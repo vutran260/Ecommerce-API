@@ -15,7 +15,6 @@ const options = {
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
 };
 
-Logger.debug(dbURI);
 
 function setRunValidators() {
   this.setOptions({ runValidators: true });

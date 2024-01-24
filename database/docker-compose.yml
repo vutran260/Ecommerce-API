@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: sql_boiler_postgres
+    image: postgres:16.0-alpine3.18
+    restart: always
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data:/var/lib/postgresql/data
+    environment:
+      #      - POSTGRES_USER=postgres
+      #      - POSTGRES_DB=4fan
+      #      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=${LINK_PALETTE_PSQL_PASS}
+      - POSTGRES_USER=${LINK_PALETTE_PSQL_USER}
+      - POSTGRES_DB=${LINK_PALETTE_PSQL_DBNAME}
+    ports:
+      - ${LINK_PALETTE_PSQL_PORT}:5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command:
+      - "postgres"
+      - "-c"
+      - "log_statement=all"
+
+volumes:
+  db-data:
+
+networks:
+  default:
+    name: postgre-link-palette-service-default

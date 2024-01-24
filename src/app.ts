@@ -13,7 +13,8 @@ import {
 import routes from './routes';
 
 process.on('uncaughtException', (e) => {
-  Logger.error(e);
+  Logger.info("AIHIAHdfsdf")
+  Logger.error(e.message);
 });
 
 const app = express();

@@ -121,7 +121,7 @@
 │   │   ├── index.ts
 │   │   └── profile
 │   │       ├── schema.ts
-│   │       └── user.ts
+│   │       └── userEndpoint.ts
 │   └── types
 │       └── app-request.d.ts
 ├── tests

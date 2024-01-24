@@ -36,3 +36,6 @@ temp
 
 *.save
 *.save.*
+
+#database
+database/data

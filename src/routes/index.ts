@@ -2,30 +2,34 @@ import express from 'express';
 import apikey from '../auth/apikey';
 import permission from '../helpers/permission';
 import { Permission } from '../database/model/ApiKey';
-import signup from './access/signup';
-import login from './access/login';
-import logout from './access/logout';
-import token from './access/token';
-import credential from './access/credential';
-import blog from './blog';
-import blogs from './blogs';
-import profile from './profile';
+import Logger from '../core/Logger';
+import { AppDataSource } from '../data_source';
+import { adminSiteRouter } from '../admin_site/router';
 
 const router = express.Router();
 
+try {
+  AppDataSource
+    .initialize()
+    .then(() => {
+      console.log("Data Source has been initialized!")
+    })
+    .catch((err) => {
+      console.error("Error during Data Source initialization:", err)
+    })
+}catch (e) {
+  Logger.error(e)
+}
 /*---------------------------------------------------------*/
 router.use(apikey);
 /*---------------------------------------------------------*/
 /*---------------------------------------------------------*/
 router.use(permission(Permission.GENERAL));
 /*---------------------------------------------------------*/
-router.use('/signup', signup);
-router.use('/login', login);
-router.use('/logout', logout);
-router.use('/token', token);
-router.use('/credential', credential);
-router.use('/profile', profile);
-router.use('/blog', blog);
-router.use('/blogs', blogs);
+
+
+const adminSiteRoute = new adminSiteRouter(AppDataSource)
+router.use('/admin_site', adminSiteRoute.getAdminSiteRouter())
+
 
 export default router;
