@@ -2,16 +2,16 @@ jest.resetAllMocks(); // make sure we do not have any mocks set from unit tests
 
 import supertest from 'supertest';
 import app from '../../../../src/app';
-import UserRepo from '../../../../src/database/repository/UserRepo';
-import KeystoreRepo from '../../../../src/database/repository/KeystoreRepo';
-import User, { UserModel } from '../../../../src/database/model/User';
+import UserRepo from '../../../../src/lib/database/repository/UserRepo';
+import KeystoreRepo from '../../../../src/lib/database/repository/KeystoreRepo';
+import User, { UserModel } from '../../../../src/lib/database/model/User';
 import bcrypt from 'bcrypt';
-import * as authUtils from '../../../../src/auth/authUtils';
-import Role, { RoleCode } from '../../../../src/database/model/Role';
+import * as authUtils from '../../../../src/lib/auth/authUtils';
+import Role, { RoleCode } from '../../../../src/lib/database/model/Role';
 import { Types } from 'mongoose';
-import ApiKey, { ApiKeyModel } from '../../../../src/database/model/ApiKey';
-import { connection } from '../../../../src/database';
-import cache from '../../../../src/cache';
+import ApiKey, { ApiKeyModel } from '../../../../src/lib/database/model/ApiKey';
+import { connection } from '../../../../src/lib/database';
+import cache from '../../../../src/lib/cache';
 
 export const createTokensSpy = jest.spyOn(authUtils, 'createTokens');
 export const bcryptCompareSpy = jest.spyOn(bcrypt, 'compare');

@@ -1,8 +1,7 @@
 import { Request } from 'express';
-import User from '../database/model/User';
-import Keystore from '../database/model/Keystore';
-import ApiKey from '../database/model/ApiKey';
-import { Users } from '../entity/entities/Users';
+import Keystore from '../lib/database/model/Keystore';
+import ApiKey from '../lib/database/model/ApiKey';
+import { user } from '../lib/posgres/schema';
 
 declare interface PublicRequest extends Request {
   apiKey: ApiKey;
@@ -13,7 +12,7 @@ declare interface RoleRequest extends PublicRequest {
 }
 
 declare interface ProtectedRequest extends RoleRequest {
-  user: Users;
+  user: any;
   accessToken: string;
   keystore: Keystore;
 }

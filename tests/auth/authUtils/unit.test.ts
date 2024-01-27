@@ -1,10 +1,10 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from './mock';
-import { validateTokenData, createTokens } from '../../../src/auth/authUtils';
-import { JwtPayload } from '../../../src/core/JWT';
+import { validateTokenData, createTokens } from '../../../src/lib/auth/authUtils';
+import { JwtPayload } from '../../../src/lib/core/JWT';
 import { tokenInfo } from '../../../src/config';
 import { Types } from 'mongoose';
-import { AuthFailureError } from '../../../src/core/ApiError';
-import User from '../../../src/database/model/User';
+import { AuthFailureError } from '../../../src/lib/core/ApiError';
+import User from '../../../src/lib/database/model/User';
 
 describe('authUtils validateTokenData tests', () => {
   beforeAll(() => {

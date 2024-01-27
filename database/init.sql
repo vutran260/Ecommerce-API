@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 
 
-CREATE TABLE admins
+CREATE TABLE admin
 (
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     email       VARCHAR,
@@ -10,26 +10,46 @@ CREATE TABLE admins
     password    VARCHAR,
     username    VARCHAR,
     fullname    VARCHAR,
-    image_url   TEXT,
-    reset_token TEXT,
-    created_at  TIMESTAMP,
-    updated_at  TIMESTAMP,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP DEFAULT NOW(),
     deleted_at  TIMESTAMP
 );
 
-CREATE TABLE users
+CREATE TABLE seller
 (
-    id                   VARCHAR PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_name            VARCHAR,
-    gender               VARCHAR          DEFAULT NULL,
-    date_of_birth        TIMESTAMP,
-    email                VARCHAR,
-    status               VARCHAR,
-    phone                VARCHAR,
-    fcm_token            TEXT,
-    password             VARCHAR,
-    created_at           TIMESTAMP,
-    updated_at           TIMESTAMP,
-    deleted_at           TIMESTAMP
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email       VARCHAR,
+    phone       VARCHAR,
+    password    VARCHAR,
+    username    VARCHAR,
+    fullname    VARCHAR,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP DEFAULT NOW(),
+    deleted_at  TIMESTAMP
+);
+
+CREATE TABLE store (
+    id          UUID PRIMARY KEY,
+    store_name  VARCHAR,
+    status      VARCHAR,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP DEFAULT NOW(),
+    deleted_at  TIMESTAMP,
+
+    CONSTRAINT fk_seller_id_store FOREIGN KEY (id) REFERENCES seller (id)
+
+);
+
+CREATE TABLE buyer
+(
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email       VARCHAR,
+    phone       VARCHAR,
+    password    VARCHAR,
+    username    VARCHAR,
+    fullname    VARCHAR,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP DEFAULT NOW(),
+    deleted_at  TIMESTAMP
 );
 

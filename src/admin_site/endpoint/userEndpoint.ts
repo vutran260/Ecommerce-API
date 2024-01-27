@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import Logger from '../../core/Logger';
+import Logger from '../../lib/core/Logger';
 import { UserUsecase } from '../usecase/userUsecase';
 
 export class UserEndpoint {

@@ -1,16 +1,15 @@
 import { UserRepository } from './repository/userRepository';
-import { AppDataSource } from '../data_source';
 import { UserUsecase } from './usecase/userUsecase';
 import { UserEndpoint } from './endpoint/userEndpoint';
-import router from '../routes';
 import express from 'express';
 import { DataSource } from 'typeorm';
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
 
 
 export class adminSiteRouter {
-  private db : DataSource
+  private db : PostgresJsDatabase
 
-  constructor(db: DataSource) {
+  constructor(db: PostgresJsDatabase) {
     this.db = db;
   }
 

@@ -1,12 +1,12 @@
 // all dependent mock should be on the top
 import { API_KEY } from '../apikey/mock';
 
-import User from '../../../src/database/model/User';
+import User from '../../../src/lib/database/model/User';
 import { Types } from 'mongoose';
-import JWT, { JwtPayload } from '../../../src/core/JWT';
-import { BadTokenError } from '../../../src/core/ApiError';
-import Keystore from '../../../src/database/model/Keystore';
-import * as authUtils from '../../../src/auth/authUtils';
+import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
+import { BadTokenError } from '../../../src/lib/core/ApiError';
+import Keystore from '../../../src/lib/database/model/Keystore';
+import * as authUtils from '../../../src/lib/auth/authUtils';
 import { tokenInfo } from '../../../src/config';
 
 export const ACCESS_TOKEN = 'xyz';
@@ -40,11 +40,11 @@ export const mockKeystoreFindForKey = jest.fn(
     ({ client: client, primaryKey: key } as Keystore),
 );
 
-jest.mock('../../../src/database/repository/UserRepo', () => ({
+jest.mock('../../../src/lib/database/repository/UserRepo', () => ({
   findById: mockUserFindById,
 }));
 
-jest.mock('../../../src/database/repository/KeystoreRepo', () => ({
+jest.mock('../../../src/lib/database/repository/KeystoreRepo', () => ({
   findforKey: mockKeystoreFindForKey,
 }));
 

@@ -1,8 +1,8 @@
-import Blog from '../../../../src/database/model/Blog';
+import Blog from '../../../../src/lib/database/model/Blog';
 import { Types } from 'mongoose';
 import { USER_ID_WRITER } from '../../../auth/authorization/mock';
 
-jest.unmock('../../../../src/database/repository/BlogRepo');
+jest.unmock('../../../../src/lib/database/repository/BlogRepo');
 
 export const BLOG_ID = new Types.ObjectId();
 export const BLOG_ID_2 = new Types.ObjectId();
@@ -50,7 +50,7 @@ export const mockFindBlogAllDataById = jest.fn(
   },
 );
 
-jest.mock('../../../../src/database/repository/BlogRepo', () => ({
+jest.mock('../../../../src/lib/database/repository/BlogRepo', () => ({
   findUrlIfExists: mockBlogFindUrlIfExists,
   create: mockBlogCreate,
   update: mockBlogUpdate,

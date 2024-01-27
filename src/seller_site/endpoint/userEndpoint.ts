@@ -1,7 +1,5 @@
-import { DataSource } from 'typeorm';
 import express, { Request, Response } from 'express';
-import Logger from '../../core/Logger';
-import { Users } from '../../entity/entities/Users';
+import Logger from '../../lib/core/Logger';
 import { UserUsecase } from '../usecase/userUsecase';
 
 export class UserEndpoint {

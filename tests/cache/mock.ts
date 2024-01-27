@@ -1,1 +1,1 @@
-jest.mock('../../src/cache', () => ({}));
+jest.mock('../../src/lib/cache', () => ({}));

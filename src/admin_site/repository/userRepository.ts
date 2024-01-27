@@ -1,22 +1,23 @@
-import { DataSource } from 'typeorm';
-import { Users } from '../../entity/entities/Users';
-import Logger from '../../core/Logger';
+import Logger from '../../lib/core/Logger';
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { admin } from '../../lib/posgres/schema';
 
 export class UserRepository {
   // private userRepo: userRepo
-  private db: DataSource;
+  private db:  PostgresJsDatabase;
 
 
-  constructor(db: DataSource) {
+  constructor(db:  PostgresJsDatabase) {
     this.db = db;
   }
 
-  public createUser = async (user: Users) => {
+  public createUser = async (input: any) => {
     try {
       // const userEntity = this.db.getRepository(Users).create(user);
-      const results = await this.db.getRepository(Users).save(user);
-      return results
+      const results = await this.db.insert(admin).values({email:"123@123.com"});
+      return  await this.db.select().from(admin)
     } catch (e: any) {
+      Logger.error(e);
       Logger.error(e.message);
       return e
     }

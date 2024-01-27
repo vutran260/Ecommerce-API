@@ -2,10 +2,10 @@
 import { USER_ID, ACCESS_TOKEN } from '../authentication/mock';
 
 import { Types } from 'mongoose';
-import User from '../../../src/database/model/User';
-import Role, { RoleCode } from '../../../src/database/model/Role';
-import { BadTokenError } from '../../../src/core/ApiError';
-import JWT, { JwtPayload } from '../../../src/core/JWT';
+import User from '../../../src/lib/database/model/User';
+import Role, { RoleCode } from '../../../src/lib/database/model/Role';
+import { BadTokenError } from '../../../src/lib/core/ApiError';
+import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
 import { tokenInfo } from '../../../src/config';
 
 export const LEARNER_ROLE_ID = new Types.ObjectId(); // random id
@@ -103,11 +103,11 @@ export const mockJwtValidate = jest.fn(
   },
 );
 
-jest.mock('../../../src/database/repository/UserRepo', () => ({
+jest.mock('../../../src/lib/database/repository/UserRepo', () => ({
   findById: mockUserFindById,
 }));
 
-jest.mock('../../../src/database/repository/RoleRepo', () => ({
+jest.mock('../../../src/lib/database/repository/RoleRepo', () => ({
   findByCodes: mockRoleRepoFindByCodes,
 }));
 

@@ -1,19 +1,18 @@
 import express, { Request, Response, NextFunction } from 'express';
-import Logger from './core/Logger';
+import Logger from './lib/core/Logger';
 import cors from 'cors';
 import { corsUrl, environment } from './config';
-import './database'; // initialize database
-import './cache'; // initialize cache
+import './lib/database'; // initialize database
+import './lib/cache'; // initialize cache
 import {
   NotFoundError,
   ApiError,
   InternalError,
   ErrorType,
-} from './core/ApiError';
-import routes from './routes';
+} from './lib/core/ApiError';
+import router from './route';
 
 process.on('uncaughtException', (e) => {
-  Logger.info("AIHIAHdfsdf")
   Logger.error(e.message);
 });
 
@@ -26,7 +25,7 @@ app.use(
 app.use(cors({ origin: corsUrl, optionsSuccessStatus: 200 }));
 
 // Routes
-app.use('/', routes);
+app.use('/', router);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => next(new NotFoundError()));

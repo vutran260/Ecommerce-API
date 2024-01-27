@@ -1,1 +1,1 @@
-jest.mock('../../src/database', () => ({}));
+jest.mock('../../src/lib/database', () => ({}));

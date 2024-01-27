@@ -74,14 +74,14 @@
 │   │   ├── Logger.ts
 │   │   └── utils.ts
 │   ├── cache
-│   │   ├── index.ts
+│   │   ├── route.ts
 │   │   ├── keys.ts
 │   │   ├── query.ts
 │   │   └── repository
 │   │       ├── BlogCache.ts
 │   │       └── BlogsCache.ts
 │   ├── database
-│   │   ├── index.ts
+│   │   ├── route.ts
 │   │   ├── model
 │   │   │   ├── ApiKey.ts
 │   │   │   ├── Blog.ts
@@ -112,13 +112,13 @@
 │   │   │   └── utils.ts
 │   │   ├── blog
 │   │   │   ├── editor.ts
-│   │   │   ├── index.ts
+│   │   │   ├── route.ts
 │   │   │   ├── schema.ts
 │   │   │   └── writer.ts
 │   │   ├── blogs
-│   │   │   ├── index.ts
+│   │   │   ├── route.ts
 │   │   │   └── schema.ts
-│   │   ├── index.ts
+│   │   ├── route.ts
 │   │   └── profile
 │   │       ├── schema.ts
 │   │       └── userEndpoint.ts
@@ -186,7 +186,7 @@
  ```
  
  ## Directory Traversal for Signup API call
- `/src → server.ts → app.ts → /routes/index.ts → /auth/apikey.ts → schema.ts → /helpers/validator.ts → asyncHandler.ts → /routes/access/signup.ts → schema.ts → /helpers/validator.ts → asyncHandler.ts → /database/repository/UserRepo.ts → /database/model/User.ts → /core/ApiResponses.ts`
+ `/src → server.ts → app.ts → /routes/route.ts → /auth/apikey.ts → schema.ts → /helpers/validator.ts → asyncHandler.ts → /routes/access/signup.ts → schema.ts → /helpers/validator.ts → asyncHandler.ts → /database/repository/UserRepo.ts → /database/model/User.ts → /core/ApiResponses.ts`
  
  ## API Examples
 * Signup

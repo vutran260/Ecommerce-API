@@ -1,4 +1,4 @@
-import cache from '.';
+import cache from './index';
 import { DynamicKeyType, Key } from './keys';
 
 export enum TYPES {

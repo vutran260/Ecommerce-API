@@ -3,7 +3,7 @@ import { AuthFailureError, InternalError } from '../core/ApiError';
 import JWT, { JwtPayload } from '../core/JWT';
 import { Types } from 'mongoose';
 import User from '../database/model/User';
-import { tokenInfo } from '../config';
+import { tokenInfo } from '../../config';
 
 export const getAccessToken = (authorization?: string) => {
   if (!authorization) throw new AuthFailureError('Invalid Authorization');

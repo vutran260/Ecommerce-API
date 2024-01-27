@@ -1,4 +1,3 @@
-import { Users } from '../../entity/entities/Users';
 import { UserRepository } from '../repository/userRepository';
 
 export class UserUsecase {
@@ -9,7 +8,7 @@ export class UserUsecase {
     this.userRepo = userRepo;
   }
 
-  public createUser = async (user: Users) => {
+  public createUser = async (user: any) => {
       return this.userRepo.createUser(user)
   };
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Logger from '../core/Logger';
-import { db } from '../config';
+import { db } from '../../config';
 
 // Build the connection string
 const dbURI = `mongodb://${db.user}:${encodeURIComponent(db.password)}@${

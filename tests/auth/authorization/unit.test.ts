@@ -12,7 +12,7 @@ import {
 
 import app from '../../../src/app';
 import supertest from 'supertest';
-import { RoleCode } from '../../../src/database/model/Role';
+import { RoleCode } from '../../../src/lib/database/model/Role';
 
 describe('authentication validation for editor', () => {
   const endpoint = '/blog/editor/test';
