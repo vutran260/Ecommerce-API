@@ -14,7 +14,7 @@ export class UserRepository {
   public createUser = async (input: any) => {
     try {
       // const userEntity = this.db.getRepository(Users).create(user);
-      const results = await this.db.insert(admin).values({email:"123@123.com"});
+      const results = await this.db.insert(admin).values(input);
       return  await this.db.select().from(admin)
     } catch (e: any) {
       Logger.error(e);

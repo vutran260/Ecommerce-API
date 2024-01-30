@@ -1,9 +1,9 @@
-import { pgTable, uuid, varchar, timestamp, foreignKey } from "drizzle-orm/pg-core"
+import { pgTable, uuid, varchar, timestamp, foreignKey, unique } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
 
-export const admin = pgTable("admin", {
+export const admin = pgTable("LP_ADMIN", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
 	email: varchar("email"),
 	phone: varchar("phone"),
@@ -15,7 +15,7 @@ export const admin = pgTable("admin", {
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 });
 
-export const seller = pgTable("seller", {
+export const user = pgTable("LP_USER", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
 	email: varchar("email"),
 	phone: varchar("phone"),
@@ -27,17 +27,36 @@ export const seller = pgTable("seller", {
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 });
 
-export const store = pgTable("store", {
-	id: uuid("id").primaryKey().notNull().references(() => seller.id),
-	storeName: varchar("store_name"),
-	status: varchar("status"),
+export const seller = pgTable("LP_SELLER", {
+	id: uuid("id").primaryKey().notNull().references(() => user.id),
+	storeId: uuid("store_id").references(() => store.id),
+	email: varchar("email"),
+	phone: varchar("phone"),
+	password: varchar("password"),
+	username: varchar("username"),
+	fullname: varchar("fullname"),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 });
 
-export const buyer = pgTable("buyer", {
-	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+export const store = pgTable("LP_STORE", {
+		id: uuid("id").primaryKey().notNull(),
+		storeKey: varchar("store_key"),
+		storeName: varchar("store_name"),
+		status: varchar("status"),
+		createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+		updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
+		deletedAt: timestamp("deleted_at", { mode: 'string' }),
+	},
+	(table) => {
+		return {
+			lpStoreStoreKeyKey: unique("LP_STORE_store_key_key").on(table.storeKey),
+		}
+	});
+
+export const buyer = pgTable("LP_BUYER", {
+	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull().references(() => user.id),
 	email: varchar("email"),
 	phone: varchar("phone"),
 	password: varchar("password"),
