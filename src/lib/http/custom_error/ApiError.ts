@@ -1,7 +1,6 @@
 import { ErrorType } from './ErrorType';
 import { ErrorCode } from './ErrorCode';
 import { StatusCode } from './StatusCode';
-import { ValidationError } from 'class-validator';
 
 export abstract class ApiError extends Error {
   protected constructor(
@@ -15,37 +14,37 @@ export abstract class ApiError extends Error {
 }
 
 export class AuthFailureError extends ApiError {
-  constructor(message = 'Invalid Credentials') {
-    super(ErrorType.UNAUTHORIZED, message);
+  constructor(message = 'Invalid Credentials', errorCode = ErrorCode.UNAUTHORIZED) {
+    super(ErrorType.UNAUTHORIZED, message, errorCode);
   }
 }
 
 export class InternalError extends ApiError {
-  constructor(message = 'Internal error') {
-    super(ErrorType.INTERNAL, message);
+  constructor(message = 'Internal error', errorCode = ErrorCode.INTERNAL) {
+    super(ErrorType.INTERNAL, message, errorCode);
   }
 }
 
 export class BadRequestError extends ApiError {
-  constructor(message = 'Bad Request') {
+  constructor(message = 'Bad Request', errorCode = ErrorCode.BAD_REQUEST) {
     super(
       ErrorType.BAD_REQUEST,
       message,
-      ErrorCode.BAD_REQUEST,
+      errorCode,
       StatusCode.BUSINESS_FAIL,
     );
   }
 }
 
 export class NotFoundError extends ApiError {
-  constructor(message = 'Not Found') {
-    super(ErrorType.NOT_FOUND, message);
+  constructor(message = 'Not Found', errorCode = ErrorCode.NOT_FOUND) {
+    super(ErrorType.NOT_FOUND, message, errorCode);
   }
 }
 
 export class ForbiddenError extends ApiError {
-  constructor(message = 'Permission denied') {
-    super(ErrorType.FORBIDDEN, message);
+  constructor(message = 'Permission denied', errorCode = ErrorCode.FORBIDDEN) {
+    super(ErrorType.FORBIDDEN, message, errorCode);
   }
 }
 
@@ -62,14 +61,14 @@ export class BadTokenError extends ApiError {
 }
 
 export class TokenExpiredError extends ApiError {
-  constructor(message = 'Token is expired') {
-    super(ErrorType.TOKEN_EXPIRED, message);
+  constructor(message = 'Token is expired', errorCode = ErrorCode.TOKEN_EXPIRED) {
+    super(ErrorType.TOKEN_EXPIRED, message, errorCode);
   }
 }
 
 export class NoDataError extends ApiError {
-  constructor(message = 'No data available') {
-    super(ErrorType.NO_DATA, message);
+  constructor(message = 'No data available', errorCode = ErrorCode.NOT_FOUND) {
+    super(ErrorType.NO_DATA, message, errorCode);
   }
 }
 
@@ -80,7 +79,7 @@ export class AccessTokenError extends ApiError {
 }
 
 export class DataExists extends ApiError {
-  constructor(message = '重複する名前は許可されない。') {
-    super(ErrorType.DATA_EXISTS, message, ErrorCode.ALREADY_EXISTS);
+  constructor(message = 'Data already exists', errorCode = ErrorCode.ALREADY_EXISTS) {
+    super(ErrorType.DATA_EXISTS, message, errorCode);
   }
 }

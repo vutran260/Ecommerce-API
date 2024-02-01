@@ -6,5 +6,7 @@ export enum ErrorCode {
 
   NOT_FOUND = '20001',
   BAD_REQUEST = '20002',
-  ALREADY_EXISTS = '20003'
+  ALREADY_EXISTS = '20003',
+
+  TOKEN_EXPIRED = '30001',
 }
