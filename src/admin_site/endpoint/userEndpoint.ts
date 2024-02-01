@@ -4,7 +4,6 @@ import { UserUsecase } from '../usecase/userUsecase';
 
 export class UserEndpoint {
 
-
   private userUsecase : UserUsecase
 
   constructor(userUsecase: UserUsecase) {

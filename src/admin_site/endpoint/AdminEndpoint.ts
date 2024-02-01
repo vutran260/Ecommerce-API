@@ -4,7 +4,6 @@ import { AdminUsecase } from '../usecase/adminUsecase';
 
 export class AdminEndpoint {
 
-
   private adminUsecase : AdminUsecase
 
   constructor(userUsecase: AdminUsecase) {
@@ -21,9 +20,23 @@ export class AdminEndpoint {
     }
   };
 
+  private changePassword = async (req: Request, res: Response) => {
+    try {
+      const results = await this.adminUsecase.changePassword(req.body);
+      return res.send({"res": {
+        result: results,
+        message: 'Update password successfully.'
+      }});
+    } catch (e: any) {
+      Logger.error(e.message);
+      return res.send("error")
+    }
+  }
+
   public getRouter() {
     const router = express.Router();
     router.post('/login', this.login);
+    router.post('/change-password', this.changePassword)
     return router;
   }
 
