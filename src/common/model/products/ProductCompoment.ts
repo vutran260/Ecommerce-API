@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 import { LP_PRODUCT_COMPONENTAttributes } from "../../../lib/mysql/models/LP_PRODUCT_COMPONENT";
 
 
@@ -8,9 +8,11 @@ export default class ProductComponent {
   productId: string;
 
   @IsString()
+  @IsNotEmpty()
   componentValue: string;
   
   @IsString()
+  @IsNotEmpty()
   componentName: string;
 }
 
