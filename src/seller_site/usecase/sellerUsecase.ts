@@ -1,0 +1,40 @@
+import { UserRepository } from '../repository/userRepository';
+import { sellerRepository } from '../repository/sellerRepository';
+import crypto from 'crypto';
+import { createTokens } from '../../lib/auth/authUtils';
+
+export class SellerUsecase {
+  private userRepo: UserRepository;
+  private sellerRepo: sellerRepository
+
+
+  constructor(userRepo: UserRepository, sellerRepo: sellerRepository) {
+    this.userRepo = userRepo;
+    this.sellerRepo = sellerRepo
+  }
+
+  public RegisterSeller = async (user: any) => {
+    try {
+      let userFromDb = await this.userRepo.getUserById(user.id)
+      if (userFromDb === null) {
+        userFromDb = await this.userRepo.createUser(user)
+      }
+
+      const seller = await this.sellerRepo.createSeller(userFromDb)
+
+      const accessTokenKey = crypto.randomBytes(64).toString('hex');
+      const refreshTokenKey = crypto.randomBytes(64).toString('hex');
+      const token = await createTokens(user.id, accessTokenKey, refreshTokenKey);
+      return token
+
+    }catch (e) {
+      throw e
+    }
+
+
+
+
+  };
+
+
+}

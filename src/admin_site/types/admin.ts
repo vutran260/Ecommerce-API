@@ -1,4 +1,4 @@
-declare interface LoginInput {
+export declare interface LoginInput {
   userName: string;
   password: string;
 }

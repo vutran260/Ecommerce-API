@@ -1,13 +1,13 @@
 import Logger from '../../lib/core/Logger';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { admin } from '../../lib/posgres/schema';
+import * as schema from '../../lib/posgres/schema';
 
 export class UserRepository {
-  // private userRepo: userRepo
-  private db:  PostgresJsDatabase;
+  private db:  PostgresJsDatabase<typeof schema>;
 
 
-  constructor(db:  PostgresJsDatabase) {
+  constructor(db:  PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 

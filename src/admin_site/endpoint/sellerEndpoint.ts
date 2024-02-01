@@ -1,19 +1,18 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
-import { UserUsecase } from '../usecase/userUsecase';
+import { SellerUsecase } from '../usecase/sellerUsecase';
 
-export class UserEndpoint {
+export class SellerEndpoint {
 
+  private sellerUsecase : SellerUsecase
 
-  private userUsecase : UserUsecase
-
-  constructor(userUsecase: UserUsecase) {
-    this.userUsecase = userUsecase;
+  constructor(userUsecase: SellerUsecase) {
+    this.sellerUsecase = userUsecase;
   }
 
   private createUser = async (req: Request, res: Response) => {
     try {
-      const results = await this.userUsecase.createUser(req.body)
+      const results = await this.sellerUsecase.createUser(req.body)
       return res.send(results);
     } catch (e: any) {
       Logger.error(e.message);

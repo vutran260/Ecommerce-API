@@ -1,10 +1,9 @@
 
 import postgres from 'postgres';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import *  as schema from '../../lib/posgres/schema';
 
-
-console.log("asdfasdfa", process.env.DATABASE_URL!);
 const queryConnection = postgres(process.env.DATABASE_URL!);
-export const  dbConnection = drizzle(queryConnection);
+export const  dbConnection : PostgresJsDatabase<typeof schema>  = drizzle(queryConnection, {schema});
 
 

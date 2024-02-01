@@ -4,6 +4,7 @@ import permission from './lib/helpers/permission';
 import { Permission } from './lib/database/model/ApiKey';
 import { adminSiteRouter } from './admin_site/router';
 import { dbConnection } from './lib/posgres/connection';
+import { sellerSiteRouter } from './seller_site/router';
 
 const router = express.Router();
 
@@ -16,7 +17,9 @@ router.use(permission(Permission.GENERAL));
 
 
 const adminSiteRoute = new adminSiteRouter(dbConnection)
+const sellerSiteRoute = new sellerSiteRouter(dbConnection)
 router.use('/admin_site', adminSiteRoute.getAdminSiteRouter())
+router.use('/seller_site', sellerSiteRoute.getSellerSiteRouter())
 
 
 export default router;

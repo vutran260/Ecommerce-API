@@ -39,14 +39,14 @@ export class JwtPayload {
 
 async function readPublicKey(): Promise<string> {
   return promisify(readFile)(
-    path.join(__dirname, '../../keys/public.pem'),
+    path.join(__dirname, '../../../keys/public.pem'),
     'utf8',
   );
 }
 
 async function readPrivateKey(): Promise<string> {
   return promisify(readFile)(
-    path.join(__dirname, '../../keys/private.pem'),
+    path.join(__dirname, '../../../keys/private.pem'),
     'utf8',
   );
 }

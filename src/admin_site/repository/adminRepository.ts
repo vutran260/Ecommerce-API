@@ -1,13 +1,15 @@
 import Logger from '../../lib/core/Logger';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { admin } from '../../lib/posgres/schema';
+import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
+import { LoginInput } from '../types/admin';
 
 export class AdminRepository {
-  private db:  PostgresJsDatabase;
+  private db:  PostgresJsDatabase<typeof schema>;
 
 
-  constructor(db:  PostgresJsDatabase) {
+  constructor(db:  PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 

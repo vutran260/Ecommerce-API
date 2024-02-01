@@ -1,27 +1,31 @@
 import { UserRepository } from './repository/userRepository';
-import { UserUsecase } from './usecase/userUsecase';
-import { UserEndpoint } from './endpoint/userEndpoint';
+import { SellerUsecase } from './usecase/sellerUsecase';
+import { SellerEndpoint } from './endpoint/sellerEndpoint';
+import * as schema from '../lib/posgres/schema';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { sellerRepository } from './repository/sellerRepository';
 
 
-export class adminSiteRouter {
-  private db : PostgresJsDatabase
+export class sellerSiteRouter {
+  private db:  PostgresJsDatabase<typeof schema>;
 
-  constructor(db: PostgresJsDatabase) {
+
+  constructor(db:  PostgresJsDatabase<typeof schema>) {
     this.db = db;
   }
 
-  public getAdminSiteRouter = () => {
+  public getSellerSiteRouter = () => {
 
     const router = express.Router();
 
     const userRepo = new UserRepository(this.db)
-    const userUsecase = new UserUsecase(userRepo)
-    const userRouter = new UserEndpoint(userUsecase)
+    const sellerRepo = new sellerRepository(this.db)
+    const sellerUsecase = new SellerUsecase(userRepo, sellerRepo)
+    const sellerEndpoint = new SellerEndpoint(sellerUsecase)
 
-    router.use('/user', userRouter.getRouter())
-    
+    router.use('/seller', sellerEndpoint.getRouter())
+
     return router
   }
 

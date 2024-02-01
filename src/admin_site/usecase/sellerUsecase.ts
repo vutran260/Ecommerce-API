@@ -1,6 +1,6 @@
 import { UserRepository } from '../repository/userRepository';
 
-export class UserUsecase {
+export class SellerUsecase {
   private userRepo: UserRepository;
 
 

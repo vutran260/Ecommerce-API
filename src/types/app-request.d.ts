@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import Keystore from '../lib/database/model/Keystore';
 import ApiKey from '../lib/database/model/ApiKey';
-import { user } from '../lib/posgres/schema';
 
 declare interface PublicRequest extends Request {
   apiKey: ApiKey;

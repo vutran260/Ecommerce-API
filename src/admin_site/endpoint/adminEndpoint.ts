@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { AdminUsecase } from '../usecase/adminUsecase';
+import { adminAuthenMiddlleware } from '../middleware/authenMiddlleware';
+import  {AdminProtectedRequest} from '../types/common'
 
 export class AdminEndpoint {
 
@@ -13,7 +15,17 @@ export class AdminEndpoint {
   private login = async (req: Request, res: Response) => {
     try {
       const results = await this.adminUsecase.login(req.body)
-      return res.send({"token": results.id});
+      return res.send({"token": results});
+    } catch (e: any) {
+      Logger.error(e.message);
+      return res.send("error")
+    }
+  };
+
+
+  private getMe = async (req: AdminProtectedRequest, res: Response) => {
+    try {
+      return res.send(req.admin);
     } catch (e: any) {
       Logger.error(e.message);
       return res.send("error")
@@ -36,8 +48,12 @@ export class AdminEndpoint {
   public getRouter() {
     const router = express.Router();
     router.post('/login', this.login);
+    router.use(adminAuthenMiddlleware)
     router.post('/change-password', this.changePassword)
+    router.get('/me', this.getMe)
     return router;
   }
 
 }
+
+

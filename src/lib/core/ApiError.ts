@@ -68,7 +68,7 @@ export class InternalError extends ApiError {
 }
 
 export class BadRequestError extends ApiError {
-  constructor(message = 'Bad Request') {
+  constructor(message: string = 'Bad Request') {
     super(ErrorType.BAD_REQUEST, message);
   }
 }

@@ -30,7 +30,7 @@ CREATE TABLE "LP_USER"
 
 CREATE TABLE "LP_STORE" (
     id          UUID PRIMARY KEY,
-    store_key    VARCHAR unique,
+    store_key   VARCHAR unique,
     store_name  VARCHAR,
     status      VARCHAR,
     created_at  TIMESTAMP DEFAULT NOW(),

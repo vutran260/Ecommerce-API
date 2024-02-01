@@ -28,7 +28,7 @@ export const validateTokenData = (payload: JwtPayload): boolean => {
 };
 
 export const createTokens = async (
-  user: User,
+  userId: string,
   accessTokenKey: string,
   refreshTokenKey: string,
 ): Promise<Tokens> => {
@@ -36,7 +36,7 @@ export const createTokens = async (
     new JwtPayload(
       tokenInfo.issuer,
       tokenInfo.audience,
-      user._id.toString(),
+      userId,
       accessTokenKey,
       tokenInfo.accessTokenValidity,
     ),
@@ -48,7 +48,7 @@ export const createTokens = async (
     new JwtPayload(
       tokenInfo.issuer,
       tokenInfo.audience,
-      user._id.toString(),
+      userId,
       refreshTokenKey,
       tokenInfo.refreshTokenValidity,
     ),
