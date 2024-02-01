@@ -128,7 +128,7 @@ export class CartItem {
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
     item.buyingPeriod = lpCart.buyingPeriod;
-    item.startBuyingDate = !item.startBuyingDate ? undefined : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
+    item.startBuyingDate = !lpCart.startBuyingDate ? undefined : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
     item.product = ProductFromLP_PRODUCT(lpCart.product);
     return item;
   }
