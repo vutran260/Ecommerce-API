@@ -31,4 +31,51 @@ export class AdminRepository {
     }
   };
 
+  public checkExistsAdmin = async (username: string) => {
+    try {
+      const result = await this.db.select().from(admin).
+      where(
+        and(
+        eq(admin.username, username),
+        ));
+
+        if (result.length < 1) {
+          return 'Admin is not exits!';
+        }
+        return result
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      return error
+    }
+  }
+
+  public updatePasswordAdmin= async (input: ChangePasswordInput) => {
+    try {
+      const result = await this.db.select().from(admin).
+      where(
+        and(
+        eq(admin.username, input.username),
+        ));
+  
+      if (result.length < 1) {
+          return 'Admin is not exits!';
+      }
+
+      if (input.password_new !== input.password_confirm) {
+        return 'Password confirm not match! Please input password confirm again';
+      }
+
+      await this.db.update(admin).set({
+        password: input.password_confirm
+      });
+      return true;
+      
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      return error
+    }
+  }
+
 }

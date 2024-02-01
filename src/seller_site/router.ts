@@ -21,7 +21,7 @@ export class adminSiteRouter {
     const userRouter = new UserEndpoint(userUsecase)
 
     router.use('/user', userRouter.getRouter())
-
+    
     return router
   }
 

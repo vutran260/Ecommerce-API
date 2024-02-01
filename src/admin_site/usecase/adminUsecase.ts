@@ -17,4 +17,9 @@ export class AdminUsecase {
   };
 
 
+  public changePassword = async (input: ChangePasswordInput) => {
+    const result = await this.adminRepo.updatePasswordAdmin(input);
+    return result;
+  }
+
 }
