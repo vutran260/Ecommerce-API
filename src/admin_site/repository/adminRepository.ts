@@ -3,7 +3,7 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { admin } from '../../lib/posgres/schema';
 import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
-import { LoginInput } from '../types/admin';
+import { ChangePasswordInput, LoginInput } from '../types/admin';
 
 export class AdminRepository {
   private db:  PostgresJsDatabase<typeof schema>;
