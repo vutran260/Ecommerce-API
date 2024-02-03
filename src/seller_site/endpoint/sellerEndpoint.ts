@@ -21,9 +21,21 @@ export class SellerEndpoint {
     }
   };
 
+  private getToken = async (req: Request, res: Response) => {
+    try {
+      const token = await this.sellerUsecase.GetTokenBySellerId(req.body.id)
+      return res.send({token: token})
+    }catch (e:any) {
+      Logger.error(e);
+      Logger.error(e?.message);
+      return res.send(e)
+    }
+  }
+
   public getRouter() {
     const router = express.Router();
     router.post('/register', this.registerSeller);
+    router.post('/getToken', this.getToken);
     return router;
   }
 

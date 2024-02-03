@@ -2,6 +2,7 @@ import { UserRepository } from '../repository/userRepository';
 import { sellerRepository } from '../repository/sellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
+import { BadRequestError } from '../../lib/core/ApiError';
 
 export class SellerUsecase {
   private userRepo: UserRepository;
@@ -30,11 +31,20 @@ export class SellerUsecase {
     }catch (e) {
       throw e
     }
-
-
-
-
   };
+
+  public GetTokenBySellerId = async (id: string) => {
+    const  seller = await  this.sellerRepo.getSellerById(id)
+    if (seller == null) {
+      throw new BadRequestError("seller not existed")
+    }
+
+    const accessTokenKey = crypto.randomBytes(64).toString('hex');
+    const refreshTokenKey = crypto.randomBytes(64).toString('hex');
+
+    const token = await createTokens(seller.id, accessTokenKey, refreshTokenKey);
+    return token
+  }
 
 
 }
