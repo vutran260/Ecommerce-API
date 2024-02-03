@@ -3,7 +3,7 @@ export declare interface LoginInput {
   password: string;
 }
 
-declare interface ChangePasswordInput {
+export declare interface ChangePasswordInput {
   username: string;
   password_new: string;
   password_confirm: string

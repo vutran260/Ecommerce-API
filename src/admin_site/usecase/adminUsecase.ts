@@ -1,7 +1,7 @@
 import { AdminRepository } from '../repository/adminRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
-import { LoginInput } from '../types/admin';
+import { ChangePasswordInput, LoginInput } from '../types/admin';
 
 export class AdminUsecase {
   private adminRepo: AdminRepository;
