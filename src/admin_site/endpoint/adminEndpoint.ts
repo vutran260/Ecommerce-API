@@ -6,6 +6,7 @@ import  {AdminProtectedRequest} from '../types/common'
 
 export class AdminEndpoint {
 
+
   private adminUsecase : AdminUsecase
 
   constructor(userUsecase: AdminUsecase) {
