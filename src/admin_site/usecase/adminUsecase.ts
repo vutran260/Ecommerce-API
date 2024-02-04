@@ -25,4 +25,9 @@ export class AdminUsecase {
     return result;
   }
 
+  public getUsers = async () => {
+    const users = await this.adminRepo.getUsers();
+    return users;
+  }
+
 }
