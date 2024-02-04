@@ -1,6 +1,6 @@
 import Logger from '../../lib/core/Logger';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { admin } from '../../lib/posgres/schema';
+import { admin, user } from '../../lib/posgres/schema';
 import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput, LoginInput } from '../types/admin';
@@ -73,6 +73,20 @@ export class AdminRepository {
       });
       return true;
       
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      return error
+    }
+  }
+
+  public getUsers = async () => {
+    try {
+      const users = await this.db.select().from(user);
+      if (users.length < 1) {
+        return 'Data blank';
+    }
+    return users
     } catch (error: any) {
       Logger.error(error);
       Logger.error(error.message);
