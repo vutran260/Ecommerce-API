@@ -1,15 +1,17 @@
 import { UserRepository } from '../repository/userRepository';
+import { SellerRepository } from '../repository/SellerRepository';
+import { Filter, Paging } from '../../lib/paging/Request';
 
 export class SellerUsecase {
-  private userRepo: UserRepository;
 
+  private sellerRepo: SellerRepository
 
-  constructor(userRepo: UserRepository) {
-    this.userRepo = userRepo;
+  constructor(sellerRepo: SellerRepository) {
+    this.sellerRepo = sellerRepo;
   }
 
-  public createUser = async (user: any) => {
-      return this.userRepo.createUser(user)
+  public GetSeller = async (filter: Filter[], paging: Paging) => {
+      return this.sellerRepo.getSeller(filter, paging)
   };
 
 

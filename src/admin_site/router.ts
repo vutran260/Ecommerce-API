@@ -8,6 +8,8 @@ import { admin } from '../lib/posgres/schema';
 import { AdminEndpoint } from './endpoint/adminEndpoint';
 import { SellerEndpoint } from './endpoint/sellerEndpoint';
 import *  as schema from '../lib/posgres/schema';
+import { adminAuthenMiddlleware } from './middleware/authenMiddlleware';
+import { SellerRepository } from './repository/SellerRepository';
 
 
 export class adminSiteRouter {
@@ -20,18 +22,20 @@ export class adminSiteRouter {
   public getAdminSiteRouter = () => {
 
     const router = express.Router();
-    const userRepo = new UserRepository(this.db)
     const adminRepo = new AdminRepository(this.db)
+    const userRepo = new UserRepository(this.db)
+    const sellerRepo = new SellerRepository(this.db)
 
-    const userUsecase = new SellerUsecase(userRepo)
+    const userUsecase = new SellerUsecase(sellerRepo)
     const adminUsecase = new AdminUsecase(adminRepo)
 
-    const userEndpoint = new SellerEndpoint(userUsecase)
+    const sellerEndpoint = new SellerEndpoint(userUsecase)
     const adminEndpoint = new AdminEndpoint(adminUsecase)
 
 
-    router.use('/user', userEndpoint.getRouter())
     router.use('/admin', adminEndpoint.getRouter())
+    router.use(adminAuthenMiddlleware)
+    router.use('/seller', sellerEndpoint.getRouter())
 
     return router
   }

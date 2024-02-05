@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import Keystore from '../lib/database/model/Keystore';
-import ApiKey from '../lib/database/model/ApiKey';
+import Keystore from '../database/model/Keystore';
+import ApiKey from '../database/model/ApiKey';
 
 declare interface PublicRequest extends Request {
   apiKey: ApiKey;

@@ -1,19 +1,24 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { SellerUsecase } from '../usecase/sellerUsecase';
+import { Filter, PaginationRequest } from '../../lib/paging/Request';
+import { filter } from 'lodash';
+import base64url from 'base64url';
+import { BadRequestError } from '../../lib/core/ApiError';
+import { pagingMiddelware } from '../../lib/paging/Middelware';
 
 export class SellerEndpoint {
 
   private sellerUsecase : SellerUsecase
 
-  constructor(userUsecase: SellerUsecase) {
-    this.sellerUsecase = userUsecase;
+  constructor(sellerUsecase: SellerUsecase) {
+    this.sellerUsecase = sellerUsecase;
   }
 
-  private createUser = async (req: Request, res: Response) => {
+  private getSeller = async (req: PaginationRequest, res: Response) => {
     try {
-      const results = await this.sellerUsecase.createUser(req.body)
-      return res.send(results);
+      const results = await this.sellerUsecase.GetSeller(req.filter, req.paging)
+      return res.send({data: results});
     } catch (e: any) {
       Logger.error(e.message);
       return res.send("error")
@@ -22,7 +27,7 @@ export class SellerEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.post('/', this.createUser);
+    router.get('/sellers', pagingMiddelware,this.getSeller);
     return router;
   }
 

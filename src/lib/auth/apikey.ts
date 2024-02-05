@@ -2,11 +2,11 @@ import express from 'express';
 import ApiKeyRepo from '../database/repository/ApiKeyRepo';
 import { ForbiddenError } from '../core/ApiError';
 import Logger from '../core/Logger';
-import { PublicRequest } from 'app-request';
 import schema from './schema';
 import validator, { ValidationSource } from '../helpers/validator';
 import asyncHandler from '../helpers/asyncHandler';
 import { Header } from '../core/utils';
+import { PublicRequest } from '../types/app-request';
 
 const router = express.Router();
 
