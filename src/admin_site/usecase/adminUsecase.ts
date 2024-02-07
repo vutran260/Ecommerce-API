@@ -2,6 +2,7 @@ import { AdminRepository } from '../repository/adminRepository';
 import { createTokens } from '../../lib/auth/authUtils';
 import crypto from 'crypto';
 import { ChangePasswordInput, LoginInput } from '../types/admin';
+import Logger from '../../lib/core/Logger';
 
 export class AdminUsecase {
   private adminRepo: AdminRepository;
@@ -12,11 +13,17 @@ export class AdminUsecase {
   }
 
   public login = async (input: LoginInput) => {
-    const result=  await this.adminRepo.getAdminByUserNamePassword(input)
-    const accessTokenKey = crypto.randomBytes(64).toString('hex');
-    const refreshTokenKey = crypto.randomBytes(64).toString('hex');
-    const token = await createTokens(result.id, accessTokenKey, refreshTokenKey);
-    return token
+    try {
+      const result=  await this.adminRepo.getAdminByUserNamePassword(input)
+      const accessTokenKey = crypto.randomBytes(64).toString('hex');
+      const refreshTokenKey = crypto.randomBytes(64).toString('hex');
+      const token = await createTokens(result.id, accessTokenKey, refreshTokenKey);
+      return token
+    }catch (e: any) {
+      Logger.error(e);
+      Logger.error(e.message);
+      throw e
+    }
   };
 
 

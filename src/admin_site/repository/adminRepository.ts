@@ -4,7 +4,7 @@ import { admin, user, seller } from '../../lib/posgres/schema';
 import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput, LoginInput } from '../types/admin';
-import { ApiError, NoDataError } from '../../lib/core/ApiError';
+import { BadRequestError, NoDataError } from '../../lib/core/ApiError';
 
 export class AdminRepository {
   private db: PostgresJsDatabase<typeof schema>;
@@ -26,13 +26,13 @@ export class AdminRepository {
         );
 
       if (result.length < 1) {
-        return null;
+        throw new BadRequestError("Incorrect username and password")
       }
       return result[0];
     } catch (e: any) {
       Logger.error(e);
       Logger.error(e.message);
-      return e;
+      throw e;
     }
   };
 

@@ -17,7 +17,7 @@ export class AdminEndpoint {
       return res.send({ token: results });
     } catch (e: any) {
       Logger.error(e.message);
-      return res.send('error');
+      return res.send({error: e.message});
     }
   };
 
