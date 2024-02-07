@@ -29,5 +29,10 @@ export class AdminUsecase {
     const users = await this.adminRepo.getUsers();
     return users;
   }
+  
+  public getSellers = async () => {
+    const sellers = await this.adminRepo.getSellers();
+    return sellers;
+  }
 
 }
