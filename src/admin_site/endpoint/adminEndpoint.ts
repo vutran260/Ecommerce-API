@@ -58,13 +58,27 @@ export class AdminEndpoint {
     }
   };
 
+  private getSellers = async (req: Request, res: Response) => {
+    try {
+      const users = await this.adminUsecase.getSellers();
+      return res.send({
+        data: users,
+        status: 200,
+      });
+    } catch (error: any) {
+      Logger.error(error.message);
+      return res.send('error');
+    }
+  };
+
   public getRouter() {
     const router = express.Router();
     router.post('/login', this.login);
-    router.use(adminAuthenMiddlleware);
+    // router.use(adminAuthenMiddlleware);
     router.post('/change-password', this.changePassword);
     router.get('/me', this.getMe);
     router.get('/users', this.getUsers);
+    router.get('/sellers', this.getSellers);
     return router;
   }
 }
