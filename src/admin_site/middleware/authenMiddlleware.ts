@@ -6,9 +6,9 @@ import { dbConnection } from '../../lib/posgres/connection';
 import { admin } from '../../lib/posgres/schema';
 import { eq } from 'drizzle-orm';
 import lodash from 'lodash';
-import { AdminProtectedRequest } from '../types/common';
+import { ProtectedRequest } from '../../lib/types/app-request';
 
-export const adminAuthenMiddlleware = asyncHandler(async (req: AdminProtectedRequest, res, next) => {
+export const adminAuthenMiddlleware = asyncHandler(async (req: ProtectedRequest, res, next) => {
   req.accessToken = getAccessToken(req.headers.authorization); // Express headers are auto converted to lowercase
 
   try {
@@ -16,9 +16,9 @@ export const adminAuthenMiddlleware = asyncHandler(async (req: AdminProtectedReq
     // validateTokenData(payload);
 
     const result = await dbConnection.select().from(admin).where(eq(admin.id, payload.sub));
-    if (result.length == 0) throw new AuthFailureError('User not registered');
+    if (result.length == 0) throw new AuthFailureError('Invalid token');
     lodash.unset(result[0], 'password')
-    req.admin = result[0];
+    req.user = result[0];
 
 
     return next();
