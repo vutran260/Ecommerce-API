@@ -4,7 +4,7 @@ import { API_KEY } from '../apikey/mock';
 import User from '../../../src/lib/database/model/User';
 import { Types } from 'mongoose';
 import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
-import { BadTokenError } from '../../../src/lib/core/ApiError';
+import { BadTokenError } from '../../../src/lib/http/custom_error/ApiError';
 import Keystore from '../../../src/lib/database/model/Keystore';
 import * as authUtils from '../../../src/lib/auth/authUtils';
 import { tokenInfo } from '../../../src/config';

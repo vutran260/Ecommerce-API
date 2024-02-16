@@ -2,7 +2,7 @@ import { UserRepository } from '../repository/userRepository';
 import { sellerRepository } from '../repository/sellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
-import { BadRequestError } from '../../lib/core/ApiError';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class SellerUsecase {
   private userRepo: UserRepository;

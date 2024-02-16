@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { environment } from '../../config';
+import { environment } from '../../../config';
 import {
   AuthFailureResponse,
   AccessTokenErrorResponse,
@@ -7,7 +7,7 @@ import {
   NotFoundResponse,
   BadRequestResponse,
   ForbiddenResponse,
-} from './ApiResponse';
+} from '../ApiResponse';
 
 export enum ErrorType {
   BAD_TOKEN = 'BadTokenError',
@@ -68,7 +68,7 @@ export class InternalError extends ApiError {
 }
 
 export class BadRequestError extends ApiError {
-  constructor(message: string = 'Bad Request') {
+  constructor(message = 'Bad Request') {
     super(ErrorType.BAD_REQUEST, message);
   }
 }

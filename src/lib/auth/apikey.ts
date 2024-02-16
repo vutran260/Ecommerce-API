@@ -1,12 +1,12 @@
 import express from 'express';
 import ApiKeyRepo from '../database/repository/ApiKeyRepo';
-import { ForbiddenError } from '../core/ApiError';
+import { ForbiddenError } from '../http/custom_error/ApiError';
 import Logger from '../core/Logger';
 import schema from './schema';
 import validator, { ValidationSource } from '../helpers/validator';
 import asyncHandler from '../helpers/asyncHandler';
 import { Header } from '../core/utils';
-import { PublicRequest } from '../types/app-request';
+import { PublicRequest } from '../http/app-request';
 
 const router = express.Router();
 

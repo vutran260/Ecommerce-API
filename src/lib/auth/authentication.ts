@@ -3,13 +3,13 @@ import {
   AuthFailureError,
   AccessTokenError,
   TokenExpiredError,
-} from '../core/ApiError';
+} from '../http/custom_error/ApiError';
 import JWT from '../core/JWT';
 import { getAccessToken, validateTokenData } from './authUtils';
 import validator, { ValidationSource } from '../helpers/validator';
 import schema from './schema';
 import asyncHandler from '../helpers/asyncHandler';
-import { ProtectedRequest } from '../types/app-request';
+import { ProtectedRequest } from '../http/app-request';
 
 const router = express.Router();
 

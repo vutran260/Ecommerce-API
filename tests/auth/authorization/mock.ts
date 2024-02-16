@@ -4,7 +4,7 @@ import { USER_ID, ACCESS_TOKEN } from '../authentication/mock';
 import { Types } from 'mongoose';
 import User from '../../../src/lib/database/model/User';
 import Role, { RoleCode } from '../../../src/lib/database/model/Role';
-import { BadTokenError } from '../../../src/lib/core/ApiError';
+import { BadTokenError } from '../../../src/lib/http/custom_error/ApiError';
 import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
 import { tokenInfo } from '../../../src/config';
 

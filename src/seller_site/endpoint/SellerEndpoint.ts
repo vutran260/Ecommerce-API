@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { SellerUsecase } from '../usecase/sellerUsecase';
+import { ResponseData } from '../../lib/http/Response';
 
 export class SellerEndpoint {
 
@@ -14,7 +15,7 @@ export class SellerEndpoint {
   private registerSeller = async (req: Request, res: Response) => {
     try {
       const results = await this.sellerUsecase.RegisterSeller(req.body)
-      return res.send({token: results});
+      return ResponseData({token:results}, res)
     } catch (e: any) {
       Logger.error(e.message);
       return res.send(e)
@@ -24,7 +25,7 @@ export class SellerEndpoint {
   private getToken = async (req: Request, res: Response) => {
     try {
       const token = await this.sellerUsecase.GetTokenBySellerId(req.body.id)
-      return res.send({token: token})
+      return ResponseData({token:token}, res)
     }catch (e:any) {
       Logger.error(e);
       Logger.error(e?.message);

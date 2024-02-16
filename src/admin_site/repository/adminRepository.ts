@@ -4,7 +4,7 @@ import { admin, user, seller } from '../../lib/posgres/schema';
 import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput, LoginInput } from '../types/admin';
-import { BadRequestError, NoDataError } from '../../lib/core/ApiError';
+import { BadRequestError, NoDataError } from '../../lib/http/custom_error/ApiError';
 
 export class AdminRepository {
   private db: PostgresJsDatabase<typeof schema>;

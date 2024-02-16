@@ -4,8 +4,9 @@ import { SellerUsecase } from '../usecase/sellerUsecase';
 import { Filter, PaginationRequest } from '../../lib/paging/Request';
 import { filter } from 'lodash';
 import base64url from 'base64url';
-import { BadRequestError } from '../../lib/core/ApiError';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { pagingMiddelware } from '../../lib/paging/Middelware';
+import { ResponseListData } from '../../lib/http/Response';
 
 export class SellerEndpoint {
 
@@ -18,7 +19,7 @@ export class SellerEndpoint {
   private getSeller = async (req: PaginationRequest, res: Response) => {
     try {
       const results = await this.sellerUsecase.GetSeller(req.filter, req.paging)
-      return res.send({data: results});
+      return ResponseListData(results, res, req.paging)
     } catch (e: any) {
       Logger.error(e.message);
       return res.send("error")

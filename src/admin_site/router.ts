@@ -5,7 +5,7 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
 import { AdminRepository } from './repository/adminRepository';
 import { AdminUsecase } from './usecase/adminUsecase';
 import { admin } from '../lib/posgres/schema';
-import { AdminEndpoint } from './endpoint/adminEndpoint';
+import { AdminEndpoint } from './endpoint/AdminEndpoint';
 import { SellerEndpoint } from './endpoint/sellerEndpoint';
 import *  as schema from '../lib/posgres/schema';
 import { adminAuthenMiddlleware } from './middleware/authenMiddlleware';

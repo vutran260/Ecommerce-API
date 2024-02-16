@@ -9,7 +9,7 @@ import {
   ApiError,
   InternalError,
   ErrorType,
-} from './lib/core/ApiError';
+} from './lib/http/custom_error/ApiError';
 import router from './route';
 
 process.on('uncaughtException', (e) => {

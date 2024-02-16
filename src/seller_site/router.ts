@@ -1,6 +1,6 @@
 import { UserRepository } from './repository/userRepository';
 import { SellerUsecase } from './usecase/sellerUsecase';
-import { SellerEndpoint } from './endpoint/sellerEndpoint';
+import { SellerEndpoint } from './endpoint/SellerEndpoint';
 import * as schema from '../lib/posgres/schema';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';

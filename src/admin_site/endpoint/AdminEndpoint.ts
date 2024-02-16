@@ -1,8 +1,9 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { AdminUsecase } from '../usecase/adminUsecase';
-import { ProtectedRequest } from '../../lib/types/app-request';
+import { ProtectedRequest } from '../../lib/http/app-request';
 import { adminAuthenMiddlleware } from '../middleware/authenMiddlleware';
+import { ResponseData } from '../../lib/http/Response';
 
 export class AdminEndpoint {
   private adminUsecase: AdminUsecase;
@@ -14,7 +15,7 @@ export class AdminEndpoint {
   private login = async (req: Request, res: Response) => {
     try {
       const results = await this.adminUsecase.login(req.body);
-      return res.send({ token: results });
+      return ResponseData({ token: results }, res)
     } catch (e: any) {
       Logger.error(e.message);
       return res.send({error: e.message});
@@ -23,7 +24,7 @@ export class AdminEndpoint {
 
   private getMe = async (req: ProtectedRequest, res: Response) => {
     try {
-      return res.send(req.user);
+      return ResponseData(req.user, res)
     } catch (e: any) {
       Logger.error(e.message);
       return res.send('error');
@@ -33,12 +34,13 @@ export class AdminEndpoint {
   private changePassword = async (req: Request, res: Response) => {
     try {
       const results = await this.adminUsecase.changePassword(req.body);
-      return res.send({
+      const data = {
         res: {
           result: results,
           message: 'Update password successfully.',
         },
-      });
+      }
+      return ResponseData(data, res)
     } catch (e: any) {
       Logger.error(e.message);
       return res.send('error');

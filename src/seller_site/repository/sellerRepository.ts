@@ -3,7 +3,7 @@ import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { seller, user } from '../../lib/posgres/schema';
 import *  as schema from '../../lib/posgres/schema';
 import { eq } from 'drizzle-orm';
-import { BadRequestError } from '../../lib/core/ApiError';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class sellerRepository {
   private db:  PostgresJsDatabase<typeof schema>;

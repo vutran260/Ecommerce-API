@@ -19,7 +19,7 @@ export const pagingMiddelware = asyncHandler(async (req: PaginationRequest, res,
 const getFilter = (req: PaginationRequest) => {
   const rawFilter = req.header('filter');
   if (!rawFilter) {
-    return;
+    return req.filter = [];
   }
   const jsonFilter = base64url.decode(rawFilter!);
   req.filter = JSON.parse(jsonFilter);

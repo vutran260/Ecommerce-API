@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
-import { ForbiddenError } from '../core/ApiError';
-import { PublicRequest } from '../types/app-request';
+import { ForbiddenError } from '../http/custom_error/ApiError';
+import { PublicRequest } from '../http/app-request';
 
 export default (permission: string) =>
   (req: PublicRequest, res: Response, next: NextFunction) => {

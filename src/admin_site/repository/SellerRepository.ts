@@ -16,6 +16,7 @@ export class SellerRepository {
   public getSeller = async (filter: Filter[], paging: Paging) => {
     try {
       const query = getRepoFilter(filter, this.getColumn)
+      console.log( "query",filter)
       const results = await this.db.select().from(seller).where(query);
       return results
     } catch (e: any) {

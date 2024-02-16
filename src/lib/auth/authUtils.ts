@@ -1,9 +1,9 @@
-import { AuthFailureError, InternalError } from '../core/ApiError';
+import { AuthFailureError, InternalError } from '../http/custom_error/ApiError';
 import JWT, { JwtPayload } from '../core/JWT';
 import { Types } from 'mongoose';
 import User from '../database/model/User';
 import { tokenInfo } from '../../config';
-import { Tokens } from '../types/app-request';
+import { Tokens } from '../http/app-request';
 
 export const getAccessToken = (authorization?: string) => {
   if (!authorization) throw new AuthFailureError('Invalid Authorization');

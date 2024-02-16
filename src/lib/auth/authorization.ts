@@ -1,8 +1,8 @@
 import express from 'express';
-import { AuthFailureError } from '../core/ApiError';
+import { AuthFailureError } from '../http/custom_error/ApiError';
 import RoleRepo from '../database/repository/RoleRepo';
 import asyncHandler from '../helpers/asyncHandler';
-import { ProtectedRequest } from '../types/app-request';
+import { ProtectedRequest } from '../http/app-request';
 
 const router = express.Router();
 

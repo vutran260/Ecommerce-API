@@ -1,8 +1,8 @@
-import { ProtectedRequest } from '../types/app-request';
+import { ProtectedRequest } from '../http/app-request';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import { SQL } from 'drizzle-orm/sql/sql';
 import { and, eq, gt, gte, ilike, inArray, like, lt, lte, ne, not } from 'drizzle-orm';
-import { BadRequestError } from '../core/ApiError';
+import { BadRequestError } from '../http/custom_error/ApiError';
 
 export declare interface PaginationRequest extends ProtectedRequest {
   paging: Paging
@@ -11,9 +11,10 @@ export declare interface PaginationRequest extends ProtectedRequest {
 
 
 export declare interface Paging {
-  limit: number,
-  page: number,
-  orderBy: string,
+  limit?: number,
+  page?: number,
+  orderBy?: string,
+  total?: number,
 }
 
 export declare interface Filter {
