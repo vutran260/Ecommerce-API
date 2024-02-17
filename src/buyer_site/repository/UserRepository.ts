@@ -16,7 +16,7 @@ export class UserRepository {
       return  await this.db.select().from(buyer)
     } catch (e: any) {
       Logger.error(e.message);
-      return e
+      throw e
     }
   };
 

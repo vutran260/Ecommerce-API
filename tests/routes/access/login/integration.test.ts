@@ -1,7 +1,7 @@
 jest.resetAllMocks(); // make sure we do not have any mocks set from unit tests
 
 import supertest from 'supertest';
-import app from '../../../../src/app';
+import app from '../../../../src/App';
 import UserRepo from '../../../../src/lib/database/repository/UserRepo';
 import KeystoreRepo from '../../../../src/lib/database/repository/KeystoreRepo';
 import User, { UserModel } from '../../../../src/lib/database/model/User';

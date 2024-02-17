@@ -1,5 +1,5 @@
-import { UserRepository } from '../repository/userRepository';
-import { sellerRepository } from '../repository/sellerRepository';
+import { UserRepository } from '../repository/UserRepository';
+import { sellerRepository } from '../repository/SellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';

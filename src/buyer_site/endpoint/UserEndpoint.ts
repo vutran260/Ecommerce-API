@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
-import { UserUsecase } from '../usecase/userUsecase';
+import { UserUsecase } from '../usecase/UserUsecase';
 
 export class UserEndpoint {
 
@@ -17,7 +17,7 @@ export class UserEndpoint {
       return res.send(results);
     } catch (e: any) {
       Logger.error(e.message);
-      return res.send("error")
+     throw e
     }
   };
 

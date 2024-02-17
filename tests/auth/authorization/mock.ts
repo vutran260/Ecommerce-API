@@ -6,7 +6,7 @@ import User from '../../../src/lib/database/model/User';
 import Role, { RoleCode } from '../../../src/lib/database/model/Role';
 import { BadTokenError } from '../../../src/lib/http/custom_error/ApiError';
 import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
-import { tokenInfo } from '../../../src/config';
+import { tokenInfo } from '../../../src/Config';
 
 export const LEARNER_ROLE_ID = new Types.ObjectId(); // random id
 export const WRITER_ROLE_ID = new Types.ObjectId(); // random id

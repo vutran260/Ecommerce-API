@@ -11,7 +11,7 @@ import {
   getAccessTokenSpy,
 } from './mock';
 
-import app from '../../../src/app';
+import app from '../../../src/App';
 import supertest from 'supertest';
 
 describe('authentication validation', () => {

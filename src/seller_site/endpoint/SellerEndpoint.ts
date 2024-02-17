@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
-import { SellerUsecase } from '../usecase/sellerUsecase';
+import { SellerUsecase } from '../usecase/SellerUsecase';
 import { ResponseData } from '../../lib/http/Response';
 
 export class SellerEndpoint {

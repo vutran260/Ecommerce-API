@@ -14,7 +14,7 @@ import {
 } from './mock';
 
 import supertest from 'supertest';
-import app from '../../../../src/app';
+import app from '../../../../src/App';
 
 describe('Login basic route', () => {
   const endpoint = '/login/basic';

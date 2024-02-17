@@ -1,14 +1,14 @@
-import { UserRepository } from './repository/userRepository';
-import { SellerUsecase } from './usecase/sellerUsecase';
+import { UserRepository } from './repository/UserRepository';
+import { SellerUsecase } from './usecase/SellerUsecase';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
-import { AdminRepository } from './repository/adminRepository';
-import { AdminUsecase } from './usecase/adminUsecase';
+import { AdminRepository } from './repository/AdminRepository';
+import { AdminUsecase } from './usecase/AdminUsecase';
 import { admin } from '../lib/posgres/schema';
 import { AdminEndpoint } from './endpoint/AdminEndpoint';
-import { SellerEndpoint } from './endpoint/sellerEndpoint';
+import { SellerEndpoint } from './endpoint/SellerEndpoint';
 import *  as schema from '../lib/posgres/schema';
-import { adminAuthenMiddlleware } from './middleware/authenMiddlleware';
+import { adminAuthenMiddlleware } from './middleware/AuthenMiddlleware';
 import { SellerRepository } from './repository/SellerRepository';
 
 

@@ -1,4 +1,4 @@
-import { UserRepository } from '../repository/userRepository';
+import { UserRepository } from '../repository/UserRepository';
 
 export class UserUsecase {
   // private userRepo: userRepo

@@ -2,9 +2,9 @@ import express from 'express';
 import apikey from './lib/auth/apikey';
 import permission from './lib/helpers/permission';
 import { Permission } from './lib/database/model/ApiKey';
-import { adminSiteRouter } from './admin_site/router';
+import { adminSiteRouter } from './admin_site/Router';
 import { dbConnection } from './lib/posgres/connection';
-import { sellerSiteRouter } from './seller_site/router';
+import { sellerSiteRouter } from './seller_site/Router';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(apikey);
 /*---------------------------------------------------------*/
 /*---------------------------------------------------------*/
-router.use(permission(Permission.GENERAL));
+// router.use(permission(Permission.GENERAL));
 /*---------------------------------------------------------*/
 
 

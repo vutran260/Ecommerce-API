@@ -16,7 +16,7 @@ import {
 } from './mock';
 
 import supertest from 'supertest';
-import app from '../../../../src/app';
+import app from '../../../../src/App';
 import { Types } from 'mongoose';
 
 describe('Writer blog create routes', () => {

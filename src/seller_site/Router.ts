@@ -1,10 +1,10 @@
-import { UserRepository } from './repository/userRepository';
-import { SellerUsecase } from './usecase/sellerUsecase';
+import { UserRepository } from './repository/UserRepository';
+import { SellerUsecase } from './usecase/SellerUsecase';
 import { SellerEndpoint } from './endpoint/SellerEndpoint';
 import * as schema from '../lib/posgres/schema';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { sellerRepository } from './repository/sellerRepository';
+import { sellerRepository } from './repository/SellerRepository';
 
 
 export class sellerSiteRouter {

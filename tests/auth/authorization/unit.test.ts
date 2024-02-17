@@ -10,7 +10,7 @@ import {
   EDITOR_ACCESS_TOKEN,
 } from './mock';
 
-import app from '../../../src/app';
+import app from '../../../src/App';
 import supertest from 'supertest';
 import { RoleCode } from '../../../src/lib/database/model/Role';
 

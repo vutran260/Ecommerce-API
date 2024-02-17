@@ -1,4 +1,4 @@
-import { UserRepository } from '../repository/userRepository';
+import { UserRepository } from '../repository/UserRepository';
 import { SellerRepository } from '../repository/SellerRepository';
 import { Filter, Paging } from '../../lib/paging/Request';
 

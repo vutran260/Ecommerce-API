@@ -1,6 +1,6 @@
 import Logger from './lib/core/Logger';
-import { port } from './config';
-import app from './app';
+import { port } from './Config';
+import app from './App';
 
 
 app

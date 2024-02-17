@@ -1,4 +1,4 @@
-import { redis } from '../../config';
+import { redis } from '../../Config';
 import { createClient } from 'redis';
 import Logger from '../core/Logger';
 

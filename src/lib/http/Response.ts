@@ -1,5 +1,7 @@
 import { Paging } from '../paging/Request';
 import { Response } from 'express';
+import { ApiError } from './custom_error/ApiError';
+import { ErrorType } from './custom_error/ErrorType';
 
 export interface LPResponse {
   error?: LPError;
@@ -47,3 +49,33 @@ export const ResponseListData = (data: any, res: Response, paging: Paging) => {
 };
 
 
+export const ResponseError = (err: Error, res: Response) => {
+  if (err instanceof  ApiError) {
+    const response : LPResponse = {
+      error: {
+        errorCode: err.errorCode,
+        errorMessage: err.message,
+        errorType: err.type
+      },
+      metadata: {
+        statusCode: err.statusCode
+      }
+    }
+
+    return res.json(response);
+  }
+
+  const response : LPResponse = {
+    error: {
+      errorCode: `10`,
+      errorMessage: err.message,
+      errorType: ErrorType.INTERNAL
+    },
+    metadata: {
+      statusCode: `10`
+    }
+  }
+
+  return res.json(response);
+
+}

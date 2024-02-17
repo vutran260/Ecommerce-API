@@ -7,7 +7,7 @@ import JWT, { JwtPayload } from '../../../src/lib/core/JWT';
 import { BadTokenError } from '../../../src/lib/http/custom_error/ApiError';
 import Keystore from '../../../src/lib/database/model/Keystore';
 import * as authUtils from '../../../src/lib/auth/authUtils';
-import { tokenInfo } from '../../../src/config';
+import { tokenInfo } from '../../../src/Config';
 
 export const ACCESS_TOKEN = 'xyz';
 

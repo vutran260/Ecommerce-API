@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
-import { SellerUsecase } from '../usecase/sellerUsecase';
+import { SellerUsecase } from '../usecase/SellerUsecase';
 import { Filter, PaginationRequest } from '../../lib/paging/Request';
 import { filter } from 'lodash';
 import base64url from 'base64url';
@@ -17,13 +17,8 @@ export class SellerEndpoint {
   }
 
   private getSeller = async (req: PaginationRequest, res: Response) => {
-    try {
       const results = await this.sellerUsecase.GetSeller(req.filter, req.paging)
       return ResponseListData(results, res, req.paging)
-    } catch (e: any) {
-      Logger.error(e.message);
-      return res.send("error")
-    }
   };
 
   public getRouter() {

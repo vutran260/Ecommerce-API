@@ -1,8 +1,8 @@
-import { UserRepository } from './repository/userRepository';
-import { UserUsecase } from './usecase/userUsecase';
-import { UserEndpoint } from './endpoint/userEndpoint';
+import { UserRepository } from './repository/UserRepository';
+import { UserUsecase } from './usecase/UserUsecase';
+import { UserEndpoint } from './endpoint/UserEndpoint';
 import express from 'express';
-import { DataSource } from 'typeorm';
+import {NextFunction} from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
 
 
@@ -22,6 +22,7 @@ export class adminSiteRouter {
     const userRouter = new UserEndpoint(userUsecase)
 
     router.use('/user', userRouter.getRouter())
+
 
     return router
   }

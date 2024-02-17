@@ -1,16 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Logger from './lib/core/Logger';
 import cors from 'cors';
-import { corsUrl, environment } from './config';
-import './lib/database'; // initialize database
-import './lib/cache'; // initialize cache
+import { corsUrl, environment } from './Config';
+// import './lib/database'; // initialize database
+// import './lib/cache'; // initialize cache
 import {
   NotFoundError,
-  ApiError,
-  InternalError,
-  ErrorType,
 } from './lib/http/custom_error/ApiError';
-import router from './route';
+import router from './Route';
+import { ResponseError } from './lib/http/Response';
 
 process.on('uncaughtException', (e) => {
   Logger.error(e.message);
@@ -33,22 +31,7 @@ app.use((req, res, next) => next(new NotFoundError()));
 // Middleware Error Handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof ApiError) {
-    ApiError.handle(err, res);
-    if (err.type === ErrorType.INTERNAL)
-      Logger.error(
-        `500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
-      );
-  } else {
-    Logger.error(
-      `500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
-    );
-    Logger.error(err);
-    if (environment === 'development') {
-      return res.status(500).send(err);
-    }
-    ApiError.handle(new InternalError(), res);
-  }
+    return ResponseError(err, res)
 });
 
 export default app;
