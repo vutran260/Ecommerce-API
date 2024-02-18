@@ -5,7 +5,10 @@ import { ProtectedRequest } from '../../lib/http/app-request';
 import { adminAuthenMiddlleware } from '../middleware/AuthenMiddlleware';
 import { ResponseData } from '../../lib/http/Response';
 import asyncHandler from '../../lib/helpers/asyncHandler';
-import 'express-async-errors'
+import 'express-async-errors';
+import LoginRequest from '../requests/LoginRequest';
+import { ValidationError, validate } from 'class-validator';
+import { CustomError } from '../../lib/http/custom_error/ApiError';
 
 export class AdminEndpoint {
   private adminUsecase: AdminUsecase;
@@ -15,27 +18,43 @@ export class AdminEndpoint {
   }
 
   private login = asyncHandler(async (req: Request, res: Response) => {
-      const results = await this.adminUsecase.login(req.body);
-      return ResponseData({ token: results }, res);
-  })
+    const loginRequest = new LoginRequest();
+
+    loginRequest.userName = req.body.userName;
+    loginRequest.password = req.body.password;
+    const errors = await validate(loginRequest);
+
+    if (errors.length > 0) {
+      // If validation fails, send the validation errors
+      errors.map((value, index) => {
+        if (index === 0) {
+          throw new CustomError(
+            400,
+            ` ${value.property} Validation failed`,
+            errors,
+          );
+        }
+      });
+      // return res.status(400).json({ errors });
+    }
+    const results = await this.adminUsecase.login(req.body);
+    return ResponseData({ token: results }, res);
+  });
 
   private getMe = asyncHandler(async (req: ProtectedRequest, res: Response) => {
-        return ResponseData(req.user, res);
-    },
-  );
+    return ResponseData(req.user, res);
+  });
 
-  private changePassword = asyncHandler(
-    async (req: Request, res: Response) => {
-        const results = await this.adminUsecase.changePassword(req.body);
-        const data = {
-          res: {
-            result: results,
-            message: 'Update password successfully.',
-          },
-        };
-        return ResponseData(data, res);
-    },
-  );
+  private changePassword = asyncHandler(async (req: Request, res: Response) => {
+    const results = await this.adminUsecase.changePassword(req.body);
+    const data = {
+      res: {
+        result: results,
+        message: 'Update password successfully.',
+      },
+    };
+    return ResponseData(data, res);
+  });
 
   private getUsers = async (req: Request, res: Response) => {
     try {
@@ -46,7 +65,7 @@ export class AdminEndpoint {
       });
     } catch (error: any) {
       Logger.error(error.message);
-      throw error
+      throw error;
     }
   };
 
@@ -59,7 +78,7 @@ export class AdminEndpoint {
       });
     } catch (error: any) {
       Logger.error(error.message);
-      throw error
+      throw error;
     }
   };
 
