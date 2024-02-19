@@ -78,16 +78,3 @@ export class AccessTokenError extends ApiError {
     super(ErrorType.ACCESS_TOKEN, message);
   }
 }
-
-
-export class CustomError extends Error {
-  statusCode: number;
-  errors: ValidationError[];
-  constructor(statusCode: number, message: string, errors: ValidationError[]) {
-    super(message);
-    this.statusCode = statusCode;
-    this.errors = errors;
-    // Set the prototype explicitly.
-    Object.setPrototypeOf(this, CustomError.prototype);
-  }
-}

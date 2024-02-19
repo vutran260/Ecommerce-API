@@ -7,9 +7,7 @@ import { ResponseData } from '../../lib/http/Response';
 import asyncHandler from '../../lib/helpers/asyncHandler';
 import 'express-async-errors';
 import LoginRequest from '../requests/LoginRequest';
-import { ValidationError, validate } from 'class-validator';
-import { CustomError } from '../../lib/http/custom_error/ApiError';
-
+import { validatorRequest } from '../../lib/helpers/validate';
 export class AdminEndpoint {
   private adminUsecase: AdminUsecase;
 
@@ -22,21 +20,7 @@ export class AdminEndpoint {
 
     loginRequest.userName = req.body.userName;
     loginRequest.password = req.body.password;
-    const errors = await validate(loginRequest);
-
-    if (errors.length > 0) {
-      // If validation fails, send the validation errors
-      errors.map((value, index) => {
-        if (index === 0) {
-          throw new CustomError(
-            400,
-            ` ${value.property} Validation failed`,
-            errors,
-          );
-        }
-      });
-      // return res.status(400).json({ errors });
-    }
+    await validatorRequest(loginRequest);
     const results = await this.adminUsecase.login(req.body);
     return ResponseData({ token: results }, res);
   });
