@@ -5,6 +5,7 @@ import * as schema from '../../lib/posgres/schema';
 import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput, LoginInput } from '../types/Admin';
 import { BadRequestError, NoDataError } from '../../lib/http/custom_error/ApiError';
+import LoginRequest from '../requests/LoginRequest';
 
 export class AdminRepository {
   private db: PostgresJsDatabase<typeof schema>;
@@ -13,7 +14,7 @@ export class AdminRepository {
     this.db = db;
   }
 
-  public getAdminByUserNamePassword = async (input: LoginInput) => {
+  public getAdminByUserNamePassword = async (input: LoginRequest) => {
     try {
       const result = await this.db
         .select()

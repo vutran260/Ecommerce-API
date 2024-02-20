@@ -1,14 +1,14 @@
 import { ErrorType } from './ErrorType';
 import { ErrorCode } from './ErrorCode';
 import { StatusCode } from './StatusCode';
-
+import { ValidationError } from 'class-validator';
 
 export abstract class ApiError extends Error {
-
-  protected constructor(public type: ErrorType,
-                        public message: string = 'error',
-                        public errorCode: ErrorCode = ErrorCode.INTERNAL,
-                        public statusCode: StatusCode = StatusCode.SYSTEM_ERROR,
+  protected constructor(
+    public type: ErrorType,
+    public message: string = 'error',
+    public errorCode: ErrorCode = ErrorCode.INTERNAL,
+    public statusCode: StatusCode = StatusCode.SYSTEM_ERROR,
   ) {
     super(type);
   }
@@ -16,9 +16,7 @@ export abstract class ApiError extends Error {
 
 export class AuthFailureError extends ApiError {
   constructor(message = 'Invalid Credentials') {
-    super(
-      ErrorType.UNAUTHORIZED,
-      message);
+    super(ErrorType.UNAUTHORIZED, message);
   }
 }
 
@@ -30,7 +28,12 @@ export class InternalError extends ApiError {
 
 export class BadRequestError extends ApiError {
   constructor(message = 'Bad Request') {
-    super(ErrorType.BAD_REQUEST, message, ErrorCode.BAD_REQUEST, StatusCode.BUSINESS_FAIL);
+    super(
+      ErrorType.BAD_REQUEST,
+      message,
+      ErrorCode.BAD_REQUEST,
+      StatusCode.BUSINESS_FAIL,
+    );
   }
 }
 
@@ -47,7 +50,7 @@ export class ForbiddenError extends ApiError {
 }
 
 export class NoEntryError extends ApiError {
-  constructor(message = 'Entry don\'t exists') {
+  constructor(message = "Entry don't exists") {
     super(ErrorType.NO_ENTRY, message);
   }
 }
