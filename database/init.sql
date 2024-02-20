@@ -55,10 +55,6 @@ CREATE TABLE "LP_SELLER"
     CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES "LP_STORE" (id)
 );
 
-
-
-
-
 CREATE TABLE "LP_BUYER"
 (
     id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -74,3 +70,15 @@ CREATE TABLE "LP_BUYER"
     CONSTRAINT fk_buyer_id_user FOREIGN KEY (id) REFERENCES "LP_USER" (id)
 );
 
+CREATE TABLE "LP_PRODUCT" (
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    product_name  VARCHAR,
+    product_tag   VARCHAR,
+    product_type   VARCHAR,
+    stock   VARCHAR,
+    price   VARCHAR,
+    status      VARCHAR,
+    created_at  TIMESTAMP DEFAULT NOW(),
+    updated_at  TIMESTAMP DEFAULT NOW(),
+    deleted_at  TIMESTAMP
+);

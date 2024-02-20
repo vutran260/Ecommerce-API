@@ -1,8 +1,6 @@
 import { pgTable, uuid, varchar, timestamp, foreignKey, unique } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
-
-
 export const admin = pgTable("LP_ADMIN", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
 	email: varchar("email"),
@@ -62,6 +60,19 @@ export const buyer = pgTable("LP_BUYER", {
 	password: varchar("password"),
 	username: varchar("username"),
 	fullname: varchar("fullname"),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: 'string' }),
+});
+
+export const product = pgTable("LP_PRODUCT", {
+	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+	product_name: varchar("product_name"),
+	product_tag: varchar("product_tag"),
+	product_type: varchar("product_type"),
+	stock: varchar("stock"),
+	price: varchar("price"),
+	status: varchar("status"),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
