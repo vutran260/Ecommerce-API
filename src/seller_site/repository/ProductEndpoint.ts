@@ -4,6 +4,8 @@ import ProductCreateRequest from '../../admin_site/requests/products/ProductCrea
 import Logger from '../../lib/core/Logger';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import { Filter, Paging, getColumnFunc, getRepoFilter } from '../../lib/paging/Request';
+import { PgColumn } from 'drizzle-orm/pg-core';
 
 export class ProductRepository {
   private db: PostgresJsDatabase<typeof schema>;
@@ -67,4 +69,25 @@ export class ProductRepository {
     }
     return result[0];
   };
+
+  public getProducts = async (filter: Filter[], paging: Paging) => {
+    try {
+      const query = getRepoFilter(filter, this.getColumn);
+      const results = await this.db.select().from(schema.product).where(query);
+      return results;
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      return error;
+    }
+  }
+
+  private getColumn: getColumnFunc = (colName: string): PgColumn => {
+    return this.columnMap.get(colName)!;
+  };
+
+  private columnMap = new Map<string, PgColumn>([
+    ['id', schema.product.id],
+    ['product_name', schema.product.product_name],
+  ]);
 }

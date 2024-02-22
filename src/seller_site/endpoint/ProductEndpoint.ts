@@ -3,7 +3,9 @@ import { ProductUsecase } from '../usecase/ProductUsecase';
 import Logger from '../../lib/core/Logger';
 import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
-import { ResponseData } from '../../lib/http/Response';
+import { ResponseData, ResponseListData } from '../../lib/http/Response';
+import { pagingMiddelware } from '../../lib/paging/Middelware';
+import { PaginationRequest } from '../../lib/paging/Request';
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;
@@ -50,11 +52,27 @@ export class ProductEndpoint {
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   };
 
+  private detailProduct = async (req: Request, res: Response) => {
+    let id: string = req.params.id;
+    const results = await this.productUsecase.detailProduct(id);
+    return ResponseData(results, res);
+  };
+
+  private getProducts = async (req: PaginationRequest, res: Response) => {
+    const results = await this.productUsecase.getProducts(
+      req.filter,
+      req.paging,
+    );
+    return ResponseListData(results, res, req.paging);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
     router.put('/update/:id', this.updateProduct);
     router.delete('/delete/:id', this.deleteProduct);
+    router.get('/detail/:id', this.detailProduct);
+    router.get('/products', pagingMiddelware, this.getProducts);
     return router;
   }
 }
