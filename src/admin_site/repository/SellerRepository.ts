@@ -9,13 +9,6 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import ProductCreateRequest from '../requests/products/ProductCreateRequest';
-import { product } from '../../lib/posgres/schema';
-import { eq } from 'drizzle-orm';
-import { ResponseData } from '../../lib/http/Response';
-import { Response } from 'express';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-
 export class SellerRepository {
   private db: PostgresJsDatabase<typeof schema>;
 
@@ -45,59 +38,4 @@ export class SellerRepository {
     ['username', seller.username],
   ]);
 
-  public createProduct = async (productCreateRequest: ProductCreateRequest) => {
-    try {
-      const results = await this.db
-        .insert(product)
-        .values(productCreateRequest)
-        .returning();
-      return results;
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
-  };
-
-  public updateProduct = async (
-    productCreateRequest: ProductCreateRequest,
-    id: string,
-  ) => {
-    try {
-      await this.getProductId(id);
-      const results = await this.db
-        .update(product)
-        .set(productCreateRequest)
-        .where(eq(product.id, id))
-        .returning();
-      return results;
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
-  };
-
-  public deleteProduct = async (id: string) => {
-    try {
-      await this.getProductId(id);
-      const results = await this.db
-        .delete(product)
-        .where(eq(product.id, id))
-        .returning();
-      return results;
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
-  };
-
-  public getProductId = async (id: string) => {
-    const result = await this.db
-      .select()
-      .from(product)
-      .where(eq(product.id, id));
-    if (result.length < 1) {
-      throw new NotFoundError();
-    }
-    return result[0];
-  };
 }
