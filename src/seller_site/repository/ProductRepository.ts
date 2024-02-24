@@ -78,7 +78,7 @@ export class ProductRepository {
     } catch (error: any) {
       Logger.error(error);
       Logger.error(error.message);
-      return error;
+      throw error;
     }
   }
 

@@ -1,6 +1,6 @@
 import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
 import { Filter, Paging } from '../../lib/paging/Request';
-import { ProductRepository } from '../repository/ProductEndpoint';
+import { ProductRepository } from '../repository/ProductRepository';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
