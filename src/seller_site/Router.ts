@@ -5,7 +5,7 @@ import * as schema from '../lib/posgres/schema';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { sellerRepository } from './repository/SellerRepository';
-import { ProductRepository } from './repository/ProductEndpoint';
+import { ProductRepository } from './repository/ProductRepository';
 import { ProductUsecase } from './usecase/ProductUsecase';
 import { ProductEndpoint } from './endpoint/ProductEndpoint';
 

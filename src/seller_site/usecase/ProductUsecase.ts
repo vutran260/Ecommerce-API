@@ -1,5 +1,6 @@
 import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
-import { ProductRepository } from '../repository/ProductEndpoint';
+import { Filter, Paging } from '../../lib/paging/Request';
+import { ProductRepository } from '../repository/ProductRepository';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -22,4 +23,12 @@ export class ProductUsecase {
   public deleteProduct = async (id: string) => {
     return this.productRepo.deleteProduct(id);
   };
+
+  public detailProduct = async (id: string) => {
+    return this.productRepo.getProductId(id);
+  };
+
+  public getProducts = async (filter: Filter[], paging: Paging) => {
+    return this.productRepo.getProducts(filter, paging);
+  }
 }
