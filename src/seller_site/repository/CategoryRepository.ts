@@ -2,8 +2,16 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from '../../lib/posgres/schema';
 import Logger from '../../lib/core/Logger';
 import { eq } from 'drizzle-orm';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-import { Filter, Paging, getColumnFunc, getRepoFilter } from '../../lib/paging/Request';
+import {
+  NoEntryError,
+  NotFoundError,
+} from '../../lib/http/custom_error/ApiError';
+import {
+  Filter,
+  Paging,
+  getColumnFunc,
+  getRepoFilter,
+} from '../../lib/paging/Request';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import CategoryCreateRequest from '../../admin_site/requests/categories/CategoryCreateRequest';
 
@@ -14,8 +22,14 @@ export class CategoryRepository {
     this.db = db;
   }
 
-  public createCategory = async (categoryCreateRequest: CategoryCreateRequest) => {
+  public createCategory = async (
+    categoryCreateRequest: CategoryCreateRequest,
+  ) => {
     try {
+      if (categoryCreateRequest.parent_id != null) {
+        await this.getCategoryId(categoryCreateRequest.parent_id);
+      }
+
       const results = await this.db
         .insert(schema.category)
         .values(categoryCreateRequest)
@@ -33,6 +47,9 @@ export class CategoryRepository {
   ) => {
     try {
       await this.getCategoryId(id);
+      if (categoryCreateRequest.parent_id != null) {
+        await this.getCategoryId(categoryCreateRequest.parent_id);
+      }
       const results = await this.db
         .update(schema.category)
         .set(categoryCreateRequest)
@@ -80,7 +97,7 @@ export class CategoryRepository {
       Logger.error(error.message);
       throw error;
     }
-  }
+  };
 
   private getColumn: getColumnFunc = (colName: string): PgColumn => {
     return this.columnMap.get(colName)!;

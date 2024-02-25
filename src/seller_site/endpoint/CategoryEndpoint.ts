@@ -17,6 +17,7 @@ export class CategoryEndpoint {
   private createCategory = async (req: Request, res: Response) => {
     try {
       const categoryCreateRequest = new CategoryCreateRequest();
+      categoryCreateRequest.parent_id = req.body.parent_id;
       categoryCreateRequest.category_name = req.body.category_name;
       categoryCreateRequest.category_tag = req.body.category_tag;
       categoryCreateRequest.status = req.body.status;
@@ -32,6 +33,7 @@ export class CategoryEndpoint {
   private updateCategory = async (req: Request, res: Response) => {
     let id: string = req.params.id;
     const categoryCreateRequest = new CategoryCreateRequest();
+    categoryCreateRequest.parent_id = req.body.parent_id;
     categoryCreateRequest.category_name = req.body.category_name;
     categoryCreateRequest.category_tag = req.body.category_tag;
     categoryCreateRequest.status = req.body.status;

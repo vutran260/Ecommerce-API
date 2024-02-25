@@ -80,6 +80,7 @@ export const product = pgTable("LP_PRODUCT", {
 
 export const category = pgTable("LP_CATEGORY", {
 	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+	parent_id: varchar("parent_id") || null,
 	category_name: varchar("category_name"),
 	category_tag: varchar("category_tag"),
 	status: varchar("status"),
