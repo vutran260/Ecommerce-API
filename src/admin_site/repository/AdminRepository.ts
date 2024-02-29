@@ -4,6 +4,7 @@ import * as schema from '../../lib/mysql/schema';
 import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput } from '../types/Admin';
 import {
+  AuthFailureError,
   NoDataError,
   NotFoundError,
 } from '../../lib/http/custom_error/ApiError';
@@ -19,26 +20,6 @@ export class AdminRepository {
   }
 
   public getAdminByUserNamePassword = async (input: LoginRequest) => {
-    // try {
-    //   const result = await this.db
-    //     .select()
-    //     .from(Admin)
-    //     .where(
-    //       and(
-    //         eq(Admin.username, input.userName),
-    //         eq(Admin.password, input.password),
-    //       ),
-    //     );
-
-    //   if (result.length < 1) {
-    //     throw new BadRequestError('Incorrect username and password');
-    //   }
-    //   return result[0];
-    // } catch (e: any) {
-    //   Logger.error(e);
-    //   Logger.error(e.message);
-    //   throw e;
-    // }
 
     const admin = await LP_ADMIN.findOne({
       where: {
@@ -47,6 +28,9 @@ export class AdminRepository {
       },
     });
 
+    if (admin == null) {
+      throw new AuthFailureError()
+    }
     console.log("admin:",admin);
     return admin
   };

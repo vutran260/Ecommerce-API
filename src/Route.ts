@@ -1,10 +1,8 @@
 import express from 'express';
 import apikey from './lib/auth/apikey';
-import permission from './lib/helpers/permission';
-import { Permission } from './lib/database/model/ApiKey';
 import { adminSiteRouter } from './admin_site/Router';
-import { dbConnection, sequelize } from './lib/mysql/Connection';
 import { sellerSiteRouter } from './seller_site/Router';
+import { SetupDB, dbConnection } from './lib/mysql/connection';
 
 const router = express.Router();
 
@@ -16,9 +14,18 @@ router.use(apikey);
 /*---------------------------------------------------------*/
 
 
-(async () => {
-  await sequelize.sync({force: true});
-})();
+// console.log("Starting");
+// (async () => {
+//   console.log("Starting")
+//   try {
+    
+//   await sequelize?.sync({force: true});
+//   } catch (error) {
+//   console.log(error)  
+//   }
+// })();
+
+SetupDB()
 
 
 const adminSiteRoute = new adminSiteRouter(dbConnection)
