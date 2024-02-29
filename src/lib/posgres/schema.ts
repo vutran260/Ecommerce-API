@@ -77,3 +77,14 @@ export const product = pgTable("LP_PRODUCT", {
 	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
 	deletedAt: timestamp("deleted_at", { mode: 'string' }),
 });
+
+export const category = pgTable("LP_CATEGORY", {
+	id: uuid("id").default(sql`uuid_generate_v4()`).primaryKey().notNull(),
+	parent_id: varchar("parent_id") || null,
+	category_name: varchar("category_name"),
+	category_tag: varchar("category_tag"),
+	status: varchar("status"),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: 'string' }),
+});
