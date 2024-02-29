@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1708878980862,
+      "tag": "0000_odd_invaders",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,25 +1,24 @@
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import * as schema from '../../lib/posgres/schema';
+import * as schema from '../../lib/mysql/schema';
 import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
 import Logger from '../../lib/core/Logger';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import { Filter, Paging, getColumnFunc, getRepoFilter } from '../../lib/paging/Request';
-import { PgColumn } from 'drizzle-orm/pg-core';
+import { MySql2Database } from 'drizzle-orm/mysql2';
+import { MySqlColumn } from 'drizzle-orm/mysql-core';
 
 export class ProductRepository {
-  private db: PostgresJsDatabase<typeof schema>;
+  private db: MySql2Database<typeof schema>;
 
-  constructor(db: PostgresJsDatabase<typeof schema>) {
+  constructor(db: MySql2Database<typeof schema>) {
     this.db = db;
   }
 
   public createProduct = async (productCreateRequest: ProductCreateRequest) => {
     try {
       const results = await this.db
-        .insert(schema.product)
+        .insert(schema.Product)
         .values(productCreateRequest)
-        .returning();
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -34,10 +33,9 @@ export class ProductRepository {
     try {
       await this.getProductId(id);
       const results = await this.db
-        .update(schema.product)
+        .update(schema.Product)
         .set(productCreateRequest)
-        .where(eq(schema.product.id, id))
-        .returning();
+        .where(eq(schema.Product.id, id))
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -49,9 +47,8 @@ export class ProductRepository {
     try {
       await this.getProductId(id);
       const results = await this.db
-        .delete(schema.product)
-        .where(eq(schema.product.id, id))
-        .returning();
+        .delete(schema.Product)
+        .where(eq(schema.Product.id, id))
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -62,8 +59,8 @@ export class ProductRepository {
   public getProductId = async (id: string) => {
     const result = await this.db
       .select()
-      .from(schema.product)
-      .where(eq(schema.product.id, id));
+      .from(schema.Product)
+      .where(eq(schema.Product.id, id));
     if (result.length < 1) {
       throw new NotFoundError();
     }
@@ -73,7 +70,7 @@ export class ProductRepository {
   public getProducts = async (filter: Filter[], paging: Paging) => {
     try {
       const query = getRepoFilter(filter, this.getColumn);
-      const results = await this.db.select().from(schema.product).where(query);
+      const results = await this.db.select().from(schema.Product).where(query);
       return results;
     } catch (error: any) {
       Logger.error(error);
@@ -82,12 +79,13 @@ export class ProductRepository {
     }
   }
 
-  private getColumn: getColumnFunc = (colName: string): PgColumn => {
+  private getColumn: getColumnFunc = (colName: string): MySqlColumn => {
     return this.columnMap.get(colName)!;
   };
 
-  private columnMap = new Map<string, PgColumn>([
-    ['id', schema.product.id],
-    ['product_name', schema.product.product_name],
+  private columnMap = new Map<string, MySqlColumn>([
+    ['id', schema.Product.id],
+    ['product_name', schema.Product.productName],
   ]);
 }
+

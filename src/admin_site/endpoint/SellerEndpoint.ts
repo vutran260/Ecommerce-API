@@ -15,7 +15,7 @@ export class SellerEndpoint {
   }
 
   private getSeller = async (req: PaginationRequest, res: Response) => {
-    const results = await this.sellerUsecase.GetSeller(req.filter, req.paging);
+    const results = await this.sellerUsecase.GetSeller(req.filterList, req.paging);
     return ResponseListData(results, res, req.paging);
   };
 

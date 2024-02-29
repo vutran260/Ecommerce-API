@@ -1,84 +1,74 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE  LP_ADMIN (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    email VARCHAR(255),
+    phone VARCHAR(225),
+    password VARCHAR(225),
+    username VARCHAR(225),
+    fullname VARCHAR(225),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
+  );
 
+CREATE TABLE LP_USER (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    email VARCHAR(255),
+    phone VARCHAR(225),
+    password VARCHAR(225),
+    username VARCHAR(225),
+    fullname VARCHAR(225),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
+  );
 
-CREATE TABLE "LP_ADMIN"
-(
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email       VARCHAR,
-    phone       VARCHAR,
-    password    VARCHAR,
-    username    VARCHAR,
-    fullname    VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP
-);
+CREATE TABLE LP_STORE (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    store_key VARCHAR(255) unique,
+    store_name VARCHAR(255),
+    status VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
+  );
 
-CREATE TABLE "LP_USER"
-(
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email       VARCHAR,
-    phone       VARCHAR,
-    password    VARCHAR,
-    username    VARCHAR,
-    fullname    VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP
-);
+CREATE TABLE LP_SELLER (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    store_id VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(225),
+    password VARCHAR(225),
+    username VARCHAR(225),
+    fullname VARCHAR(225),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    CONSTRAINT fk_seller_id_user FOREIGN KEY (id) REFERENCES LP_USER (id),
+    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
+  );
 
+CREATE TABLE LP_BUYER (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    email VARCHAR(255),
+    phone VARCHAR(225),
+    password VARCHAR(225),
+    username VARCHAR(225),
+    fullname VARCHAR(225),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP,
+    CONSTRAINT fk_buyer_id_user FOREIGN KEY (id) REFERENCES LP_USER (id)
+  );
 
-CREATE TABLE "LP_STORE" (
-    id          UUID PRIMARY KEY,
-    store_key   VARCHAR unique,
-    store_name  VARCHAR,
-    status      VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP
-);
-
-CREATE TABLE "LP_SELLER"
-(
-    id          UUID PRIMARY KEY,
-    store_id    UUID ,
-    email       VARCHAR,
-    phone       VARCHAR,
-    password    VARCHAR,
-    username    VARCHAR,
-    fullname    VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP,
-
-    CONSTRAINT fk_seller_id_user FOREIGN KEY (id) REFERENCES "LP_USER" (id),
-    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES "LP_STORE" (id)
-);
-
-CREATE TABLE "LP_BUYER"
-(
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email       VARCHAR,
-    phone       VARCHAR,
-    password    VARCHAR,
-    username    VARCHAR,
-    fullname    VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP,
-
-    CONSTRAINT fk_buyer_id_user FOREIGN KEY (id) REFERENCES "LP_USER" (id)
-);
-
-CREATE TABLE "LP_PRODUCT" (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    product_name  VARCHAR,
-    product_tag   VARCHAR,
-    product_type   VARCHAR,
-    stock   VARCHAR,
-    price   VARCHAR,
-    status      VARCHAR,
-    created_at  TIMESTAMP DEFAULT NOW(),
-    updated_at  TIMESTAMP DEFAULT NOW(),
-    deleted_at  TIMESTAMP
-);
+CREATE TABLE LP_PRODUCT (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    product_name VARCHAR(255),
+    product_tag VARCHAR(255),
+    product_type VARCHAR(255),
+    stock VARCHAR(255),
+    price VARCHAR(255),
+    status VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
+  );

@@ -1,57 +1,71 @@
 import Logger from '../../lib/core/Logger';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { admin, user, seller } from '../../lib/posgres/schema';
-import * as schema from '../../lib/posgres/schema';
+import { Admin, User, Seller } from '../../lib/mysql/schema';
+import * as schema from '../../lib/mysql/schema';
 import { and, eq } from 'drizzle-orm';
-import { ChangePasswordInput, LoginInput } from '../types/Admin';
-import { BadRequestError, NoDataError } from '../../lib/http/custom_error/ApiError';
+import { ChangePasswordInput } from '../types/Admin';
+import {
+  NoDataError,
+  NotFoundError,
+} from '../../lib/http/custom_error/ApiError';
 import LoginRequest from '../requests/LoginRequest';
+import { MySql2Database } from 'drizzle-orm/mysql2';
+import { LP_ADMIN } from '../../lib/mysql/models/init-models';
 
 export class AdminRepository {
-  private db: PostgresJsDatabase<typeof schema>;
+  private db: MySql2Database<typeof schema>;
 
-  constructor(db: PostgresJsDatabase<typeof schema>) {
+  constructor(db: MySql2Database<typeof schema>) {
     this.db = db;
   }
 
   public getAdminByUserNamePassword = async (input: LoginRequest) => {
-    try {
-      const result = await this.db
-        .select()
-        .from(admin)
-        .where(
-          and(
-            eq(admin.username, input.userName),
-            eq(admin.password, input.password),
-          ),
-        );
+    // try {
+    //   const result = await this.db
+    //     .select()
+    //     .from(Admin)
+    //     .where(
+    //       and(
+    //         eq(Admin.username, input.userName),
+    //         eq(Admin.password, input.password),
+    //       ),
+    //     );
 
-      if (result.length < 1) {
-        throw new BadRequestError("Incorrect username and password")
-      }
-      return result[0];
-    } catch (e: any) {
-      Logger.error(e);
-      Logger.error(e.message);
-      throw e;
-    }
+    //   if (result.length < 1) {
+    //     throw new BadRequestError('Incorrect username and password');
+    //   }
+    //   return result[0];
+    // } catch (e: any) {
+    //   Logger.error(e);
+    //   Logger.error(e.message);
+    //   throw e;
+    // }
+
+    const admin = await LP_ADMIN.findOne({
+      where: {
+        username: input.userName,
+        password: input.password,
+      },
+    });
+
+    console.log("admin:",admin);
+    return admin
   };
 
   public checkExistsAdmin = async (username: string) => {
     try {
       const result = await this.db
         .select()
-        .from(admin)
-        .where(and(eq(admin.username, username)));
+        .from(Admin)
+        .where(and(eq(Admin.username, username)));
 
       if (result.length < 1) {
-        return 'Admin is not exits!';
+        throw new NotFoundError('Admin is not exits!');
       }
       return result;
     } catch (error: any) {
       Logger.error(error);
       Logger.error(error.message);
-      return error;
+      throw error;
     }
   };
 
@@ -59,15 +73,15 @@ export class AdminRepository {
     try {
       const result = await this.db
         .select()
-        .from(admin)
-        .where(and(eq(admin.username, input.username)));
+        .from(Admin)
+        .where(and(eq(Admin.username, input.username)));
       if (result.length < 0) throw new NoDataError();
 
       if (input.password_new !== input.password_confirm) {
         return 'Password confirm not match! Please input password confirm again';
       }
 
-      await this.db.update(admin).set({
+      await this.db.update(Admin).set({
         password: input.password_confirm,
       });
       return true;
@@ -80,7 +94,7 @@ export class AdminRepository {
 
   public getUsers = async () => {
     try {
-      const users = await this.db.select().from(user);
+      const users = await this.db.select().from(User);
       if (users.length == 0) throw new NoDataError();
       return users;
     } catch (error: any) {
@@ -92,7 +106,7 @@ export class AdminRepository {
 
   public getSellers = async () => {
     try {
-      const sellers = await this.db.select().from(seller);
+      const sellers = await this.db.select().from(Seller);
       if (sellers.length == 0) throw new NoDataError();
       return sellers;
     } catch (error: any) {

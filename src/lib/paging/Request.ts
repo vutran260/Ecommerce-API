@@ -1,14 +1,14 @@
 import { ProtectedRequest } from '../http/app-request';
-import { PgColumn } from 'drizzle-orm/pg-core';
 import { SQL } from 'drizzle-orm/sql/sql';
 import { and, eq, gt, gte, ilike, inArray, like, lt, lte, ne, not } from 'drizzle-orm';
 import { BadRequestError } from '../http/custom_error/ApiError';
+import { MySqlColumn } from 'drizzle-orm/mysql-core';
 
-export declare interface PaginationRequest extends ProtectedRequest {
-  paging: Paging
-  filter: Filter [],
+export interface PaginationRequest extends ProtectedRequest {
+  paging: Paging,
+  filterList: Filter []
 }
-
+ 
 
 export declare interface Paging {
   limit?: number,
@@ -75,5 +75,5 @@ const filterToRepoFilter = (input: Filter, getColumnFunc: getColumnFunc): SQL =>
 };
 
 export interface getColumnFunc {
-  (colName: string): PgColumn;
+  (colName: string): MySqlColumn;
 }

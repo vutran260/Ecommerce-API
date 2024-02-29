@@ -1,21 +1,20 @@
 import { UserRepository } from './repository/UserRepository';
 import { SellerUsecase } from './usecase/SellerUsecase';
 import express from 'express';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
 import { AdminRepository } from './repository/AdminRepository';
 import { AdminUsecase } from './usecase/AdminUsecase';
-import { admin } from '../lib/posgres/schema';
 import { AdminEndpoint } from './endpoint/AdminEndpoint';
 import { SellerEndpoint } from './endpoint/SellerEndpoint';
-import *  as schema from '../lib/posgres/schema';
+import *  as schema from '../lib/mysql/schema';
 import { adminAuthenMiddlleware } from './middleware/AuthenMiddlleware';
 import { SellerRepository } from './repository/SellerRepository';
+import { MySql2Database } from 'drizzle-orm/mysql2';
 
 
 export class adminSiteRouter {
-  private db : PostgresJsDatabase<typeof schema>
+  private db: MySql2Database<typeof schema>;
 
-  constructor(db:  PostgresJsDatabase<typeof schema>) {
+  constructor(db: MySql2Database<typeof schema>) {
     this.db = db;
   }
 

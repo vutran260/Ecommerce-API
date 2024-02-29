@@ -1,18 +1,19 @@
 import { UserRepository } from './repository/UserRepository';
 import { SellerUsecase } from './usecase/SellerUsecase';
 import { SellerEndpoint } from './endpoint/SellerEndpoint';
-import * as schema from '../lib/posgres/schema';
+import * as schema from '../lib/mysql/schema';
 import express from 'express';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { sellerRepository } from './repository/SellerRepository';
+import { SellerRepository } from './repository/SellerRepository';
 import { ProductRepository } from './repository/ProductRepository';
 import { ProductUsecase } from './usecase/ProductUsecase';
 import { ProductEndpoint } from './endpoint/ProductEndpoint';
+import { MySql2Database } from 'drizzle-orm/mysql2';
 
 export class sellerSiteRouter {
-  private db: PostgresJsDatabase<typeof schema>;
+  private db: MySql2Database<typeof schema>;
 
-  constructor(db: PostgresJsDatabase<typeof schema>) {
+  constructor(db: MySql2Database<typeof schema>) {
     this.db = db;
   }
 
@@ -20,7 +21,7 @@ export class sellerSiteRouter {
     const router = express.Router();
 
     const userRepo = new UserRepository(this.db);
-    const sellerRepo = new sellerRepository(this.db);
+    const sellerRepo = new SellerRepository(this.db);
     const sellerUsecase = new SellerUsecase(userRepo, sellerRepo);
     const sellerEndpoint = new SellerEndpoint(sellerUsecase);
 

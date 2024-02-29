@@ -3,7 +3,7 @@ import apikey from './lib/auth/apikey';
 import permission from './lib/helpers/permission';
 import { Permission } from './lib/database/model/ApiKey';
 import { adminSiteRouter } from './admin_site/Router';
-import { dbConnection } from './lib/posgres/connection';
+import { dbConnection, sequelize } from './lib/mysql/Connection';
 import { sellerSiteRouter } from './seller_site/Router';
 
 const router = express.Router();
@@ -14,6 +14,11 @@ router.use(apikey);
 /*---------------------------------------------------------*/
 // router.use(permission(Permission.GENERAL));
 /*---------------------------------------------------------*/
+
+
+(async () => {
+  await sequelize.sync({force: true});
+})();
 
 
 const adminSiteRoute = new adminSiteRouter(dbConnection)

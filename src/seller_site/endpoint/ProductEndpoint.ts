@@ -33,7 +33,7 @@ export class ProductEndpoint {
   };
 
   private updateProduct = async (req: Request, res: Response) => {
-    let id: string = req.params.id;
+    const id: string = req.params.id;
     const productCreateRequest = new ProductCreateRequest();
     productCreateRequest.product_name = req.body.product_name;
     productCreateRequest.product_tag = req.body.product_tag;
@@ -47,20 +47,20 @@ export class ProductEndpoint {
   };
 
   private deleteProduct = async (req: Request, res: Response) => {
-    let id: string = req.params.id;
+    const id: string = req.params.id;
     const results = await this.productUsecase.deleteProduct(id);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   };
 
   private detailProduct = async (req: Request, res: Response) => {
-    let id: string = req.params.id;
+    const id: string = req.params.id;
     const results = await this.productUsecase.detailProduct(id);
     return ResponseData(results, res);
   };
 
   private getProducts = async (req: PaginationRequest, res: Response) => {
     const results = await this.productUsecase.getProducts(
-      req.filter,
+      req.filterList,
       req.paging,
     );
     return ResponseListData(results, res, req.paging);

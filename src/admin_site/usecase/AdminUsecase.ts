@@ -2,7 +2,6 @@ import { AdminRepository } from '../repository/AdminRepository';
 import { createTokens } from '../../lib/auth/authUtils';
 import crypto from 'crypto';
 import { ChangePasswordInput, LoginInput } from '../types/Admin';
-import Logger from '../../lib/core/Logger';
 import LoginRequest from '../requests/LoginRequest';
 
 export class AdminUsecase {
@@ -17,7 +16,7 @@ export class AdminUsecase {
       const result=  await this.adminRepo.getAdminByUserNamePassword(input)
       const accessTokenKey = crypto.randomBytes(64).toString('hex');
       const refreshTokenKey = crypto.randomBytes(64).toString('hex');
-      const token = await createTokens(result.id, accessTokenKey, refreshTokenKey);
+      const token = await createTokens(result?.id||"", accessTokenKey, refreshTokenKey);
       return token
   };
 

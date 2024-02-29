@@ -1,15 +1,15 @@
 import { UserRepository } from '../repository/UserRepository';
-import { sellerRepository } from '../repository/SellerRepository';
+import { SellerRepository } from '../repository/SellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class SellerUsecase {
   private userRepo: UserRepository;
-  private sellerRepo: sellerRepository
+  private sellerRepo: SellerRepository
 
 
-  constructor(userRepo: UserRepository, sellerRepo: sellerRepository) {
+  constructor(userRepo: UserRepository, sellerRepo: SellerRepository) {
     this.userRepo = userRepo;
     this.sellerRepo = sellerRepo
   }

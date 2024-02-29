@@ -2,14 +2,13 @@ import { UserRepository } from './repository/UserRepository';
 import { UserUsecase } from './usecase/UserUsecase';
 import { UserEndpoint } from './endpoint/UserEndpoint';
 import express from 'express';
-import {NextFunction} from 'express';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js/index';
-
+import { MySql2Database } from 'drizzle-orm/mysql2';
+import * as schema from '../lib/mysql/schema';
 
 export class adminSiteRouter {
-  private db : PostgresJsDatabase
+  private db: MySql2Database<typeof schema>;
 
-  constructor(db: PostgresJsDatabase) {
+  constructor(db: MySql2Database<typeof schema>) {
     this.db = db;
   }
 
