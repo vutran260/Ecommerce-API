@@ -5,17 +5,18 @@ import { BadRequestError } from '../http/custom_error/ApiError';
 import { MySqlColumn } from 'drizzle-orm/mysql-core';
 import { Op } from 'sequelize';
 import lodash from 'lodash';
+import { LpOrder } from './Order';
 
 export interface PaginationRequest extends ProtectedRequest {
   paging: Paging,
   filterList: Filter []
+  order:  LpOrder[],
 }
  
 
 export declare interface Paging {
   limit: number,
   page: number,
-  orderBy?: string,
   total?: number,
 }
 
@@ -31,8 +32,7 @@ export declare interface Filter {
 }
 
 
-export const BuildQuery = (filter: Filter[]) => {
-  console.log("filtering", filter)
+export const BuildQuery = (filter: Filter[])=> {
   return {
     [Op.and]:filter.map(filter => getOperatorFromFilter(filter))
   } 

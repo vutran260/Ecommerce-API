@@ -2,11 +2,8 @@ import asyncHandler from '../../lib/helpers/asyncHandler';
 import { getAccessToken } from '../../lib/auth/authUtils';
 import JWT from '../../lib/core/JWT';
 import { AccessTokenError, AuthFailureError, TokenExpiredError } from '../../lib/http/custom_error/ApiError';
-import { eq } from 'drizzle-orm';
 import lodash from 'lodash';
 import { ProtectedRequest } from '../../lib/http/app-request';
-import { Admin } from '../../lib/mysql/schema';
-import { dbConnection } from '../../lib/mysql/connection';
 import { LP_ADMIN } from '../../lib/mysql/models/LP_ADMIN';
 
 export const adminAuthenMiddlleware = asyncHandler(async (req: ProtectedRequest, res, next) => {

@@ -1,13 +1,14 @@
 import asyncHandler from '../helpers/asyncHandler';
+import { GetOrder } from './Order';
 import { PaginationRequest } from './Request';
 import base64url from 'base64url';
 
 export const pagingMiddelware = asyncHandler(async (req: PaginationRequest, res, next) => {
 
   try {
-    getFilter(req);
-    getPaging(req)
-
+    GetFilter(req);
+    GetPaging(req)
+    GetOrder(req)
 
     return next();
   } catch (e) {
@@ -16,7 +17,7 @@ export const pagingMiddelware = asyncHandler(async (req: PaginationRequest, res,
 });
 
 
-const getFilter = (req: PaginationRequest) => {
+const GetFilter = (req: PaginationRequest) => {
   const rawFilter = req.header('filter');
   if (!rawFilter) {
     return req.filterList = [];
@@ -25,9 +26,9 @@ const getFilter = (req: PaginationRequest) => {
   req.filterList = JSON.parse(jsonFilter);
 };
 
-const getPaging = (req: PaginationRequest) => {
+const GetPaging = (req: PaginationRequest) => {
   const limit = req.query.limit;
-  req.paging = { limit: 0, orderBy: '', page: 0 }
+  req.paging = { limit: 0, page: 0 }
   if (!!limit && !!Number(limit)) {
     req.paging.limit = Number(limit);
   }
