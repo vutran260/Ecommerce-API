@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import Logger from '../../lib/core/Logger';
 import { AdminUsecase } from '../usecase/AdminUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { adminAuthenMiddlleware } from '../middleware/AuthenMiddlleware';

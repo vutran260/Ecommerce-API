@@ -1,7 +1,6 @@
 import express, {  Response } from 'express';
 import { SellerUsecase } from '../usecase/SellerUsecase';
-import { Filter, PaginationRequest } from '../../lib/paging/Request';
-import { filter } from 'lodash';
+import { PaginationRequest } from '../../lib/paging/Request';
 import { pagingMiddelware } from '../../lib/paging/Middelware';
 import { ResponseListData } from '../../lib/http/Response';
 
