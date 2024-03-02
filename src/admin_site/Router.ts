@@ -1,4 +1,3 @@
-import { UserRepository } from './repository/UserRepository';
 import { SellerUsecase } from './usecase/SellerUsecase';
 import express from 'express';
 import { AdminRepository } from './repository/AdminRepository';
@@ -22,8 +21,7 @@ export class adminSiteRouter {
     const router = express.Router();
     try {
     const adminRepo = new AdminRepository()
-    const userRepo = new UserRepository(this.db)
-    const sellerRepo = new SellerRepository(this.db)
+    const sellerRepo = new SellerRepository()
 
     const userUsecase = new SellerUsecase(sellerRepo)
     const adminUsecase = new AdminUsecase(adminRepo)
