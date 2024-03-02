@@ -3,6 +3,8 @@ import { SQL } from 'drizzle-orm/sql/sql';
 import { and, eq, gt, gte, ilike, inArray, like, lt, lte, ne, not } from 'drizzle-orm';
 import { BadRequestError } from '../http/custom_error/ApiError';
 import { MySqlColumn } from 'drizzle-orm/mysql-core';
+import { Op } from 'sequelize';
+import lodash from 'lodash';
 
 export interface PaginationRequest extends ProtectedRequest {
   paging: Paging,
@@ -27,6 +29,26 @@ export declare interface Filter {
   attribute: string;
   not: boolean;
 }
+
+
+export const BuildQuery = (filter: Filter[]) => {
+  console.log("filtering", filter)
+  return {
+    [Op.and]:filter.map(filter => getOperatorFromFilter(filter))
+  } 
+}
+
+const getOperatorFromFilter = (input: Filter) => {
+  const operator = {
+      [lodash.get(Op,input.operation)]: input.value
+  }
+
+  const out = {}
+  lodash.set(out, input.attribute, operator)
+
+  return out
+}
+
 
 export const getRepoFilter = (input: Filter[], getColumnFunc: getColumnFunc):SQL|undefined => {
   let out: any[] = [];

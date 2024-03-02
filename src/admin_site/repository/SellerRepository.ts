@@ -1,53 +1,17 @@
-import * as schema from '../../lib/mysql/schema';
-import { Seller } from '../../lib/mysql/schema';
-import { Filter, getColumnFunc, GetOffset, Paging } from '../../lib/paging/Request';
-import { MySql2Database } from 'drizzle-orm/mysql2';
-import { MySqlColumn } from 'drizzle-orm/mysql-core';
-import { LP_SELLER, LP_USER } from '../../lib/mysql/models/init-models';
-import { Op } from 'sequelize';
+import { Filter, GetOffset, Paging, BuildQuery } from '../../lib/paging/Request';
+import { LP_SELLER } from '../../lib/mysql/models/init-models';
 export class SellerRepository {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(db: MySql2Database<typeof schema>) {
-    this.db = db;
-  }
-
   public getSeller = async (filter: Filter[], paging: Paging) => {
-    // try {
-    //   const query = getRepoFilter(filter, this.getColumn);
-    //   console.log('query', filter);
-    //   const results = await this.db.select().from(Seller).where(query);
-    //   return results;
-    // } catch (e: any) {
-    //   Logger.error(e);
-    //   Logger.error(e.message);
-    //   return e;
-    // }
-
+    const count = await LP_SELLER.count({ 
+      where: BuildQuery(filter)
+    });
+    paging.total = count;
       
     const data = await LP_SELLER.findAll({
-      // where: {
-      //   "id": {[Op.like]: "12"},
-      // },
+      where: BuildQuery(filter),
       offset: GetOffset(paging),
       limit: paging.limit,
     });
-
-
     return data
-
-
-
-
-
   };
-
-  private getColumn: getColumnFunc = (colName: string): MySqlColumn => {
-    return this.columnMap.get(colName)!;
-  };
-
-  private columnMap = new Map<string, MySqlColumn>([
-    ['id', Seller.id],
-    ['username', Seller.username],
-  ]);
 }

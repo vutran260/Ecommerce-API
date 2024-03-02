@@ -1,9 +1,7 @@
-import express, { Request, Response } from 'express';
-import Logger from '../../lib/core/Logger';
+import express, {  Response } from 'express';
 import { SellerUsecase } from '../usecase/SellerUsecase';
 import { Filter, PaginationRequest } from '../../lib/paging/Request';
 import { filter } from 'lodash';
-import base64url from 'base64url';
 import { pagingMiddelware } from '../../lib/paging/Middelware';
 import { ResponseListData } from '../../lib/http/Response';
 

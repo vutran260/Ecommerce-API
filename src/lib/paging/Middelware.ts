@@ -22,7 +22,7 @@ const getFilter = (req: PaginationRequest) => {
     return req.filterList = [];
   }
   const jsonFilter = base64url.decode(rawFilter!);
-  req.filter = JSON.parse(jsonFilter);
+  req.filterList = JSON.parse(jsonFilter);
 };
 
 const getPaging = (req: PaginationRequest) => {
