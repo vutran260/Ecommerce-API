@@ -1,5 +1,5 @@
 import asyncHandler from '../helpers/asyncHandler';
-import { Filter, PaginationRequest } from './Request';
+import { PaginationRequest } from './Request';
 import base64url from 'base64url';
 
 export const pagingMiddelware = asyncHandler(async (req: PaginationRequest, res, next) => {
@@ -21,7 +21,7 @@ const getFilter = (req: PaginationRequest) => {
   if (!rawFilter) {
     return req.filterList = [];
   }
-  const jsonFilter = base64url.decode(rawFilter!);
+  const jsonFilter = base64url.decode(rawFilter);
   req.filterList = JSON.parse(jsonFilter);
 };
 
