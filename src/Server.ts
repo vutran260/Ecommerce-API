@@ -3,6 +3,9 @@ import { port } from './Config';
 import app from './App';
 
 
+process.on('uncaughtException', (e) => {
+  Logger.error(e.message);
+});
 app
   .listen(port, () => {
     Logger.info(`server running on port : ${port}`);

@@ -4,7 +4,7 @@ export declare interface LoginInput {
 }
 
 export declare interface ChangePasswordInput {
-  username: string;
+  id: string;
   password_new: string;
   password_confirm: string
 }

@@ -19,9 +19,9 @@ export class adminSiteRouter {
   }
 
   public getAdminSiteRouter = () => {
-
     const router = express.Router();
-    const adminRepo = new AdminRepository(this.db)
+    try {
+    const adminRepo = new AdminRepository()
     const userRepo = new UserRepository(this.db)
     const sellerRepo = new SellerRepository(this.db)
 
@@ -35,6 +35,11 @@ export class adminSiteRouter {
     router.use('/admin', adminEndpoint.getRouter())
     router.use(adminAuthenMiddlleware)
     router.use('/seller', sellerEndpoint.getRouter())
+    } catch (error) {
+      console.log(error)
+      
+    }
+
 
     return router
   }

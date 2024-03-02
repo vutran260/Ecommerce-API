@@ -29,8 +29,12 @@ export class AdminEndpoint {
     return ResponseData(req.user, res);
   });
 
-  private changePassword = asyncHandler(async (req: Request, res: Response) => {
-    const results = await this.adminUsecase.changePassword(req.body);
+  private changePassword = asyncHandler(async (req: ProtectedRequest, res: Response) => {
+    const results = await this.adminUsecase.changePassword({
+      id: req.user.id,
+      password_confirm: req.body.password_confirm,
+      password_new: req.body.password_new,
+    });
     const data = {
       res: {
         result: results,
@@ -40,31 +44,7 @@ export class AdminEndpoint {
     return ResponseData(data, res);
   });
 
-  private getUsers = async (req: Request, res: Response) => {
-    try {
-      const users = await this.adminUsecase.getUsers();
-      return res.send({
-        data: users,
-        status: 200,
-      });
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
-  };
 
-  private getSellers = async (req: Request, res: Response) => {
-    try {
-      const users = await this.adminUsecase.getSellers();
-      return res.send({
-        data: users,
-        status: 200,
-      });
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
-  };
 
   public getRouter() {
     const router = express.Router();
@@ -72,8 +52,6 @@ export class AdminEndpoint {
     router.use(adminAuthenMiddlleware);
     router.post('/change-password', this.changePassword);
     router.get('/me', this.getMe);
-    router.get('/users', this.getUsers);
-    router.get('/sellers', this.getSellers);
     return router;
   }
 }

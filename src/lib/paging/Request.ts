@@ -11,10 +11,14 @@ export interface PaginationRequest extends ProtectedRequest {
  
 
 export declare interface Paging {
-  limit?: number,
-  page?: number,
+  limit: number,
+  page: number,
   orderBy?: string,
   total?: number,
+}
+
+export const GetOffset = (p: Paging) => {
+  return (p.page-1) * p.limit
 }
 
 export declare interface Filter {
