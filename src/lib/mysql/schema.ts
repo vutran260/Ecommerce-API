@@ -104,3 +104,15 @@ export const User = mysqlTable("LP_USER", {
 		lpUserId: primaryKey({ columns: [table.id], name: "LP_USER_id"}),
 	}
 });
+
+
+export const category = mysqlTable("LP_CATEGORY", {
+	id: varchar("id", { length: 255 }).notNull(),
+	parent_id: varchar("parent_id", {length: 255}),
+	category_name: varchar("category_name", { length: 255}),
+	category_tag: varchar("category_tag", { length: 255}),
+	status: varchar("status", { length: 255}),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow(),
+	updatedAt: timestamp("updated_at", { mode: 'string' }).defaultNow(),
+	deletedAt: timestamp("deleted_at", { mode: 'string' }),
+});
