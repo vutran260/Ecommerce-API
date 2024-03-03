@@ -6,50 +6,25 @@ import * as schema from '../../lib/mysql/schema';
 import { Sequelize } from 'sequelize-typescript';
 import { initModels } from './models/init-models';
 
-// export const sequelize = new Sequelize(
-//   {
-//   host: process.env.MYSQL_HOST,
-//   port: parseInt(process.env.MYSQL_PORT||"1111"),
-//   username: process.env.MYSQL_USER,
-//   password: process.env.MYSQL_PASSWORD,
-//   database: process.env.MYSQL_DATABASE,
-//   dialect: 'mysql',
-//   storage: ':memory:',
-//   models: [__dirname + '/src/lib/mysql/models'],
-// });
 
 export const SetupDB = () => {
   try {
+    console.log(process.env.MYSQL_DATABASE);
     const se = new Sequelize({
-        host: 'localhost',
-        port: parseInt(process.env.MYSQL_PORT || '1111'),
-        username: 'link-palette',
-        password: 'P@ssw0rd',
-        database: 'link-palette-dev',
-        dialect: 'mysql',
-        storage: ':memory:',
-        // models: [__dirname + '/models',],
-        
-      }); 
-      initModels(se)
-
+      host: process.env.MYSQL_HOST,
+      port: parseInt(process.env.MYSQL_PORT || '1111'),
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+      dialect: 'mysql',
+      storage: ':memory:',
+    });
+    initModels(se);
   } catch (error) {
     console.log(error);
-    throw error
+    throw error;
   }
 };
-
-// export const sequelize = new Sequelize({
-//   host: 'localhost',
-//   port: parseInt(process.env.MYSQL_PORT || '1111'),
-//   username: 'link-palette',
-//   password: 'P@ssw0rd',
-//   database: 'link-palette-dev',
-//   dialect: 'mysql',
-//   storage: ':memory:',
-//   models: [__dirname + '/models'],
-// });
-
 
 const poolConnection = mysql.createPool({
   host: process.env.MYSQL_HOST,
