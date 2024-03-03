@@ -35,8 +35,9 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_PRODUCT {
     return LP_PRODUCT.init({
     id: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV4,
+      allowNull: false, 
       primaryKey: true
     },
     product_name: {
@@ -66,7 +67,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   }, {
     sequelize,
     tableName: 'LP_PRODUCT',
-    timestamps: true,
+    timestamps: false,
     paranoid: true,
     indexes: [
       {

@@ -3,9 +3,17 @@ import ProductCreateRequest from '../../admin_site/requests/products/ProductCrea
 import Logger from '../../lib/core/Logger';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-import { Filter, Paging, getColumnFunc, getRepoFilter } from '../../lib/paging/Request';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+  getColumnFunc,
+  getRepoFilter,
+} from '../../lib/paging/Request';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import { MySqlColumn } from 'drizzle-orm/mysql-core';
+import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
 
 export class ProductRepository {
   private db: MySql2Database<typeof schema>;
@@ -16,9 +24,13 @@ export class ProductRepository {
 
   public createProduct = async (productCreateRequest: ProductCreateRequest) => {
     try {
-      const results = await this.db
-        .insert(schema.Product)
-        .values(productCreateRequest)
+      const results: any = await LP_PRODUCT.create(productCreateRequest)
+        .then((pro) => {
+          return pro.dataValues;
+        })
+        .catch((err) => {
+          throw err;
+        });
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -32,10 +44,11 @@ export class ProductRepository {
   ) => {
     try {
       await this.getProductId(id);
-      const results = await this.db
-        .update(schema.Product)
-        .set(productCreateRequest)
-        .where(eq(schema.Product.id, id))
+      const results = await LP_PRODUCT.update(productCreateRequest, {
+        where: {
+          id: id,
+        },
+      });
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -46,9 +59,12 @@ export class ProductRepository {
   public deleteProduct = async (id: string) => {
     try {
       await this.getProductId(id);
-      const results = await this.db
-        .delete(schema.Product)
-        .where(eq(schema.Product.id, id))
+      const results = await LP_PRODUCT.destroy({
+        where: {
+          id: id,
+        },
+      });
+
       return results;
     } catch (error: any) {
       Logger.error(error.message);
@@ -57,27 +73,36 @@ export class ProductRepository {
   };
 
   public getProductId = async (id: string) => {
-    const result = await this.db
-      .select()
-      .from(schema.Product)
-      .where(eq(schema.Product.id, id));
-    if (result.length < 1) {
-      throw new NotFoundError();
-    }
-    return result[0];
+    const result: any = await LP_PRODUCT.findByPk(id)
+      .then((res) => {
+        return res?.dataValues;
+      })
+      .catch((error) => {
+        console.log('error', error);
+        throw new NotFoundError();
+      });
+    return result;
   };
 
   public getProducts = async (filter: Filter[], paging: Paging) => {
     try {
-      const query = getRepoFilter(filter, this.getColumn);
-      const results = await this.db.select().from(schema.Product).where(query);
+      const count = await LP_PRODUCT.count({
+        where: BuildQuery(filter),
+      });
+      paging.total = count;
+
+      const results = await LP_PRODUCT.findAll({
+        where: BuildQuery(filter),
+        offset: GetOffset(paging),
+        limit: paging.limit,
+      });
       return results;
     } catch (error: any) {
       Logger.error(error);
       Logger.error(error.message);
       throw error;
     }
-  }
+  };
 
   private getColumn: getColumnFunc = (colName: string): MySqlColumn => {
     return this.columnMap.get(colName)!;
@@ -88,4 +113,3 @@ export class ProductRepository {
     ['product_name', schema.Product.productName],
   ]);
 }
-

@@ -25,7 +25,7 @@ export class ProductEndpoint {
       productCreateRequest.status = req.body.status;
       await validatorRequest(productCreateRequest);
       const results = await this.productUsecase.createProduct(req.body);
-      return ResponseData(results[0], res);
+      return ResponseData(results, res);
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -43,7 +43,7 @@ export class ProductEndpoint {
     productCreateRequest.status = req.body.status;
     await validatorRequest(productCreateRequest);
     const results = await this.productUsecase.updateProduct(req.body, id);
-    return ResponseData(results[0], res);
+    return ResponseData(results, res);
   };
 
   private deleteProduct = async (req: Request, res: Response) => {
