@@ -17,7 +17,7 @@ export class SellerUsecase {
   public RegisterSeller = async (user: any) => {
     try {
       let userFromDb = await this.userRepo.getUserById(user.id)
-      if (userFromDb === null) {
+      if (!!!userFromDb) {
         userFromDb = await this.userRepo.createUser(user)
       }
 

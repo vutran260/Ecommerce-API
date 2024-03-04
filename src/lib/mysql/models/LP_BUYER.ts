@@ -66,12 +66,25 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
     fullname: {
       type: DataTypes.STRING(225),
       allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'LP_BUYER',
-    timestamps: true,
-    paranoid: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",

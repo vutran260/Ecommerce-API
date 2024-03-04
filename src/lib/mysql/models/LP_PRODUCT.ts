@@ -35,9 +35,8 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_PRODUCT {
     return LP_PRODUCT.init({
     id: {
-      type: Sequelize.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false, 
+      type: DataTypes.STRING(255),
+      allowNull: false,
       primaryKey: true
     },
     product_name: {
@@ -63,12 +62,25 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'LP_PRODUCT',
     timestamps: false,
-    paranoid: true,
     indexes: [
       {
         name: "PRIMARY",

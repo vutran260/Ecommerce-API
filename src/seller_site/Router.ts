@@ -20,8 +20,8 @@ export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
     const router = express.Router();
 
-    const userRepo = new UserRepository(this.db);
-    const sellerRepo = new SellerRepository(this.db);
+    const userRepo = new UserRepository();
+    const sellerRepo = new SellerRepository();
     const sellerUsecase = new SellerUsecase(userRepo, sellerRepo);
     const sellerEndpoint = new SellerEndpoint(sellerUsecase);
 
@@ -34,3 +34,6 @@ export class sellerSiteRouter {
     return router;
   };
 }
+
+// module.exports = { timestamps: false }
+    // "gen-model": "sequelize-auto -o ./src/lib/mysql/models -l ts -a ./config.js -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"

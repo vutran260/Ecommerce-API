@@ -1,7 +1,3 @@
-import Logger from '../../lib/core/Logger';
-import { Admin, User, Seller } from '../../lib/mysql/schema';
-import * as schema from '../../lib/mysql/schema';
-import { and, eq } from 'drizzle-orm';
 import { ChangePasswordInput } from '../types/Admin';
 import {
   AuthFailureError, BadRequestError,

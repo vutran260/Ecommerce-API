@@ -17,7 +17,7 @@
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
     "introspect": "drizzle-kit introspect:mysql --config=config.ts",
-    "gen-model": "sequelize-auto -o ./models -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"
+    "gen-model": "sequelize-auto -a ./src/lib/mysql/config.js -o ./src/lib/mysql/models -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"
   },
   "repository": {
     "type": "git",

@@ -58,12 +58,25 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'LP_STORE',
-    timestamps: true,
-    paranoid: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",

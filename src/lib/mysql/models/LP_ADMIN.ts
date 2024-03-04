@@ -56,12 +56,25 @@ export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttribut
     fullname: {
       type: DataTypes.STRING(225),
       allowNull: true
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   }, {
     sequelize,
     tableName: 'LP_ADMIN',
-    timestamps: true,
-    paranoid: true,
+    timestamps: false,
     indexes: [
       {
         name: "PRIMARY",
