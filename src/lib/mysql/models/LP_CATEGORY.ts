@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 
 export interface LP_CATEGORYAttributes {
   id: string;
-  parent_id: string;
+  parent_id: string | null;
   category_name?: string;
   category_tag?: string;
   status?: string;
@@ -14,14 +14,7 @@ export interface LP_CATEGORYAttributes {
 
 export type LP_CATEGORYPk = 'id';
 export type LP_CATEGORYId = LP_CATEGORY[LP_CATEGORYPk];
-export type LP_CATEGORYOptionalAttributes =
-  | 'parent_id'
-  | 'category_name'
-  | 'category_tag'
-  | 'status'
-  | 'created_at'
-  | 'updated_at'
-  | 'deleted_at';
+export type LP_CATEGORYOptionalAttributes = "parent_id" | "category_name" | "category_tag" | "status" | "created_at" | "updated_at" | "deleted_at";
 export type LP_CATEGORYCreationAttributes = Optional<
   LP_CATEGORYAttributes,
   LP_CATEGORYOptionalAttributes
@@ -32,7 +25,7 @@ export class LP_CATEGORY
   implements LP_CATEGORYAttributes
 {
   id!: string;
-  parent_id!: string;
+  parent_id: string;
   category_name?: string;
   category_tag?: string;
   status?: string;
@@ -44,8 +37,8 @@ export class LP_CATEGORY
     return LP_CATEGORY.init(
       {
         id: {
-          type: Sequelize.UUID,
-          defaultValue: Sequelize.UUIDV4,
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
           allowNull: false,
           primaryKey: true,
         },

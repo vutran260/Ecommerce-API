@@ -73,13 +73,13 @@ CREATE TABLE LP_PRODUCT (
     deleted_at TIMESTAMP
   );
 
-CREATE TABLE "LP_CATEGORY" (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    parent_id   VARCHAR,
-    category_name  VARCHAR,
-    category_tag   VARCHAR,
-    status      VARCHAR,
+CREATE TABLE LP_CATEGORY (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    parent_id VARCHAR(255),
+    category_name VARCHAR(255),
+    category_tag VARCHAR(255),
+    status VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
-);
+  );

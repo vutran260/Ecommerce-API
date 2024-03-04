@@ -42,13 +42,10 @@ export class ProductRepository {
     id: string,
   ) => {
     try {
-      await this.getProductId(id);
-      const results = await LP_PRODUCT.update(productCreateRequest, {
-        where: {
-          id: id,
-        },
-      });
-      return results;
+      const product = await this.getProductId(id);
+      if (product) {
+        return await product.update(productCreateRequest);
+      }
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -57,14 +54,8 @@ export class ProductRepository {
 
   public deleteProduct = async (id: string) => {
     try {
-      await this.getProductId(id);
-      const results = await LP_PRODUCT.destroy({
-        where: {
-          id: id,
-        },
-      });
-
-      return results;
+      const product = await this.getProductId(id);
+      return await product.destroy();
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -72,15 +63,12 @@ export class ProductRepository {
   };
 
   public getProductId = async (id: string) => {
-    const result: any = await LP_PRODUCT.findByPk(id)
-      .then((res) => {
-        return res?.dataValues;
-      })
-      .catch((error) => {
-        console.log('error', error);
-        throw new NotFoundError();
-      });
-    return result;
+    const result: any = await LP_PRODUCT.findByPk(id);
+    if (result) {
+      return result;
+    } else {
+      throw new NotFoundError();
+    }
   };
 
   public getProducts = async (filter: Filter[], paging: Paging) => {
