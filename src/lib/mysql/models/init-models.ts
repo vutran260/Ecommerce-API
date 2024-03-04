@@ -11,6 +11,8 @@ import { LP_STORE as _LP_STORE } from "./LP_STORE";
 import type { LP_STOREAttributes, LP_STORECreationAttributes } from "./LP_STORE";
 import { LP_USER as _LP_USER } from "./LP_USER";
 import type { LP_USERAttributes, LP_USERCreationAttributes } from "./LP_USER";
+import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
+import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
 
 export {
   _LP_ADMIN as LP_ADMIN,
@@ -19,6 +21,7 @@ export {
   _LP_SELLER as LP_SELLER,
   _LP_STORE as LP_STORE,
   _LP_USER as LP_USER,
+  _LP_CATEGORY as LP_CATEGORY,
 };
 
 export type {
@@ -34,6 +37,8 @@ export type {
   LP_STORECreationAttributes,
   LP_USERAttributes,
   LP_USERCreationAttributes,
+  LP_CATEGORYAttributes,
+  LP_CATEGORYCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -43,6 +48,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_SELLER = _LP_SELLER.initModel(sequelize);
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_USER = _LP_USER.initModel(sequelize);
+  const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
 
   LP_SELLER.belongsTo(LP_STORE, { as: "store", foreignKey: "store_id"});
   LP_STORE.hasMany(LP_SELLER, { as: "LP_SELLERs", foreignKey: "store_id"});
@@ -58,5 +64,6 @@ export function initModels(sequelize: Sequelize) {
     LP_SELLER: LP_SELLER,
     LP_STORE: LP_STORE,
     LP_USER: LP_USER,
+    LP_CATEGORY: LP_CATEGORY,
   };
 }
