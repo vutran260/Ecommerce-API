@@ -2,7 +2,7 @@ import express from 'express';
 import apikey from './lib/auth/apikey';
 import { adminSiteRouter } from './admin_site/Router';
 import { sellerSiteRouter } from './seller_site/Router';
-import { SetupDB, dbConnection } from './lib/mysql/connection';
+import { SetupDB, dbConnection } from './lib/mysql/Connection';
 
 const router = express.Router();
 
