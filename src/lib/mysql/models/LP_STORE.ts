@@ -14,7 +14,7 @@ export interface LP_STOREAttributes {
 
 export type LP_STOREPk = "id";
 export type LP_STOREId = LP_STORE[LP_STOREPk];
-export type LP_STOREOptionalAttributes = "store_key" | "store_name" | "status" | "created_at" | "updated_at" | "deleted_at";
+export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "status" | "created_at" | "updated_at" | "deleted_at";
 export type LP_STORECreationAttributes = Optional<LP_STOREAttributes, LP_STOREOptionalAttributes>;
 
 export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttributes> implements LP_STOREAttributes {
@@ -44,6 +44,7 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
     id: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
     store_key: {
