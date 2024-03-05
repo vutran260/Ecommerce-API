@@ -23,7 +23,7 @@ export class CategoryEndpoint {
       categoryCreateRequest.status = req.body.status;
       await validatorRequest(categoryCreateRequest);
       const results = await this.categoryUsecase.createCategory(req.body);
-      return ResponseData(results[0], res);
+      return ResponseData(results, res);
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -39,7 +39,7 @@ export class CategoryEndpoint {
     categoryCreateRequest.status = req.body.status;
     await validatorRequest(categoryCreateRequest);
     const results = await this.categoryUsecase.updateCategory(req.body, id);
-    return ResponseData(results[0], res);
+    return ResponseData(results, res);
   };
 
   private deleteCategory = async (req: Request, res: Response) => {

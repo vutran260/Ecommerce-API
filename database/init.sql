@@ -1,5 +1,5 @@
 CREATE TABLE  LP_ADMIN (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
     email VARCHAR(255),
     phone VARCHAR(225),
     password VARCHAR(225),
@@ -11,7 +11,7 @@ CREATE TABLE  LP_ADMIN (
   );
 
 CREATE TABLE LP_USER (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
     email VARCHAR(255),
     phone VARCHAR(225),
     password VARCHAR(225),
@@ -23,7 +23,7 @@ CREATE TABLE LP_USER (
   );
 
 CREATE TABLE LP_STORE (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
     store_key VARCHAR(255) unique,
     store_name VARCHAR(255),
     status VARCHAR(255),
@@ -61,7 +61,7 @@ CREATE TABLE LP_BUYER (
   );
 
 CREATE TABLE LP_PRODUCT (
-    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
     product_name VARCHAR(255),
     product_tag VARCHAR(255),
     product_type VARCHAR(255),
@@ -73,13 +73,13 @@ CREATE TABLE LP_PRODUCT (
     deleted_at TIMESTAMP
   );
 
-CREATE TABLE "LP_CATEGORY" (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    parent_id   VARCHAR,
-    category_name  VARCHAR,
-    category_tag   VARCHAR,
-    status      VARCHAR,
+CREATE TABLE LP_CATEGORY (
+    id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
+    parent_id VARCHAR(255),
+    category_name VARCHAR(255),
+    category_tag VARCHAR(255),
+    status VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
-);
+  );

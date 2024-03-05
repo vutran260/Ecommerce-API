@@ -9,6 +9,9 @@ import { ProductRepository } from './repository/ProductRepository';
 import { ProductUsecase } from './usecase/ProductUsecase';
 import { ProductEndpoint } from './endpoint/ProductEndpoint';
 import { MySql2Database } from 'drizzle-orm/mysql2';
+import { CategoryRepository } from './repository/CategoryRepository';
+import { CategoryUsecase } from './usecase/CategoryUsecase';
+import { CategoryEndpoint } from './endpoint/CategoryEndpoint';
 
 export class sellerSiteRouter {
   private db: MySql2Database<typeof schema>;
@@ -29,8 +32,14 @@ export class sellerSiteRouter {
     const productUsecase = new ProductUsecase(productRepo);
     const productEndpoint = new ProductEndpoint(productUsecase);
 
+    
+    const categorytRepo = new CategoryRepository(this.db);
+    const categoryUsecase = new CategoryUsecase(categorytRepo);
+    const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
+
     router.use('/seller', sellerEndpoint.getRouter());
     router.use('/product', productEndpoint.getRouter());
+    router.use('/category', categoryEndpoint.getRouter());
     return router;
   };
 }

@@ -6,6 +6,7 @@ import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { pagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
+import { DataType } from 'sequelize-typescript';
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;

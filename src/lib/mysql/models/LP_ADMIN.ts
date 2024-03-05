@@ -15,7 +15,7 @@ export interface LP_ADMINAttributes {
 
 export type LP_ADMINPk = "id";
 export type LP_ADMINId = LP_ADMIN[LP_ADMINPk];
-export type LP_ADMINOptionalAttributes = "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
+export type LP_ADMINOptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
 export type LP_ADMINCreationAttributes = Optional<LP_ADMINAttributes, LP_ADMINOptionalAttributes>;
 
 export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttributes> implements LP_ADMINAttributes {
@@ -35,6 +35,7 @@ export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttribut
     id: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
     email: {

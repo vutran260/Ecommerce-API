@@ -17,7 +17,7 @@ export interface LP_USERAttributes {
 
 export type LP_USERPk = "id";
 export type LP_USERId = LP_USER[LP_USERPk];
-export type LP_USEROptionalAttributes = "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
+export type LP_USEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
 export type LP_USERCreationAttributes = Optional<LP_USERAttributes, LP_USEROptionalAttributes>;
 
 export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes> implements LP_USERAttributes {
@@ -47,6 +47,7 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
     id: {
       type: DataTypes.STRING(255),
       allowNull: false,
+      defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
     email: {
