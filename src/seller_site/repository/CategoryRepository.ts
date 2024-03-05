@@ -4,7 +4,9 @@ import Logger from '../../lib/core/Logger';
 import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
+  BuildQuery,
   Filter,
+  GetOffset,
   Paging,
   getColumnFunc,
   getRepoFilter,
@@ -83,8 +85,16 @@ export class CategoryRepository {
 
   public getCategories = async (filter: Filter[], paging: Paging) => {
     try {
-      const query = getRepoFilter(filter, this.getColumn);
-      const results = await this.db.select().from(schema.category).where(query);
+      const count = await LP_CATEGORY.count({
+        where: BuildQuery(filter),
+      });
+      paging.total = count;
+
+      const results = await LP_CATEGORY.findAll({
+        where: BuildQuery(filter),
+        offset: GetOffset(paging),
+        limit: paging.limit,
+      });
       return results;
     } catch (error: any) {
       Logger.error(error);
@@ -92,13 +102,4 @@ export class CategoryRepository {
       throw error;
     }
   };
-
-  private getColumn: getColumnFunc = (colName: string): MySqlColumn => {
-    return this.columnMap.get(colName)!;
-  };
-
-  private columnMap = new Map<string, MySqlColumn>([
-    ['id', schema.Product.id],
-    ['product_name', schema.Product.productName],
-  ]);
 }

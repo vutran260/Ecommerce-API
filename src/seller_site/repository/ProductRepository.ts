@@ -90,13 +90,4 @@ export class ProductRepository {
       throw error;
     }
   };
-
-  private getColumn: getColumnFunc = (colName: string): MySqlColumn => {
-    return this.columnMap.get(colName)!;
-  };
-
-  private columnMap = new Map<string, MySqlColumn>([
-    ['id', schema.Product.id],
-    ['product_name', schema.Product.productName],
-  ]);
 }
