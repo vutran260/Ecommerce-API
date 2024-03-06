@@ -1,4 +1,4 @@
-import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
 import { LP_SELLER } from '../../lib/mysql/models/LP_SELLER';
 
 export class SellerRepository {
@@ -17,4 +17,14 @@ export class SellerRepository {
     const result = await LP_SELLER.findOne({ where: { id: id } });
     return result?.dataValues;
   };
+
+  public addStoreId = async (sellerId:string , storeId: string) => {
+
+    const result = await LP_SELLER.update({store_id: storeId}, {where: {id: sellerId}})
+    if( result[0] === 0) {
+      throw new InternalError("Fail to add store to seller")
+    }
+
+  };
+
 }

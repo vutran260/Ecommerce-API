@@ -1,28 +1,15 @@
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import * as schema from '../../lib/mysql/schema';
 import Logger from '../../lib/core/Logger';
-import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-  getColumnFunc,
-  getRepoFilter,
 } from '../../lib/paging/Request';
-import { PgColumn } from 'drizzle-orm/pg-core';
 import CategoryCreateRequest from '../../admin_site/requests/categories/CategoryCreateRequest';
-import { MySql2Database } from 'drizzle-orm/mysql2';
-import { MySqlColumn } from 'drizzle-orm/mysql-core';
 import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
 
 export class CategoryRepository {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(db: MySql2Database<typeof schema>) {
-    this.db = db;
-  }
 
   public createCategory = async (
     categoryCreateRequest: CategoryCreateRequest,

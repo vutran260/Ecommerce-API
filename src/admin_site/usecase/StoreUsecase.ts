@@ -1,0 +1,38 @@
+import { StoreStatus } from '../../lib/constant/Store';
+import { LpOrder } from '../../lib/paging/Order';
+import { Filter, Paging } from '../../lib/paging/Request';
+import { StoreRepository } from '../repository/StoreRepository';
+
+export class StoreUsecase {
+
+  private storeRepo: StoreRepository
+
+  constructor(storeRepo: StoreRepository) {
+    this.storeRepo = storeRepo;
+  }
+
+  public GetStoreList = async (filter: Filter[],order: LpOrder[], paging: Paging) => {
+      return await this.storeRepo.getStoreList(filter, order, paging)
+  };
+
+  public GetStoreByID =async  (id: string) => {
+    return await  this.storeRepo.getStoreById(id)
+}
+
+
+  public ApproveCreateStoreRequest = async (storeId: string, remark: string) => {
+    const store = await this.storeRepo.updateStoreStatus(storeId, StoreStatus.ACTIVE, remark)
+    //todo create store table
+
+
+
+  }
+
+  public RejectCreateStoreRequest = async (storeId: string, remark: string) => {
+    const store= await this.storeRepo.updateStoreStatus(storeId, StoreStatus.REJECT, remark )
+
+    return store
+  }
+
+
+}

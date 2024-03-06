@@ -12,6 +12,10 @@ import { MySql2Database } from 'drizzle-orm/mysql2';
 import { CategoryRepository } from './repository/CategoryRepository';
 import { CategoryUsecase } from './usecase/CategoryUsecase';
 import { CategoryEndpoint } from './endpoint/CategoryEndpoint';
+import { StoreRepository } from './repository/StoreRepository';
+import { StoreUsecase } from './usecase/StoreUsecase';
+import { StoreEndpoint } from './endpoint/StoreEndpoint';
+import { sellerAuthenMiddlleware as SellerAuthenMiddlleware } from './middleware/AuthenMiddleware';
 
 export class sellerSiteRouter {
   private db: MySql2Database<typeof schema>;
@@ -25,19 +29,25 @@ export class sellerSiteRouter {
 
     const userRepo = new UserRepository();
     const sellerRepo = new SellerRepository();
-    const sellerUsecase = new SellerUsecase(userRepo, sellerRepo);
-    const sellerEndpoint = new SellerEndpoint(sellerUsecase);
+    const storeRepo = new StoreRepository()
+    const productRepo = new ProductRepository();
+    const categorytRepo = new CategoryRepository();
 
-    const productRepo = new ProductRepository(this.db);
+    const sellerUsecase = new SellerUsecase(userRepo, sellerRepo);
+    const storeUsecase = new StoreUsecase(storeRepo, sellerRepo)
+    const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo);
-    const productEndpoint = new ProductEndpoint(productUsecase);
 
     
-    const categorytRepo = new CategoryRepository(this.db);
-    const categoryUsecase = new CategoryUsecase(categorytRepo);
+    const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
+    const storeEndpoint = new StoreEndpoint(storeUsecase)
+    const sellerEndpoint = new SellerEndpoint(sellerUsecase);
+
 
     router.use('/seller', sellerEndpoint.getRouter());
+    router.use(SellerAuthenMiddlleware)
+    router.use('/store', storeEndpoint.getRouter())
     router.use('/product', productEndpoint.getRouter());
     router.use('/category', categoryEndpoint.getRouter());
     return router;

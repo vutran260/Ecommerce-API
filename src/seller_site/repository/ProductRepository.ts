@@ -1,25 +1,15 @@
-import * as schema from '../../lib/mysql/schema';
 import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
 import Logger from '../../lib/core/Logger';
-import { eq } from 'drizzle-orm';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-  getColumnFunc,
 } from '../../lib/paging/Request';
-import { MySql2Database } from 'drizzle-orm/mysql2';
-import { MySqlColumn } from 'drizzle-orm/mysql-core';
 import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
 
 export class ProductRepository {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(db: MySql2Database<typeof schema>) {
-    this.db = db;
-  }
 
   public createProduct = async (productCreateRequest: ProductCreateRequest) => {
     try {

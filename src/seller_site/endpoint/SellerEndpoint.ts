@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { SellerUsecase } from '../usecase/SellerUsecase';
 import { ResponseData } from '../../lib/http/Response';
+import { ProtectedRequest } from '../../lib/http/app-request';
+import { sellerAuthenMiddlleware } from '../middleware/AuthenMiddleware';
 
 export class SellerEndpoint {
 
@@ -18,7 +20,7 @@ export class SellerEndpoint {
       return ResponseData({token:results}, res)
     } catch (e: any) {
       Logger.error(e.message);
-      return res.send(e)
+      throw e;
     }
   };
 
@@ -29,14 +31,21 @@ export class SellerEndpoint {
     }catch (e:any) {
       Logger.error(e);
       Logger.error(e?.message);
-      return res.send(e)
+      throw e;
     }
   }
+
+  private getMe = async (req: ProtectedRequest, res: Response) => { 
+      return ResponseData(req.user, res);
+  }
+
 
   public getRouter() {
     const router = express.Router();
     router.post('/register', this.registerSeller);
     router.post('/getToken', this.getToken);
+    router.use(sellerAuthenMiddlleware)
+    router.get('/me', this.getMe);
     return router;
   }
 

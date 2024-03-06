@@ -25,7 +25,7 @@ export class SellerUsecase {
 
       const accessTokenKey = crypto.randomBytes(64).toString('hex');
       const refreshTokenKey = crypto.randomBytes(64).toString('hex');
-      const token = await createTokens(user.id, accessTokenKey, refreshTokenKey);
+      const token = await createTokens(userFromDb.id, accessTokenKey, refreshTokenKey);
       return token
 
     }catch (e) {

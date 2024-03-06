@@ -8,6 +8,9 @@ import *  as schema from '../lib/mysql/schema';
 import { adminAuthenMiddlleware } from './middleware/AuthenMiddlleware';
 import { SellerRepository } from './repository/SellerRepository';
 import { MySql2Database } from 'drizzle-orm/mysql2';
+import { StoreRepository } from './repository/StoreRepository';
+import { StoreUsecase } from './usecase/StoreUsecase';
+import { StoreEndpoint } from './endpoint/StoreEndpoint';
 
 
 export class adminSiteRouter {
@@ -18,28 +21,37 @@ export class adminSiteRouter {
   }
 
   public getAdminSiteRouter = () => {
-    const router = express.Router();
     try {
+    const router = express.Router();
     const adminRepo = new AdminRepository()
     const sellerRepo = new SellerRepository()
+    const storeRepo = new StoreRepository();
+
 
     const userUsecase = new SellerUsecase(sellerRepo)
     const adminUsecase = new AdminUsecase(adminRepo)
+    const storeUsecase = new StoreUsecase(storeRepo);
+
+    
 
     const sellerEndpoint = new SellerEndpoint(userUsecase)
     const adminEndpoint = new AdminEndpoint(adminUsecase)
+    const storeEndpoint = new StoreEndpoint(storeUsecase);
+
 
 
     router.use('/admin', adminEndpoint.getRouter())
     router.use(adminAuthenMiddlleware)
     router.use('/seller', sellerEndpoint.getRouter())
+    router.use('/store', storeEndpoint.getRouter());
+
+    return router
     } catch (error) {
-      console.log(error)
-      
+      console.error(error)
+      throw error;
     }
 
 
-    return router
   }
 
 }
