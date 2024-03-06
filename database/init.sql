@@ -10,6 +10,10 @@ CREATE TABLE  LP_ADMIN (
     deleted_at TIMESTAMP
   );
 
+INSERT INTO LP_ADMIN
+(email, phone, password, username, fullname)
+VALUES( 'eamil', 'phone', 'password', 'username', 'fullname');
+
 CREATE TABLE LP_USER (
     id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
     email VARCHAR(255),
