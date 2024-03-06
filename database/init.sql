@@ -16,6 +16,7 @@ VALUES( 'eamil', 'phone', 'password', 'username', 'fullname');
 
 CREATE TABLE LP_USER (
     id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
+    contact_id VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     phone VARCHAR(225),
     password VARCHAR(225),
@@ -23,22 +24,28 @@ CREATE TABLE LP_USER (
     fullname VARCHAR(225),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP
+    deleted_at TIMESTAMP,
+
+    UNIQUE(contact_id)
   );
 
 CREATE TABLE LP_STORE (
     id VARCHAR(255) NOT NULL PRIMARY KEY DEFAULT (uuid()),
+    contact_id VARCHAR(225) NOT NULL,
     store_key VARCHAR(255) unique,
     store_name VARCHAR(255),
     status VARCHAR(255),
     remark VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP
+    deleted_at TIMESTAMP,
+    
+    UNIQUE(contact_id)
   );
 
 CREATE TABLE LP_SELLER (
     id VARCHAR(255) NOT NULL PRIMARY KEY,
+    contact_id VARCHAR(225) NOT NULL,
     store_id VARCHAR(255),
     email VARCHAR(255),
     phone VARCHAR(225),
@@ -48,8 +55,11 @@ CREATE TABLE LP_SELLER (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
+
     CONSTRAINT fk_seller_id_user FOREIGN KEY (id) REFERENCES LP_USER (id),
-    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
+    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
+
+    UNIQUE(contact_id)
   );
 
 CREATE TABLE LP_BUYER (

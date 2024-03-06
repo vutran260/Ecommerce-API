@@ -16,15 +16,16 @@ export class StoreUsecase {
 
   public RegisterStore = async (seller: any, input: any) => {
 
-    if (!!seller.id) throw new BadRequestError("seller already register store")
+    if (!!seller.store_id) throw new BadRequestError("seller already register store")
 
     const store = await this.storeRepo.CreateStore({
-      storeKey: input.storeKey,
-      storeName: input.storeName,
+      contact_id: seller.contact_id,
+      store_key: input.store_key,
+      store_name: input.store_name,
       status: StoreStatus.WAITING_FOR_CREATE_APPROVE
     })
 
-    await this.sellerRepo.addStoreId(seller.id, store.id)
+    await this.sellerRepo.addStoreId(seller.id, store!.id)
 
     return store
   };

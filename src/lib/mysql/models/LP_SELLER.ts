@@ -5,6 +5,7 @@ import type { LP_USER, LP_USERId } from './LP_USER';
 
 export interface LP_SELLERAttributes {
   id: string;
+  contact_id: string;
   store_id?: string;
   email?: string;
   phone?: string;
@@ -23,6 +24,7 @@ export type LP_SELLERCreationAttributes = Optional<LP_SELLERAttributes, LP_SELLE
 
 export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttributes> implements LP_SELLERAttributes {
   id!: string;
+  contact_id!: string;
   store_id?: string;
   email?: string;
   phone?: string;
@@ -54,6 +56,10 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
         model: 'LP_USER',
         key: 'id'
       }
+    },
+    contact_id: {
+      type: DataTypes.STRING(225),
+      allowNull: false
     },
     store_id: {
       type: DataTypes.STRING(255),

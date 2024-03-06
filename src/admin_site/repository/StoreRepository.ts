@@ -39,7 +39,10 @@ export class StoreRepository {
     remark = '',
   ) => {
     const rs = await LP_STORE.update(
-      {status: status},
+      {
+        status: status,
+        remark: remark
+      },
       {where: {id: storeId}}
     )
     if (rs[0] === 0)  {
@@ -52,7 +55,8 @@ export class StoreRepository {
 
 
 export interface CreateStoreInput {
-  storeKey: string;
-  storeName: string;
+  contact_id: string;
+  store_key: string;
+  store_name: string;
   status: string;
 }

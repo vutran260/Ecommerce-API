@@ -26,7 +26,7 @@ export class SellerEndpoint {
 
   private getToken = async (req: Request, res: Response) => {
     try {
-      const token = await this.sellerUsecase.GetTokenBySellerId(req.body.id)
+      const token = await this.sellerUsecase.GetTokenBySellerContactId(req.body.contact_id)
       return ResponseData({token:token}, res)
     }catch (e:any) {
       Logger.error(e);

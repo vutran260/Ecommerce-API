@@ -5,6 +5,7 @@ import type { LP_SELLER, LP_SELLERCreationAttributes, LP_SELLERId } from './LP_S
 
 export interface LP_USERAttributes {
   id: string;
+  contact_id: string;
   email?: string;
   phone?: string;
   password?: string;
@@ -22,6 +23,7 @@ export type LP_USERCreationAttributes = Optional<LP_USERAttributes, LP_USEROptio
 
 export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes> implements LP_USERAttributes {
   id!: string;
+  contact_id!: string;
   email?: string;
   phone?: string;
   password?: string;
@@ -49,6 +51,10 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
       allowNull: false,
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
+    },
+    contact_id: {
+      type: DataTypes.STRING(255),
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING(255),

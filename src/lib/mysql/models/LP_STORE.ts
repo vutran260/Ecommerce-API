@@ -4,9 +4,11 @@ import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 
 export interface LP_STOREAttributes {
   id: string;
+  contact_id: string;
   store_key?: string;
   store_name?: string;
   status?: string;
+  remark?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -14,14 +16,16 @@ export interface LP_STOREAttributes {
 
 export type LP_STOREPk = "id";
 export type LP_STOREId = LP_STORE[LP_STOREPk];
-export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "status" | "created_at" | "updated_at" | "deleted_at";
+export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "status" | "remark" | "created_at" | "updated_at" | "deleted_at";
 export type LP_STORECreationAttributes = Optional<LP_STOREAttributes, LP_STOREOptionalAttributes>;
 
 export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttributes> implements LP_STOREAttributes {
   id!: string;
+  contact_id!: string;
   store_key?: string;
   store_name?: string;
   status?: string;
+  remark?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -47,6 +51,10 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
+    contact_id: {
+      type: DataTypes.STRING(225),
+      allowNull: false
+    },
     store_key: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -57,6 +65,10 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       allowNull: true
     },
     status: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    remark: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
