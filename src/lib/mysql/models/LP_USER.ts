@@ -6,11 +6,16 @@ import type { LP_SELLER, LP_SELLERCreationAttributes, LP_SELLERId } from './LP_S
 export interface LP_USERAttributes {
   id: string;
   contact_id: string;
+  prefecture_id: string;
   email?: string;
   phone?: string;
   password?: string;
   username?: string;
   fullname?: string;
+  name_kanji?: string;
+  name_kana?: string;
+  birthday?: string;
+  address?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -18,17 +23,22 @@ export interface LP_USERAttributes {
 
 export type LP_USERPk = "id";
 export type LP_USERId = LP_USER[LP_USERPk];
-export type LP_USEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
+export type LP_USEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "name_kanji" | "name_kana" | "birthday" | "address" | "created_at" | "updated_at" | "deleted_at";
 export type LP_USERCreationAttributes = Optional<LP_USERAttributes, LP_USEROptionalAttributes>;
 
 export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes> implements LP_USERAttributes {
   id!: string;
   contact_id!: string;
+  prefecture_id!: string;
   email?: string;
   phone?: string;
   password?: string;
   username?: string;
   fullname?: string;
+  name_kanji?: string;
+  name_kana?: string;
+  birthday?: string;
+  address?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -54,6 +64,11 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
     },
     contact_id: {
       type: DataTypes.STRING(255),
+      allowNull: false,
+      unique: "contact_id"
+    },
+    prefecture_id: {
+      type: DataTypes.STRING(225),
       allowNull: false
     },
     email: {
@@ -73,6 +88,22 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
       allowNull: true
     },
     fullname: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    name_kanji: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    name_kana: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    birthday: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    address: {
       type: DataTypes.STRING(225),
       allowNull: true
     },
@@ -101,6 +132,14 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "contact_id",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "contact_id" },
         ]
       },
     ]
