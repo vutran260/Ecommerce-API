@@ -6,12 +6,15 @@ import type { LP_USER, LP_USERId } from './LP_USER';
 export interface LP_SELLERAttributes {
   id: string;
   contact_id: string;
+  prefecture_id?: string;
   store_id?: string;
   email?: string;
   phone?: string;
   password?: string;
-  username?: string;
-  fullname?: string;
+  office_name?: string;
+  office_name_kana?: string;
+  post_code?: string;
+  address?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -19,18 +22,21 @@ export interface LP_SELLERAttributes {
 
 export type LP_SELLERPk = "id";
 export type LP_SELLERId = LP_SELLER[LP_SELLERPk];
-export type LP_SELLEROptionalAttributes = "store_id" | "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
+export type LP_SELLEROptionalAttributes = "prefecture_id" | "store_id" | "email" | "phone" | "password" | "office_name" | "office_name_kana" | "post_code" | "address" | "created_at" | "updated_at" | "deleted_at";
 export type LP_SELLERCreationAttributes = Optional<LP_SELLERAttributes, LP_SELLEROptionalAttributes>;
 
 export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttributes> implements LP_SELLERAttributes {
   id!: string;
   contact_id!: string;
+  prefecture_id?: string;
   store_id?: string;
   email?: string;
   phone?: string;
   password?: string;
-  username?: string;
-  fullname?: string;
+  office_name?: string;
+  office_name_kana?: string;
+  post_code?: string;
+  address?: string;
   created_at?: Date;
   updated_at?: Date;
   deleted_at?: Date;
@@ -59,7 +65,12 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
     },
     contact_id: {
       type: DataTypes.STRING(225),
-      allowNull: false
+      allowNull: false,
+      unique: "contact_id"
+    },
+    prefecture_id: {
+      type: DataTypes.STRING(225),
+      allowNull: true
     },
     store_id: {
       type: DataTypes.STRING(255),
@@ -81,11 +92,19 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    username: {
+    office_name: {
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    fullname: {
+    office_name_kana: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    post_code: {
+      type: DataTypes.STRING(225),
+      allowNull: true
+    },
+    address: {
       type: DataTypes.STRING(225),
       allowNull: true
     },
@@ -114,6 +133,14 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "contact_id",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "contact_id" },
         ]
       },
       {

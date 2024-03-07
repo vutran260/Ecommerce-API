@@ -5,8 +5,14 @@ import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 export interface LP_STOREAttributes {
   id: string;
   contact_id: string;
+  prefecture_id: string;
   store_key?: string;
   store_name?: string;
+  store_name_kana?: string;
+  owner?: string;
+  zip_code?: string;
+  phone?: string;
+  reject_reason?: string;
   status?: string;
   remark?: string;
   created_at?: Date;
@@ -16,14 +22,20 @@ export interface LP_STOREAttributes {
 
 export type LP_STOREPk = "id";
 export type LP_STOREId = LP_STORE[LP_STOREPk];
-export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "status" | "remark" | "created_at" | "updated_at" | "deleted_at";
+export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "store_name_kana" | "owner" | "zip_code" | "phone" | "reject_reason" | "status" | "remark" | "created_at" | "updated_at" | "deleted_at";
 export type LP_STORECreationAttributes = Optional<LP_STOREAttributes, LP_STOREOptionalAttributes>;
 
 export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttributes> implements LP_STOREAttributes {
   id!: string;
   contact_id!: string;
+  prefecture_id!: string;
   store_key?: string;
   store_name?: string;
+  store_name_kana?: string;
+  owner?: string;
+  zip_code?: string;
+  phone?: string;
+  reject_reason?: string;
   status?: string;
   remark?: string;
   created_at?: Date;
@@ -53,6 +65,11 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
     },
     contact_id: {
       type: DataTypes.STRING(225),
+      allowNull: false,
+      unique: "contact_id"
+    },
+    prefecture_id: {
+      type: DataTypes.STRING(225),
       allowNull: false
     },
     store_key: {
@@ -61,6 +78,26 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       unique: "store_key"
     },
     store_name: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    store_name_kana: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    owner: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    zip_code: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    phone: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    reject_reason: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
@@ -97,6 +134,14 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "contact_id",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "contact_id" },
         ]
       },
       {
