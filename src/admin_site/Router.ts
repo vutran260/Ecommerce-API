@@ -4,21 +4,14 @@ import { AdminRepository } from './repository/AdminRepository';
 import { AdminUsecase } from './usecase/AdminUsecase';
 import { AdminEndpoint } from './endpoint/AdminEndpoint';
 import { SellerEndpoint } from './endpoint/SellerEndpoint';
-import *  as schema from '../lib/mysql/schema';
 import { adminAuthenMiddlleware } from './middleware/AuthenMiddlleware';
 import { SellerRepository } from './repository/SellerRepository';
-import { MySql2Database } from 'drizzle-orm/mysql2';
 import { StoreRepository } from './repository/StoreRepository';
 import { StoreUsecase } from './usecase/StoreUsecase';
 import { StoreEndpoint } from './endpoint/StoreEndpoint';
 
 
 export class adminSiteRouter {
-  private db: MySql2Database<typeof schema>;
-
-  constructor(db: MySql2Database<typeof schema>) {
-    this.db = db;
-  }
 
   public getAdminSiteRouter = () => {
     try {

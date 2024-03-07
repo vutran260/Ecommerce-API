@@ -1,4 +1,4 @@
-import { LP_USER, LP_USERCreationAttributes, LP_USEROptionalAttributes } from '../../lib/mysql/models/LP_USER';
+import { LP_USER, LP_USERCreationAttributes } from '../../lib/mysql/models/LP_USER';
 
 export class UserRepository {
   public getUserById = async (id: string) => {

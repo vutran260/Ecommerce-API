@@ -4,7 +4,7 @@ export class StoreRepository {
 
   public CreateStore = async (input: LP_STORECreationAttributes) => {
 
-    const rs = await LP_STORE.create(input)
+    await LP_STORE.create(input)
     return this.getStoreByContactId(input.contact_id)
   }
 

@@ -45,6 +45,8 @@ export class StoreEndpoint {
     const router = express.Router();
     router.get('/stores', pagingMiddelware,this.getStores);
     router.post(`/store/detail/:id`, this.getStoreDetail)
+    router.post(`/store/approve/:id`, this.approveCreatingStoreRequest)
+    router.post(`/store/reject/:id`, this.rejectCreatingStoreRequest)
     return router;
   }
 

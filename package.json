@@ -16,7 +16,6 @@
     "eslint": "eslint . --ext .js,.ts",
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
-    "introspect": "drizzle-kit introspect:mysql --config=config.ts",
     "gen-model": "sequelize-auto -a ./src/lib/mysql/config.js -o ./src/lib/mysql/models -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"
   },
   "repository": {
@@ -33,7 +32,6 @@
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "drizzle-orm": "^0.29.3",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
     "joi": "^17.7.0",
@@ -45,7 +43,6 @@
     "mysql2": "^3.9.2",
     "newrelic": "^9.7.2",
     "pg": "^8.11.3",
-    "postgres": "^3.4.3",
     "qs": "^6.11.0",
     "redis": "^4.5.1",
     "reflect-metadata": "^0.2.1",
@@ -75,7 +72,6 @@
     "@typescript-eslint/parser": "^5.46.0",
     "colors": "^1.4.0",
     "dotenv": "^16.0.3",
-    "drizzle-kit": "^0.20.13",
     "eslint": "^8.29.0",
     "jest": "^29.3.1",
     "nodemon": "^2.0.20",

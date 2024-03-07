@@ -21,17 +21,13 @@ export class StoreUsecase {
 
 
   public ApproveCreateStoreRequest = async (storeId: string, remark: string) => {
-    const store = await this.storeRepo.updateStoreStatus(storeId, StoreStatus.ACTIVE, remark)
-    //todo create store table
-
-
-
+    await this.storeRepo.updateStoreStatus(storeId, StoreStatus.ACTIVE, remark)
+    return this.GetStoreByID(storeId)
   }
 
   public RejectCreateStoreRequest = async (storeId: string, remark: string) => {
-    const store= await this.storeRepo.updateStoreStatus(storeId, StoreStatus.REJECT, remark )
-
-    return store
+    await this.storeRepo.updateStoreStatus(storeId, StoreStatus.REJECT, remark )
+    return this.GetStoreByID(storeId)
   }
 
 

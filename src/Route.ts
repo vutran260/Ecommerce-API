@@ -2,7 +2,7 @@ import express from 'express';
 import apikey from './lib/auth/apikey';
 import { adminSiteRouter } from './admin_site/Router';
 import { sellerSiteRouter } from './seller_site/Router';
-import { SetupDB, dbConnection } from './lib/mysql/Connection';
+import { SetupDB } from './lib/mysql/Connection';
 
 const router = express.Router();
 
@@ -28,8 +28,8 @@ router.use(apikey);
 SetupDB()
 
 
-const adminSiteRoute = new adminSiteRouter(dbConnection)
-const sellerSiteRoute = new sellerSiteRouter(dbConnection)
+const adminSiteRoute = new adminSiteRouter()
+const sellerSiteRoute = new sellerSiteRouter()
 router.use('/admin_site', adminSiteRoute.getAdminSiteRouter())
 router.use('/seller_site', sellerSiteRoute.getSellerSiteRouter())
 
