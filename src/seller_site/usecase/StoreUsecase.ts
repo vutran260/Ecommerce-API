@@ -20,6 +20,7 @@ export class StoreUsecase {
 
     const store = await this.storeRepo.CreateStore({
       contact_id: seller.contact_id,
+      prefecture_id: input.prefecture_id,
       store_key: input.store_key,
       store_name: input.store_name,
       status: StoreStatus.WAITING_FOR_CREATE_APPROVE

@@ -1,12 +1,12 @@
 import { BuildQuery, Filter,  GetOffset, Paging } from '../../lib/paging/Request';
-import { LP_STORE } from '../../lib/mysql/models/LP_STORE';
+import { LP_STORE, LP_STORECreationAttributes } from '../../lib/mysql/models/LP_STORE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { InternalError } from '../../lib/http/custom_error/ApiError';
 import { StoreStatus } from '../../lib/constant/Store';
 
 export class StoreRepository {
 
-  public CreateStore = async (input: CreateStoreInput) => {
+  public CreateStore = async (input: LP_STORECreationAttributes) => {
     const rs = await LP_STORE.create(input)
     return rs.dataValues
   };
@@ -54,9 +54,3 @@ export class StoreRepository {
 }
 
 
-export interface CreateStoreInput {
-  contact_id: string;
-  store_key: string;
-  store_name: string;
-  status: string;
-}
