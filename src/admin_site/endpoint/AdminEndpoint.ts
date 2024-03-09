@@ -15,12 +15,12 @@ export class AdminEndpoint {
   }
 
   private login = asyncHandler(async (req: Request, res: Response) => {
-    const loginRequest = new LoginRequest();
-
-    loginRequest.userName = req.body.userName;
-    loginRequest.password = req.body.password;
+    const loginRequest: LoginRequest = {
+      userName: req.body.userName,
+      password: req.body.password,
+    };
     await validatorRequest(loginRequest);
-    const results = await this.adminUsecase.login(req.body);
+    const results = await this.adminUsecase.login(loginRequest);
     return ResponseData({ token: results }, res);
   });
 
@@ -28,22 +28,22 @@ export class AdminEndpoint {
     return ResponseData(req.user, res);
   });
 
-  private changePassword = asyncHandler(async (req: ProtectedRequest, res: Response) => {
-    const results = await this.adminUsecase.changePassword({
-      id: req.user.id,
-      password_confirm: req.body.password_confirm,
-      password_new: req.body.password_new,
-    });
-    const data = {
-      res: {
-        result: results,
-        message: 'Update password successfully.',
-      },
-    };
-    return ResponseData(data, res);
-  });
-
-
+  private changePassword = asyncHandler(
+    async (req: ProtectedRequest, res: Response) => {
+      const results = await this.adminUsecase.changePassword({
+        id: req.user.id,
+        password_confirm: req.body.password_confirm,
+        password_new: req.body.password_new,
+      });
+      const data = {
+        res: {
+          result: results,
+          message: 'Update password successfully.',
+        },
+      };
+      return ResponseData(data, res);
+    },
+  );
 
   public getRouter() {
     const router = express.Router();

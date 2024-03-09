@@ -6,7 +6,7 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import CategoryCreateRequest from '../../admin_site/requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
 import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
 
 export class CategoryRepository {

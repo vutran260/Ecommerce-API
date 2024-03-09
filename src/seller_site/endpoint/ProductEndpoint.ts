@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
 import Logger from '../../lib/core/Logger';
-import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
+import ProductCreateRequest from '../requests/products/ProductCreateRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
@@ -18,17 +18,19 @@ export class ProductEndpoint {
 
   private createProduct = async (req: ProtectedRequest, res: Response) => {
     try {
-      const productCreateRequest = new ProductCreateRequest();
-      productCreateRequest.productName = req.body.productName;
-      productCreateRequest.productTag = req.body.productTag;
-      productCreateRequest.productType = req.body.productType;
-      productCreateRequest.stock = req.body.stock;
-      productCreateRequest.price = req.body.price;
-      productCreateRequest.status = req.body.status;
-      productCreateRequest.storeId = req.storeId!;
-
+      const productCreateRequest: ProductCreateRequest = {
+        storeId: req.body.storeId,
+        productName: req.body.productName,
+        productTag: req.body.productTag,
+        productType: req.body.productType,
+        stock: req.body.stock,
+        price: req.body.price,
+        status: req.body.status,
+      };
       await validatorRequest(productCreateRequest);
-      const results = await this.productUsecase.createProduct(productCreateRequest);
+      const results = await this.productUsecase.createProduct(
+        productCreateRequest,
+      );
       return ResponseData(results, res);
     } catch (error: any) {
       Logger.error(error.message);
@@ -38,15 +40,18 @@ export class ProductEndpoint {
 
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const productCreateRequest = new ProductCreateRequest();
-    productCreateRequest.productName = req.body.productName;
-    productCreateRequest.productTag = req.body.productTag;
-    productCreateRequest.productType = req.body.productType;
-    productCreateRequest.stock = req.body.stock;
-    productCreateRequest.price = req.body.price;
-    productCreateRequest.status = req.body.status;
 
-    await validatorRequest(productCreateRequest);
+    const productUpdateRequest: ProductCreateRequest = {
+      storeId: req.body.storeId,
+      productName: req.body.productName,
+      productTag: req.body.productTag,
+      productType: req.body.productType,
+      stock: req.body.stock,
+      price: req.body.price,
+      status: req.body.status,
+    };
+
+    await validatorRequest(productUpdateRequest);
 
     const results = await this.productUsecase.updateProduct(req.body, id);
     return ResponseData(results, res);
@@ -73,7 +78,12 @@ export class ProductEndpoint {
     router.put('/update/:id', this.updateProduct);
     // router.delete('/delete/:id', this.deleteProduct);
     router.get('/detail/:id', this.getDetailProduct);
-    router.get('/products', PagingMiddelware, StoreFilterMiddelware, this.getProducts);
+    router.get(
+      '/products',
+      PagingMiddelware,
+      StoreFilterMiddelware,
+      this.getProducts,
+    );
     return router;
   }
 }
