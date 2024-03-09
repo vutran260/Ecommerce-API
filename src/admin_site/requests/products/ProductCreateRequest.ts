@@ -1,20 +1,22 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export default class ProductCreateRequest {
-  
-  id: string;
 
   @IsString()
   @IsNotEmpty()
-  product_name: string;
+  storeId: string;
 
   @IsString()
   @IsNotEmpty()
-  product_tag: string;
+  productName: string;
 
   @IsString()
   @IsNotEmpty()
-  product_type: string;
+  productTag: string;
+
+  @IsString()
+  @IsNotEmpty()
+  productType: string;
 
   @IsString()
   @IsNotEmpty()

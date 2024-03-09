@@ -1,17 +1,15 @@
 import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
-import { LP_SELLER, LP_SELLERAttributes } from '../../lib/mysql/models/LP_SELLER';
+import { LP_SELLER, LP_SELLERCreationAttributes } from '../../lib/mysql/models/LP_SELLER';
 
 export class SellerRepository {
 
-  public createSeller = async (input: LP_SELLERAttributes) => {
+  public createSeller = async (input: LP_SELLERCreationAttributes) => {
     const result = await this.getSellerById(input.id);
     if (result != null) {
       throw new BadRequestError('seller already registered');
     }
-    console.log("input", input);
-    const rs = await LP_SELLER.create(input);
-    console.log(rs);
-    return rs;
+    await LP_SELLER.create(input);
+    return await this.getSellerById(input.id);
   };
 
   public getSellerById = async (id: string) => {
@@ -21,13 +19,13 @@ export class SellerRepository {
 
 
   public getSellerByContactId = async (contactId: string) => {
-    const result = await LP_SELLER.findOne({ where: { contact_id: contactId } });
+    const result = await LP_SELLER.findOne({ where: { contactId: contactId } });
     return result?.dataValues;
   };
 
   public addStoreId = async (sellerId:string , storeId: string) => {
 
-    const result = await LP_SELLER.update({store_id: storeId}, {where: {id: sellerId}})
+    const result = await LP_SELLER.update({storeId: storeId}, {where: {id: sellerId}})
     if( result[0] === 0) {
       throw new InternalError("Fail to add store to seller")
     }

@@ -1,58 +1,78 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { LP_BUYER, LP_BUYERCreationAttributes, LP_BUYERId } from './LP_BUYER';
+import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 import type { LP_SELLER, LP_SELLERCreationAttributes, LP_SELLERId } from './LP_SELLER';
+import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_USERAttributes {
   id: string;
-  contact_id: string;
-  prefecture_id: string;
+  contactId: string;
+  prefectureId: string;
   email?: string;
   phone?: string;
   password?: string;
   username?: string;
   fullname?: string;
-  name_kanji?: string;
-  name_kana?: string;
+  nameKanji?: string;
+  nameKana?: string;
   birthday?: string;
   address?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_USERPk = "id";
 export type LP_USERId = LP_USER[LP_USERPk];
-export type LP_USEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "name_kanji" | "name_kana" | "birthday" | "address" | "created_at" | "updated_at" | "deleted_at";
+export type LP_USEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "nameKanji" | "nameKana" | "birthday" | "address" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_USERCreationAttributes = Optional<LP_USERAttributes, LP_USEROptionalAttributes>;
 
 export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes> implements LP_USERAttributes {
   id!: string;
-  contact_id!: string;
-  prefecture_id!: string;
+  contactId!: string;
+  prefectureId!: string;
   email?: string;
   phone?: string;
   password?: string;
   username?: string;
   fullname?: string;
-  name_kanji?: string;
-  name_kana?: string;
+  nameKanji?: string;
+  nameKana?: string;
   birthday?: string;
   address?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
-  // LP_USER hasOne LP_BUYER via id
-  LP_BUYER!: LP_BUYER;
-  getLP_BUYER!: Sequelize.HasOneGetAssociationMixin<LP_BUYER>;
-  setLP_BUYER!: Sequelize.HasOneSetAssociationMixin<LP_BUYER, LP_BUYERId>;
-  createLP_BUYER!: Sequelize.HasOneCreateAssociationMixin<LP_BUYER>;
+  // LP_USER hasMany LP_BUYER via id
+  lpBuyers!: LP_BUYER[];
+  getLpBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_BUYER>;
+  setLpBuyers!: Sequelize.HasManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  addLpBuyer!: Sequelize.HasManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
+  addLpBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  createLpBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_BUYER>;
+  removeLpBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
+  removeLpBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  hasLpBuyer!: Sequelize.HasManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
+  hasLpBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  countLpBuyers!: Sequelize.HasManyCountAssociationsMixin;
   // LP_USER hasOne LP_SELLER via id
-  LP_SELLER!: LP_SELLER;
-  getLP_SELLER!: Sequelize.HasOneGetAssociationMixin<LP_SELLER>;
-  setLP_SELLER!: Sequelize.HasOneSetAssociationMixin<LP_SELLER, LP_SELLERId>;
-  createLP_SELLER!: Sequelize.HasOneCreateAssociationMixin<LP_SELLER>;
+  lpSeller!: LP_SELLER;
+  getLpSeller!: Sequelize.HasOneGetAssociationMixin<LP_SELLER>;
+  setLpSeller!: Sequelize.HasOneSetAssociationMixin<LP_SELLER, LP_SELLERId>;
+  createLpSeller!: Sequelize.HasOneCreateAssociationMixin<LP_SELLER>;
+  // LP_USER belongsToMany LP_STORE via id and storeId
+  storeIdLpStores!: LP_STORE[];
+  getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;
+  setStoreIdLpStores!: Sequelize.BelongsToManySetAssociationsMixin<LP_STORE, LP_STOREId>;
+  addStoreIdLpStore!: Sequelize.BelongsToManyAddAssociationMixin<LP_STORE, LP_STOREId>;
+  addStoreIdLpStores!: Sequelize.BelongsToManyAddAssociationsMixin<LP_STORE, LP_STOREId>;
+  createStoreIdLpStore!: Sequelize.BelongsToManyCreateAssociationMixin<LP_STORE>;
+  removeStoreIdLpStore!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_STORE, LP_STOREId>;
+  removeStoreIdLpStores!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_STORE, LP_STOREId>;
+  hasStoreIdLpStore!: Sequelize.BelongsToManyHasAssociationMixin<LP_STORE, LP_STOREId>;
+  hasStoreIdLpStores!: Sequelize.BelongsToManyHasAssociationsMixin<LP_STORE, LP_STOREId>;
+  countStoreIdLpStores!: Sequelize.BelongsToManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_USER {
     return LP_USER.init({
@@ -62,14 +82,16 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
-    contact_id: {
+    contactId: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique: "contact_id"
+      unique: "contact_id",
+      field: 'contact_id'
     },
-    prefecture_id: {
+    prefectureId: {
       type: DataTypes.STRING(225),
-      allowNull: false
+      allowNull: false,
+      field: 'prefecture_id'
     },
     email: {
       type: DataTypes.STRING(255),
@@ -91,13 +113,15 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    name_kanji: {
+    nameKanji: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'name_kanji'
     },
-    name_kana: {
+    nameKana: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'name_kana'
     },
     birthday: {
       type: DataTypes.STRING(225),
@@ -107,19 +131,22 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,

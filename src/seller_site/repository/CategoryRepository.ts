@@ -15,8 +15,8 @@ export class CategoryRepository {
     categoryCreateRequest: CategoryCreateRequest,
   ) => {
     try {
-      if (categoryCreateRequest.parent_id != null) {
-        await this.getCategoryId(categoryCreateRequest.parent_id);
+      if (categoryCreateRequest.parentId != null) {
+        await this.getCategoryId(categoryCreateRequest.parentId);
       }
 
       const results = await LP_CATEGORY.create(categoryCreateRequest)
@@ -39,8 +39,8 @@ export class CategoryRepository {
   ) => {
     try {
       const category = await this.getCategoryId(id);
-      if (categoryCreateRequest.parent_id != null) {
-        await this.getCategoryId(categoryCreateRequest.parent_id);
+      if (categoryCreateRequest.parentId != null) {
+        await this.getCategoryId(categoryCreateRequest.parentId);
       }
       if (category) {
         return await category.update(categoryCreateRequest);

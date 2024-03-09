@@ -17,6 +17,7 @@ export class StoreRepository {
     })
 
     paging.total = count;
+    console.log("=========",paging)
     
     const rs = await LP_STORE.findAll({
       where: BuildQuery(filter),
@@ -30,7 +31,7 @@ export class StoreRepository {
 
   public getStoreById = async (id: string) => {
     const rs = await LP_STORE.findByPk(id)
-    return rs;
+    return rs?.dataValues;
   }
 
   public updateStoreStatus = async (

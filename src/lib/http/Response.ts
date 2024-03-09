@@ -2,6 +2,7 @@ import { Paging } from '../paging/Request';
 import { Response } from 'express';
 import { ApiError } from './custom_error/ApiError';
 import { ErrorType } from './custom_error/ErrorType';
+import Logger from '../core/Logger';
 
 export interface LPResponse {
   error?: LPError;
@@ -50,6 +51,9 @@ export const ResponseListData = (data: any, res: Response, paging: Paging) => {
 
 
 export const ResponseError = (err: Error, res: Response) => {
+  
+  Logger.error(err)
+
   if (err instanceof  ApiError) {
     const response : LPResponse = {
       error: {

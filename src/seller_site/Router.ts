@@ -12,7 +12,8 @@ import { CategoryEndpoint } from './endpoint/CategoryEndpoint';
 import { StoreRepository } from './repository/StoreRepository';
 import { StoreUsecase } from './usecase/StoreUsecase';
 import { StoreEndpoint } from './endpoint/StoreEndpoint';
-import { sellerAuthenMiddlleware as SellerAuthenMiddlleware } from './middleware/AuthenMiddleware';
+import { SellerAuthenMiddlleware as SellerAuthenMiddlleware } from './middleware/SellerAuthenMiddleware';
+import { StoreAuthenMiddlleware } from './middleware/StoreAuthenMiddllware';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -39,6 +40,8 @@ export class sellerSiteRouter {
     router.use('/seller', sellerEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware)
     router.use('/store', storeEndpoint.getRouter())
+
+    router.use(StoreAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());
     router.use('/category', categoryEndpoint.getRouter());
     return router;

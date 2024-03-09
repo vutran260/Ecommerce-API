@@ -50,12 +50,20 @@ export function initModels(sequelize: Sequelize) {
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_USER = _LP_USER.initModel(sequelize);
 
-  LP_SELLER.belongsTo(LP_STORE, { as: "store", foreignKey: "store_id"});
-  LP_STORE.hasMany(LP_SELLER, { as: "LP_SELLERs", foreignKey: "store_id"});
-  LP_BUYER.belongsTo(LP_USER, { as: "id_LP_USER", foreignKey: "id"});
-  LP_USER.hasOne(LP_BUYER, { as: "LP_BUYER", foreignKey: "id"});
-  LP_SELLER.belongsTo(LP_USER, { as: "id_LP_USER", foreignKey: "id"});
-  LP_USER.hasOne(LP_SELLER, { as: "LP_SELLER", foreignKey: "id"});
+  LP_STORE.belongsToMany(LP_USER, { as: 'idLpUsers', through: LP_BUYER, foreignKey: "storeId", otherKey: "id" });
+  LP_USER.belongsToMany(LP_STORE, { as: 'storeIdLpStores', through: LP_BUYER, foreignKey: "id", otherKey: "storeId" });
+  LP_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_BUYER, { as: "lpBuyers", foreignKey: "storeId"});
+  LP_CATEGORY.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_CATEGORY, { as: "lpCategories", foreignKey: "storeId"});
+  LP_PRODUCT.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_PRODUCT, { as: "lpProducts", foreignKey: "storeId"});
+  LP_SELLER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_SELLER, { as: "lpSellers", foreignKey: "storeId"});
+  LP_BUYER.belongsTo(LP_USER, { as: "idLpUser", foreignKey: "id"});
+  LP_USER.hasMany(LP_BUYER, { as: "lpBuyers", foreignKey: "id"});
+  LP_SELLER.belongsTo(LP_USER, { as: "idLpUser", foreignKey: "id"});
+  LP_USER.hasOne(LP_SELLER, { as: "lpSeller", foreignKey: "id"});
 
   return {
     LP_ADMIN: LP_ADMIN,

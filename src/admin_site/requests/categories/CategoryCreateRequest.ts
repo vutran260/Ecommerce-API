@@ -1,16 +1,20 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export default class CategoryCreateRequest {
-  id: string;
-  parent_id: string;
+  id?: string;
+  parentId?: string;
 
   @IsString()
   @IsNotEmpty()
-  category_name: string;
+  storeId: string;
 
   @IsString()
   @IsNotEmpty()
-  category_tag: string;
+  categoryName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  categoryTag: string;
 
   @IsString()
   @IsNotEmpty()

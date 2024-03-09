@@ -18,7 +18,7 @@ export class AdminRepository {
     if (admin == null) {
       throw new AuthFailureError();
     }
-    return admin;
+    return admin.dataValues;
   };
 
   public updatePasswordAdmin = async (input: ChangePasswordInput) => {

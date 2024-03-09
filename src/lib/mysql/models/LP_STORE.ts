@@ -1,59 +1,111 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
+import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
+import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
+import type { LP_USER, LP_USERId } from './LP_USER';
 
 export interface LP_STOREAttributes {
   id: string;
-  contact_id: string;
-  prefecture_id: string;
-  store_key?: string;
-  store_name?: string;
-  store_name_kana?: string;
+  contactId: string;
+  prefectureId: string;
+  storeKey?: string;
+  storeName?: string;
+  storeNameKana?: string;
   owner?: string;
-  zip_code?: string;
+  zipCode?: string;
   phone?: string;
-  reject_reason?: string;
+  rejectReason?: string;
   status?: string;
   remark?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_STOREPk = "id";
 export type LP_STOREId = LP_STORE[LP_STOREPk];
-export type LP_STOREOptionalAttributes = "id" | "store_key" | "store_name" | "store_name_kana" | "owner" | "zip_code" | "phone" | "reject_reason" | "status" | "remark" | "created_at" | "updated_at" | "deleted_at";
+export type LP_STOREOptionalAttributes = "id" | "storeKey" | "storeName" | "storeNameKana" | "owner" | "zipCode" | "phone" | "rejectReason" | "status" | "remark" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_STORECreationAttributes = Optional<LP_STOREAttributes, LP_STOREOptionalAttributes>;
 
 export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttributes> implements LP_STOREAttributes {
   id!: string;
-  contact_id!: string;
-  prefecture_id!: string;
-  store_key?: string;
-  store_name?: string;
-  store_name_kana?: string;
+  contactId!: string;
+  prefectureId!: string;
+  storeKey?: string;
+  storeName?: string;
+  storeNameKana?: string;
   owner?: string;
-  zip_code?: string;
+  zipCode?: string;
   phone?: string;
-  reject_reason?: string;
+  rejectReason?: string;
   status?: string;
   remark?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
-  // LP_STORE hasMany LP_SELLER via store_id
-  LP_SELLERs!: LP_SELLER[];
-  getLP_SELLERs!: Sequelize.HasManyGetAssociationsMixin<LP_SELLER>;
-  setLP_SELLERs!: Sequelize.HasManySetAssociationsMixin<LP_SELLER, LP_SELLERId>;
-  addLP_SELLER!: Sequelize.HasManyAddAssociationMixin<LP_SELLER, LP_SELLERId>;
-  addLP_SELLERs!: Sequelize.HasManyAddAssociationsMixin<LP_SELLER, LP_SELLERId>;
-  createLP_SELLER!: Sequelize.HasManyCreateAssociationMixin<LP_SELLER>;
-  removeLP_SELLER!: Sequelize.HasManyRemoveAssociationMixin<LP_SELLER, LP_SELLERId>;
-  removeLP_SELLERs!: Sequelize.HasManyRemoveAssociationsMixin<LP_SELLER, LP_SELLERId>;
-  hasLP_SELLER!: Sequelize.HasManyHasAssociationMixin<LP_SELLER, LP_SELLERId>;
-  hasLP_SELLERs!: Sequelize.HasManyHasAssociationsMixin<LP_SELLER, LP_SELLERId>;
-  countLP_SELLERs!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_BUYER via storeId
+  lpBuyers!: LP_BUYER[];
+  getLpBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_BUYER>;
+  setLpBuyers!: Sequelize.HasManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  addLpBuyer!: Sequelize.HasManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
+  addLpBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  createLpBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_BUYER>;
+  removeLpBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
+  removeLpBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  hasLpBuyer!: Sequelize.HasManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
+  hasLpBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  countLpBuyers!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_CATEGORY via storeId
+  lpCategories!: LP_CATEGORY[];
+  getLpCategories!: Sequelize.HasManyGetAssociationsMixin<LP_CATEGORY>;
+  setLpCategories!: Sequelize.HasManySetAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  addLpCategory!: Sequelize.HasManyAddAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  addLpCategories!: Sequelize.HasManyAddAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  createLpCategory!: Sequelize.HasManyCreateAssociationMixin<LP_CATEGORY>;
+  removeLpCategory!: Sequelize.HasManyRemoveAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  removeLpCategories!: Sequelize.HasManyRemoveAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  hasLpCategory!: Sequelize.HasManyHasAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  hasLpCategories!: Sequelize.HasManyHasAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  countLpCategories!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_PRODUCT via storeId
+  lpProducts!: LP_PRODUCT[];
+  getLpProducts!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT>;
+  setLpProducts!: Sequelize.HasManySetAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addLpProduct!: Sequelize.HasManyAddAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addLpProducts!: Sequelize.HasManyAddAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  createLpProduct!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT>;
+  removeLpProduct!: Sequelize.HasManyRemoveAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  removeLpProducts!: Sequelize.HasManyRemoveAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasLpProduct!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasLpProducts!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  countLpProducts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_SELLER via storeId
+  lpSellers!: LP_SELLER[];
+  getLpSellers!: Sequelize.HasManyGetAssociationsMixin<LP_SELLER>;
+  setLpSellers!: Sequelize.HasManySetAssociationsMixin<LP_SELLER, LP_SELLERId>;
+  addLpSeller!: Sequelize.HasManyAddAssociationMixin<LP_SELLER, LP_SELLERId>;
+  addLpSellers!: Sequelize.HasManyAddAssociationsMixin<LP_SELLER, LP_SELLERId>;
+  createLpSeller!: Sequelize.HasManyCreateAssociationMixin<LP_SELLER>;
+  removeLpSeller!: Sequelize.HasManyRemoveAssociationMixin<LP_SELLER, LP_SELLERId>;
+  removeLpSellers!: Sequelize.HasManyRemoveAssociationsMixin<LP_SELLER, LP_SELLERId>;
+  hasLpSeller!: Sequelize.HasManyHasAssociationMixin<LP_SELLER, LP_SELLERId>;
+  hasLpSellers!: Sequelize.HasManyHasAssociationsMixin<LP_SELLER, LP_SELLERId>;
+  countLpSellers!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE belongsToMany LP_USER via storeId and id
+  idLpUsers!: LP_USER[];
+  getIdLpUsers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_USER>;
+  setIdLpUsers!: Sequelize.BelongsToManySetAssociationsMixin<LP_USER, LP_USERId>;
+  addIdLpUser!: Sequelize.BelongsToManyAddAssociationMixin<LP_USER, LP_USERId>;
+  addIdLpUsers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_USER, LP_USERId>;
+  createIdLpUser!: Sequelize.BelongsToManyCreateAssociationMixin<LP_USER>;
+  removeIdLpUser!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_USER, LP_USERId>;
+  removeIdLpUsers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_USER, LP_USERId>;
+  hasIdLpUser!: Sequelize.BelongsToManyHasAssociationMixin<LP_USER, LP_USERId>;
+  hasIdLpUsers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_USER, LP_USERId>;
+  countIdLpUsers!: Sequelize.BelongsToManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_STORE {
     return LP_STORE.init({
@@ -63,43 +115,50 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
-    contact_id: {
+    contactId: {
       type: DataTypes.STRING(225),
       allowNull: false,
-      unique: "contact_id"
+      unique: "contact_id",
+      field: 'contact_id'
     },
-    prefecture_id: {
+    prefectureId: {
       type: DataTypes.STRING(225),
-      allowNull: false
+      allowNull: false,
+      field: 'prefecture_id'
     },
-    store_key: {
+    storeKey: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      unique: "store_key"
+      unique: "store_key",
+      field: 'store_key'
     },
-    store_name: {
+    storeName: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'store_name'
     },
-    store_name_kana: {
+    storeNameKana: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'store_name_kana'
     },
     owner: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    zip_code: {
+    zipCode: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'zip_code'
     },
     phone: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    reject_reason: {
+    rejectReason: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'reject_reason'
     },
     status: {
       type: DataTypes.STRING(255),
@@ -109,19 +168,22 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,

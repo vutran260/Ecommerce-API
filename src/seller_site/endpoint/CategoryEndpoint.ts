@@ -2,10 +2,12 @@ import express, { Request, Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
-import { pagingMiddelware } from '../../lib/paging/Middelware';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { CategoryUsecase } from '../usecase/CategoryUsecase';
 import CategoryCreateRequest from '../../admin_site/requests/categories/CategoryCreateRequest';
+import { ProtectedRequest } from '../../lib/http/app-request';
+import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 
 export class CategoryEndpoint {
   private categoryUsecase: CategoryUsecase;
@@ -14,13 +16,16 @@ export class CategoryEndpoint {
     this.categoryUsecase = categoryUsecase;
   }
 
-  private createCategory = async (req: Request, res: Response) => {
+  private createCategory = async (req: ProtectedRequest, res: Response) => {
     try {
-      const categoryCreateRequest = new CategoryCreateRequest();
-      categoryCreateRequest.parent_id = req.body.parent_id;
-      categoryCreateRequest.category_name = req.body.category_name;
-      categoryCreateRequest.category_tag = req.body.category_tag;
-      categoryCreateRequest.status = req.body.status;
+      const categoryCreateRequest : CategoryCreateRequest = {
+        parentId: req.body.parentId,
+        categoryName: req.body.categoryName,
+        categoryTag: req.body.categoryTag,
+        status : req.body.status,
+        storeId: req.storeId!,
+      };
+
       await validatorRequest(categoryCreateRequest);
       const results = await this.categoryUsecase.createCategory(req.body);
       return ResponseData(results, res);
@@ -30,12 +35,12 @@ export class CategoryEndpoint {
     }
   };
 
-  private updateCategory = async (req: Request, res: Response) => {
+  private updateCategory = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
     const categoryCreateRequest = new CategoryCreateRequest();
-    categoryCreateRequest.parent_id = req.body.parent_id;
-    categoryCreateRequest.category_name = req.body.category_name;
-    categoryCreateRequest.category_tag = req.body.category_tag;
+    categoryCreateRequest.parentId = req.body.parentId;
+    categoryCreateRequest.categoryName = req.body.categoryName;
+    categoryCreateRequest.categoryTag = req.body.categoryTag;
     categoryCreateRequest.status = req.body.status;
     await validatorRequest(categoryCreateRequest);
     const results = await this.categoryUsecase.updateCategory(req.body, id);
@@ -68,7 +73,7 @@ export class CategoryEndpoint {
     router.put('/update/:id', this.updateCategory);
     router.delete('/delete/:id', this.deleteCategory);
     router.get('/detail/:id', this.detailCategory);
-    router.get('/categories', pagingMiddelware, this.getCategories);
+    router.get('/categories', PagingMiddelware, StoreFilterMiddelware ,this.getCategories);
     return router;
   }
 }

@@ -1,32 +1,40 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_CATEGORYAttributes {
   id: string;
-  parent_id?: string;
-  category_name?: string;
-  category_tag?: string;
+  storeId: string;
+  parentId?: string;
+  categoryName?: string;
+  categoryTag?: string;
   status?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_CATEGORYPk = "id";
 export type LP_CATEGORYId = LP_CATEGORY[LP_CATEGORYPk];
-export type LP_CATEGORYOptionalAttributes = "id" | "parent_id" | "category_name" | "category_tag" | "status" | "created_at" | "updated_at" | "deleted_at";
+export type LP_CATEGORYOptionalAttributes = "id" | "parentId" | "categoryName" | "categoryTag" | "status" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_CATEGORYCreationAttributes = Optional<LP_CATEGORYAttributes, LP_CATEGORYOptionalAttributes>;
 
 export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes> implements LP_CATEGORYAttributes {
   id!: string;
-  parent_id?: string;
-  category_name?: string;
-  category_tag?: string;
+  storeId!: string;
+  parentId?: string;
+  categoryName?: string;
+  categoryTag?: string;
   status?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
+  // LP_CATEGORY belongsTo LP_STORE via storeId
+  store!: LP_STORE;
+  getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
+  setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
+  createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_CATEGORY {
     return LP_CATEGORY.init({
@@ -36,35 +44,50 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
-    parent_id: {
+    storeId: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false,
+      references: {
+        model: 'LP_STORE',
+        key: 'id'
+      },
+      field: 'store_id'
     },
-    category_name: {
+    parentId: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'parent_id'
     },
-    category_tag: {
+    categoryName: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'category_name'
+    },
+    categoryTag: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'category_tag'
     },
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
@@ -77,6 +100,13 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "fk_store_id_category",
+        using: "BTREE",
+        fields: [
+          { name: "store_id" },
         ]
       },
     ]

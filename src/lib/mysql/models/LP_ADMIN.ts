@@ -8,14 +8,14 @@ export interface LP_ADMINAttributes {
   password?: string;
   username?: string;
   fullname?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_ADMINPk = "id";
 export type LP_ADMINId = LP_ADMIN[LP_ADMINPk];
-export type LP_ADMINOptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "created_at" | "updated_at" | "deleted_at";
+export type LP_ADMINOptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_ADMINCreationAttributes = Optional<LP_ADMINAttributes, LP_ADMINOptionalAttributes>;
 
 export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttributes> implements LP_ADMINAttributes {
@@ -25,9 +25,9 @@ export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttribut
   password?: string;
   username?: string;
   fullname?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ADMIN {
@@ -58,19 +58,22 @@ export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttribut
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,

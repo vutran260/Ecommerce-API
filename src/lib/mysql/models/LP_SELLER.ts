@@ -5,52 +5,52 @@ import type { LP_USER, LP_USERId } from './LP_USER';
 
 export interface LP_SELLERAttributes {
   id: string;
-  contact_id: string;
-  prefecture_id?: string;
-  store_id?: string;
+  contactId: string;
+  prefectureId?: string;
+  storeId?: string;
   email?: string;
   phone?: string;
   password?: string;
-  office_name?: string;
-  office_name_kana?: string;
-  post_code?: string;
+  officeName?: string;
+  officeNameKana?: string;
+  postCode?: string;
   address?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_SELLERPk = "id";
 export type LP_SELLERId = LP_SELLER[LP_SELLERPk];
-export type LP_SELLEROptionalAttributes = "prefecture_id" | "store_id" | "email" | "phone" | "password" | "office_name" | "office_name_kana" | "post_code" | "address" | "created_at" | "updated_at" | "deleted_at";
+export type LP_SELLEROptionalAttributes = "prefectureId" | "storeId" | "email" | "phone" | "password" | "officeName" | "officeNameKana" | "postCode" | "address" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SELLERCreationAttributes = Optional<LP_SELLERAttributes, LP_SELLEROptionalAttributes>;
 
 export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttributes> implements LP_SELLERAttributes {
   id!: string;
-  contact_id!: string;
-  prefecture_id?: string;
-  store_id?: string;
+  contactId!: string;
+  prefectureId?: string;
+  storeId?: string;
   email?: string;
   phone?: string;
   password?: string;
-  office_name?: string;
-  office_name_kana?: string;
-  post_code?: string;
+  officeName?: string;
+  officeNameKana?: string;
+  postCode?: string;
   address?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
-  // LP_SELLER belongsTo LP_STORE via store_id
+  // LP_SELLER belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
   setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
   createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
   // LP_SELLER belongsTo LP_USER via id
-  id_LP_USER!: LP_USER;
-  getId_LP_USER!: Sequelize.BelongsToGetAssociationMixin<LP_USER>;
-  setId_LP_USER!: Sequelize.BelongsToSetAssociationMixin<LP_USER, LP_USERId>;
-  createId_LP_USER!: Sequelize.BelongsToCreateAssociationMixin<LP_USER>;
+  idLpUser!: LP_USER;
+  getIdLpUser!: Sequelize.BelongsToGetAssociationMixin<LP_USER>;
+  setIdLpUser!: Sequelize.BelongsToSetAssociationMixin<LP_USER, LP_USERId>;
+  createIdLpUser!: Sequelize.BelongsToCreateAssociationMixin<LP_USER>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_SELLER {
     return LP_SELLER.init({
@@ -63,22 +63,25 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
         key: 'id'
       }
     },
-    contact_id: {
+    contactId: {
       type: DataTypes.STRING(225),
       allowNull: false,
-      unique: "contact_id"
+      unique: "contact_id",
+      field: 'contact_id'
     },
-    prefecture_id: {
+    prefectureId: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'prefecture_id'
     },
-    store_id: {
+    storeId: {
       type: DataTypes.STRING(255),
       allowNull: true,
       references: {
         model: 'LP_STORE',
         key: 'id'
-      }
+      },
+      field: 'store_id'
     },
     email: {
       type: DataTypes.STRING(255),
@@ -92,35 +95,41 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    office_name: {
+    officeName: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'office_name'
     },
-    office_name_kana: {
+    officeNameKana: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'office_name_kana'
     },
-    post_code: {
+    postCode: {
       type: DataTypes.STRING(225),
-      allowNull: true
+      allowNull: true,
+      field: 'post_code'
     },
     address: {
       type: DataTypes.STRING(225),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,

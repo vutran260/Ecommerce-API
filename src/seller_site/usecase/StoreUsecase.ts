@@ -19,10 +19,10 @@ export class StoreUsecase {
     if (!!seller.store_id) throw new BadRequestError("seller already register store")
 
     const store = await this.storeRepo.CreateStore({
-      contact_id: seller.contact_id,
-      prefecture_id: input.prefecture_id,
-      store_key: input.store_key,
-      store_name: input.store_name,
+      contactId: seller.contactId,
+      prefectureId: input.prefectureId,
+      storeKey: input.storeKey,
+      storeName: input.storeName,
       status: StoreStatus.WAITING_FOR_CREATE_APPROVE
     })
 

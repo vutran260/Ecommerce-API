@@ -1,7 +1,7 @@
 import express, {  Response } from 'express';
 import { SellerUsecase } from '../usecase/SellerUsecase';
 import { PaginationRequest } from '../../lib/paging/Request';
-import { pagingMiddelware } from '../../lib/paging/Middelware';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { ResponseListData } from '../../lib/http/Response';
 
 export class SellerEndpoint {
@@ -18,7 +18,7 @@ export class SellerEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.get('/sellers', pagingMiddelware, this.getSeller);
+    router.get('/sellers', PagingMiddelware, this.getSeller);
     return router;
   }
 }

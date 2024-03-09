@@ -7,11 +7,12 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
+import { LP_PRODUCT, LP_PRODUCTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class ProductRepository {
 
-  public createProduct = async (productCreateRequest: ProductCreateRequest) => {
+  public createProduct = async (productCreateRequest: LP_PRODUCTCreationAttributes) => {
     try {
       const results: any = await LP_PRODUCT.create(productCreateRequest)
         .then((pro) => {
@@ -61,7 +62,7 @@ export class ProductRepository {
     }
   };
 
-  public getProducts = async (filter: Filter[], paging: Paging) => {
+  public getProducts = async (filter: Filter[], order: LpOrder[], paging: Paging) => {
     try {
       const count = await LP_PRODUCT.count({
         where: BuildQuery(filter),
@@ -71,6 +72,7 @@ export class ProductRepository {
       const results = await LP_PRODUCT.findAll({
         where: BuildQuery(filter),
         offset: GetOffset(paging),
+        order: BuildOrderQuery(order),
         limit: paging.limit,
       });
       return results;

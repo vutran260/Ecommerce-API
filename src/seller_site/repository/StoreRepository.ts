@@ -5,11 +5,11 @@ export class StoreRepository {
   public CreateStore = async (input: LP_STORECreationAttributes) => {
 
     await LP_STORE.create(input)
-    return this.getStoreByContactId(input.contact_id)
+    return this.getStoreByContactId(input.contactId)
   }
 
   public getStoreByContactId = async (contactId: string) => {
-    const result = await LP_STORE.findOne({ where: { contact_id: contactId } });
+    const result = await LP_STORE.findOne({ where: { contactId: contactId } });
     return result?.dataValues;
   };
 }

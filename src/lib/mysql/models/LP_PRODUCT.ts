@@ -1,36 +1,44 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_PRODUCTAttributes {
   id: string;
-  product_name?: string;
-  product_tag?: string;
-  product_type?: string;
+  storeId: string;
+  productName?: string;
+  productTag?: string;
+  productType?: string;
   stock?: string;
   price?: string;
   status?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 }
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "product_name" | "product_tag" | "product_type" | "stock" | "price" | "status" | "created_at" | "updated_at" | "deleted_at";
+export type LP_PRODUCTOptionalAttributes = "id" | "productName" | "productTag" | "productType" | "stock" | "price" | "status" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
   id!: string;
-  product_name?: string;
-  product_tag?: string;
-  product_type?: string;
+  storeId!: string;
+  productName?: string;
+  productTag?: string;
+  productType?: string;
   stock?: string;
   price?: string;
   status?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  deleted_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
+  // LP_PRODUCT belongsTo LP_STORE via storeId
+  store!: LP_STORE;
+  getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
+  setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
+  createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_PRODUCT {
     return LP_PRODUCT.init({
@@ -40,17 +48,29 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       defaultValue: Sequelize.Sequelize.fn('uuid'),
       primaryKey: true
     },
-    product_name: {
+    storeId: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: false,
+      references: {
+        model: 'LP_STORE',
+        key: 'id'
+      },
+      field: 'store_id'
     },
-    product_tag: {
+    productName: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'product_name'
     },
-    product_type: {
+    productTag: {
       type: DataTypes.STRING(255),
-      allowNull: true
+      allowNull: true,
+      field: 'product_tag'
+    },
+    productType: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'product_type'
     },
     stock: {
       type: DataTypes.STRING(255),
@@ -64,19 +84,22 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       type: DataTypes.STRING(255),
       allowNull: true
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     },
-    deleted_at: {
+    deletedAt: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: true,
+      field: 'deleted_at'
     }
   }, {
     sequelize,
@@ -89,6 +112,13 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "fk_store_id_product",
+        using: "BTREE",
+        fields: [
+          { name: "store_id" },
         ]
       },
     ]

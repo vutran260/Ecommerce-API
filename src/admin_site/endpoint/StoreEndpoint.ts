@@ -1,7 +1,7 @@
 import { PaginationRequest } from '../../lib/paging/Request';
 import express, { Response } from 'express';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
-import { pagingMiddelware } from '../../lib/paging/Middelware';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { StoreUsecase } from '../usecase/StoreUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
 
@@ -43,7 +43,7 @@ export class StoreEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.get('/stores', pagingMiddelware,this.getStores);
+    router.get('/stores', PagingMiddelware,this.getStores);
     router.post(`/store/detail/:id`, this.getStoreDetail)
     router.post(`/store/approve/:id`, this.approveCreatingStoreRequest)
     router.post(`/store/reject/:id`, this.rejectCreatingStoreRequest)

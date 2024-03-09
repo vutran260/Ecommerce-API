@@ -3,7 +3,7 @@ import Logger from '../../lib/core/Logger';
 import { SellerUsecase } from '../usecase/SellerUsecase';
 import { ResponseData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
-import { sellerAuthenMiddlleware } from '../middleware/AuthenMiddleware';
+import { SellerAuthenMiddlleware } from '../middleware/SellerAuthenMiddleware';
 
 export class SellerEndpoint {
 
@@ -44,7 +44,7 @@ export class SellerEndpoint {
     const router = express.Router();
     router.post('/register', this.registerSeller);
     router.post('/getToken', this.getToken);
-    router.use(sellerAuthenMiddlleware)
+    router.use(SellerAuthenMiddlleware)
     router.get('/me', this.getMe);
     return router;
   }

@@ -3,8 +3,7 @@ import { SellerRepository } from '../repository/SellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
-import { LP_USER, LP_USERAttributes, LP_USERCreationAttributes } from '../../lib/mysql/models/LP_USER';
-import { LP_ADMINCreationAttributes } from '../../lib/mysql/models/LP_ADMIN';
+import {  LP_USERCreationAttributes } from '../../lib/mysql/models/LP_USER';
 
 export class SellerUsecase {
   private userRepo: UserRepository;
@@ -18,7 +17,7 @@ export class SellerUsecase {
 
   public RegisterSeller = async (user: LP_USERCreationAttributes) => {
     try {
-      let userFromDb = await this.userRepo.getUserByContactId(user.contact_id)
+      let userFromDb = await this.userRepo.getUserByContactId(user.contactId)
       if (!!!userFromDb) {
         userFromDb = await this.userRepo.createUser(user)
       }

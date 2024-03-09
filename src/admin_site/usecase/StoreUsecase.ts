@@ -1,4 +1,5 @@
 import { StoreStatus } from '../../lib/constant/Store';
+import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { StoreRepository } from '../repository/StoreRepository';
@@ -16,7 +17,11 @@ export class StoreUsecase {
   };
 
   public GetStoreByID =async  (id: string) => {
-    return await  this.storeRepo.getStoreById(id)
+    const rs =  await  this.storeRepo.getStoreById(id)
+    if (!rs) {
+      throw new NotFoundError()
+    }
+    return rs
 }
 
 
