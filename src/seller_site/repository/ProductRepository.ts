@@ -1,4 +1,4 @@
-import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
+import ProductCreateRequest from '../requests/products/ProductCreateRequest';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {

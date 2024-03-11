@@ -1,4 +1,4 @@
-import ProductCreateRequest from '../../admin_site/requests/products/ProductCreateRequest';
+import ProductCreateRequest from '../requests/products/ProductCreateRequest';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { ProductRepository } from '../repository/ProductRepository';

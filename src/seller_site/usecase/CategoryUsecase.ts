@@ -1,4 +1,4 @@
-import CategoryCreateRequest from '../../admin_site/requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { CategoryRepository } from '../repository/CategoryRepository';
 
