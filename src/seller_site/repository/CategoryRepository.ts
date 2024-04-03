@@ -7,10 +7,16 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
-import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
+import {
+  LP_CATEGORY,
+  LP_CATEGORYAttributes,
+} from '../../lib/mysql/models/LP_CATEGORY';
+import { Sequelize } from 'sequelize-typescript';
+import { lpSequelize } from '../../lib/mysql/Connection';
+import { QueryTypes } from 'sequelize';
+import { range } from 'lodash';
 
 export class CategoryRepository {
-
   public createCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
   ) => {
@@ -89,4 +95,62 @@ export class CategoryRepository {
       throw error;
     }
   };
+
+  public getCategoriesWithHierarchy = async (storeId: string ,id = "") => {
+    const query =
+      `
+        WITH RECURSIVE cte AS
+        (
+            SELECT *,
+                   CAST(id AS CHAR(200)) AS path,
+                   0 as depth FROM LP_CATEGORY 
+                   WHERE store_id = "${storeId}" AND ` + 
+                   (!id
+        ? `parent_id IS NULL `
+        : `id = "${id}" `) +
+          `UNION ALL
+            SELECT c.*, 
+                   CONCAT(cte.path, ",", c.id),
+                   cte.depth+1
+            FROM LP_CATEGORY c JOIN cte ON
+            cte.id=c.parent_id
+          )
+          SELECT * FROM cte ORDER BY path;
+        `;
+
+        
+    const record = await lpSequelize.query(query, {
+      raw: true,
+      type: QueryTypes.SELECT,
+      mapToModel: true,
+      model: CategoryHierarchie,
+    });
+
+    const out: CategoryHierarchie[] = [];
+    const mapCte = new Map<string, CategoryHierarchie>();
+    for (const category  of record) {
+      mapCte.set(category.id, category)
+      
+      if (category.parentId === null) {
+        category.children = [];
+        out.push(category);
+        continue;
+      }
+      
+      const parentCate = mapCte.get(category.parentId!);
+
+      if (!!parentCate && !parentCate?.children) {
+        parentCate.children = []
+      }
+      parentCate?.children?.push(category)
+    }
+
+    return out;
+  };
+}
+
+class CategoryHierarchie extends LP_CATEGORY {
+  path: string;
+  depth: number;
+  children?: CategoryHierarchie[];
 }

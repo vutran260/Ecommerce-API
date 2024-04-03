@@ -33,4 +33,8 @@ export class CategoryUsecase {
   public getCategories = async (filter: Filter[], paging: Paging) => {
     return this.categoryRepo.getCategories(filter, paging);
   };
+
+  public getCategoriesWithHierarchy = async (store_id: string, id="") => {
+    return this.categoryRepo.getCategoriesWithHierarchy(store_id, id)
+  }
 }

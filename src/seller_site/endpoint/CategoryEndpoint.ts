@@ -74,6 +74,12 @@ export class CategoryEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
+  private getCategoriesWithHierarchy = async (req: ProtectedRequest, res: Response) => {
+    const id: string = req.params.id;
+    const response = await this.categoryUsecase.getCategoriesWithHierarchy(req.storeId!,id)
+    return ResponseData(response, res)
+  }
+
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createCategory);
@@ -86,6 +92,8 @@ export class CategoryEndpoint {
       StoreFilterMiddelware,
       this.getCategories,
     );
+
+    router.get("/categories/hierarchy", this.getCategoriesWithHierarchy);
     return router;
   }
 }
