@@ -8,6 +8,7 @@ import { CategoryUsecase } from '../usecase/CategoryUsecase';
 import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
+import MovePositionRequest from '../requests/categories/MovePositionRequest';
 
 export class CategoryEndpoint {
   private categoryUsecase: CategoryUsecase;
@@ -18,12 +19,17 @@ export class CategoryEndpoint {
 
   private createCategory = async (req: ProtectedRequest, res: Response) => {
     try {
+      const categories =
+        await this.categoryUsecase.getgetCategoriesTheSameLevel(
+          req.body.parentId || null,
+        );
       const categoryCreateRequest: CategoryCreateRequest = {
         parentId: req.body.parentId,
         categoryName: req.body.categoryName,
         categoryTag: req.body.categoryTag,
         status: req.body.status,
         storeId: req.storeId!,
+        orderLevel: categories.length + 1,
       };
 
       await validatorRequest(categoryCreateRequest);
@@ -45,6 +51,7 @@ export class CategoryEndpoint {
       categoryName: req.body.categoryName,
       categoryTag: req.body.categoryTag,
       status: req.body.status,
+      orderLevel: req.body.orderLevel,
     };
     await validatorRequest(categoryUpdateRequest);
     const results = await this.categoryUsecase.updateCategory(
@@ -74,11 +81,32 @@ export class CategoryEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
-  private getCategoriesWithHierarchy = async (req: ProtectedRequest, res: Response) => {
+  private getCategoriesWithHierarchy = async (
+    req: ProtectedRequest,
+    res: Response,
+  ) => {
     const id: string = req.params.id;
-    const response = await this.categoryUsecase.getCategoriesWithHierarchy(req.storeId!,id)
-    return ResponseData(response, res)
-  }
+    const response = await this.categoryUsecase.getCategoriesWithHierarchy(
+      req.storeId!,
+      id,
+    );
+    return ResponseData(response, res);
+  };
+
+  private moveUpCategory = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    const { parentId, typeAction } = req.body;
+    const moveUpCategoryRequest: MovePositionRequest = {
+      parentId: parentId || null,
+      typeAction: typeAction,
+    };
+    await validatorRequest(moveUpCategoryRequest);
+    const results = await this.categoryUsecase.moveUpCategory(
+      moveUpCategoryRequest,
+      id,
+    );
+    return ResponseData(results, res);
+  };
 
   public getRouter() {
     const router = express.Router();
@@ -93,7 +121,8 @@ export class CategoryEndpoint {
       this.getCategories,
     );
 
-    router.get("/categories/hierarchy", this.getCategoriesWithHierarchy);
+    router.get('/categories/hierarchy', this.getCategoriesWithHierarchy);
+    router.put('/move/:id', this.moveUpCategory);
     return router;
   }
 }

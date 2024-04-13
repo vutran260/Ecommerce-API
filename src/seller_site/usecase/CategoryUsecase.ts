@@ -1,6 +1,7 @@
 import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { CategoryRepository } from '../repository/CategoryRepository';
+import MovePositionRequest from '../requests/categories/MovePositionRequest';
 
 export class CategoryUsecase {
   private categoryRepo: CategoryRepository;
@@ -36,5 +37,13 @@ export class CategoryUsecase {
 
   public getCategoriesWithHierarchy = async (store_id: string, id="") => {
     return this.categoryRepo.getCategoriesWithHierarchy(store_id, id)
+  }
+
+  public getgetCategoriesTheSameLevel = async (parentId?: string) => {
+    return this.categoryRepo.getCategoriesTheSameLevel(parentId);
+  }
+
+  public moveUpCategory = async (input: MovePositionRequest, id: string) => {
+    return this.categoryRepo.moveUpCategory(input, id);
   }
 }

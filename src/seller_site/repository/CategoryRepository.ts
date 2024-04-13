@@ -13,8 +13,10 @@ import {
 } from '../../lib/mysql/models/LP_CATEGORY';
 import { Sequelize } from 'sequelize-typescript';
 import { lpSequelize } from '../../lib/mysql/Connection';
-import { QueryTypes } from 'sequelize';
+import { Attributes, FindAndCountOptions, Op, QueryTypes } from 'sequelize';
 import { range } from 'lodash';
+import MovePositionRequest from '../requests/categories/MovePositionRequest';
+import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 
 export class CategoryRepository {
   public createCategory = async (
@@ -96,7 +98,7 @@ export class CategoryRepository {
     }
   };
 
-  public getCategoriesWithHierarchy = async (storeId: string ,id = "") => {
+  public getCategoriesWithHierarchy = async (storeId: string, id = '') => {
     const query =
       `
         WITH RECURSIVE cte AS
@@ -104,48 +106,137 @@ export class CategoryRepository {
             SELECT *,
                    CAST(id AS CHAR(200)) AS path,
                    0 as depth FROM LP_CATEGORY 
-                   WHERE store_id = "${storeId}" AND ` + 
-                   (!id
-        ? `parent_id IS NULL `
-        : `id = "${id}" `) +
-          `UNION ALL
+                   WHERE store_id = "${storeId}" AND ` +
+      (!id ? `parent_id IS NULL ` : `id = "${id}" `) +
+      `UNION ALL
             SELECT c.*, 
                    CONCAT(cte.path, ",", c.id),
                    cte.depth+1
             FROM LP_CATEGORY c JOIN cte ON
             cte.id=c.parent_id
           )
-          SELECT * FROM cte ORDER BY path;
+          SELECT * FROM cte ORDER BY depth ASC, order_level ASC;
         `;
 
-        
     const record = await lpSequelize.query(query, {
       raw: true,
       type: QueryTypes.SELECT,
       mapToModel: true,
       model: CategoryHierarchie,
     });
-
     const out: CategoryHierarchie[] = [];
     const mapCte = new Map<string, CategoryHierarchie>();
-    for (const category  of record) {
-      mapCte.set(category.id, category)
-      
+    for (const category of record) {
+      mapCte.set(category.id, category);
+      const test: any = this.getCategoriesTheSameLevel(category.id)
       if (category.parentId === null) {
-        category.children = [];
+        delete category.children;
         out.push(category);
         continue;
       }
-      
+
       const parentCate = mapCte.get(category.parentId!);
 
       if (!!parentCate && !parentCate?.children) {
-        parentCate.children = []
+        parentCate.children = [];
       }
-      parentCate?.children?.push(category)
+      parentCate?.children?.push(category);
+      if (parentCate?.children?.length == 0) {
+        delete parentCate.children;
+      }
     }
 
     return out;
+  };
+
+  public moveUpCategory = async (input: MovePositionRequest, id: string) => {
+    try {
+      const categoriesTheSameLevel = await this.getCategoriesTheSameLevel(
+        input.parentId,
+      );
+
+      const category = await this.getCategoryId(id);
+      if (input.parentId != null) {
+        await this.getCategoryId(input.parentId);
+      }
+
+      categoriesTheSameLevel.length > 0 &&
+        categoriesTheSameLevel.map((res: any) => {
+          switch (input.typeAction) {
+            case CategoryTypeAction.UP:
+              if (
+                res.orderLevel ==
+                category.orderLevel - CategoryValue.VALUE_ONE
+              ) {
+                res.orderLevel += CategoryValue.VALUE_ONE;
+                res.save();
+              }
+              break;
+            case CategoryTypeAction.DOWN:
+              if (
+                res.orderLevel ==
+                category.orderLevel + CategoryValue.VALUE_ONE
+              ) {
+                res.orderLevel -= CategoryValue.VALUE_ONE;
+                res.save();
+              }
+              break;
+            case CategoryTypeAction.TOP:
+              if (res.orderLevel < category.orderLevel) {
+                res.orderLevel++;
+                res.save();
+              }
+              break;
+            case CategoryTypeAction.BOTTOM:
+              if (res.orderLevel > category.orderLevel) {
+                res.orderLevel--;
+                res.save();
+              }
+              break;
+            default:
+          }
+        });
+
+      switch (input.typeAction) {
+        case CategoryTypeAction.UP:
+          category.orderLevel -= CategoryValue.VALUE_ONE;
+          category.save();
+          break;
+        case CategoryTypeAction.DOWN:
+          category.orderLevel += CategoryValue.VALUE_ONE;
+          category.save();
+          break;
+        case CategoryTypeAction.TOP:
+          category.orderLevel = CategoryValue.VALUE_ONE;
+          category.save();
+          break;
+        case CategoryTypeAction.BOTTOM:
+          category.orderLevel = categoriesTheSameLevel.length;
+          category.save();
+          break;
+        default:
+      }
+    } catch (error: any) {
+      Logger.error(error.message);
+      throw error;
+    }
+  };
+
+  public getCategoriesTheSameLevel = async (parentId?: string) => {
+    const options: Omit<
+      FindAndCountOptions<Attributes<LP_CATEGORY>>,
+      'group'
+    > = {};
+
+    const whereOptions: any = {};
+    whereOptions.parentId = parentId;
+    options.where = whereOptions;
+
+    const categories = await LP_CATEGORY.findAll({
+      ...options,
+    });
+
+    return categories;
   };
 }
 
