@@ -77,13 +77,13 @@ export class LP_USER extends Model<LP_USERAttributes, LP_USERCreationAttributes>
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_USER {
     return LP_USER.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('uuid'),
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     contactId: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
       unique: "contact_id",
       field: 'contact_id'

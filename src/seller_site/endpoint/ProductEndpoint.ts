@@ -8,6 +8,7 @@ import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
+import { plainToClass, Expose } from "class-transformer";
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;
@@ -18,22 +19,17 @@ export class ProductEndpoint {
 
   private createProduct = async (req: ProtectedRequest, res: Response) => {
     try {
-      const productCreateRequest: ProductCreateRequest = {
-        storeId: req.body.storeId,
-        productName: req.body.productName,
-        productTag: req.body.productTag,
-        productType: req.body.productType,
-        stock: req.body.stock,
-        price: req.body.price,
-        status: req.body.status,
-      };
+      // const productCreateRequest: ProductCreateRequest =  req.body as ProductCreateRequest
+      const productCreateRequest = plainToClass(ProductCreateRequest, req.body);
+      productCreateRequest.storeId = req.storeId;
       await validatorRequest(productCreateRequest);
       const results = await this.productUsecase.createProduct(
         productCreateRequest,
       );
       return ResponseData(results, res);
     } catch (error: any) {
-      Logger.error(error.message);
+      Logger.error(error);
+      Logger.error(new Error(error.message))
       throw error;
     }
   };
@@ -41,15 +37,8 @@ export class ProductEndpoint {
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
 
-    const productUpdateRequest: ProductCreateRequest = {
-      storeId: req.body.storeId,
-      productName: req.body.productName,
-      productTag: req.body.productTag,
-      productType: req.body.productType,
-      stock: req.body.stock,
-      price: req.body.price,
-      status: req.body.status,
-    };
+    const productUpdateRequest: ProductCreateRequest = req.body as ProductCreateRequest;
+    productUpdateRequest.storeId = req.storeId;
 
     await validatorRequest(productUpdateRequest);
 

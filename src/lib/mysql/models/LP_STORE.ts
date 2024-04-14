@@ -110,9 +110,9 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_STORE {
     return LP_STORE.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('uuid'),
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     contactId: {

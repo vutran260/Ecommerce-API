@@ -55,7 +55,7 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_SELLER {
     return LP_SELLER.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
       primaryKey: true,
       references: {
@@ -75,7 +75,7 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
       field: 'prefecture_id'
     },
     storeId: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: true,
       references: {
         model: 'LP_STORE',

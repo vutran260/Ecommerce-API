@@ -14,7 +14,7 @@ declare interface RoleRequest extends PublicRequest {
 
 declare interface ProtectedRequest extends RoleRequest {
   user: LP_ADMINAttributes|LP_SELLERAttributes;
-  storeId?: string;
+  storeId: string;
   accessToken: string;
   keystore: Keystore;
 }

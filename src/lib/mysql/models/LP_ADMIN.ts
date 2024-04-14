@@ -33,9 +33,9 @@ export class LP_ADMIN extends Model<LP_ADMINAttributes, LP_ADMINCreationAttribut
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ADMIN {
     return LP_ADMIN.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('uuid'),
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     email: {

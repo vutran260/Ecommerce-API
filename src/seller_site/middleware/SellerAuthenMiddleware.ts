@@ -20,7 +20,7 @@ export const SellerAuthenMiddlleware = asyncHandler(async (req: ProtectedRequest
     if (!seller || !seller.dataValues) throw new AuthFailureError('Invalid token');
     
     req.user = seller.dataValues;
-    req.storeId = seller.dataValues.storeId;
+    req.storeId = seller.dataValues.storeId? seller.dataValues.storeId:"";
 
 
     return next();

@@ -47,7 +47,7 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_BUYER {
     return LP_BUYER.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
       primaryKey: true,
       references: {
@@ -56,7 +56,7 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
       }
     },
     storeId: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
       primaryKey: true,
       references: {

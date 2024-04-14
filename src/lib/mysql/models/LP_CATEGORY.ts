@@ -39,13 +39,13 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_CATEGORY {
     return LP_CATEGORY.init({
     id: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.fn('uuid'),
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     storeId: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: false,
       references: {
         model: 'LP_STORE',
@@ -54,7 +54,7 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
       field: 'store_id'
     },
     parentId: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(36),
       allowNull: true,
       field: 'parent_id'
     },

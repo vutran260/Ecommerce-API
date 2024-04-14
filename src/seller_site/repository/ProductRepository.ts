@@ -7,25 +7,27 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import { LP_PRODUCT, LP_PRODUCTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT';
+import { LP_PRODUCT, LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
+import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
+import { LP_PRODUCT_OPTIONCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
+import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 
 export class ProductRepository {
 
-  public createProduct = async (productCreateRequest: LP_PRODUCTCreationAttributes) => {
-    try {
-      const results: any = await LP_PRODUCT.create(productCreateRequest)
-        .then((pro) => {
-          return pro.dataValues;
-        })
-        .catch((err) => {
-          throw err;
-        });
-      return results;
-    } catch (error: any) {
-      Logger.error(error.message);
-      throw error;
-    }
+  public createProduct = async (input: CreateProductInput): Promise<void> => {
+
+    const product = await LP_PRODUCT.create(input);
+
+    await Promise.all(input.lpProductComponents.map((component) => {
+      return product.createLpProductComponent(component);
+    }))
+    await Promise.all(input.lpProductOptions.map((option) => {
+      return product.createLpProductOption(option);
+    }))
+    await Promise.all(input.lpProductOptionPrices.map((optionPrice) => {
+      return product.createLpProductOptionPrice(optionPrice);
+    }))    
   };
 
   public updateProduct = async (
@@ -82,4 +84,11 @@ export class ProductRepository {
       throw error;
     }
   };
+}
+
+
+export interface CreateProductInput extends LP_PRODUCTCreationAttributes{
+  lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
+  lpProductOptions: LP_PRODUCT_OPTIONCreationAttributes[];
+  lpProductOptionPrices: LP_PRODUCT_OPTION_PRICECreationAttributes[];
 }
