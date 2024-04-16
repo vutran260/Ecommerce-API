@@ -59,10 +59,13 @@ export class CategoryRepository {
     }
   };
 
-  public deleteCategory = async (id: string) => {
+  public deleteCategory = async (ids: string[]) => {
     try {
-      const category = await this.getCategoryId(id);
-      return await category.destroy();
+      ids.length > 0 &&
+        ids.forEach(async (id) => {
+          const category = await this.getCategoryId(id);
+          return await category.destroy();
+        });
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -128,7 +131,7 @@ export class CategoryRepository {
     const mapCte = new Map<string, CategoryHierarchie>();
     for (const category of record) {
       mapCte.set(category.id, category);
-      const test: any = this.getCategoriesTheSameLevel(category.id)
+      const test: any = this.getCategoriesTheSameLevel(category.id);
       if (category.parentId === null) {
         delete category.children;
         out.push(category);

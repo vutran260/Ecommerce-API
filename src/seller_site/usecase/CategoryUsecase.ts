@@ -23,8 +23,8 @@ export class CategoryUsecase {
     return this.categoryRepo.updateCategory(categoryCreateRequest, id);
   };
 
-  public deleteCategory = async (id: string) => {
-    return this.categoryRepo.deleteCategory(id);
+  public deleteCategory = async (ids: string[]) => {
+    return this.categoryRepo.deleteCategory(ids);
   };
 
   public detailCategory = async (id: string) => {
@@ -35,15 +35,15 @@ export class CategoryUsecase {
     return this.categoryRepo.getCategories(filter, paging);
   };
 
-  public getCategoriesWithHierarchy = async (store_id: string, id="") => {
-    return this.categoryRepo.getCategoriesWithHierarchy(store_id, id)
-  }
+  public getCategoriesWithHierarchy = async (store_id: string, id = '') => {
+    return this.categoryRepo.getCategoriesWithHierarchy(store_id, id);
+  };
 
   public getgetCategoriesTheSameLevel = async (parentId?: string) => {
     return this.categoryRepo.getCategoriesTheSameLevel(parentId);
-  }
+  };
 
   public moveUpCategory = async (input: MovePositionRequest, id: string) => {
     return this.categoryRepo.moveUpCategory(input, id);
-  }
+  };
 }

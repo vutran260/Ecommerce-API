@@ -62,8 +62,8 @@ export class CategoryEndpoint {
   };
 
   private deleteCategory = async (req: Request, res: Response) => {
-    const id: string = req.params.id;
-    const results = await this.categoryUsecase.deleteCategory(id);
+    const ids: string[] = req.body.ids;
+    const results = await this.categoryUsecase.deleteCategory(ids);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   };
 
@@ -112,7 +112,7 @@ export class CategoryEndpoint {
     const router = express.Router();
     router.post('/create', this.createCategory);
     router.put('/update/:id', this.updateCategory);
-    router.delete('/delete/:id', this.deleteCategory);
+    router.post('/delete', this.deleteCategory);
     router.get('/detail/:id', this.detailCategory);
     router.get(
       '/categories',
