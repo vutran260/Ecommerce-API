@@ -1,14 +1,14 @@
 import express, { Request, Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
 import Logger from '../../lib/core/Logger';
-import ProductCreateRequest from '../requests/products/ProductCreateRequest';
+import Product from '../requests/products/Product';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
-import { plainToClass, Expose } from "class-transformer";
+import { plainToClass } from "class-transformer";
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;
@@ -20,7 +20,7 @@ export class ProductEndpoint {
   private createProduct = async (req: ProtectedRequest, res: Response) => {
     try {
       // const productCreateRequest: ProductCreateRequest =  req.body as ProductCreateRequest
-      const productCreateRequest = plainToClass(ProductCreateRequest, req.body);
+      const productCreateRequest = plainToClass(Product, req.body);
       productCreateRequest.storeId = req.storeId;
       await validatorRequest(productCreateRequest);
       const results = await this.productUsecase.createProduct(
@@ -37,7 +37,7 @@ export class ProductEndpoint {
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
 
-    const productUpdateRequest: ProductCreateRequest = req.body as ProductCreateRequest;
+    const productUpdateRequest: Product = req.body as Product;
     productUpdateRequest.storeId = req.storeId;
 
     await validatorRequest(productUpdateRequest);

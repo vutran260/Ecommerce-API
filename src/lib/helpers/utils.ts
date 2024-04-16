@@ -19,3 +19,7 @@ export function findIpAddress(req: Request) {
 export function addMillisToCurrentDate(millis: number) {
   return moment().add(millis, 'ms').toDate();
 }
+
+export const booleanToTINYINT = (value: boolean) => (value ? 1 : 0);
+
+export const TINYINTToBoolean = (value: number) => (value === 1 ? true : false);

@@ -1,4 +1,4 @@
-import ProductCreateRequest from '../requests/products/ProductCreateRequest';
+import Product from '../requests/products/Product';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import {
@@ -18,7 +18,7 @@ export class ProductUsecase {
     this.productRepo = productRepo;
   }
 
-  public createProduct = async (input: ProductCreateRequest) => {
+  public createProduct = async (input: Product) => {
 
     if (input.hasOption){
       this.validateOption(input.options, input.optionPrices);
@@ -38,10 +38,10 @@ export class ProductUsecase {
 
     const createProductRepoInput = this.mapToCreateProductRepoInput(input)
 
-    await this.productRepo.createProduct(createProductRepoInput);
+    return await this.productRepo.createProduct(createProductRepoInput);
   };
 
-  public updateProduct = async (input: ProductCreateRequest, id: string) => {
+  public updateProduct = async (input: Product, id: string) => {
     return this.productRepo.updateProduct(input, id);
   };
 
@@ -64,7 +64,7 @@ export class ProductUsecase {
 
 
   private mapToCreateProductRepoInput = (
-    input: ProductCreateRequest 
+    input: Product 
   ) => {
     const createProduct: CreateProductInput = {
       storeId: input.storeId,
@@ -73,7 +73,7 @@ export class ProductUsecase {
       buyingPeriod: input.buyingPeriod?.join(','),
       isRecomend: input.isRecomend ? 1 : 0,
       productName: input.productName,
-      productImage: input.productImage.join(','),
+      productImage: input.productImage?.join(','),
       productDescription: input.productDescription,
       capacity: input.capacity,
       expirationUseDate: input.expirationUseDate,
@@ -168,7 +168,7 @@ export class ProductUsecase {
 
   };
 
-  private validatePrice = (input: ProductCreateRequest) => {
+  private validatePrice = (input: Product) => {
     if (!input.price || !input.priceBeforeDiscount || !input.stockItem) { 
       throw new BadRequestError('invalid price setting');
     }
