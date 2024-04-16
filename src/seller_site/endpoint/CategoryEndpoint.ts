@@ -20,7 +20,7 @@ export class CategoryEndpoint {
   private createCategory = async (req: ProtectedRequest, res: Response) => {
     try {
       const categories =
-        await this.categoryUsecase.getgetCategoriesTheSameLevel(
+        await this.categoryUsecase.getCategoriesTheSameLevel(
           req.body.parentId || null,
         );
       const categoryCreateRequest: CategoryCreateRequest = {

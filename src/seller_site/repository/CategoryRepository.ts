@@ -154,14 +154,15 @@ export class CategoryRepository {
 
   public moveUpCategory = async (input: MovePositionRequest, id: string) => {
     try {
-      const categoriesTheSameLevel = await this.getCategoriesTheSameLevel(
-        input.parentId,
-      );
 
       const category = await this.getCategoryId(id);
       if (input.parentId != null) {
         await this.getCategoryId(input.parentId);
       }
+
+      const categoriesTheSameLevel = await this.getCategoriesTheSameLevel(
+        category.parentId,
+      );
 
       categoriesTheSameLevel.length > 0 &&
         categoriesTheSameLevel.map((res: any) => {

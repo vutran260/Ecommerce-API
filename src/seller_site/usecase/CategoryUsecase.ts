@@ -39,7 +39,7 @@ export class CategoryUsecase {
     return this.categoryRepo.getCategoriesWithHierarchy(store_id, id);
   };
 
-  public getgetCategoriesTheSameLevel = async (parentId?: string) => {
+  public getCategoriesTheSameLevel = async (parentId?: string) => {
     return this.categoryRepo.getCategoriesTheSameLevel(parentId);
   };
 
