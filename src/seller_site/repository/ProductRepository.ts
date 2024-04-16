@@ -1,4 +1,7 @@
-import Product, { ProductFromLP_PRODUCT } from '../requests/products/Product';
+import Product, {
+  ProductFromLP_PRODUCT,
+  ProductToLP_PRODUCT,
+} from '../requests/products/Product';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
@@ -21,31 +24,35 @@ import {
   LP_PRODUCT_OPTION,
   LP_PRODUCT_OPTIONCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
-import {
-  LP_PRODUCT_OPTION_PRICECreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
+import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../requests/products/ProductCompoment';
 import { ProductOptionFromLP_PRODUCT_OPTION } from '../requests/products/ProductOption';
 import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../requests/products/ProductOptionPrice';
 
 export class ProductRepository {
-  public createProduct = async (input: CreateProductInput): Promise<Product> => {
-
+  public createProduct = async (
+    input: CreateProductInput,
+  ): Promise<Product> => {
     const product = await LP_PRODUCT.create(input);
 
-    await Promise.all(input.lpProductComponents.map((component) => {
-      return product.createLpProductComponent(component);
-    }))
-    await Promise.all(input.lpProductOptions.map((option) => {
-      return product.createLpProductOption(option);
-    }))
-    await Promise.all(input.lpProductOptionPrices.map((optionPrice) => {
-      return product.createLpProductOptionPrice(optionPrice);
-    }))
+    await Promise.all(
+      input.lpProductComponents.map((component) => {
+        return product.createLpProductComponent(component);
+      }),
+    );
+    await Promise.all(
+      input.lpProductOptions.map((option) => {
+        return product.createLpProductOption(option);
+      }),
+    );
+    await Promise.all(
+      input.lpProductOptionPrices.map((optionPrice) => {
+        return product.createLpProductOptionPrice(optionPrice);
+      }),
+    );
 
     return this.getProductId(product.id);
   };
-
 
   public getProductId = async (id: string): Promise<Product> => {
     const result = await LP_PRODUCT.findByPk(id);
@@ -53,29 +60,47 @@ export class ProductRepository {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
-    const out: Product = ProductFromLP_PRODUCT( result.dataValues);
+    const out: Product = ProductFromLP_PRODUCT(result.dataValues);
 
-
-    (await result.getLpProductComponents()).forEach(
-      (component) => out.components.push(ProductCompomentFromLP_PRODUCT_COMPONENT(component.dataValues))
+    (await result.getLpProductComponents()).forEach((component) =>
+      out.components.push(
+        ProductCompomentFromLP_PRODUCT_COMPONENT(component.dataValues),
+      ),
     );
-    (await result.getLpProductOptions()).forEach(
-      (option) => out.options.push(ProductOptionFromLP_PRODUCT_OPTION(option.dataValues))
+    (await result.getLpProductOptions()).forEach((option) =>
+      out.options.push(ProductOptionFromLP_PRODUCT_OPTION(option.dataValues)),
     );
 
-    (await result.getLpProductOptionPrices()).forEach(
-      (optionPrice) => out.optionPrices.push(ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE(optionPrice.dataValues))
+    (await result.getLpProductOptionPrices()).forEach((optionPrice) =>
+      out.optionPrices.push(
+        ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE(optionPrice.dataValues),
+      ),
     );
 
     return out;
   };
 
-  public updateProduct = async (productCreateRequest: Product, id: string) => {
+  public updateProduct = async (input: Product): Promise<Product> => {
     try {
-      const product = await this.getProductId(id);
-      // if (product) {
-      //   // return await product.update(productCreateRequest);
-      // }
+      const lpProduct = await LP_PRODUCT.findByPk(input.id);
+      if (!lpProduct) {
+        throw new NotFoundError(`Product with id ${input.id} not found`);
+      }
+      await lpProduct.update(ProductToLP_PRODUCT(input));
+
+      (await lpProduct.getLpProductComponents()).forEach(async (component) => {
+        await component.destroy();
+      });
+
+      await Promise.all(
+        input.components.map((component) => {
+          return lpProduct.createLpProductComponent(
+            ProductCompomentFromLP_PRODUCT_COMPONENT(component),
+          );
+        }),
+      );
+
+      return await this.getProductId(input.id);
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
@@ -91,7 +116,6 @@ export class ProductRepository {
       throw error;
     }
   };
-
 
   public getProducts = async (
     filter: Filter[],

@@ -1,4 +1,4 @@
-import Product from '../requests/products/Product';
+import Product, { ProductToLP_PRODUCT } from '../requests/products/Product';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import {
@@ -20,6 +20,22 @@ export class ProductUsecase {
 
   public createProduct = async (input: Product) => {
 
+    this.validateProduct(input);
+
+    const createProductRepoInput = this.mapToCreateProductRepoInput(input)
+
+    return await this.productRepo.createProduct(createProductRepoInput);
+  };
+
+  public updateProduct = async (input: Product) => {
+
+    this.validateProduct(input);
+
+    return await this.productRepo.updateProduct(input);
+  };
+
+
+  private validateProduct (input: Product) {
     if (input.hasOption){
       this.validateOption(input.options, input.optionPrices);
     } else {
@@ -35,15 +51,7 @@ export class ProductUsecase {
     if (!input.hasOption && (input.optionPrices?.length>0 || input.options?.length>0) ) {
       throw new BadRequestError('fix price product must not have option or option price');
     }
-
-    const createProductRepoInput = this.mapToCreateProductRepoInput(input)
-
-    return await this.productRepo.createProduct(createProductRepoInput);
-  };
-
-  public updateProduct = async (input: Product, id: string) => {
-    return this.productRepo.updateProduct(input, id);
-  };
+  }
 
   public deleteProduct = async (id: string) => {
     return this.productRepo.deleteProduct(id);

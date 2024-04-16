@@ -35,15 +35,12 @@ export class ProductEndpoint {
   };
 
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
-    const id: string = req.params.id;
-
-    const productUpdateRequest: Product = req.body as Product;
-    productUpdateRequest.storeId = req.storeId;
-
-    await validatorRequest(productUpdateRequest);
-
-    const results = await this.productUsecase.updateProduct(req.body, id);
-    return ResponseData(results, res);
+      const productCreateRequest = plainToClass(Product, req.body);
+      await validatorRequest(productCreateRequest);
+      const results = await this.productUsecase.updateProduct(
+        productCreateRequest,
+      );
+      return ResponseData(results, res);
   };
 
   private getDetailProduct = async (req: Request, res: Response) => {
@@ -64,7 +61,7 @@ export class ProductEndpoint {
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
-    router.put('/update/:id', this.updateProduct);
+    router.put('/', this.updateProduct);
     // router.delete('/delete/:id', this.deleteProduct);
     router.get('/detail/:id', this.getDetailProduct);
     router.get(

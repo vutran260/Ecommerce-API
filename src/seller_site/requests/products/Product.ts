@@ -4,7 +4,6 @@ import ProductOption from './ProductOption';
 import ProductOptionPrice from './ProductOptionPrice';
 import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
-import { LP_PRODUCT_COMPONENTAttributes } from '../../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 
 export default class Product {
   id: string;
