@@ -107,8 +107,8 @@ export class CategoryRepository {
       '(SELECT a.*, a.id AS path, 0 as depth, ' +
       `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
       (!id
-        ? 'AND parent_id IS NULL) as brother_count '
-        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotheCount `) +
+        ? 'AND parent_id IS NULL) as brotherCount '
+        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotherCount `) +
       `FROM LP_CATEGORY as a WHERE store_id = '${storeId}' AND ` +
       (!id ? 'parent_id IS NULL ' : `id = '${id}' `) +
       'UNION ALL ' +
@@ -241,6 +241,7 @@ export class CategoryRepository {
 }
 
 class CategoryHierarchie extends LP_CATEGORY {
+  brotherCount: number;
   path: string;
   depth: number;
   children?: CategoryHierarchie[];
