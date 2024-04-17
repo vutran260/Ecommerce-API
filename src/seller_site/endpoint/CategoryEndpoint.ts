@@ -85,7 +85,7 @@ export class CategoryEndpoint {
     req: ProtectedRequest,
     res: Response,
   ) => {
-    const id: string = req.params.id;
+    const id = req.query.id?.toString() || '';
     const response = await this.categoryUsecase.getCategoriesWithHierarchy(
       req.storeId!,
       id,

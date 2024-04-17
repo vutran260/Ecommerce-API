@@ -102,24 +102,44 @@ export class CategoryRepository {
   };
 
   public getCategoriesWithHierarchy = async (storeId: string, id = '') => {
+    // const query =
+    //   `
+    //     WITH RECURSIVE cte AS
+    //     (
+    //         SELECT *,
+    //                CAST(id AS CHAR(200)) AS path,
+    //                0 as depth,
+    //                select count(*) from LP_CATEGORY where parent_id = `+
+    //                (!id? `IS NULL ` : `= (SELECT parent_id FROM LP_CATEGORY where id = "${id}") `)+
+    //                ` FROM LP_CATEGORY
+    //                WHERE store_id = "${storeId}" AND ` +
+    //   (!id ? `parent_id IS NULL ` : `id = "${id}" `) +
+    //   `UNION ALL
+    //         SELECT c.*,
+    //                CONCAT(cte.path, ",", c.id),
+    //                cte.depth+1,
+    //                select count(*) from LP_CATEGORY where parent_id = (SELECT parent_id FROM LP_CATEGORY where id = c.id)
+    //         FROM LP_CATEGORY c JOIN cte ON
+    //         cte.id=c.parent_id
+    //       )
+    //       SELECT * FROM cte ORDER BY depth ASC, order_level ASC;
+    //     `;
+
     const query =
-      `
-        WITH RECURSIVE cte AS
-        (
-            SELECT *,
-                   CAST(id AS CHAR(200)) AS path,
-                   0 as depth FROM LP_CATEGORY 
-                   WHERE store_id = "${storeId}" AND ` +
-      (!id ? `parent_id IS NULL ` : `id = "${id}" `) +
-      `UNION ALL
-            SELECT c.*, 
-                   CONCAT(cte.path, ",", c.id),
-                   cte.depth+1
-            FROM LP_CATEGORY c JOIN cte ON
-            cte.id=c.parent_id
-          )
-          SELECT * FROM cte ORDER BY depth ASC, order_level ASC;
-        `;
+      'WITH RECURSIVE cte AS ' +
+      '(SELECT a.*, a.id AS path, 0 as depth, ' +
+      `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
+      (!id
+        ? 'AND parent_id IS NULL) as brother_count '
+        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brother_count `) +
+      `FROM LP_CATEGORY as a WHERE store_id = '${storeId}' AND ` +
+      (!id ? 'parent_id IS NULL ' : `id = '${id}' `) +
+      'UNION ALL ' +
+      "SELECT c.*, CONCAT(cte.path, ',', c.id), cte.depth + 1, " +
+      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brother_count ' +
+      'FROM LP_CATEGORY c ' +
+      'JOIN cte ON cte.id = c.parent_id ) ' +
+      'SELECT * FROM cte ORDER BY depth ASC, order_level ASC;';
 
     const record = await lpSequelize.query(query, {
       raw: true,
@@ -131,15 +151,15 @@ export class CategoryRepository {
     const mapCte = new Map<string, CategoryHierarchie>();
     for (const category of record) {
       mapCte.set(category.id, category);
-      const test: any = this.getCategoriesTheSameLevel(category.id);
-      if (category.parentId === null) {
+      // const test: any = this.getCategoriesTheSameLevel(category.id);
+      if (category.parentId === null || (category.parentId && !mapCte.has(category.parentId))) {
         delete category.children;
         out.push(category);
         continue;
       }
 
       const parentCate = mapCte.get(category.parentId!);
-
+      // parent exist
       if (!!parentCate && !parentCate?.children) {
         parentCate.children = [];
       }
@@ -154,7 +174,6 @@ export class CategoryRepository {
 
   public moveUpCategory = async (input: MovePositionRequest, id: string) => {
     try {
-
       const category = await this.getCategoryId(id);
       if (input.parentId != null) {
         await this.getCategoryId(input.parentId);
