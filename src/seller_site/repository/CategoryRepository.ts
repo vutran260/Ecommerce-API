@@ -102,41 +102,18 @@ export class CategoryRepository {
   };
 
   public getCategoriesWithHierarchy = async (storeId: string, id = '') => {
-    // const query =
-    //   `
-    //     WITH RECURSIVE cte AS
-    //     (
-    //         SELECT *,
-    //                CAST(id AS CHAR(200)) AS path,
-    //                0 as depth,
-    //                select count(*) from LP_CATEGORY where parent_id = `+
-    //                (!id? `IS NULL ` : `= (SELECT parent_id FROM LP_CATEGORY where id = "${id}") `)+
-    //                ` FROM LP_CATEGORY
-    //                WHERE store_id = "${storeId}" AND ` +
-    //   (!id ? `parent_id IS NULL ` : `id = "${id}" `) +
-    //   `UNION ALL
-    //         SELECT c.*,
-    //                CONCAT(cte.path, ",", c.id),
-    //                cte.depth+1,
-    //                select count(*) from LP_CATEGORY where parent_id = (SELECT parent_id FROM LP_CATEGORY where id = c.id)
-    //         FROM LP_CATEGORY c JOIN cte ON
-    //         cte.id=c.parent_id
-    //       )
-    //       SELECT * FROM cte ORDER BY depth ASC, order_level ASC;
-    //     `;
-
     const query =
       'WITH RECURSIVE cte AS ' +
       '(SELECT a.*, a.id AS path, 0 as depth, ' +
       `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
       (!id
         ? 'AND parent_id IS NULL) as brother_count '
-        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brother_count `) +
+        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotheCount `) +
       `FROM LP_CATEGORY as a WHERE store_id = '${storeId}' AND ` +
       (!id ? 'parent_id IS NULL ' : `id = '${id}' `) +
       'UNION ALL ' +
       "SELECT c.*, CONCAT(cte.path, ',', c.id), cte.depth + 1, " +
-      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brother_count ' +
+      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brotherCount ' +
       'FROM LP_CATEGORY c ' +
       'JOIN cte ON cte.id = c.parent_id ) ' +
       'SELECT * FROM cte ORDER BY depth ASC, order_level ASC;';
