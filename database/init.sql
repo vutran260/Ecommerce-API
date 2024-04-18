@@ -189,3 +189,15 @@ CREATE TABLE LP_CATEGORY (
 
     CONSTRAINT fk_store_id_category FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
   );
+
+CREATE TABLE LP_PRODUCT_CATEGORY (
+  product_id VARCHAR(36) NOT NULL,
+  category_id VARCHAR(36) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(225),
+
+  CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
+  CONSTRAINT FOREIGN KEY (category_id) REFERENCES LP_CATEGORY (id),
+
+  PRIMARY KEY (product_id, category_id)
+);
