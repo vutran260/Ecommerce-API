@@ -64,6 +64,17 @@ export class CategoryRepository {
       ids.length > 0 &&
         ids.forEach(async (id) => {
           const category = await this.getCategoryId(id);
+          const categoriesTheSameLevel: any[any] =
+            await this.getCategoriesTheSameLevel(category?.parentId);
+          const filterCategories = categoriesTheSameLevel.filter(
+            (res: any) => res.orderLevel > category.orderLevel,
+          );
+          filterCategories.length > 0 &&
+            filterCategories.map((res: any) => {
+              res.orderLevel = res.orderLevel - 1;
+              res.save();
+            });
+
           return await category.destroy();
         });
     } catch (error: any) {
@@ -129,7 +140,10 @@ export class CategoryRepository {
     for (const category of record) {
       mapCte.set(category.id, category);
       // const test: any = this.getCategoriesTheSameLevel(category.id);
-      if (category.parentId === null || (category.parentId && !mapCte.has(category.parentId))) {
+      if (
+        category.parentId === null ||
+        (category.parentId && !mapCte.has(category.parentId))
+      ) {
         delete category.children;
         out.push(category);
         continue;
@@ -236,7 +250,7 @@ export class CategoryRepository {
       ...options,
     });
 
-    return categories;
+    return await categories;
   };
 }
 
