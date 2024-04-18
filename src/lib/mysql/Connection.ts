@@ -4,10 +4,12 @@ import { Sequelize } from 'sequelize-typescript';
 import { initModels } from './models/init-models';
 
 
+export let lpSequelize: Sequelize;
+
 export const SetupDB = () => {
   try {
     console.log(process.env.MYSQL_DATABASE);
-    const se = new Sequelize({
+    lpSequelize = new Sequelize({
       host: process.env.MYSQL_HOST,
       port: parseInt(process.env.MYSQL_PORT || '1111'),
       username: process.env.MYSQL_USER,
@@ -16,7 +18,7 @@ export const SetupDB = () => {
       dialect: 'mysql',
       storage: ':memory:',
     });
-    initModels(se);
+    initModels(lpSequelize);
   } catch (error) {
     console.log(error);
     throw error;
