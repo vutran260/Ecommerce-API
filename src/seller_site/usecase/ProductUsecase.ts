@@ -120,6 +120,12 @@ export class ProductUsecase {
           stockItem: optionPrice.stockItem,
         };
       }),
+      lpProductCategories: input.categories.map((category) => {
+        return {
+          productId: '',
+          categoryId: category,
+        };
+      }),
       price: parseFloat(input.price),
       priceBeforeDiscount: parseFloat(input.priceBeforeDiscount),
       cost: parseFloat(input.cost),

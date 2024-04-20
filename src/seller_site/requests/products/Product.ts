@@ -94,6 +94,9 @@ export default class Product {
 
   @IsArray()
   optionPrices: ProductOptionPrice[];
+
+  @IsArray()
+  categories: string[];
 }
 
 export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
@@ -164,5 +167,6 @@ export const ProductFromLP_PRODUCT = (
     components: [],
     options: [],
     optionPrices: [],
+    categories: [],
   };
 };

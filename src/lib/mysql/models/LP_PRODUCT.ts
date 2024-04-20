@@ -1,5 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
+import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
 import type { LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId } from './LP_PRODUCT_OPTION';
 import type { LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId } from './LP_PRODUCT_OPTION_PRICE';
@@ -67,6 +69,30 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   updatedAt?: Date;
   deletedAt?: Date;
 
+  // LP_PRODUCT belongsToMany LP_CATEGORY via productId and categoryId
+  categoryIdLpCategories!: LP_CATEGORY[];
+  getCategoryIdLpCategories!: Sequelize.BelongsToManyGetAssociationsMixin<LP_CATEGORY>;
+  setCategoryIdLpCategories!: Sequelize.BelongsToManySetAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  addCategoryIdLpCategory!: Sequelize.BelongsToManyAddAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  addCategoryIdLpCategories!: Sequelize.BelongsToManyAddAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  createCategoryIdLpCategory!: Sequelize.BelongsToManyCreateAssociationMixin<LP_CATEGORY>;
+  removeCategoryIdLpCategory!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  removeCategoryIdLpCategories!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  hasCategoryIdLpCategory!: Sequelize.BelongsToManyHasAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
+  hasCategoryIdLpCategories!: Sequelize.BelongsToManyHasAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
+  countCategoryIdLpCategories!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_PRODUCT_CATEGORY via productId
+  lpProductCategories!: LP_PRODUCT_CATEGORY[];
+  getLpProductCategories!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_CATEGORY>;
+  setLpProductCategories!: Sequelize.HasManySetAssociationsMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  addLpProductCategory!: Sequelize.HasManyAddAssociationMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  addLpProductCategories!: Sequelize.HasManyAddAssociationsMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  createLpProductCategory!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_CATEGORY>;
+  removeLpProductCategory!: Sequelize.HasManyRemoveAssociationMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  removeLpProductCategories!: Sequelize.HasManyRemoveAssociationsMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  hasLpProductCategory!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  hasLpProductCategories!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId>;
+  countLpProductCategories!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_PRODUCT_COMPONENT via productId
   lpProductComponents!: LP_PRODUCT_COMPONENT[];
   getLpProductComponents!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_COMPONENT>;

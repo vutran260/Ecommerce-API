@@ -12,22 +12,21 @@ import {
 } from '../../lib/paging/Request';
 import {
   LP_PRODUCT,
-  LP_PRODUCTAttributes,
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
-  LP_PRODUCT_COMPONENT,
   LP_PRODUCT_COMPONENTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import {
-  LP_PRODUCT_OPTION,
   LP_PRODUCT_OPTIONCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
 import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../requests/products/ProductCompoment';
 import { ProductOptionFromLP_PRODUCT_OPTION } from '../requests/products/ProductOption';
 import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../requests/products/ProductOptionPrice';
+import { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
 
 export class ProductRepository {
   public createProduct = async (
@@ -50,6 +49,12 @@ export class ProductRepository {
         return product.createLpProductOptionPrice(optionPrice);
       }),
     );
+
+    await Promise.all(
+      input.lpProductCategories.map((category) => {
+        return product.createLpProductCategory(category);
+      })
+    )
 
     return this.getProductId(product.id);
   };
@@ -77,6 +82,9 @@ export class ProductRepository {
       ),
     );
 
+    (await result.getLpProductCategories()).forEach((category) =>
+      out.categories.push(category.dataValues.categoryId))
+
     return out;
   };
 
@@ -99,6 +107,19 @@ export class ProductRepository {
           );
         }),
       );
+
+      await LP_PRODUCT_CATEGORY.destroy({
+        where: {
+          productId: input.id
+        }
+      })
+
+      await Promise.all(input.categories.map((category) => {
+        return lpProduct.createLpProductCategory({
+          categoryId: category,
+          productId: input.id
+        })
+      }))
 
       return await this.getProductId(input.id);
     } catch (error: any) {
@@ -147,4 +168,5 @@ export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
   lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
   lpProductOptions: LP_PRODUCT_OPTIONCreationAttributes[];
   lpProductOptionPrices: LP_PRODUCT_OPTION_PRICECreationAttributes[];
+  lpProductCategories: LP_PRODUCT_CATEGORYCreationAttributes[];
 }
