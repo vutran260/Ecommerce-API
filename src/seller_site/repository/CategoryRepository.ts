@@ -61,22 +61,35 @@ export class CategoryRepository {
 
   public deleteCategory = async (ids: string[]) => {
     try {
-      ids.length > 0 &&
-        ids.forEach(async (id) => {
-          const category = await this.getCategoryId(id);
-          const categoriesTheSameLevel: any[any] =
-            await this.getCategoriesTheSameLevel(category?.parentId);
-          const filterCategories = categoriesTheSameLevel.filter(
-            (res: any) => res.orderLevel > category.orderLevel,
-          );
-          filterCategories.length > 0 &&
-            filterCategories.map((res: any) => {
-              res.orderLevel = res.orderLevel - 1;
-              res.save();
-            });
+      for (let index = 0; index < ids.length; index++) {
+        const id = ids[index];
+        const category = await this.getCategoryId(id);
 
-          return await category.destroy();
-        });
+        // Get all the same category parent.
+        const categoriesTheSameLevel: any[any] =
+          await this.getCategoriesTheSameLevel(category?.parentId);
+
+        // Filter categories have filed order level grater of order level category truyen vao
+        const filterCategories = await categoriesTheSameLevel.filter(
+          (res: any) => res.id != category.id,
+        );
+        await category.destroy();
+
+        for (let index1 = 0; index1 < filterCategories.length; index1++) {
+          const updateCategory: CategoryCreateRequest = {
+            parentId: filterCategories[index]?.dataValues.parentId,
+            storeId: filterCategories[index]?.dataValues.storeId,
+            categoryName: filterCategories[index]?.dataValues.categoryName,
+            categoryTag: filterCategories[index]?.dataValues.categoryTag,
+            status: filterCategories[index]?.dataValues.status,
+            orderLevel: index1 + 1,
+          };
+          await this.updateCategory(
+            updateCategory,
+            filterCategories[index1].dataValues.id,
+          );
+        }
+      }
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
