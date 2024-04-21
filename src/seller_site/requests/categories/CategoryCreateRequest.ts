@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export default class CategoryCreateRequest {
   id?: string;
@@ -19,4 +19,7 @@ export default class CategoryCreateRequest {
   @IsString()
   @IsNotEmpty()
   status: string;
+
+  @IsNumber()
+  orderLevel: number;
 }

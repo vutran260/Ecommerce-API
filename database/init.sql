@@ -183,6 +183,7 @@ CREATE TABLE LP_CATEGORY (
     category_name VARCHAR(255),
     category_tag VARCHAR(255),
     status VARCHAR(255),
+    order_level INT(1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,

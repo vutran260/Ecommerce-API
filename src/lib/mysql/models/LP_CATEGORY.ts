@@ -11,6 +11,7 @@ export interface LP_CATEGORYAttributes {
   categoryName?: string;
   categoryTag?: string;
   status?: string;
+  orderLevel?: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -18,7 +19,7 @@ export interface LP_CATEGORYAttributes {
 
 export type LP_CATEGORYPk = "id";
 export type LP_CATEGORYId = LP_CATEGORY[LP_CATEGORYPk];
-export type LP_CATEGORYOptionalAttributes = "id" | "parentId" | "categoryName" | "categoryTag" | "status" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_CATEGORYOptionalAttributes = "id" | "parentId" | "categoryName" | "categoryTag" | "status" | "orderLevel" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_CATEGORYCreationAttributes = Optional<LP_CATEGORYAttributes, LP_CATEGORYOptionalAttributes>;
 
 export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes> implements LP_CATEGORYAttributes {
@@ -28,6 +29,7 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
   categoryName?: string;
   categoryTag?: string;
   status?: string;
+  orderLevel?: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -97,6 +99,11 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    orderLevel: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'order_level'
     },
     createdAt: {
       type: DataTypes.DATE,
