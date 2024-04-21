@@ -1,5 +1,8 @@
 import Logger from '../../lib/core/Logger';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import {
+  DataExists,
+  NotFoundError,
+} from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
@@ -25,6 +28,15 @@ export class CategoryRepository {
     try {
       if (categoryCreateRequest.parentId != null) {
         await this.getCategoryId(categoryCreateRequest.parentId);
+      }
+
+      const existingCategoryName = await LP_CATEGORY.findOne({
+        where: {
+          categoryName: categoryCreateRequest.categoryName,
+        },
+      });
+      if (existingCategoryName) {
+        throw new DataExists();
       }
 
       const results = await LP_CATEGORY.create(categoryCreateRequest)
@@ -69,25 +81,26 @@ export class CategoryRepository {
         const categoriesTheSameLevel: any[any] =
           await this.getCategoriesTheSameLevel(category?.parentId);
 
-        // Filter categories have filed order level grater of order level category truyen vao
+        // Filter categories have filed order level grater of order level category input
         const filterCategories = await categoriesTheSameLevel.filter(
           (res: any) => res.id != category.id,
         );
         await category.destroy();
-
-        for (let index1 = 0; index1 < filterCategories.length; index1++) {
-          const updateCategory: CategoryCreateRequest = {
-            parentId: filterCategories[index]?.dataValues.parentId,
-            storeId: filterCategories[index]?.dataValues.storeId,
-            categoryName: filterCategories[index]?.dataValues.categoryName,
-            categoryTag: filterCategories[index]?.dataValues.categoryTag,
-            status: filterCategories[index]?.dataValues.status,
-            orderLevel: index1 + 1,
-          };
-          await this.updateCategory(
-            updateCategory,
-            filterCategories[index1].dataValues.id,
-          );
+        if (filterCategories.length > 0) {
+          filterCategories.forEach(async (res: any, index: number) => {
+            const updateCategory: CategoryCreateRequest = {
+              parentId: filterCategories[index]?.dataValues.parentId,
+              storeId: filterCategories[index]?.dataValues.storeId,
+              categoryName: filterCategories[index]?.dataValues.categoryName,
+              categoryTag: filterCategories[index]?.dataValues.categoryTag,
+              status: filterCategories[index]?.dataValues.status,
+              orderLevel: index + 1,
+            };
+            await this.updateCategory(
+              updateCategory,
+              filterCategories[index].dataValues.id,
+            );
+          });
         }
       }
     } catch (error: any) {
