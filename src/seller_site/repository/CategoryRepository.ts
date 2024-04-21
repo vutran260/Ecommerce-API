@@ -1,5 +1,8 @@
 import Logger from '../../lib/core/Logger';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import {
+  DataExists,
+  NotFoundError,
+} from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
@@ -25,6 +28,15 @@ export class CategoryRepository {
     try {
       if (categoryCreateRequest.parentId != null) {
         await this.getCategoryId(categoryCreateRequest.parentId);
+      }
+
+      const existingCategoryName = await LP_CATEGORY.findOne({
+        where: {
+          categoryName: categoryCreateRequest.categoryName,
+        },
+      });
+      if (existingCategoryName) {
+        throw new DataExists();
       }
 
       const results = await LP_CATEGORY.create(categoryCreateRequest)
@@ -61,22 +73,36 @@ export class CategoryRepository {
 
   public deleteCategory = async (ids: string[]) => {
     try {
-      ids.length > 0 &&
-        ids.forEach(async (id) => {
-          const category = await this.getCategoryId(id);
-          const categoriesTheSameLevel: any[any] =
-            await this.getCategoriesTheSameLevel(category?.parentId);
-          const filterCategories = categoriesTheSameLevel.filter(
-            (res: any) => res.orderLevel > category.orderLevel,
-          );
-          filterCategories.length > 0 &&
-            filterCategories.map((res: any) => {
-              res.orderLevel = res.orderLevel - 1;
-              res.save();
-            });
+      for (let index = 0; index < ids.length; index++) {
+        const id = ids[index];
+        const category = await this.getCategoryId(id);
 
-          return await category.destroy();
-        });
+        // Get all the same category parent.
+        const categoriesTheSameLevel: any[any] =
+          await this.getCategoriesTheSameLevel(category?.parentId);
+
+        // Filter categories have filed order level grater of order level category input
+        const filterCategories = await categoriesTheSameLevel.filter(
+          (res: any) => res.id != category.id,
+        );
+        await category.destroy();
+        if (filterCategories.length > 0) {
+          filterCategories.forEach(async (res: any, index: number) => {
+            const updateCategory: CategoryCreateRequest = {
+              parentId: filterCategories[index]?.dataValues.parentId,
+              storeId: filterCategories[index]?.dataValues.storeId,
+              categoryName: filterCategories[index]?.dataValues.categoryName,
+              categoryTag: filterCategories[index]?.dataValues.categoryTag,
+              status: filterCategories[index]?.dataValues.status,
+              orderLevel: index + 1,
+            };
+            await this.updateCategory(
+              updateCategory,
+              filterCategories[index].dataValues.id,
+            );
+          });
+        }
+      }
     } catch (error: any) {
       Logger.error(error.message);
       throw error;
