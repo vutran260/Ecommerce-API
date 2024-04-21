@@ -81,6 +81,6 @@ export class AccessTokenError extends ApiError {
 
 export class DataExists extends ApiError {
   constructor(message = 'Data is already exists') {
-    super(ErrorType.DATA_EXISTS, message);
+    super(ErrorType.DATA_EXISTS, message, ErrorCode.ALREADY_EXISTS);
   }
 }
