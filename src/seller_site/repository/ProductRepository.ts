@@ -15,18 +15,18 @@ import {
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import {
-  LP_PRODUCT_COMPONENTCreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
-import {
-  LP_PRODUCT_OPTIONCreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT_OPTION';
+import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
+import { LP_PRODUCT_OPTIONCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
 import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../requests/products/ProductCompoment';
 import { ProductOptionFromLP_PRODUCT_OPTION } from '../requests/products/ProductOption';
 import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../requests/products/ProductOptionPrice';
-import { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+import {
+  LP_PRODUCT_CATEGORY,
+  LP_PRODUCT_CATEGORYCreationAttributes,
+} from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
+import { forEach } from 'lodash';
 
 export class ProductRepository {
   public createProduct = async (
@@ -53,8 +53,8 @@ export class ProductRepository {
     await Promise.all(
       input.lpProductCategories.map((category) => {
         return product.createLpProductCategory(category);
-      })
-    )
+      }),
+    );
 
     return this.getProductId(product.id);
   };
@@ -83,7 +83,8 @@ export class ProductRepository {
     );
 
     (await result.getLpProductCategories()).forEach((category) =>
-      out.categories.push(category.dataValues.categoryId))
+      out.categories.push(category.dataValues.categoryId),
+    );
 
     return out;
   };
@@ -110,16 +111,18 @@ export class ProductRepository {
 
       await LP_PRODUCT_CATEGORY.destroy({
         where: {
-          productId: input.id
-        }
-      })
+          productId: input.id,
+        },
+      });
 
-      await Promise.all(input.categories.map((category) => {
-        return lpProduct.createLpProductCategory({
-          categoryId: category,
-          productId: input.id
-        })
-      }))
+      await Promise.all(
+        input.categories.map((category) => {
+          return lpProduct.createLpProductCategory({
+            categoryId: category,
+            productId: input.id,
+          });
+        }),
+      );
 
       return await this.getProductId(input.id);
     } catch (error: any) {
@@ -128,12 +131,17 @@ export class ProductRepository {
     }
   };
 
-  public deleteProduct = async (id: string) => {
+  public deleteProducts = async (ids: string[]) => {
     try {
-      const product = await this.getProductId(id);
-      // return await product.destroy();
+      ids.forEach(async (id) => {
+        const lpProduct = await LP_PRODUCT.findByPk(id);
+        if (!lpProduct) {
+          throw new NotFoundError(`Product with id ${id} not found`);
+        }
+        await lpProduct.update({ isDeleted: 1, deletedAt: new Date() });
+      });
     } catch (error: any) {
-      Logger.error(error.message);
+      Logger.error(error);
       throw error;
     }
   };
@@ -144,6 +152,11 @@ export class ProductRepository {
     paging: Paging,
   ) => {
     try {
+      filter.push({
+        operation: 'eq',
+        value: 0,
+        attribute: 'isDeleted',
+      });
       const count = await LP_PRODUCT.count({
         where: BuildQuery(filter),
       });

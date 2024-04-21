@@ -124,6 +124,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     stockItem: product.stockItem,
     productTag: product.productTag,
     status: product.status,
+    isDeleted: 0,
   };
 };
 

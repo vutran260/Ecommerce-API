@@ -31,6 +31,7 @@ export interface LP_PRODUCTAttributes {
   stockItem?: number;
   productTag?: string;
   status?: string;
+  isDeleted: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -38,7 +39,7 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceBeforeDiscount" | "cost" | "stockItem" | "productTag" | "status" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceBeforeDiscount" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
@@ -65,6 +66,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   stockItem?: number;
   productTag?: string;
   status?: string;
+  isDeleted!: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -250,6 +252,12 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    isDeleted: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'is_deleted'
     },
     createdAt: {
       type: DataTypes.DATE,

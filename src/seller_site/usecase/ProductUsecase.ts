@@ -54,8 +54,13 @@ export class ProductUsecase {
   }
 
   public deleteProduct = async (id: string) => {
-    return this.productRepo.deleteProduct(id);
+    return this.productRepo.deleteProducts([id]);
   };
+
+
+  public deleteProducts = async (ids: string[]) => {
+    return this.productRepo.deleteProducts(ids);
+  }
 
   public detailProduct = async (id: string) => {
     return this.productRepo.getProductId(id);

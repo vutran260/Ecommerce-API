@@ -58,11 +58,24 @@ export class ProductEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
+  private deleteProduct = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    await this.productUsecase.deleteProduct(id);
+    return ResponseData({ message: 'Deleted is successfully!' }, res);
+  }
+
+  private deleteProducts = async (req: Request, res: Response) => {
+    const ids: string[] = req.body.ids;
+    await this.productUsecase.deleteProducts(ids);
+    return ResponseData({ message: 'Deleted is successfully!' }, res);
+  }
+
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
     router.put('/', this.updateProduct);
-    // router.delete('/delete/:id', this.deleteProduct);
+    router.delete('/delete/:id', this.deleteProduct);
+    router.delete('/products', this.deleteProducts);
     router.get('/detail/:id', this.getDetailProduct);
     router.get(
       '/products',
