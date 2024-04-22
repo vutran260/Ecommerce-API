@@ -16,8 +16,6 @@ VALUES( 'email', 'phone', 'password', 'username', 'fullname');
 
 CREATE TABLE LP_USER (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    contact_id VARCHAR(36) NOT NULL,
-    prefecture_id VARCHAR(225) NOT NULL,
     email VARCHAR(255),
     phone VARCHAR(225),
     password VARCHAR(225),

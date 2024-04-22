@@ -1,7 +1,6 @@
-import { UserRepository } from './repository/UserRepository';
-import { UserUsecase } from './usecase/UserUsecase';
-import { UserEndpoint } from './endpoint/UserEndpoint';
 import express from 'express';
+import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
+import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
 
 export class adminSiteRouter {
 
@@ -9,12 +8,11 @@ export class adminSiteRouter {
 
     const router = express.Router();
 
-    const userRepo = new UserRepository()
-    const userUsecase = new UserUsecase(userRepo)
-    const userRouter = new UserEndpoint(userUsecase)
+    const buyerEndpoint = new BuyerEndpoint();
 
-    router.use('/user', userRouter.getRouter())
-
+    router.use(BuyerAuthenMiddlleware)
+    
+    router.get('/buyer', buyerEndpoint.getRouter())
 
     return router
   }
