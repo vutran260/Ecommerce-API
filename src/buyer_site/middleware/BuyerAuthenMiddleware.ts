@@ -37,7 +37,7 @@ export const BuyerAuthenMiddlleware = asyncHandler(
       if (!user) {
        user = await LP_USER.create({
           id: buyerInfo.id,
-          contactId: '',
+          contactId: buyerInfo.id,
           prefectureId: '',
         });
       }

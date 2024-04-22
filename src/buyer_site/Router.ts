@@ -2,9 +2,9 @@ import express from 'express';
 import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
 import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
 
-export class adminSiteRouter {
+export class buyerSiteRouter {
 
-  public getAdminSiteRouter = () => {
+  public getBuyerSiteRouter = () => {
 
     const router = express.Router();
 

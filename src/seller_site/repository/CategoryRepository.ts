@@ -141,7 +141,7 @@ export class CategoryRepository {
   public getCategoriesWithHierarchy = async (storeId: string, id = '') => {
     const query =
       'WITH RECURSIVE cte AS ' +
-      '(SELECT a.*, a.id AS path, 0 as depth, ' +
+      '(SELECT a.*, CAST(a.id AS CHAR(200)) AS path, 0 as depth, ' +
       `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
       (!id
         ? 'AND parent_id IS NULL) as brotherCount '

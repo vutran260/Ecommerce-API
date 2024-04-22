@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
-import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
+import type { LP_SELLER, LP_SELLERCreationAttributes, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_USERAttributes {
