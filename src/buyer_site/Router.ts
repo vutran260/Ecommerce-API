@@ -12,7 +12,7 @@ export class adminSiteRouter {
 
     router.use(BuyerAuthenMiddlleware)
     
-    router.get('/buyer', buyerEndpoint.getRouter())
+    router.use('/buyer', buyerEndpoint.getRouter())
 
     return router
   }
