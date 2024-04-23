@@ -21,7 +21,7 @@ export class CategoryEndpoint {
     try {
       const categories =
         await this.categoryUsecase.getCategoriesTheSameLevel(
-          req.body.parentId || null,
+          req.body.parentId || null, req.storeId!
         );
       const categoryCreateRequest: CategoryCreateRequest = {
         parentId: req.body.parentId,

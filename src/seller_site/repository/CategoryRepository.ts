@@ -262,7 +262,7 @@ export class CategoryRepository {
     }
   };
 
-  public getCategoriesTheSameLevel = async (parentId?: string) => {
+  public getCategoriesTheSameLevel = async (parentId?: string, storeId?: string) => {
     const options: Omit<
       FindAndCountOptions<Attributes<LP_CATEGORY>>,
       'group'
@@ -270,6 +270,7 @@ export class CategoryRepository {
 
     const whereOptions: any = {};
     whereOptions.parentId = parentId;
+    whereOptions.storeId = storeId;
     options.where = whereOptions;
 
     const categories = await LP_CATEGORY.findAll({
