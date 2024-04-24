@@ -12,23 +12,25 @@ export class CategoryUsecase {
 
   public createCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
+    storeId: string
   ) => {
-    return this.categoryRepo.createCategory(categoryCreateRequest);
+    return this.categoryRepo.createCategory(categoryCreateRequest, storeId);
   };
 
   public updateCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
     id: string,
+    storeId: string
   ) => {
-    return this.categoryRepo.updateCategory(categoryCreateRequest, id);
+    return this.categoryRepo.updateCategory(categoryCreateRequest, id, storeId);
   };
 
-  public deleteCategory = async (ids: string[]) => {
-    return this.categoryRepo.deleteCategory(ids);
+  public deleteCategory = async (ids: string[], storeId: string) => {
+    return this.categoryRepo.deleteCategory(ids, storeId);
   };
 
-  public detailCategory = async (id: string) => {
-    return this.categoryRepo.getCategoryId(id);
+  public detailCategory = async (id: string, storeId: string) => {
+    return this.categoryRepo.getCategoryId(id, storeId);
   };
 
   public getCategories = async (filter: Filter[], paging: Paging) => {
@@ -43,7 +45,7 @@ export class CategoryUsecase {
     return this.categoryRepo.getCategoriesTheSameLevel(parentId, storeId);
   };
 
-  public moveUpCategory = async (input: MovePositionRequest, id: string) => {
-    return this.categoryRepo.moveUpCategory(input, id);
+  public moveUpCategory = async (input: MovePositionRequest, id: string, storeId: string) => {
+    return this.categoryRepo.moveUpCategory(input, id, storeId);
   };
 }
