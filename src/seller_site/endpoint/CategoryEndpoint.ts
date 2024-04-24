@@ -19,10 +19,10 @@ export class CategoryEndpoint {
 
   private createCategory = async (req: ProtectedRequest, res: Response) => {
     try {
-      const categories =
-        await this.categoryUsecase.getCategoriesTheSameLevel(
-          req.body.parentId || null,
-        );
+      const categories = await this.categoryUsecase.getCategoriesTheSameLevel(
+        req.body.parentId || null,
+        req.storeId!,
+      );
       const categoryCreateRequest: CategoryCreateRequest = {
         parentId: req.body.parentId,
         categoryName: req.body.categoryName,
@@ -35,6 +35,7 @@ export class CategoryEndpoint {
       await validatorRequest(categoryCreateRequest);
       const results = await this.categoryUsecase.createCategory(
         categoryCreateRequest,
+        req.storeId!,
       );
       return ResponseData(results, res);
     } catch (error: any) {
@@ -57,19 +58,23 @@ export class CategoryEndpoint {
     const results = await this.categoryUsecase.updateCategory(
       categoryUpdateRequest,
       id,
+      req.storeId!
     );
     return ResponseData(results, res);
   };
 
-  private deleteCategory = async (req: Request, res: Response) => {
+  private deleteCategory = async (req: ProtectedRequest, res: Response) => {
     const ids: string[] = req.body.ids;
-    const results = await this.categoryUsecase.deleteCategory(ids);
+    const results = await this.categoryUsecase.deleteCategory(
+      ids,
+      req.storeId!,
+    );
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   };
 
-  private detailCategory = async (req: Request, res: Response) => {
+  private detailCategory = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const results = await this.categoryUsecase.detailCategory(id);
+    const results = await this.categoryUsecase.detailCategory(id, req.storeId!);
     return ResponseData(results, res);
   };
 
@@ -93,7 +98,7 @@ export class CategoryEndpoint {
     return ResponseData(response, res);
   };
 
-  private moveUpCategory = async (req: Request, res: Response) => {
+  private moveUpCategory = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
     const { parentId, typeAction } = req.body;
     const moveUpCategoryRequest: MovePositionRequest = {
@@ -104,6 +109,7 @@ export class CategoryEndpoint {
     const results = await this.categoryUsecase.moveUpCategory(
       moveUpCategoryRequest,
       id,
+      req.storeId!,
     );
     return ResponseData(results, res);
   };

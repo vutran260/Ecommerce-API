@@ -24,15 +24,17 @@ import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 export class CategoryRepository {
   public createCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
+    storeId: string,
   ) => {
     try {
       if (categoryCreateRequest.parentId != null) {
-        await this.getCategoryId(categoryCreateRequest.parentId);
+        await this.getCategoryId(categoryCreateRequest.parentId, storeId);
       }
 
       const existingCategoryName = await LP_CATEGORY.findOne({
         where: {
           categoryName: categoryCreateRequest.categoryName,
+          storeId: storeId,
         },
       });
       if (existingCategoryName) {
@@ -56,11 +58,12 @@ export class CategoryRepository {
   public updateCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
     id: string,
+    storeId: string,
   ) => {
     try {
-      const category = await this.getCategoryId(id);
+      const category = await this.getCategoryId(id, storeId);
       if (categoryCreateRequest.parentId != null) {
-        await this.getCategoryId(categoryCreateRequest.parentId);
+        await this.getCategoryId(categoryCreateRequest.parentId, storeId);
       }
       if (category) {
         return await category.update(categoryCreateRequest);
@@ -71,15 +74,15 @@ export class CategoryRepository {
     }
   };
 
-  public deleteCategory = async (ids: string[]) => {
+  public deleteCategory = async (ids: string[], storeId: string) => {
     try {
       for (let index = 0; index < ids.length; index++) {
         const id = ids[index];
-        const category = await this.getCategoryId(id);
+        const category = await this.getCategoryId(id, storeId);
 
         // Get all the same category parent.
         const categoriesTheSameLevel: any[any] =
-          await this.getCategoriesTheSameLevel(category?.parentId);
+          await this.getCategoriesTheSameLevel(category?.parentId, storeId);
 
         // Filter categories have filed order level grater of order level category input
         const filterCategories = await categoriesTheSameLevel.filter(
@@ -99,6 +102,7 @@ export class CategoryRepository {
             await this.updateCategory(
               updateCategory,
               filterCategories[index].dataValues.id,
+              storeId,
             );
           });
         }
@@ -109,8 +113,13 @@ export class CategoryRepository {
     }
   };
 
-  public getCategoryId = async (id: string) => {
-    const result: any = await LP_CATEGORY.findByPk(id);
+  public getCategoryId = async (id: string, storeId: string) => {
+    const result: any = await LP_CATEGORY.findOne({
+      where: {
+        id: id,
+        storeId: storeId,
+      },
+    });
     if (result) {
       return result;
     } else {
@@ -165,7 +174,6 @@ export class CategoryRepository {
     const mapCte = new Map<string, CategoryHierarchie>();
     for (const category of record) {
       mapCte.set(category.id, category);
-      // const test: any = this.getCategoriesTheSameLevel(category.id);
       if (
         category.parentId === null ||
         (category.parentId && !mapCte.has(category.parentId))
@@ -189,15 +197,20 @@ export class CategoryRepository {
     return out;
   };
 
-  public moveUpCategory = async (input: MovePositionRequest, id: string) => {
+  public moveUpCategory = async (
+    input: MovePositionRequest,
+    id: string,
+    storeId: string,
+  ) => {
     try {
-      const category = await this.getCategoryId(id);
+      const category = await this.getCategoryId(id, storeId);
       if (input.parentId != null) {
-        await this.getCategoryId(input.parentId);
+        await this.getCategoryId(input.parentId, storeId);
       }
 
       const categoriesTheSameLevel = await this.getCategoriesTheSameLevel(
         category.parentId,
+        storeId,
       );
 
       categoriesTheSameLevel.length > 0 &&
@@ -262,7 +275,10 @@ export class CategoryRepository {
     }
   };
 
-  public getCategoriesTheSameLevel = async (parentId?: string) => {
+  public getCategoriesTheSameLevel = async (
+    parentId?: string,
+    storeId?: string,
+  ) => {
     const options: Omit<
       FindAndCountOptions<Attributes<LP_CATEGORY>>,
       'group'
@@ -270,10 +286,12 @@ export class CategoryRepository {
 
     const whereOptions: any = {};
     whereOptions.parentId = parentId;
+    whereOptions.storeId = storeId;
     options.where = whereOptions;
 
     const categories = await LP_CATEGORY.findAll({
       ...options,
+      order: [['orderLevel', 'ASC']],
     });
 
     return await categories;
