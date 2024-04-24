@@ -6,6 +6,7 @@ import { ProtectedRequest } from '../../lib/http/app-request';
 import { SellerAuthenMiddlleware } from '../middleware/SellerAuthenMiddleware';
 import RegisterSellerRequest from '../requests/sellers/RegisterSellerRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class SellerEndpoint {
   private sellerUsecase: SellerUsecase;
@@ -36,8 +37,12 @@ export class SellerEndpoint {
 
   private getToken = async (req: Request, res: Response) => {
     try {
-      const token = await this.sellerUsecase.GetTokenBySellerContactId(
-        req.body.contactId,
+      if (!req.body.sellerId) {
+        throw new BadRequestError('Missing seller id');
+      }
+
+      const token = await this.sellerUsecase.GetTokenById(
+        req.body.sellerId,
       );
       return ResponseData({ token: token }, res);
     } catch (e: any) {

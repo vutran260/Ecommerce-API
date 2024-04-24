@@ -1,32 +1,24 @@
-import { UserRepository } from '../repository/UserRepository';
 import { SellerRepository } from '../repository/SellerRepository';
 import crypto from 'crypto';
 import { createTokens } from '../../lib/auth/authUtils';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
-import {  LP_USERCreationAttributes } from '../../lib/mysql/models/LP_USER';
+import { LP_SELLERCreationAttributes } from '../../lib/mysql/models/LP_SELLER';
 
 export class SellerUsecase {
-  private userRepo: UserRepository;
   private sellerRepo: SellerRepository
 
 
-  constructor(userRepo: UserRepository, sellerRepo: SellerRepository) {
-    this.userRepo = userRepo;
+  constructor( sellerRepo: SellerRepository) {
     this.sellerRepo = sellerRepo
   }
 
-  public RegisterSeller = async (user: LP_USERCreationAttributes) => {
+  public RegisterSeller = async (sellerInput: LP_SELLERCreationAttributes) => {
     try {
-      let userFromDb = await this.userRepo.getUserByContactId(user.contactId)
-      if (!!!userFromDb) {
-        userFromDb = await this.userRepo.createUser(user)
-      }
-
-      const seller = await this.sellerRepo.createSeller(userFromDb!)
+      const seller = await this.sellerRepo.createSeller(sellerInput)
 
       const accessTokenKey = crypto.randomBytes(64).toString('hex');
       const refreshTokenKey = crypto.randomBytes(64).toString('hex');
-      const token = await createTokens(userFromDb!.id, accessTokenKey, refreshTokenKey);
+      const token = await createTokens(seller?.id||'', accessTokenKey, refreshTokenKey);
       return token
 
     }catch (e) {
@@ -34,8 +26,8 @@ export class SellerUsecase {
     }
   };
 
-  public GetTokenBySellerContactId = async (contactId: string) => {
-    const  seller = await  this.sellerRepo.getSellerByContactId(contactId)
+  public GetTokenById = async (id: string) => {
+    const  seller = await  this.sellerRepo.getSellerById(id)
     if (seller == null) {
       throw new BadRequestError("seller not existed")
     }

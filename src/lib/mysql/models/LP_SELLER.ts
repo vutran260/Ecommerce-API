@@ -1,11 +1,9 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
-import type { LP_USER, LP_USERId } from './LP_USER';
 
 export interface LP_SELLERAttributes {
   id: string;
-  contactId: string;
   prefectureId?: string;
   storeId?: string;
   email?: string;
@@ -22,12 +20,11 @@ export interface LP_SELLERAttributes {
 
 export type LP_SELLERPk = "id";
 export type LP_SELLERId = LP_SELLER[LP_SELLERPk];
-export type LP_SELLEROptionalAttributes = "prefectureId" | "storeId" | "email" | "phone" | "password" | "officeName" | "officeNameKana" | "postCode" | "address" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_SELLEROptionalAttributes = "id" | "prefectureId" | "storeId" | "email" | "phone" | "password" | "officeName" | "officeNameKana" | "postCode" | "address" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SELLERCreationAttributes = Optional<LP_SELLERAttributes, LP_SELLEROptionalAttributes>;
 
 export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttributes> implements LP_SELLERAttributes {
   id!: string;
-  contactId!: string;
   prefectureId?: string;
   storeId?: string;
   email?: string;
@@ -46,28 +43,14 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
   setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
   createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
-  // LP_SELLER belongsTo LP_USER via id
-  idLpUser!: LP_USER;
-  getIdLpUser!: Sequelize.BelongsToGetAssociationMixin<LP_USER>;
-  setIdLpUser!: Sequelize.BelongsToSetAssociationMixin<LP_USER, LP_USERId>;
-  createIdLpUser!: Sequelize.BelongsToCreateAssociationMixin<LP_USER>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_SELLER {
     return LP_SELLER.init({
     id: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'LP_USER',
-        key: 'id'
-      }
-    },
-    contactId: {
-      type: DataTypes.STRING(225),
-      allowNull: false,
-      unique: "contact_id",
-      field: 'contact_id'
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
     },
     prefectureId: {
       type: DataTypes.STRING(225),
@@ -142,14 +125,6 @@ export class LP_SELLER extends Model<LP_SELLERAttributes, LP_SELLERCreationAttri
         using: "BTREE",
         fields: [
           { name: "id" },
-        ]
-      },
-      {
-        name: "contact_id",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "contact_id" },
         ]
       },
       {

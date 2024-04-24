@@ -2,6 +2,8 @@ import { SellerRepository } from '../repository/SellerRepository';
 import { StoreRepository } from '../repository/StoreRepository';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { StoreStatus } from '../../lib/constant/Store';
+import { LP_STORECreationAttributes } from '../../lib/mysql/models/LP_STORE';
+import { LP_SELLERAttributes } from '../../lib/mysql/models/LP_SELLER';
 
 export class StoreUsecase {
   private storeRepo: StoreRepository;
@@ -14,17 +16,11 @@ export class StoreUsecase {
   }
 
 
-  public RegisterStore = async (seller: any, input: any) => {
+  public RegisterStore = async (seller: LP_SELLERAttributes, input: LP_STORECreationAttributes) => {
 
     if (!!seller.storeId) throw new BadRequestError("Seller already register store!")
 
-    const store = await this.storeRepo.CreateStore({
-      contactId: seller.contactId,
-      prefectureId: input.prefectureId,
-      storeKey: input.storeKey,
-      storeName: input.storeName,
-      status: StoreStatus.WAITING_FOR_CREATE_APPROVE
-    })
+    const store = await this.storeRepo.CreateStore(input)
 
     await this.sellerRepo.addStoreId(seller.id, store!.id)
 

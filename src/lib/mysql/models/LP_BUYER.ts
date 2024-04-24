@@ -1,11 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
-import type { LP_USER, LP_USERId } from './LP_USER';
+import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 
 export interface LP_BUYERAttributes {
   id: string;
-  storeId: string;
   email?: string;
   phone?: string;
   password?: string;
@@ -16,14 +15,13 @@ export interface LP_BUYERAttributes {
   deletedAt?: Date;
 }
 
-export type LP_BUYERPk = "id" | "storeId";
+export type LP_BUYERPk = "id";
 export type LP_BUYERId = LP_BUYER[LP_BUYERPk];
-export type LP_BUYEROptionalAttributes = "email" | "phone" | "password" | "username" | "fullname" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_BUYEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_BUYERCreationAttributes = Optional<LP_BUYERAttributes, LP_BUYEROptionalAttributes>;
 
 export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttributes> implements LP_BUYERAttributes {
   id!: string;
-  storeId!: string;
   email?: string;
   phone?: string;
   password?: string;
@@ -33,37 +31,38 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   updatedAt?: Date;
   deletedAt?: Date;
 
-  // LP_BUYER belongsTo LP_STORE via storeId
-  store!: LP_STORE;
-  getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
-  setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
-  createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
-  // LP_BUYER belongsTo LP_USER via id
-  idLpUser!: LP_USER;
-  getIdLpUser!: Sequelize.BelongsToGetAssociationMixin<LP_USER>;
-  setIdLpUser!: Sequelize.BelongsToSetAssociationMixin<LP_USER, LP_USERId>;
-  createIdLpUser!: Sequelize.BelongsToCreateAssociationMixin<LP_USER>;
+  // LP_BUYER belongsToMany LP_STORE via buyerId and storeId
+  storeIdLpStores!: LP_STORE[];
+  getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;
+  setStoreIdLpStores!: Sequelize.BelongsToManySetAssociationsMixin<LP_STORE, LP_STOREId>;
+  addStoreIdLpStore!: Sequelize.BelongsToManyAddAssociationMixin<LP_STORE, LP_STOREId>;
+  addStoreIdLpStores!: Sequelize.BelongsToManyAddAssociationsMixin<LP_STORE, LP_STOREId>;
+  createStoreIdLpStore!: Sequelize.BelongsToManyCreateAssociationMixin<LP_STORE>;
+  removeStoreIdLpStore!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_STORE, LP_STOREId>;
+  removeStoreIdLpStores!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_STORE, LP_STOREId>;
+  hasStoreIdLpStore!: Sequelize.BelongsToManyHasAssociationMixin<LP_STORE, LP_STOREId>;
+  hasStoreIdLpStores!: Sequelize.BelongsToManyHasAssociationsMixin<LP_STORE, LP_STOREId>;
+  countStoreIdLpStores!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_BUYER hasMany LP_STORE_BUYER via buyerId
+  lpStoreBuyers!: LP_STORE_BUYER[];
+  getLpStoreBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_STORE_BUYER>;
+  setLpStoreBuyers!: Sequelize.HasManySetAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  addLpStoreBuyer!: Sequelize.HasManyAddAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  addLpStoreBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  createLpStoreBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_STORE_BUYER>;
+  removeLpStoreBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  removeLpStoreBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  hasLpStoreBuyer!: Sequelize.HasManyHasAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  hasLpStoreBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  countLpStoreBuyers!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_BUYER {
     return LP_BUYER.init({
     id: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'LP_USER',
-        key: 'id'
-      }
-    },
-    storeId: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'LP_STORE',
-        key: 'id'
-      },
-      field: 'store_id'
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
     },
     email: {
       type: DataTypes.STRING(255),
@@ -113,14 +112,6 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
         using: "BTREE",
         fields: [
           { name: "id" },
-          { name: "store_id" },
-        ]
-      },
-      {
-        name: "fk_store_id_buyer",
-        using: "BTREE",
-        fields: [
-          { name: "store_id" },
         ]
       },
     ]

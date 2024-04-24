@@ -14,30 +14,10 @@ INSERT INTO LP_ADMIN
 (email, phone, password, username, fullname)
 VALUES( 'email', 'phone', 'password', 'username', 'fullname');
 
-CREATE TABLE LP_USER (
-    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    contact_id VARCHAR(36) NOT NULL,
-    prefecture_id VARCHAR(225) NOT NULL,
-    email VARCHAR(255),
-    phone VARCHAR(225),
-    password VARCHAR(225),
-    username VARCHAR(225),
-    fullname VARCHAR(225),
-    name_kanji VARCHAR(225),
-    name_kana VARCHAR(225),
-    birthday VARCHAR(225),
-    address VARCHAR(225),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP,
-
-    UNIQUE(contact_id)
-  );
 
 CREATE TABLE LP_STORE (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    contact_id VARCHAR(225) NOT NULL,
-    prefecture_id VARCHAR(225) NOT NULL,
+    contract_id VARCHAR(225) NOT NULL,
     store_key VARCHAR(255) unique,
     store_name VARCHAR(255),
     store_name_kana VARCHAR(255),
@@ -51,12 +31,11 @@ CREATE TABLE LP_STORE (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
     
-    UNIQUE(contact_id)
+    UNIQUE(contract_id)
   );
 
 CREATE TABLE LP_SELLER (
-    id VARCHAR(36) NOT NULL PRIMARY KEY,
-    contact_id VARCHAR(225) NOT NULL,
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     prefecture_id VARCHAR(225),
     store_id VARCHAR(36),
     email VARCHAR(255),
@@ -70,15 +49,11 @@ CREATE TABLE LP_SELLER (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
 
-    CONSTRAINT fk_seller_id_user FOREIGN KEY (id) REFERENCES LP_USER (id),
-    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
-
-    UNIQUE(contact_id)
+    CONSTRAINT fk_store_id_seller FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
   );
 
 CREATE TABLE LP_BUYER (
-    id VARCHAR(36) NOT NULL,
-    store_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     email VARCHAR(255),
     phone VARCHAR(225),
     password VARCHAR(225),
@@ -86,22 +61,30 @@ CREATE TABLE LP_BUYER (
     fullname VARCHAR(225),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP,
-    CONSTRAINT fk_buyer_id_user FOREIGN KEY (id) REFERENCES LP_USER (id),
-    CONSTRAINT fk_store_id_buyer FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
-
-    PRIMARY KEY(id, store_id)
+    deleted_at TIMESTAMP
   );
+
+
+CREATE TABLE LP_STORE_BUYER (
+    store_id VARCHAR(36) NOT NULL,
+    buyer_id VARCHAR(36) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
+    CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
+
+    PRIMARY KEY (store_id, buyer_id)
+
+);
 
 CREATE TABLE LP_PRODUCT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     store_id VARCHAR(36) NOT NULL,
 
-    is_subscription TINYINT NOT NULL,
+    is_subscription TINYINT(1) NOT NULL,
     buying_time_option VARCHAR(255),
     buying_period VARCHAR(255),
 
-    is_recomend TINYINT NOT NULL,
+    is_recomend TINYINT(1) NOT NULL,
     product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(512) NOT NULL,
     product_description VARCHAR(512) NOT NULL,
@@ -116,7 +99,7 @@ CREATE TABLE LP_PRODUCT (
     notification_number VARCHAR(255),
     notification VARCHAR(255),
 
-    has_option TINYINT NOT NULL,
+    has_option TINYINT(1) NOT NULL,
 
 
     price DECIMAL(10, 4),
@@ -126,7 +109,7 @@ CREATE TABLE LP_PRODUCT (
 
     product_tag VARCHAR(255),
     status VARCHAR(255),
-    is_deleted TINYINT NOT NULL DEFAULT 0,
+    is_deleted TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
@@ -183,7 +166,7 @@ CREATE TABLE LP_CATEGORY (
     category_name VARCHAR(255),
     category_tag VARCHAR(255),
     status VARCHAR(255),
-    order_level INT(1),
+    order_level INT(11),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,

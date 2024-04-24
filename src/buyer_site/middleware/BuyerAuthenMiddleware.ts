@@ -8,7 +8,6 @@ import {
 } from '../../lib/http/custom_error/ApiError';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { LP_BUYER, LP_BUYERAttributes } from '../../lib/mysql/models/LP_BUYER';
-import { LP_USER } from '../../lib/mysql/models/LP_USER';
 import { Header } from '../../lib/core/utils';
 import validator from 'validator';
 import {uniqueNamesGenerator, adjectives, colors, animals} from 'unique-names-generator'
@@ -22,34 +21,27 @@ export const BuyerAuthenMiddlleware = asyncHandler(
       throw new BadRequestError('Missing store id');
     }
 
-    const store = await LP_STORE.findByPk(storeId);
-    if (!store) {
+    const lpStore = await LP_STORE.findByPk(storeId);
+    if (!lpStore) {
       throw new BadRequestError('Store not found');
     }
 
     try {
       const buyerInfo: LP_BUYERAttributes = validatetoken(
         accessToken,
-        storeId,
       );
 
-      let user = await LP_USER.findByPk(buyerInfo.id);
-      if (!user) {
-       user = await LP_USER.create({
-          id: buyerInfo.id,
-          contactId: buyerInfo.id,
-          prefectureId: '',
+      let lpBuyer = await LP_BUYER.findByPk(buyerInfo.id);
+      if (!lpBuyer) {
+        lpBuyer = await LP_BUYER.create({
+          id: buyerInfo.id
         });
       }
 
-      
-      let buyer = await LP_BUYER.findByPk(buyerInfo.id);
-      if (!buyer) {
-        buyerInfo.username = user.username;
-        buyer = await LP_BUYER.create(buyerInfo);
-      }
-
-      req.user = buyer?.dataValues;
+      if (!await lpBuyer.hasStoreIdLpStore(storeId)) {
+        await lpBuyer.addStoreIdLpStore(storeId);
+      } 
+      req.user = lpBuyer?.dataValues;
       req.storeId = storeId;
 
       return next();
@@ -60,14 +52,13 @@ export const BuyerAuthenMiddlleware = asyncHandler(
   },
 );
 
-const validatetoken = (token: string, storeId: string): LP_BUYERAttributes => {
+const validatetoken = (token: string): LP_BUYERAttributes => {
   if (validator.isUUID(token)) {
     throw new BadTokenError('Invalid token');
   }
 
   return {
     id: token,
-    storeId: storeId,
     username: uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] }),
   };
 };

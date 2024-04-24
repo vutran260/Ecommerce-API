@@ -4,12 +4,11 @@ import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
-import type { LP_USER, LP_USERId } from './LP_USER';
+import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 
 export interface LP_STOREAttributes {
   id: string;
-  contactId: string;
-  prefectureId: string;
+  contractId: string;
   storeKey?: string;
   storeName?: string;
   storeNameKana?: string;
@@ -31,8 +30,7 @@ export type LP_STORECreationAttributes = Optional<LP_STOREAttributes, LP_STOREOp
 
 export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttributes> implements LP_STOREAttributes {
   id!: string;
-  contactId!: string;
-  prefectureId!: string;
+  contractId!: string;
   storeKey?: string;
   storeName?: string;
   storeNameKana?: string;
@@ -46,18 +44,18 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   updatedAt?: Date;
   deletedAt?: Date;
 
-  // LP_STORE hasMany LP_BUYER via storeId
-  lpBuyers!: LP_BUYER[];
-  getLpBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_BUYER>;
-  setLpBuyers!: Sequelize.HasManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  addLpBuyer!: Sequelize.HasManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
-  addLpBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  createLpBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_BUYER>;
-  removeLpBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
-  removeLpBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  hasLpBuyer!: Sequelize.HasManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
-  hasLpBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  countLpBuyers!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE belongsToMany LP_BUYER via storeId and buyerId
+  buyerIdLpBuyers!: LP_BUYER[];
+  getBuyerIdLpBuyers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_BUYER>;
+  setBuyerIdLpBuyers!: Sequelize.BelongsToManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyer!: Sequelize.BelongsToManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  createBuyerIdLpBuyer!: Sequelize.BelongsToManyCreateAssociationMixin<LP_BUYER>;
+  removeBuyerIdLpBuyer!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
+  removeBuyerIdLpBuyers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyer!: Sequelize.BelongsToManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  countBuyerIdLpBuyers!: Sequelize.BelongsToManyCountAssociationsMixin;
   // LP_STORE hasMany LP_CATEGORY via storeId
   lpCategories!: LP_CATEGORY[];
   getLpCategories!: Sequelize.HasManyGetAssociationsMixin<LP_CATEGORY>;
@@ -94,18 +92,18 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   hasLpSeller!: Sequelize.HasManyHasAssociationMixin<LP_SELLER, LP_SELLERId>;
   hasLpSellers!: Sequelize.HasManyHasAssociationsMixin<LP_SELLER, LP_SELLERId>;
   countLpSellers!: Sequelize.HasManyCountAssociationsMixin;
-  // LP_STORE belongsToMany LP_USER via storeId and id
-  idLpUsers!: LP_USER[];
-  getIdLpUsers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_USER>;
-  setIdLpUsers!: Sequelize.BelongsToManySetAssociationsMixin<LP_USER, LP_USERId>;
-  addIdLpUser!: Sequelize.BelongsToManyAddAssociationMixin<LP_USER, LP_USERId>;
-  addIdLpUsers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_USER, LP_USERId>;
-  createIdLpUser!: Sequelize.BelongsToManyCreateAssociationMixin<LP_USER>;
-  removeIdLpUser!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_USER, LP_USERId>;
-  removeIdLpUsers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_USER, LP_USERId>;
-  hasIdLpUser!: Sequelize.BelongsToManyHasAssociationMixin<LP_USER, LP_USERId>;
-  hasIdLpUsers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_USER, LP_USERId>;
-  countIdLpUsers!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_STORE_BUYER via storeId
+  lpStoreBuyers!: LP_STORE_BUYER[];
+  getLpStoreBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_STORE_BUYER>;
+  setLpStoreBuyers!: Sequelize.HasManySetAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  addLpStoreBuyer!: Sequelize.HasManyAddAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  addLpStoreBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  createLpStoreBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_STORE_BUYER>;
+  removeLpStoreBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  removeLpStoreBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  hasLpStoreBuyer!: Sequelize.HasManyHasAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  hasLpStoreBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
+  countLpStoreBuyers!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_STORE {
     return LP_STORE.init({
@@ -115,16 +113,11 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
-    contactId: {
+    contractId: {
       type: DataTypes.STRING(225),
       allowNull: false,
-      unique: "contact_id",
-      field: 'contact_id'
-    },
-    prefectureId: {
-      type: DataTypes.STRING(225),
-      allowNull: false,
-      field: 'prefecture_id'
+      unique: "contract_id",
+      field: 'contract_id'
     },
     storeKey: {
       type: DataTypes.STRING(255),
@@ -199,11 +192,11 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
         ]
       },
       {
-        name: "contact_id",
+        name: "contract_id",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "contact_id" },
+          { name: "contract_id" },
         ]
       },
       {

@@ -1,4 +1,3 @@
-import { UserRepository } from './repository/UserRepository';
 import { SellerUsecase } from './usecase/SellerUsecase';
 import { SellerEndpoint } from './endpoint/SellerEndpoint';
 import express from 'express';
@@ -19,13 +18,12 @@ export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
     const router = express.Router();
 
-    const userRepo = new UserRepository();
     const sellerRepo = new SellerRepository();
     const storeRepo = new StoreRepository()
     const productRepo = new ProductRepository();
     const categorytRepo = new CategoryRepository();
 
-    const sellerUsecase = new SellerUsecase(userRepo, sellerRepo);
+    const sellerUsecase = new SellerUsecase(sellerRepo);
     const storeUsecase = new StoreUsecase(storeRepo, sellerRepo)
     const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo);
