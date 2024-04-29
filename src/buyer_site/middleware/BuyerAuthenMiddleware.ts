@@ -12,6 +12,7 @@ import { Header } from '../../lib/core/utils';
 import validator from 'validator';
 import {uniqueNamesGenerator, adjectives, colors, animals} from 'unique-names-generator'
 import { LP_STORE } from '../../lib/mysql/models/LP_STORE';
+import JWT from '../../lib/core/JWT';
 
 export const BuyerAuthenMiddlleware = asyncHandler(
   async (req: ProtectedRequest, res, next) => {
@@ -27,14 +28,14 @@ export const BuyerAuthenMiddlleware = asyncHandler(
     }
 
     try {
-      const buyerInfo: LP_BUYERAttributes = validatetoken(
-        accessToken,
-      );
-
-      let lpBuyer = await LP_BUYER.findByPk(buyerInfo.id);
+      // const buyerInfo: LP_BUYERAttributes = validatetoken(
+      //   accessToken,
+      // );
+      const buyerInfo = await JWT.validate(accessToken);
+      let lpBuyer = await LP_BUYER.findByPk(buyerInfo.sub);
       if (!lpBuyer) {
         lpBuyer = await LP_BUYER.create({
-          id: buyerInfo.id
+          id: buyerInfo.sub
         });
       }
 
