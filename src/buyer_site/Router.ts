@@ -1,21 +1,19 @@
 import express from 'express';
 import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
 import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
+import { BuyerRepository } from './repository/BuyerRepository';
+import { BuyerUsecase } from './usecase/BuyerUsecase';
 
 export class buyerSiteRouter {
-
   public getBuyerSiteRouter = () => {
-
     const router = express.Router();
 
-    const buyerEndpoint = new BuyerEndpoint();
+    const buyerRepo = new BuyerRepository();
+    const buyerUsecase = new BuyerUsecase(buyerRepo);
+    const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
 
-    router.use(BuyerAuthenMiddlleware)
-    
-    router.use('/buyer', buyerEndpoint.getRouter())
+    router.use('/buyer', buyerEndpoint.getRouter());
 
-    return router
-  }
-
+    return router;
+  };
 }
-
