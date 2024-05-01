@@ -27,6 +27,7 @@ import {
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
 import { forEach } from 'lodash';
+import { Op } from 'sequelize';
 
 export class ProductRepository {
   public createProduct = async (
@@ -150,6 +151,7 @@ export class ProductRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    categoryId: string,
   ) => {
     try {
       filter.push({
@@ -158,11 +160,23 @@ export class ProductRepository {
         attribute: 'isDeleted',
       });
       const count = await LP_PRODUCT.count({
+        include:[
+          {
+            association: LP_PRODUCT.associations.lpProductCategories,
+            where: categoryId? {categoryId: categoryId} : undefined,
+          }
+        ],
         where: BuildQuery(filter),
       });
       paging.total = count;
 
       const results = await LP_PRODUCT.findAll({
+        include:[
+          {
+            association: LP_PRODUCT.associations.lpProductCategories,
+            where: categoryId? {categoryId: categoryId} : undefined
+          }
+        ],
         where: BuildQuery(filter),
         offset: GetOffset(paging),
         order: BuildOrderQuery(order),

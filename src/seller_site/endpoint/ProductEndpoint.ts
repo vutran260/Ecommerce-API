@@ -54,6 +54,7 @@ export class ProductEndpoint {
       req.filterList,
       req.order,
       req.paging,
+      req.query["categoryId"] as string,
     );
     return ResponseListData(results, res, req.paging);
   };

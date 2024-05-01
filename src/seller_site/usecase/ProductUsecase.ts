@@ -70,8 +70,9 @@ export class ProductUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    categoryId: string,
   ) => {
-    return this.productRepo.getProducts(filter, order, paging);
+    return this.productRepo.getProducts(filter, order, paging, categoryId);
   };
 
 
