@@ -12,7 +12,6 @@ import { Header } from '../../lib/core/utils';
 import validator from 'validator';
 import {uniqueNamesGenerator, adjectives, colors, animals} from 'unique-names-generator'
 import { LP_STORE } from '../../lib/mysql/models/LP_STORE';
-import JWT from '../../lib/core/JWT';
 
 export const BuyerAuthenMiddlleware = asyncHandler(
   async (req: ProtectedRequest, res, next) => {
@@ -28,14 +27,13 @@ export const BuyerAuthenMiddlleware = asyncHandler(
     }
 
     try {
-      // const buyerInfo: LP_BUYERAttributes = validatetoken(
-      //   accessToken,
-      // );
-      const buyerInfo = await JWT.validate(accessToken);
-      let lpBuyer = await LP_BUYER.findByPk(buyerInfo.sub);
+      const buyerInfo: LP_BUYERAttributes = validatetoken(
+        accessToken,
+      );
+      let lpBuyer = await LP_BUYER.findByPk(buyerInfo.id);
       if (!lpBuyer) {
         lpBuyer = await LP_BUYER.create({
-          id: buyerInfo.sub
+          id: buyerInfo.id
         });
       }
 
@@ -54,7 +52,7 @@ export const BuyerAuthenMiddlleware = asyncHandler(
 );
 
 const validatetoken = (token: string): LP_BUYERAttributes => {
-  if (validator.isUUID(token)) {
+  if (!validator.isUUID(token)) {
     throw new BadTokenError('Invalid token');
   }
 
