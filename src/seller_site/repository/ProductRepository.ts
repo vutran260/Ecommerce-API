@@ -189,6 +189,13 @@ export class ProductRepository {
       throw error;
     }
   };
+
+  public activeProductId = async (id: string) => {
+    await LP_PRODUCT.update(
+      {status: "ACTIVE"},
+      {where: {id: id}}
+    )
+  }
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {

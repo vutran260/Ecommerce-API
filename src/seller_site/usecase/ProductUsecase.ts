@@ -66,6 +66,10 @@ export class ProductUsecase {
     return this.productRepo.getProductId(id);
   };
 
+  public activeProduct = async (id: string) => {
+    return this.productRepo.activeProductId(id);
+  }
+
   public getProducts = async (
     filter: Filter[],
     order: LpOrder[],

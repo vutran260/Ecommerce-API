@@ -71,6 +71,12 @@ export class ProductEndpoint {
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   }
 
+  private activeProduct = async (req: ProtectedRequest, res: Response) => {
+    const id: string = req.params.id;
+    const results = await this.productUsecase.activeProduct(id);
+    return ResponseData({ message: 'Active is successfully!' }, res);
+  }
+
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
@@ -84,6 +90,7 @@ export class ProductEndpoint {
       StoreFilterMiddelware,
       this.getProducts,
     );
+    router.put('/active/:id', this.activeProduct);
     return router;
   }
 }
