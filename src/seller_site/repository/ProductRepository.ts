@@ -196,6 +196,13 @@ export class ProductRepository {
       {where: {id: id}}
     )
   }
+
+  public inactiveProductId = async (id: string) => {
+    await LP_PRODUCT.update(
+      {status: "INACTIVE"},
+      {where: {id: id}}
+    )
+  }
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {

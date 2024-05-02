@@ -76,7 +76,11 @@ export class ProductEndpoint {
     const results = await this.productUsecase.activeProduct(id);
     return ResponseData({ message: 'Active is successfully!' }, res);
   }
-
+  private inactiveProduct = async (req: ProtectedRequest, res: Response) => {
+    const id: string = req.params.id;
+    const results = await this.productUsecase.activeProduct(id);
+    return ResponseData({ message: 'Inactive is successfully!' }, res);
+  }
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
@@ -91,6 +95,8 @@ export class ProductEndpoint {
       this.getProducts,
     );
     router.put('/active/:id', this.activeProduct);
+    router.put('/inactive/:id', this.inactiveProduct);
+    
     return router;
   }
 }
