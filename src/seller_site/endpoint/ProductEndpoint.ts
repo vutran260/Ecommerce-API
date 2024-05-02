@@ -78,7 +78,7 @@ export class ProductEndpoint {
   }
   private inactiveProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const results = await this.productUsecase.activeProduct(id);
+    const results = await this.productUsecase.inactiveProduct(id);
     return ResponseData({ message: 'Inactive is successfully!' }, res);
   }
   public getRouter() {
