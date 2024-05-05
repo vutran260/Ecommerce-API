@@ -16,6 +16,10 @@ export default class Product {
   @IsNotEmpty()
   isSubscription: boolean;
 
+  @IsBoolean()
+  @IsNotEmpty()
+  isDiscount: boolean;
+
   @IsArray()
   buyingTimeOption?: number[];
 
@@ -104,6 +108,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     id: product.id,
     storeId: product.storeId,
     isSubscription: booleanToTINYINT(product.isSubscription),
+    isDiscount: booleanToTINYINT(product.isDiscount),
     buyingTimeOption: product.buyingTimeOption?.join(','),
     buyingPeriod: product.buyingPeriod?.join(','),
     isRecomend: booleanToTINYINT(product.isRecomend),
@@ -135,6 +140,7 @@ export const ProductFromLP_PRODUCT = (
     id: product.id,
     storeId: product.storeId,
     isSubscription: TINYINTToBoolean(product.isSubscription),
+    isDiscount: TINYINTToBoolean(product.isDiscount),
     buyingTimeOption: product.buyingTimeOption
       ? product.buyingTimeOption.split(',').map(Number)
       : [],

@@ -11,6 +11,7 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
+  isDiscount: number;
   buyingTimeOption?: string;
   buyingPeriod?: string;
   isRecomend: number;
@@ -46,6 +47,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   id!: string;
   storeId!: string;
   isSubscription!: number;
+  isDiscount!: number;
   buyingTimeOption?: string;
   buyingPeriod?: string;
   isRecomend!: number;
@@ -158,6 +160,11 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       type: DataTypes.BOOLEAN,
       allowNull: false,
       field: 'is_subscription'
+    },
+    isDiscount: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: 'is_discount'
     },
     buyingTimeOption: {
       type: DataTypes.STRING(255),

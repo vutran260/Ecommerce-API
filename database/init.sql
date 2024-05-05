@@ -79,8 +79,8 @@ CREATE TABLE LP_STORE_BUYER (
 CREATE TABLE LP_PRODUCT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     store_id VARCHAR(36) NOT NULL,
-
     is_subscription TINYINT(1) NOT NULL,
+    is_discount TINYINT(1) NOT NULL,
     buying_time_option VARCHAR(255),
     buying_period VARCHAR(255),
 

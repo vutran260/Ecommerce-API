@@ -89,6 +89,7 @@ export class ProductUsecase {
     const createProduct: CreateProductInput = {
       storeId: input.storeId,
       isSubscription: input.isSubscription ? 1 : 0,
+      isDiscount: input.isDiscount ? 1 : 0,
       buyingTimeOption: input.buyingTimeOption?.join(','),
       buyingPeriod: input.buyingPeriod?.join(','),
       isRecomend: input.isRecomend ? 1 : 0,
