@@ -20,6 +20,7 @@ import { Attributes, FindAndCountOptions, Op, QueryTypes } from 'sequelize';
 import { range } from 'lodash';
 import MovePositionRequest from '../requests/categories/MovePositionRequest';
 import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
+import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 
 export class CategoryRepository {
   public createCategory = async (
@@ -89,6 +90,13 @@ export class CategoryRepository {
           (res: any) => res.id != category.id,
         );
         await category.destroy();
+        
+        await LP_PRODUCT_CATEGORY.destroy({
+          where: {
+            categoryId: id,
+          },
+        })
+
         if (filterCategories.length > 0) {
           filterCategories.forEach(async (res: any, index: number) => {
             const updateCategory: CategoryCreateRequest = {
