@@ -25,6 +25,7 @@ import {
   LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+import lodash, { forEach } from 'lodash';
 
 export class ProductRepository {
   public createProduct = async (
@@ -172,6 +173,9 @@ export class ProductRepository {
           {
             association: LP_PRODUCT.associations.lpProductCategories,
             where: categoryId? {categoryId: categoryId} : undefined
+          },
+          {
+            association: LP_PRODUCT.associations.categoryIdLpCategories,
           }
         ],
         where: BuildQuery(filter),
@@ -179,6 +183,9 @@ export class ProductRepository {
         order: BuildOrderQuery(order),
         limit: paging.limit,
       });
+      forEach(results, (result) => {
+        lodash.unset(result.dataValues, 'lpProductCategories');
+      })
       return results;
     } catch (error: any) {
       Logger.error(error);
