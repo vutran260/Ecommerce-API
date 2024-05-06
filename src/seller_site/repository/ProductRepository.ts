@@ -25,9 +25,6 @@ import {
   LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
-import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
-import { forEach } from 'lodash';
-import { Op } from 'sequelize';
 
 export class ProductRepository {
   public createProduct = async (

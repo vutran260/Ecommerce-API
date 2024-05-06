@@ -80,9 +80,16 @@ CREATE TABLE LP_PRODUCT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     store_id VARCHAR(36) NOT NULL,
     is_subscription TINYINT(1) NOT NULL,
-    is_discount TINYINT(1) NOT NULL,
+    
     buying_time_option VARCHAR(255),
     buying_period VARCHAR(255),
+
+    is_discount TINYINT(1) NOT NULL,
+    discount_percentage INTEGER,
+    has_discount_schedule TINYINT,
+    discount_time_from TIMESTAMP,
+    discount_time_to TIMESTAMP,
+
 
     is_recomend TINYINT(1) NOT NULL,
     product_name VARCHAR(255) NOT NULL,
@@ -103,7 +110,7 @@ CREATE TABLE LP_PRODUCT (
 
 
     price DECIMAL(10, 4),
-    price_before_discount DECIMAL(10, 4),
+    price_subscription DECIMAL(10, 4),
     cost DECIMAL(10, 4),
     stock_item INTEGER,
 
