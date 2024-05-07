@@ -40,6 +40,8 @@ export const BuyerAuthenMiddlleware = asyncHandler(
       if (!await lpBuyer.hasStoreIdLpStore(storeId)) {
         await lpBuyer.addStoreIdLpStore(storeId);
       } 
+
+      
       req.user = lpBuyer?.dataValues;
       req.storeId = storeId;
 

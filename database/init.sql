@@ -186,3 +186,27 @@ CREATE TABLE LP_PRODUCT_CATEGORY (
 
   PRIMARY KEY (product_id, category_id)
 );
+
+
+CREATE TABLE LP_CART (
+  buyer_id VARCHAR(36) NOT NULL,
+  store_id VARCHAR(36) NOT NULL,
+  product_id VARCHAR(36) NOT NULL,
+  quantity INTEGER NOT NULL,
+  is_subscription TINYINT NOT NULL,
+
+
+  buying_time_option INTEGER,
+  buying_period INTEGER,
+  start_buying_date TIMESTAMP,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_by VARCHAR(225),
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_by VARCHAR(225),
+
+  CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
+  CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
+  CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
+  PRIMARY KEY (buyer_id, store_id, product_id)
+)
