@@ -10,6 +10,7 @@ import {
   BadRequestError,
 } from '../../lib/http/custom_error/ApiError';
 import ProductOption from '../requests/products/ProductOption';
+import { booleanToTINYINT } from '../../lib/helpers/utils';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -41,6 +42,8 @@ export class ProductUsecase {
     } else {
       this.validatePrice(input);
     }
+
+    this.validateDiscount(input)
 
     if (input.isSubscription) {
       if (input.buyingPeriod?.length === 0 || input.buyingTimeOption?.length ===0) {
@@ -140,9 +143,13 @@ export class ProductUsecase {
         };
       }),
       price: parseFloat(input.price),
-      priceBeforeDiscount: parseFloat(input.priceBeforeDiscount),
+      priceSubscription: parseFloat(input.priceSubscription),
       cost: parseFloat(input.cost),
       stockItem: input.stockItem,
+      discountPercentage: input.discountPercentage,
+      hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule), 
+      discountTimeFrom: input.discountTimeFrom?new Date(input.discountTimeFrom):undefined, 
+      discountTimeTo: input.discountTimeTo?new Date(input.discountTimeTo):undefined,
     };
 
     return createProduct;
@@ -196,8 +203,40 @@ export class ProductUsecase {
   };
 
   private validatePrice = (input: Product) => {
-    if (!input.price || !input.priceBeforeDiscount || !input.stockItem) { 
+    if (!input.price || !input.priceSubscription || !input.stockItem) { 
       throw new BadRequestError('invalid price setting');
     }
+
+    if (input.isSubscription && !input.priceSubscription) {
+      throw new BadRequestError('priceSubscription is required')
+    }
+  }
+
+  private validateDiscount = (input: Product) => {
+    if (!input.isDiscount) {
+      return
+    }
+
+    if (!input.discountPercentage) {
+      throw new BadRequestError('discountPercentage is required when product is discounted')
+    }
+
+    if (input.hasDiscountSchedule === undefined) {
+      throw new BadRequestError('hasDiscountSchedule is required when product is discounted')
+    }
+
+    if (!input.hasDiscountSchedule) {
+      return
+    }
+
+    if (!input.discountTimeFrom || !input.discountTimeTo) {
+      throw new BadRequestError('discountTimeFrom and discountTimeTo are required when product is discounted')
+    }
+
+    if (input.discountTimeFrom > input.discountTimeTo) {
+      throw new BadRequestError('discountTimeFrom must be before discountTimeTo')
+    }
+
+    
   }
 }

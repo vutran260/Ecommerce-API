@@ -20,6 +20,13 @@ export function addMillisToCurrentDate(millis: number) {
   return moment().add(millis, 'ms').toDate();
 }
 
-export const booleanToTINYINT = (value: boolean) => (value ? 1 : 0);
+export const booleanToTINYINT = (value?: boolean) => {
+  if (value === undefined) return value
+  return value ? 1 : 0
+};
 
-export const TINYINTToBoolean = (value: number) => (value === 1 ? true : false);
+export const TINYINTToBoolean = (value?: number) => {
+  if (value === undefined) return value
+  return value === 1 ? true : false
+
+};

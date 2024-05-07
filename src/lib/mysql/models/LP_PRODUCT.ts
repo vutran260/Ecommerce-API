@@ -12,9 +12,13 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
-  isDiscount: number;
   buyingTimeOption?: string;
   buyingPeriod?: string;
+  isDiscount: number;
+  discountPercentage?: number;
+  hasDiscountSchedule?: number;
+  discountTimeFrom?: Date;
+  discountTimeTo?: Date;
   isRecomend: number;
   productName: string;
   productImage: string;
@@ -28,7 +32,7 @@ export interface LP_PRODUCTAttributes {
   notification?: string;
   hasOption: number;
   price?: number;
-  priceBeforeDiscount?: number;
+  priceSubscription?: number;
   cost?: number;
   stockItem?: number;
   productTag?: string;
@@ -41,16 +45,20 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceBeforeDiscount" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
   id!: string;
   storeId!: string;
   isSubscription!: number;
-  isDiscount!: number;
   buyingTimeOption?: string;
   buyingPeriod?: string;
+  isDiscount!: number;
+  discountPercentage?: number;
+  hasDiscountSchedule?: number;
+  discountTimeFrom?: Date;
+  discountTimeTo?: Date;
   isRecomend!: number;
   productName!: string;
   productImage!: string;
@@ -64,7 +72,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   notification?: string;
   hasOption!: number;
   price?: number;
-  priceBeforeDiscount?: number;
+  priceSubscription?: number;
   cost?: number;
   stockItem?: number;
   productTag?: string;
@@ -174,11 +182,6 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: false,
       field: 'is_subscription'
     },
-    isDiscount: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      field: 'is_discount'
-    },
     buyingTimeOption: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -188,6 +191,31 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       type: DataTypes.STRING(255),
       allowNull: true,
       field: 'buying_period'
+    },
+    isDiscount: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: 'is_discount'
+    },
+    discountPercentage: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'discount_percentage'
+    },
+    hasDiscountSchedule: {
+      type: DataTypes.TINYINT,
+      allowNull: true,
+      field: 'has_discount_schedule'
+    },
+    discountTimeFrom: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'discount_time_from'
+    },
+    discountTimeTo: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'discount_time_to'
     },
     isRecomend: {
       type: DataTypes.BOOLEAN,
@@ -250,10 +278,10 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       type: DataTypes.DECIMAL(10,4),
       allowNull: true
     },
-    priceBeforeDiscount: {
+    priceSubscription: {
       type: DataTypes.DECIMAL(10,4),
       allowNull: true,
-      field: 'price_before_discount'
+      field: 'price_subscription'
     },
     cost: {
       type: DataTypes.DECIMAL(10,4),
