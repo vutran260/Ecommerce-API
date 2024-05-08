@@ -26,6 +26,7 @@ import {
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
+import { Op } from 'sequelize';
 
 export class ProductRepository {
   public createProduct = async (
@@ -149,7 +150,7 @@ export class ProductRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    categoryId: string,
+    categoryIds: string[]|null,
   ) => {
     try {
       filter.push({
@@ -161,7 +162,7 @@ export class ProductRepository {
         include:[
           {
             association: LP_PRODUCT.associations.lpProductCategories,
-            where: categoryId? {categoryId: categoryId} : undefined,
+            where: categoryIds? {categoryId: {[Op.in]:categoryIds}} : undefined,
           }
         ],
         where: BuildQuery(filter),
@@ -172,7 +173,7 @@ export class ProductRepository {
         include:[
           {
             association: LP_PRODUCT.associations.lpProductCategories,
-            where: categoryId? {categoryId: categoryId} : undefined
+            where: categoryIds? {categoryId: {[Op.in]:categoryIds}} : undefined
           },
           {
             association: LP_PRODUCT.associations.categoryIdLpCategories,

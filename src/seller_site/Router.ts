@@ -26,7 +26,7 @@ export class sellerSiteRouter {
     const sellerUsecase = new SellerUsecase(sellerRepo);
     const storeUsecase = new StoreUsecase(storeRepo, sellerRepo)
     const categoryUsecase = new CategoryUsecase(categorytRepo);
-    const productUsecase = new ProductUsecase(productRepo);
+    const productUsecase = new ProductUsecase(productRepo, categorytRepo);
 
     
     const productEndpoint = new ProductEndpoint(productUsecase);
