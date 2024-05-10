@@ -18,20 +18,14 @@ export class ProductEndpoint {
   }
 
   private createProduct = async (req: ProtectedRequest, res: Response) => {
-    try {
-      // const productCreateRequest: ProductCreateRequest =  req.body as ProductCreateRequest
       const productCreateRequest = plainToClass(Product, req.body);
       productCreateRequest.storeId = req.storeId;
+      
       await validatorRequest(productCreateRequest);
       const results = await this.productUsecase.createProduct(
         productCreateRequest,
       );
       return ResponseData(results, res);
-    } catch (error: any) {
-      Logger.error(error);
-      Logger.error(new Error(error.message))
-      throw error;
-    }
   };
 
   private updateProduct = async (req: ProtectedRequest, res: Response) => {

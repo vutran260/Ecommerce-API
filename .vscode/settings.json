@@ -9,5 +9,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[sql]": {
     "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }
