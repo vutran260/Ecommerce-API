@@ -80,7 +80,7 @@ export class AccessTokenError extends ApiError {
 }
 
 export class DataExists extends ApiError {
-  constructor(message = 'Data is already exists') {
+  constructor(message = 'これは必須項目です。') {
     super(ErrorType.DATA_EXISTS, message, ErrorCode.ALREADY_EXISTS);
   }
 }
