@@ -90,12 +90,12 @@ export class CategoryRepository {
           (res: any) => res.id != category.id,
         );
         await category.destroy();
-        
+
         await LP_PRODUCT_CATEGORY.destroy({
           where: {
             categoryId: id,
           },
-        })
+        });
 
         if (filterCategories.length > 0) {
           filterCategories.forEach(async (res: any, index: number) => {
@@ -153,6 +153,26 @@ export class CategoryRepository {
       Logger.error(error.message);
       throw error;
     }
+  };
+
+  public getAllLeafInSub = async (categoryId: string): Promise<string[]> => {
+    const query =
+      'WITH RECURSIVE cte AS ' +
+      '(SELECT a.id, a.parent_id ' +
+      `FROM LP_CATEGORY as a ` +
+      `WHERE a.id = '${categoryId}' ` +
+      'UNION ALL ' +
+      'SELECT c.id, c.parent_id ' +
+      'FROM LP_CATEGORY c ' +
+      'JOIN cte ON cte.id = c.parent_id ) ' +
+      'SELECT * FROM cte where id NOT IN (SELECT parent_id FROM cte WHERE parent_id IS NOT NULL)';
+    const record = await lpSequelize.query(query, {
+      raw: true,
+      type: QueryTypes.SELECT,
+    });
+
+    return record.map((res: any) => res.id);
+    
   };
 
   public getCategoriesWithHierarchy = async (storeId: string, id = '') => {

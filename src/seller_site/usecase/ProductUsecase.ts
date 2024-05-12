@@ -11,12 +11,17 @@ import {
 } from '../../lib/http/custom_error/ApiError';
 import ProductOption from '../requests/products/ProductOption';
 import { booleanToTINYINT } from '../../lib/helpers/utils';
+import { CategoryRepository } from '../repository/CategoryRepository';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
+  private categoryRepo: CategoryRepository;
 
-  constructor(productRepo: ProductRepository) {
+  constructor(productRepo: ProductRepository,
+    categoryRepo: CategoryRepository
+  ) {
     this.productRepo = productRepo;
+    this.categoryRepo= categoryRepo;
   }
 
   public createProduct = async (input: Product) => {
@@ -81,7 +86,13 @@ export class ProductUsecase {
     paging: Paging,
     categoryId: string,
   ) => {
-    return this.productRepo.getProducts(filter, order, paging, categoryId);
+    let categoryIds = null
+    if (!!categoryId) {
+    categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
+    } 
+
+
+    return this.productRepo.getProducts(filter, order, paging, categoryIds);
   };
 
 
@@ -203,7 +214,7 @@ export class ProductUsecase {
   };
 
   private validatePrice = (input: Product) => {
-    if (!input.price || !input.priceSubscription || !input.stockItem) { 
+    if (!input.price || !input.stockItem) { 
       throw new BadRequestError('invalid price setting');
     }
 

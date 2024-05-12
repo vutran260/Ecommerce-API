@@ -27,6 +27,5 @@ export const booleanToTINYINT = (value?: boolean) => {
 
 export const TINYINTToBoolean = (value?: number) => {
   if (value === undefined) return value
-  return value === 1 ? true : false
-
+  return !!value
 };
