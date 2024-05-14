@@ -31,7 +31,7 @@ export interface LP_PRODUCTAttributes {
   notificationNumber?: string;
   notification?: string;
   hasOption: number;
-  price?: number;
+  price: number;
   priceSubscription?: number;
   cost?: number;
   stockItem?: number;
@@ -45,7 +45,7 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
@@ -71,7 +71,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   notificationNumber?: string;
   notification?: string;
   hasOption!: number;
-  price?: number;
+  price!: number;
   priceSubscription?: number;
   cost?: number;
   stockItem?: number;
@@ -193,12 +193,12 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       field: 'buying_period'
     },
     isDiscount: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       field: 'is_discount'
     },
     discountPercentage: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TINYINT.UNSIGNED,
       allowNull: true,
       field: 'discount_percentage'
     },
@@ -218,7 +218,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       field: 'discount_time_to'
     },
     isRecomend: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       field: 'is_recomend'
     },
@@ -270,25 +270,25 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: true
     },
     hasOption: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       field: 'has_option'
     },
     price: {
-      type: DataTypes.DECIMAL(10,4),
-      allowNull: true
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
     priceSubscription: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       field: 'price_subscription'
     },
     cost: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true
     },
     stockItem: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       field: 'stock_item'
     },
@@ -302,7 +302,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: true
     },
     isDeleted: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0,
       field: 'is_deleted'

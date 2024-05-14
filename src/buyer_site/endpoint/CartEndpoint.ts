@@ -48,8 +48,8 @@ export class CartEndpoint {
   }
 
   private getCart = async (req: ProtectedRequest, res: Response) => {
-    const storeId: string = req.params.storeId
-    const buyerId: string = req.params.buyerId
+    const storeId: string = req.storeId
+    const buyerId: string = req.user.id
     const results = await this.cartUsecase.getCart(storeId, buyerId);
     return ResponseData(results, res)
   }
@@ -70,7 +70,7 @@ export class CartEndpoint {
     const router = express.Router();
 
     router.post('/addProduct', this.addProduct);
-    router.get('/:storeId/:buyerId', this.getCart)
+    router.get('/', this.getCart)
     router.delete('/delete/:id', this.deleteProduct);
     router.delete('/products', this.deleteProducts)
     router.put('/', this.updateProduct)

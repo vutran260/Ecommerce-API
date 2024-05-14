@@ -49,7 +49,7 @@ export class LP_PRODUCT_OPTION extends Model<LP_PRODUCT_OPTIONAttributes, LP_PRO
       field: 'option_value'
     },
     optionOrder: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       field: 'option_order'
     }

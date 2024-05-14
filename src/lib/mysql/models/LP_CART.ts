@@ -9,6 +9,7 @@ export interface LP_CARTAttributes {
   storeId: string;
   productId: string;
   quantity: number;
+  isSubscription: number;
   buyingTimeOption?: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -16,7 +17,6 @@ export interface LP_CARTAttributes {
   createdBy?: string;
   updatedAt?: Date;
   updatedBy?: string;
-  isSubscription: number;
 }
 
 export type LP_CARTPk = "buyerId" | "storeId" | "productId";
@@ -29,6 +29,7 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
   storeId!: string;
   productId!: string;
   quantity!: number;
+  isSubscription!: number;
   buyingTimeOption?: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -36,7 +37,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
   createdBy?: string;
   updatedAt?: Date;
   updatedBy?: string;
-  isSubscription!: number;
 
   // LP_CART belongsTo LP_BUYER via buyerId
   buyer!: LP_BUYER;
@@ -87,16 +87,21 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
       field: 'product_id'
     },
     quantity: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
+    isSubscription: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      field: 'is_subscription'
+    },
     buyingTimeOption: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TINYINT.UNSIGNED,
       allowNull: true,
       field: 'buying_time_option'
     },
     buyingPeriod: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TINYINT.UNSIGNED,
       allowNull: true,
       field: 'buying_period'
     },
@@ -126,11 +131,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
       type: DataTypes.STRING(225),
       allowNull: true,
       field: 'updated_by'
-    },
-    isSubscription: {
-      type: DataTypes.TINYINT,
-      allowNull: false,
-      field: 'is_subscription'
     }
   }, {
     sequelize,

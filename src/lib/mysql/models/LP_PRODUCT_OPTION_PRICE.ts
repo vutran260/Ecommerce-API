@@ -65,20 +65,20 @@ export class LP_PRODUCT_OPTION_PRICE extends Model<LP_PRODUCT_OPTION_PRICEAttrib
       field: 'option_value_3'
     },
     price: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
     priceBeforeDiscount: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       field: 'price_before_discount'
     },
     cost: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
     stockItem: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       field: 'stock_item'
     }

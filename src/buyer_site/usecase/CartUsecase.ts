@@ -1,8 +1,10 @@
-import { isEmpty, update } from "lodash";
+import lodash, { isEmpty, update } from "lodash";
 import { ProductRepository } from "../../seller_site/repository/ProductRepository";
 import { ProductRequest } from "../endpoint/CartEndpoint";
 import { CartRepository } from "../repository/CartRepository";
 import { BadRequestError } from "../../lib/http/custom_error/ApiError";
+import Logger from "../../lib/core/Logger";
+import { LP_CART } from "../../lib/mysql/models/LP_CART";
 
 export class CartUsecase {
 
@@ -33,12 +35,17 @@ export class CartUsecase {
         throw new BadRequestError('Product is not subscription');
       }
     }
-    if (await this.cartRepo.getProductInCart(addProductRequest.ToLP_CART().productId, addProductRequest.ToLP_CART().storeId, addProductRequest.ToLP_CART().buyerId)) {
+
+    const isPrroductExist = await this.cartRepo.isProductExistInCart(
+      addProductRequest.productId,
+      addProductRequest.storeId,
+      addProductRequest.buyerId);
+    if (isPrroductExist) {
+      Logger.info("Product already exists in cart increase quantity");
       await this.cartRepo.updateQuantityProductCart(addProductRequest.ToLP_CART())
       return
     }
     await this.cartRepo.addProductToCart(addProductRequest.ToLP_CART());
-    return
   }
 
 
@@ -72,8 +79,15 @@ export class CartUsecase {
   }
 
   public getCart = async (storeId: string, buyerId: string,) => {
-    const product = await this.cartRepo.getCart(storeId, buyerId)
-    return product
+    const products = await this.cartRepo.getCart(storeId, buyerId)
+
+    const out  = products.map(product =>{
+      const price = this.calculateProductPrice(product);
+      lodash.set(product.dataValues, "price", price);
+      lodash.set(product, "price", price);
+      return product.dataValues;
+    });
+    return out;
   }
 
   public deleteProducts = async (ids: string[], storeId: string, buyerId: string) => {
@@ -81,6 +95,31 @@ export class CartUsecase {
 
   }
 
+
+  private calculateProductPrice = (cartProduct:LP_CART): number => {
+    let price = 0;
+    if (!cartProduct.isSubscription) {
+      price = cartProduct.product.price;
+    } else {
+      price = cartProduct.product.priceSubscription!;
+    }
+
+    if (!cartProduct.product.isDiscount) {
+      return price;
+    }
+
+    const now = new Date();
+    if (!cartProduct.product.hasDiscountSchedule || 
+      (cartProduct.product.hasDiscountSchedule && (
+        now <= cartProduct.product.discountTimeTo! &&
+        now >= cartProduct.product.discountTimeFrom!
+      ) )
+    ) {
+      price = (price * (100 - cartProduct.product.discountPercentage!)) / 100;
+      return price;
+    }
+    return price
+  };
 
 
 }

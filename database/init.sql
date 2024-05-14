@@ -84,14 +84,14 @@ CREATE TABLE LP_PRODUCT (
     buying_time_option VARCHAR(255),
     buying_period VARCHAR(255),
 
-    is_discount TINYINT(1) NOT NULL,
-    discount_percentage INTEGER,
+    is_discount TINYINT NOT NULL,
+    discount_percentage TINYINT UNSIGNED,
     has_discount_schedule TINYINT,
     discount_time_from TIMESTAMP,
     discount_time_to TIMESTAMP,
 
 
-    is_recomend TINYINT(1) NOT NULL,
+    is_recomend TINYINT NOT NULL,
     product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(512) NOT NULL,
     product_description VARCHAR(512) NOT NULL,
@@ -106,17 +106,17 @@ CREATE TABLE LP_PRODUCT (
     notification_number VARCHAR(255),
     notification VARCHAR(255),
 
-    has_option TINYINT(1) NOT NULL,
+    has_option TINYINT NOT NULL,
 
 
-    price DECIMAL(10, 4),
-    price_subscription DECIMAL(10, 4),
-    cost DECIMAL(10, 4),
-    stock_item INTEGER,
+    price INT UNSIGNED NOT NULL,
+    price_subscription INT UNSIGNED,
+    cost INT UNSIGNED,
+    stock_item INT UNSIGNED,
 
     product_tag VARCHAR(255),
     status VARCHAR(255),
-    is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+    is_deleted TINYINT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
@@ -129,7 +129,7 @@ CREATE TABLE LP_PRODUCT (
 CREATE TABLE LP_PRODUCT_COMPONENT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     product_id VARCHAR(36) NOT NULL,
-    amount DECIMAL(10, 4) NOT NULL,
+    amount INT UNSIGNED NOT NULL,
     unit VARCHAR(255),
 
     CONSTRAINT fk_product_id_component FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
@@ -139,7 +139,7 @@ CREATE TABLE LP_PRODUCT_OPTION (
     product_id VARCHAR(36) NOT NULL,
     option_type VARCHAR(72) NOT NULL,
     option_value VARCHAR(255) NOT NULL,
-    option_order INTEGER NOT NULL,
+    option_order INT UNSIGNED NOT NULL,
 
     CONSTRAINT fk_product_id_option FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
 
@@ -154,10 +154,10 @@ CREATE TABLE LP_PRODUCT_OPTION_PRICE (
     option_value_3 VARCHAR(72),
 
 
-    price DECIMAL(10, 4) NOT NULL,
-    price_before_discount DECIMAL(10, 4),
-    cost DECIMAL(10, 4) NOT NULL,
-    stock_item INTEGER NOT NULL,
+    price INT UNSIGNED NOT NULL,
+    price_before_discount INT UNSIGNED,
+    cost INT UNSIGNED NOT NULL,
+    stock_item INT UNSIGNED NOT NULL,
 
 
     CONSTRAINT fk_product_id_option_price FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
@@ -199,12 +199,12 @@ CREATE TABLE LP_CART (
   buyer_id VARCHAR(36) NOT NULL,
   store_id VARCHAR(36) NOT NULL,
   product_id VARCHAR(36) NOT NULL,
-  quantity INTEGER NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
   is_subscription TINYINT NOT NULL,
 
 
-  buying_time_option INTEGER,
-  buying_period INTEGER,
+  buying_time_option TINYINT UNSIGNED,
+  buying_period TINYINT UNSIGNED,
   start_buying_date TIMESTAMP,
 
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

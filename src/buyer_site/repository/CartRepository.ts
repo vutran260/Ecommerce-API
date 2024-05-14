@@ -1,6 +1,8 @@
 import { range } from "lodash";
 import { NotFoundError } from "../../lib/http/custom_error/ApiError";
 import { LP_CART, LP_CARTCreationAttributes } from "../../lib/mysql/models/LP_CART";
+import Logger from "../../lib/core/Logger";
+import { Op } from "sequelize";
 
 export class CartRepository {
 
@@ -8,20 +10,34 @@ export class CartRepository {
     await LP_CART.create(input);
   }
 
-  public getProductInCart = async (id: string, storeId: string, buyerId: string) => {
+  public getProductInCart = async (productId: string, storeId: string, buyerId: string) => {
     const product = await LP_CART.findOne(
       {
         where: {
-          productId: id,
+          productId: productId,
           buyerId: buyerId,
           storeId: storeId
         }
       });
     if (product === null) {
-      return new NotFoundError(`Product with id ${id} not found in cart`);
-
+      throw new NotFoundError(
+        `Product with id ${productId} not found in cart of buyer ${buyerId} in store ${storeId}`);
     }
     return product
+  }
+
+  public isProductExistInCart = async (productId: string, storeId: string, buyerId: string) => {
+    const count = await LP_CART.count(
+      {
+        where: {
+          productId: productId,
+          buyerId: buyerId,
+          storeId: storeId
+        }
+      });
+    return count > 0
+
+
   }
 
   public updateQuantityProductCart = async (input: LP_CARTCreationAttributes) => {
@@ -69,6 +85,7 @@ export class CartRepository {
     }
     );
     if (!lpProduct) {
+      Logger.error(`Failed to delete product ${id} not found`);
       throw new NotFoundError(`Product with id ${id} not found`);
     }
     await LP_CART.destroy({
@@ -81,50 +98,30 @@ export class CartRepository {
   }
 
   public deleteProducts = async (ids: string[], storeId: string, buyerId: string) => {
-    for (let i = 0; i < ids.length; i++) {
-
-      const lpProduct = await LP_CART.findOne({
-        where: {
-          productId: ids[i],
-          storeId: storeId,
-          buyerId: buyerId
-        }
-      }
-      );
-      if (!lpProduct) {
-        throw new NotFoundError(`Product with id ${ids[i]} not found`);
-      }
-      await LP_CART.destroy({
-        where: {
-          productId: ids[i],
-          buyerId: buyerId,
-          storeId: storeId
-        },
-      });
-    }
+    await LP_CART.destroy({
+      where: {
+        productId: { [Op.in]: ids },
+        buyerId: buyerId,
+        storeId: storeId
+      },
+    });
   }
 
-  public getCart = async (storeId: string, buyerId: string) => {
+  public getCart = async (storeId: string, buyerId: string):Promise<LP_CART[]>  => {
     let product = []
     product = await LP_CART.findAll({
+      include: [
+        {
+          association: LP_CART.associations.product,
+        }
+      ],
       where: {
         storeId: storeId,
         buyerId: buyerId
       },
     })
-    // console.log(`=========================================`, a)
-    if (product.length === 0) {
-      return new NotFoundError(`Cart with store id ${storeId} and buyer id  ${buyerId}  not found`);
-    }
     return product
   }
-
-
 }
 
 
-
-//   public getCart = async () => {
-//   const product = await LP_CART.findAll()
-// }
-// }
