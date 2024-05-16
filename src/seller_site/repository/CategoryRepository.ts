@@ -89,13 +89,12 @@ export class CategoryRepository {
         const filterCategories = await categoriesTheSameLevel.filter(
           (res: any) => res.id != category.id,
         );
-        await category.destroy();
-
         await LP_PRODUCT_CATEGORY.destroy({
           where: {
             categoryId: id,
           },
         });
+        await category.destroy();
 
         if (filterCategories.length > 0) {
           filterCategories.forEach(async (res: any, index: number) => {
