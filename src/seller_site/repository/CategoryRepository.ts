@@ -66,6 +66,16 @@ export class CategoryRepository {
       if (categoryCreateRequest.parentId != null) {
         await this.getCategoryId(categoryCreateRequest.parentId, storeId);
       }
+      const existingCategoryName = await LP_CATEGORY.findOne({
+        where: {
+          categoryName: categoryCreateRequest.categoryName,
+          storeId: storeId,
+        },
+      });
+      if (existingCategoryName) {
+        throw new DataExists();
+      }
+
       if (category) {
         return await category.update(categoryCreateRequest);
       }
