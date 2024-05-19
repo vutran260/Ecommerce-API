@@ -80,7 +80,7 @@ export class AccessTokenError extends ApiError {
 }
 
 export class DataExists extends ApiError {
-  constructor(message = 'これは必須項目です。') {
+  constructor(message = '重複する名前は許可されない。') {
     super(ErrorType.DATA_EXISTS, message, ErrorCode.ALREADY_EXISTS);
   }
 }
