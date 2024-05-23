@@ -3,14 +3,12 @@ import { ProtectedRequest } from '../../lib/http/app-request';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
-import { LP_CART, LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
+import { LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
 import { booleanToTINYINT } from '../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORTMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
-import { ResponseData, ResponseListData } from '../../lib/http/Response';
-import Logger from '../../lib/core/Logger';
-import { string } from 'joi';
+import { ResponseData } from '../../lib/http/Response';
 
 export class CartEndpoint {
   private cartUsecase: CartUsecase;
@@ -42,7 +40,7 @@ export class CartEndpoint {
     const buyerId: string = req.user.id
     const storeId: string = req.storeId
     const id: string = req.params.id;
-    await this.cartUsecase.deleteProduct(id, buyerId, storeId);
+    await this.cartUsecase.deleteProduct(id, storeId, buyerId);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
 
   }

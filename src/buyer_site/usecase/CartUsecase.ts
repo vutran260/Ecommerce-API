@@ -18,15 +18,15 @@ export class CartUsecase {
 
   public addProduct = async (addProductRequest: ProductRequest) => {
     if (addProductRequest.isSubscription) {
-      if (isEmpty(addProductRequest.buyingTimeOption)) {
+      if (addProductRequest.buyingTimeOption === null) {
         throw new BadRequestError('Missing buying time option');
       }
 
-      if (isEmpty(addProductRequest.buyingPeriod)) {
+      if (addProductRequest.buyingPeriod === null) {
         throw new BadRequestError('Missing buying period');
       }
 
-      if (isEmpty(addProductRequest.startBuyingDate)) {
+      if (addProductRequest.startBuyingDate === null) {
         throw new BadRequestError('Missing start buying date');
       }
 
@@ -52,15 +52,15 @@ export class CartUsecase {
 
   public updateProduct = async (updateProduct: ProductRequest) => {
     if (updateProduct.isSubscription) {
-      if (isEmpty(updateProduct.buyingTimeOption)) {
+      if (updateProduct.buyingTimeOption=== null) {
         throw new BadRequestError('Missing buying time option');
       }
 
-      if (isEmpty(updateProduct.buyingPeriod)) {
+      if (updateProduct.buyingPeriod===null) {
         throw new BadRequestError('Missing buying period');
       }
 
-      if (isEmpty(updateProduct.startBuyingDate)) {
+      if (updateProduct.startBuyingDate===null) {
         throw new BadRequestError('Missing start buying date');
       }
 
