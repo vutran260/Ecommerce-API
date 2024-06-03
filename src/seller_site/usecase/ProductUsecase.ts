@@ -153,8 +153,8 @@ export class ProductUsecase {
           categoryId: category,
         };
       }),
-      price: parseFloat(input.price),
-      priceSubscription: parseFloat(input.priceSubscription),
+      price: input.price,
+      priceSubscription: input.priceSubscription,
       cost: parseFloat(input.cost),
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,

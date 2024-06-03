@@ -82,9 +82,9 @@ export default class Product {
   @IsNotEmpty()
   status: string;
 
-  price: string;
+  price?: number;
 
-  priceSubscription: string;
+  priceSubscription?: number;
 
   cost: string;
 
@@ -111,7 +111,9 @@ export default class Product {
 
   discountTimeTo?: string;
 
-  caculatedPrice: number;
+  caculatedNormalPrice: number;
+
+  caculatedSubscriptionPrice?: number;
 
 }
 
@@ -135,8 +137,8 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     notificationNumber: product.notificationNumber,
     notification: product.notification,
     hasOption: booleanToTINYINT(product.hasOption)!,
-    price: parseFloat(product.price),
-    priceSubscription: parseFloat(product.priceSubscription),
+    price:product.price,
+    priceSubscription: product.priceSubscription,
     cost: parseFloat(product.cost),
     stockItem: product.stockItem,
     productTag: product.productTag,
@@ -181,10 +183,8 @@ export const ProductFromLP_PRODUCT = (
       : '',
     notification: lpProduct.notification ? lpProduct.notification : '',
     hasOption: TINYINTToBoolean(lpProduct.hasOption)!,
-    price: lpProduct.price ? lpProduct.price.toString() : '0',
-    priceSubscription: lpProduct.priceSubscription
-      ? lpProduct.priceSubscription.toString()
-      : '0',
+    price: lpProduct.price,
+    priceSubscription: lpProduct.priceSubscription,
     cost: lpProduct.cost ? lpProduct.cost.toString() : '0',
     stockItem: lpProduct.stockItem ? lpProduct.stockItem : 0,
     productTag: lpProduct.productTag ? lpProduct.productTag : '',
@@ -197,18 +197,38 @@ export const ProductFromLP_PRODUCT = (
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule), 
     discountTimeFrom: lpProduct.discountTimeFrom?.toISOString(), 
     discountTimeTo: lpProduct.discountTimeTo?.toISOString(),
-    caculatedPrice: calculatedProductPrice(lpProduct),
+    caculatedNormalPrice:  calculatedProductNormalPrice(lpProduct),
+    caculatedSubscriptionPrice: calculatedProductSubcriptionPrice(lpProduct),
   };
 };
 
 
-const calculatedProductPrice = (LpProduct:LP_PRODUCTAttributes): number => {
-  let price = 0;
-  if (!LpProduct.isSubscription) {
-    price = LpProduct.price!;
-  } else {
-    price = LpProduct.priceSubscription!;
+const calculatedProductNormalPrice = (LpProduct:LP_PRODUCTAttributes): number => {
+  let price = LpProduct.price!;
+
+  if (!LpProduct.isDiscount) {
+    return price;
   }
+
+  const now = new Date();
+  if (!LpProduct.hasDiscountSchedule || 
+    (LpProduct.hasDiscountSchedule && (
+      now <= LpProduct.discountTimeTo! &&
+      now >= LpProduct.discountTimeFrom!
+    ) )
+  ) {
+    price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
+    return price;
+  }
+  return price
+};
+
+const calculatedProductSubcriptionPrice = (LpProduct:LP_PRODUCTAttributes): number|undefined => {
+  if (!LpProduct.isSubscription) {
+    return undefined;
+  }
+  let price = LpProduct.priceSubscription!;
+  
 
   if (!LpProduct.isDiscount) {
     return price;
