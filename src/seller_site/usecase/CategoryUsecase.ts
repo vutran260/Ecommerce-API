@@ -1,7 +1,7 @@
-import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../../common/model/categories/CategoryCreateRequest';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { CategoryRepository } from '../repository/CategoryRepository';
-import MovePositionRequest from '../requests/categories/MovePositionRequest';
+import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 
 export class CategoryUsecase {
   private categoryRepo: CategoryRepository;

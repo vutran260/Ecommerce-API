@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
 import Logger from '../../lib/core/Logger';
-import Product from '../requests/products/Product';
+import Product from '../../common/model/products/Product';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';

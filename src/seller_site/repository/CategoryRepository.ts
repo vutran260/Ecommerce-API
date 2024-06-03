@@ -9,7 +9,7 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../../common/model/categories/CategoryCreateRequest';
 import {
   LP_CATEGORY,
   LP_CATEGORYAttributes,
@@ -18,7 +18,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { Attributes, FindAndCountOptions, Op, QueryTypes } from 'sequelize';
 import { range } from 'lodash';
-import MovePositionRequest from '../requests/categories/MovePositionRequest';
+import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 

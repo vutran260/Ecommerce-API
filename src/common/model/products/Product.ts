@@ -2,7 +2,7 @@ import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import ProductComponent from './ProductCompoment';
 import ProductOption from './ProductOption';
 import ProductOptionPrice from './ProductOptionPrice';
-import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
+import { LP_PRODUCT, LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 
 export default class Product {
@@ -109,7 +109,9 @@ export default class Product {
 
   discountTimeFrom?: string;
 
-  discountTimeTo?: string
+  discountTimeTo?: string;
+
+  caculatedPrice: number;
 
 }
 
@@ -151,6 +153,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
 export const ProductFromLP_PRODUCT = (
   lpProduct: LP_PRODUCTAttributes,
 ): Product => {
+
   return {
     id: lpProduct.id,
     storeId: lpProduct.storeId,
@@ -194,6 +197,32 @@ export const ProductFromLP_PRODUCT = (
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule), 
     discountTimeFrom: lpProduct.discountTimeFrom?.toISOString(), 
     discountTimeTo: lpProduct.discountTimeTo?.toISOString(),
-
+    caculatedPrice: calculatedProductPrice(lpProduct),
   };
+};
+
+
+const calculatedProductPrice = (LpProduct:LP_PRODUCTAttributes): number => {
+  let price = 0;
+  if (!LpProduct.isSubscription) {
+    price = LpProduct.price!;
+  } else {
+    price = LpProduct.priceSubscription!;
+  }
+
+  if (!LpProduct.isDiscount) {
+    return price;
+  }
+
+  const now = new Date();
+  if (!LpProduct.hasDiscountSchedule || 
+    (LpProduct.hasDiscountSchedule && (
+      now <= LpProduct.discountTimeTo! &&
+      now >= LpProduct.discountTimeFrom!
+    ) )
+  ) {
+    price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
+    return price;
+  }
+  return price
 };

@@ -4,7 +4,7 @@ import { SellerUsecase } from '../usecase/SellerUsecase';
 import { ResponseData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { SellerAuthenMiddlleware } from '../middleware/SellerAuthenMiddleware';
-import RegisterSellerRequest from '../requests/sellers/RegisterSellerRequest';
+import RegisterSellerRequest from '../../common/model/sellers/RegisterSellerRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 

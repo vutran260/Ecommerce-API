@@ -5,10 +5,10 @@ import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { CategoryUsecase } from '../usecase/CategoryUsecase';
-import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../../common/model/categories/CategoryCreateRequest';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
-import MovePositionRequest from '../requests/categories/MovePositionRequest';
+import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 
 export class CategoryEndpoint {
   private categoryUsecase: CategoryUsecase;
