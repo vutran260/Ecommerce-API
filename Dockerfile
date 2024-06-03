@@ -14,7 +14,7 @@ WORKDIR /home/node/app
 COPY --chown=node:node . .
 
 # installing the dependencies into the container
-RUN npm install
+RUN npm install --verbose
 
 # container exposed network port number
 EXPOSE 3000
