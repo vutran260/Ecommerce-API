@@ -1,10 +1,10 @@
-import lodash, { isEmpty, update } from "lodash";
-import { ProductRepository } from "../../seller_site/repository/ProductRepository";
+import lodash from "lodash";
 import { ProductRequest } from "../endpoint/CartEndpoint";
 import { CartRepository } from "../repository/CartRepository";
 import { BadRequestError } from "../../lib/http/custom_error/ApiError";
 import Logger from "../../lib/core/Logger";
 import { LP_CART } from "../../lib/mysql/models/LP_CART";
+import { ProductRepository } from '../repository/ProductRepository';
 
 export class CartUsecase {
 
