@@ -3,7 +3,7 @@ import { ResponseData } from '../../lib/http/Response';
 import Logger from '../../lib/core/Logger';
 import { StoreUsecase } from '../usecase/StoreUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
-import StoreCreateRequest, { StoreCreateRequestToLP_STORECreationAttributes } from '../requests/stores/StoreCreateRequest';
+import StoreCreateRequest, { StoreCreateRequestToLP_STORECreationAttributes } from '../../common/model/stores/StoreCreateRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { plainToClass } from 'class-transformer';
 

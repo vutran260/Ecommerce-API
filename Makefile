@@ -5,5 +5,8 @@ start-db:
 	docker-compose -f database/docker-compose.yml up -d
 
 .PHONY:
-gen-db-entity:
-	npx typeorm-model-generator -h localhost -d link-palette-dev -u link-palette -x P@ssw0rd -e postgres -o ./src/entity/. -s public -p 1111
+deploy:
+	docker build --platform linux/amd64 -t linkpalette-be .
+	docker image save linkpalette-be > app.tar
+	scp ./app.tar root@167.179.91.247:/root/link_palette/app_be/app.tar
+	ssh -t root@167.179.91.247 'cd /root/link_palette/app_be/; make deploy'

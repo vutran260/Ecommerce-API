@@ -1,17 +1,17 @@
-import Product, { ProductToLP_PRODUCT } from '../requests/products/Product';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import {
   CreateProductInput,
   ProductRepository,
 } from '../repository/ProductRepository';
-import ProductOptionPrice from '../requests/products/ProductOptionPrice';
 import {
   BadRequestError,
 } from '../../lib/http/custom_error/ApiError';
-import ProductOption from '../requests/products/ProductOption';
 import { booleanToTINYINT } from '../../lib/helpers/utils';
 import { CategoryRepository } from '../repository/CategoryRepository';
+import Product from '../../common/model/products/Product';
+import ProductOption from '../../common/model/products/ProductOption';
+import ProductOptionPrice from '../../common/model/products/ProductOptionPrice';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -153,8 +153,8 @@ export class ProductUsecase {
           categoryId: category,
         };
       }),
-      price: parseFloat(input.price),
-      priceSubscription: parseFloat(input.priceSubscription),
+      price: input.price,
+      priceSubscription: input.priceSubscription,
       cost: parseFloat(input.cost),
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,

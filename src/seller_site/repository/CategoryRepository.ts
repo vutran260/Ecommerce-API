@@ -9,7 +9,7 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import CategoryCreateRequest from '../requests/categories/CategoryCreateRequest';
+import CategoryCreateRequest from '../../common/model/categories/CategoryCreateRequest';
 import {
   LP_CATEGORY,
   LP_CATEGORYAttributes,
@@ -18,7 +18,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { Attributes, FindAndCountOptions, Op, QueryTypes } from 'sequelize';
 import { range } from 'lodash';
-import MovePositionRequest from '../requests/categories/MovePositionRequest';
+import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 
@@ -66,6 +66,16 @@ export class CategoryRepository {
       if (categoryCreateRequest.parentId != null) {
         await this.getCategoryId(categoryCreateRequest.parentId, storeId);
       }
+      const existingCategoryName = await LP_CATEGORY.findOne({
+        where: {
+          categoryName: categoryCreateRequest.categoryName,
+          storeId: storeId,
+        },
+      });
+      if (existingCategoryName) {
+        throw new DataExists();
+      }
+
       if (category) {
         return await category.update(categoryCreateRequest);
       }
@@ -89,13 +99,12 @@ export class CategoryRepository {
         const filterCategories = await categoriesTheSameLevel.filter(
           (res: any) => res.id != category.id,
         );
-        await category.destroy();
-
         await LP_PRODUCT_CATEGORY.destroy({
           where: {
             categoryId: id,
           },
         });
+        await category.destroy();
 
         if (filterCategories.length > 0) {
           filterCategories.forEach(async (res: any, index: number) => {

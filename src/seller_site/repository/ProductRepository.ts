@@ -1,7 +1,3 @@
-import Product, {
-  ProductFromLP_PRODUCT,
-  ProductToLP_PRODUCT,
-} from '../requests/products/Product';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
@@ -18,15 +14,16 @@ import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import { LP_PRODUCT_OPTIONCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
 import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
-import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../requests/products/ProductCompoment';
-import { ProductOptionFromLP_PRODUCT_OPTION } from '../requests/products/ProductOption';
-import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../requests/products/ProductOptionPrice';
 import {
   LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
 import { Op } from 'sequelize';
+import Product, { ProductFromLP_PRODUCT, ProductToLP_PRODUCT } from '../../common/model/products/Product';
+import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
+import { ProductOptionFromLP_PRODUCT_OPTION } from '../../common/model/products/ProductOption';
+import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../../common/model/products/ProductOptionPrice';
 
 export class ProductRepository {
   public createProduct = async (

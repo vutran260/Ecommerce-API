@@ -2,7 +2,7 @@ import express, { Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { ResponseData } from '../../lib/http/Response';
-import Buyer from '../../seller_site/requests/buyers/Buyer';
+import Buyer from '../../common/model/buyers/Buyer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { BuyerUsecase } from '../usecase/BuyerUsecase';
 import { BuyerAuthenMiddlleware } from '../middleware/BuyerAuthenMiddleware';
