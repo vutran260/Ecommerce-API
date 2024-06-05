@@ -5,6 +5,7 @@ import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_CARTAttributes {
+  id: string;
   buyerId: string;
   storeId: string;
   productId: string;
@@ -19,12 +20,13 @@ export interface LP_CARTAttributes {
   updatedBy?: string;
 }
 
-export type LP_CARTPk = "buyerId" | "storeId" | "productId";
+export type LP_CARTPk = "id";
 export type LP_CARTId = LP_CART[LP_CARTPk];
-export type LP_CARTOptionalAttributes = "buyingTimeOption" | "buyingPeriod" | "startBuyingDate" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
+export type LP_CARTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "startBuyingDate" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_CARTCreationAttributes = Optional<LP_CARTAttributes, LP_CARTOptionalAttributes>;
 
 export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes> implements LP_CARTAttributes {
+  id!: string;
   buyerId!: string;
   storeId!: string;
   productId!: string;
@@ -56,10 +58,15 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_CART {
     return LP_CART.init({
+    id: {
+      type: DataTypes.STRING(36),
+      allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
     buyerId: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true,
       references: {
         model: 'LP_BUYER',
         key: 'id'
@@ -69,7 +76,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
     storeId: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true,
       references: {
         model: 'LP_STORE',
         key: 'id'
@@ -79,7 +85,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
     productId: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      primaryKey: true,
       references: {
         model: 'LP_PRODUCT',
         key: 'id'
@@ -142,9 +147,14 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
         unique: true,
         using: "BTREE",
         fields: [
+          { name: "id" },
+        ]
+      },
+      {
+        name: "buyer_id",
+        using: "BTREE",
+        fields: [
           { name: "buyer_id" },
-          { name: "store_id" },
-          { name: "product_id" },
         ]
       },
       {

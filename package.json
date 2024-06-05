@@ -16,8 +16,8 @@
     "eslint": "eslint . --ext .js,.ts",
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
-    "gen-model": "sequelize-auto -a ./src/lib/mysql/config.js -o ./src/lib/mysql/models --cp c -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql && replace-uuid-gen",
-    "replace-uuid-gen": "replace-in-files --string=\"DataTypes.UUIDV4\" --replacement=\"DataTypes.UUIDV4\" ./."
+    "gen-model": "sequelize-auto -a ./src/lib/mysql/config.js -o ./src/lib/mysql/models --cp c -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql && npm run replace-uuid-gen",
+    "replace-uuid-gen": "replace-in-files --string=\"Sequelize.Sequelize.fn('uuid')\" --replacement=\"DataTypes.UUIDV4\" ./src/."
   },
   "repository": {
     "type": "git",
