@@ -37,7 +37,7 @@ export class ProductEndpoint {
     const router = express.Router();
     router.get('/detail/:id', this.getDetailProduct);
     router.get(
-      '/products',
+      '/items',
       PagingMiddelware,
       StoreFilterMiddelware,
       this.getProducts,

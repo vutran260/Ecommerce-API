@@ -1,9 +1,7 @@
-import lodash from "lodash";
-import { ProductRequest } from "../endpoint/CartEndpoint";
+import { CartItem } from "../endpoint/CartEndpoint";
 import { CartRepository } from "../repository/CartRepository";
 import { BadRequestError } from "../../lib/http/custom_error/ApiError";
 import Logger from "../../lib/core/Logger";
-import { LP_CART } from "../../lib/mysql/models/LP_CART";
 import { ProductRepository } from '../repository/ProductRepository';
 
 export class CartUsecase {
@@ -16,110 +14,80 @@ export class CartUsecase {
     this.cartRepo = cartRepo;
   }
 
-  public addProduct = async (addProductRequest: ProductRequest) => {
-    if (addProductRequest.isSubscription) {
-      if (addProductRequest.buyingTimeOption === null) {
+  public addItem = async (addItemRequest: CartItem) => {
+    if (addItemRequest.isSubscription) {
+      if (addItemRequest.buyingTimeOption === null) {
         throw new BadRequestError('Missing buying time option');
       }
 
-      if (addProductRequest.buyingPeriod === null) {
+      if (addItemRequest.buyingPeriod === null) {
         throw new BadRequestError('Missing buying period');
       }
 
-      if (addProductRequest.startBuyingDate === null) {
+      if (addItemRequest.startBuyingDate === null) {
         throw new BadRequestError('Missing start buying date');
       }
 
-      const product = await this.productRepo.getProductId(addProductRequest.productId);
+      const product = await this.productRepo.getProductId(addItemRequest.productId);
       if (!product.isSubscription) {
         throw new BadRequestError('Product is not subscription');
       }
     }
 
-    const isPrroductExist = await this.cartRepo.isProductExistInCart(
-      addProductRequest.productId,
-      addProductRequest.storeId,
-      addProductRequest.buyerId);
-    if (isPrroductExist) {
-      Logger.info("Product already exists in cart increase quantity");
-      await this.cartRepo.updateQuantityProductCart(addProductRequest.ToLP_CART())
-      return
+    if (!addItemRequest.isSubscription) {
+      const item = await this.cartRepo.getNomalItemInCart(
+        addItemRequest.productId,
+        addItemRequest.storeId,
+        addItemRequest.buyerId);
+
+      if (!!item && !item.isSubscription) {
+        Logger.info("Product already exists in cart increase quantity");
+        await this.cartRepo.increaseQuantityProductCart(item.id, addItemRequest.quantity);
+        return this.cartRepo.getItemById(item.id);
+      }
     }
-    await this.cartRepo.addProductToCart(addProductRequest.ToLP_CART());
+    await this.cartRepo.addItemToCart(addItemRequest.ToLP_CART());
   }
 
 
 
-  public updateProduct = async (updateProduct: ProductRequest) => {
-    if (updateProduct.isSubscription) {
-      if (updateProduct.buyingTimeOption=== null) {
+  public updateItem = async (cartItem: CartItem) => {
+    if (cartItem.isSubscription) {
+      if (cartItem.buyingTimeOption === null) {
         throw new BadRequestError('Missing buying time option');
       }
 
-      if (updateProduct.buyingPeriod===null) {
+      if (cartItem.buyingPeriod === null) {
         throw new BadRequestError('Missing buying period');
       }
 
-      if (updateProduct.startBuyingDate===null) {
+      if (cartItem.startBuyingDate === null) {
         throw new BadRequestError('Missing start buying date');
       }
 
-      const product = await this.productRepo.getProductId(updateProduct.productId);
+      const product = await this.productRepo.getProductId(cartItem.productId);
       if (!product.isSubscription) {
         throw new BadRequestError('Product is not subscription');
       }
     }
 
-    await this.cartRepo.updateProductInCart(updateProduct.ToLP_CART());
-    return
+    await this.cartRepo.updateItemInCart(cartItem.ToLP_CART());
+    return this.cartRepo.getItemById(cartItem.id);
   }
 
-  public deleteProduct = async (id: string, storeId: string, buyerId: string) => {
-    await this.cartRepo.deleteProduct(id, storeId, buyerId)
+  public deleteItem = async (id: string) => {
+    await this.cartRepo.deleteItem(id)
   }
 
-  public getCart = async (storeId: string, buyerId: string,) => {
-    const products = await this.cartRepo.getCart(storeId, buyerId)
+  public getListItemInCart = async (storeId: string, buyerId: string,) => {
+    const items = await this.cartRepo.getListItemInCart(storeId, buyerId)
 
-    const out  = products.map(product =>{
-      const price = this.calculateProductPrice(product);
-      lodash.set(product.dataValues, "price", price);
-      lodash.set(product, "price", price);
-      return product.dataValues;
-    });
-    return out;
+    return items.map(item => CartItem.FromLP_CART(item));
   }
 
-  public deleteProducts = async (ids: string[], storeId: string, buyerId: string) => {
-    await this.cartRepo.deleteProducts(ids, storeId, buyerId)
+  public deleteItems = async (ids: string[]) => {
+    await this.cartRepo.deleteItems(ids)
 
   }
-
-
-  private calculateProductPrice = (cartProduct:LP_CART): number => {
-    let price = 0;
-    if (!cartProduct.isSubscription) {
-      price = cartProduct.product.price;
-    } else {
-      price = cartProduct.product.priceSubscription!;
-    }
-
-    if (!cartProduct.product.isDiscount) {
-      return price;
-    }
-
-    const now = new Date();
-    if (!cartProduct.product.hasDiscountSchedule || 
-      (cartProduct.product.hasDiscountSchedule && (
-        now <= cartProduct.product.discountTimeTo! &&
-        now >= cartProduct.product.discountTimeFrom!
-      ) )
-    ) {
-      price = (price * (100 - cartProduct.product.discountPercentage!)) / 100;
-      return price;
-    }
-    return price
-  };
-
 
 }

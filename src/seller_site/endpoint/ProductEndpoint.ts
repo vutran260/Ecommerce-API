@@ -80,10 +80,10 @@ export class ProductEndpoint {
     router.post('/create', this.createProduct);
     router.put('/', this.updateProduct);
     router.delete('/delete/:id', this.deleteProduct);
-    router.delete('/products', this.deleteProducts);
+    router.delete('/items', this.deleteProducts);
     router.get('/detail/:id', this.getDetailProduct);
     router.get(
-      '/products',
+      '/items',
       PagingMiddelware,
       StoreFilterMiddelware,
       this.getProducts,

@@ -6,23 +6,44 @@ import { Op } from "sequelize";
 
 export class CartRepository {
 
-  public addProductToCart = async (input: LP_CARTCreationAttributes) => {
+  public addItemToCart = async (input: LP_CARTCreationAttributes) => {
     await LP_CART.create(input);
   }
 
-  public getProductInCart = async (productId: string, storeId: string, buyerId: string) => {
+  
+  public getItemById = async (id: string) => {
+    const product = await LP_CART.findOne(
+      {
+        where: {
+          id: id
+        }
+      });
+    return product
+  }
+
+  public getSubscriptionItemInCart = async (productId: string, storeId: string, buyerId: string) => {
     const product = await LP_CART.findOne(
       {
         where: {
           productId: productId,
           buyerId: buyerId,
-          storeId: storeId
+          storeId: storeId,
+          isSubscription: true
         }
       });
-    if (product === null) {
-      throw new NotFoundError(
-        `Product with id ${productId} not found in cart of buyer ${buyerId} in store ${storeId}`);
-    }
+    return product
+  }
+
+  public getNomalItemInCart = async (productId: string, storeId: string, buyerId: string) => {
+    const product = await LP_CART.findOne(
+      {
+        where: {
+          productId: productId,
+          buyerId: buyerId,
+          storeId: storeId,
+          isSubscription: false,
+        }
+      });
     return product
   }
 
@@ -40,19 +61,17 @@ export class CartRepository {
 
   }
 
-  public updateQuantityProductCart = async (input: LP_CARTCreationAttributes) => {
+  public increaseQuantityProductCart = async (id: string, quantity: number) => {
     await LP_CART.increment('quantity', {
-      by: input.quantity,
+      by: quantity,
       where: {
-        productId: input.productId,
-        storeId: input.storeId,
-        buyerId: input.buyerId
+        id: id
       },
     });
 
   }
 
-  public updateProductInCart = async (input: LP_CARTCreationAttributes) => {
+  public updateItemInCart = async (input: LP_CARTCreationAttributes) => {
     await LP_CART.update(
       {
         quantity: input.quantity,
@@ -64,23 +83,18 @@ export class CartRepository {
       },
       {
         where: {
-          productId: input.productId,
-          storeId: input.storeId,
-          buyerId: input.buyerId
+            id: input.id,
         },
       },
 
     )
   }
 
-  public deleteProduct = async (id: string, storeId: string, buyerId: string) => {
+  public deleteItem = async (id: string) => {
 
     const lpProduct = await LP_CART.findOne({
       where: {
-        productId: id,
-        storeId: storeId,
-        buyerId: buyerId
-
+        id: id,
       }
     }
     );
@@ -90,24 +104,20 @@ export class CartRepository {
     }
     await LP_CART.destroy({
       where: {
-        productId: id,
-        storeId: storeId,
-        buyerId: buyerId,
+        id: id,
       },
     });
   }
 
-  public deleteProducts = async (ids: string[], storeId: string, buyerId: string) => {
+  public deleteItems = async (ids: string[]) => {
     await LP_CART.destroy({
       where: {
-        productId: { [Op.in]: ids },
-        buyerId: buyerId,
-        storeId: storeId
+        id: { [Op.in]: ids },
       },
     });
   }
 
-  public getCart = async (storeId: string, buyerId: string):Promise<LP_CART[]>  => {
+  public getListItemInCart = async (storeId: string, buyerId: string):Promise<LP_CART[]>  => {
     let product = []
     product = await LP_CART.findAll({
       include: [

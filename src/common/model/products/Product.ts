@@ -2,7 +2,7 @@ import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 import ProductComponent from './ProductCompoment';
 import ProductOption from './ProductOption';
 import ProductOptionPrice from './ProductOptionPrice';
-import { LP_PRODUCT, LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
+import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 
 export default class Product {
@@ -82,7 +82,7 @@ export default class Product {
   @IsNotEmpty()
   status: string;
 
-  price?: number;
+  price: number;
 
   priceSubscription?: number;
 
@@ -155,6 +155,10 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
 export const ProductFromLP_PRODUCT = (
   lpProduct: LP_PRODUCTAttributes,
 ): Product => {
+
+  if (!lpProduct) {
+    return new Product();
+  }
 
   return {
     id: lpProduct.id,

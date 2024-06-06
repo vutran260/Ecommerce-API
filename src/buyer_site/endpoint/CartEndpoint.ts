@@ -3,12 +3,13 @@ import { ProtectedRequest } from '../../lib/http/app-request';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
-import { LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
-import { booleanToTINYINT } from '../../lib/helpers/utils';
+import { LP_CART, LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
+import { TINYINTToBoolean, booleanToTINYINT } from '../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORTMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
 import { ResponseData } from '../../lib/http/Response';
+import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
 
 export class CartEndpoint {
   private cartUsecase: CartUsecase;
@@ -17,30 +18,28 @@ export class CartEndpoint {
     this.cartUsecase = cartUsecase;
   }
 
-  private addProduct = async (req: ProtectedRequest, res: Response) => {
-    const addProductRequest = plainToInstance(ProductRequest, req.body);
-    addProductRequest.buyerId = req.user.id;
-    addProductRequest.storeId = req.storeId;
+  private addItem = async (req: ProtectedRequest, res: Response) => {
+    const addItemRequest = plainToInstance(CartItem, req.body);
+    addItemRequest.buyerId = req.user.id;
+    addItemRequest.storeId = req.storeId;
 
-    await validatorRequest(addProductRequest);
-    await this.cartUsecase.addProduct(addProductRequest);
+    await validatorRequest(addItemRequest);
+    await this.cartUsecase.addItem(addItemRequest);
 
     return ResponseData("add product success!!!", res);
   };
-  private updateProduct = async (req: ProtectedRequest, res: Response) => {
-    const updateProductRequest = plainToInstance(ProductRequest, req.body);
-    updateProductRequest.buyerId = req.user.id;
-    updateProductRequest.storeId = req.storeId;
-    await validatorRequest(updateProductRequest);
-    await this.cartUsecase.updateProduct(updateProductRequest);
+  private updateItem = async (req: ProtectedRequest, res: Response) => {
+    const updateItemRequest = plainToInstance(CartItem, req.body);
+    updateItemRequest.buyerId = req.user.id;
+    updateItemRequest.storeId = req.storeId;
+    await validatorRequest(updateItemRequest);
+    await this.cartUsecase.updateItem(updateItemRequest);
     return ResponseData("update product success!!!", res);
   }
 
-  private deleteProduct = async (req: ProtectedRequest, res: Response) => {
-    const buyerId: string = req.user.id
-    const storeId: string = req.storeId
+  private deleteItem = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    await this.cartUsecase.deleteProduct(id, storeId, buyerId);
+    await this.cartUsecase.deleteItem(id);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
 
   }
@@ -48,15 +47,13 @@ export class CartEndpoint {
   private getCart = async (req: ProtectedRequest, res: Response) => {
     const storeId: string = req.storeId
     const buyerId: string = req.user.id
-    const results = await this.cartUsecase.getCart(storeId, buyerId);
+    const results = await this.cartUsecase.getListItemInCart(storeId, buyerId);
     return ResponseData(results, res)
   }
 
-  private deleteProducts = async (req: ProtectedRequest, res: Response) => {
-    const storeId: string = req.storeId
-    const buyerId: string = req.user.id
+  private deleteItems = async (req: ProtectedRequest, res: Response) => {
     const ids: string[] = req.body.ids;
-    await this.cartUsecase.deleteProducts(ids, storeId, buyerId);
+    await this.cartUsecase.deleteItems(ids);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   }
 
@@ -67,16 +64,18 @@ export class CartEndpoint {
   public getRouter() {
     const router = express.Router();
 
-    router.post('/addProduct', this.addProduct);
+    router.post('/', this.addItem);
     router.get('/', this.getCart)
-    router.delete('/delete/:id', this.deleteProduct);
-    router.delete('/products', this.deleteProducts)
-    router.put('/', this.updateProduct)
+    router.delete('/:id', this.deleteItem);
+    router.delete('/items', this.deleteItems)
+    router.put('/', this.updateItem)
     return router;
   }
 }
 
-export class ProductRequest {
+export class CartItem {
+  id: string
+
   @IsString()
   @IsNotEmpty()
   buyerId: string;
@@ -97,13 +96,16 @@ export class ProductRequest {
   @IsNotEmpty()
   isSubscription: boolean;
 
-  buyingTimeOption: number;
-  buyingPeriod: number;
+  buyingTimeOption?: number;
+  buyingPeriod?: number;
   startBuyingDate: string;
+
+  product: Product;
 
   public ToLP_CART(): LP_CARTAttributes {
     const startBuyingDate = this.startBuyingDate ? moment(this.startBuyingDate, DATE_FORTMAT).toDate() : undefined;
     return {
+      id: this.id,
       buyerId: this.buyerId,
       storeId: this.storeId,
       productId: this.productId,
@@ -114,21 +116,21 @@ export class ProductRequest {
       startBuyingDate: startBuyingDate,
     };
   }
+
+  static FromLP_CART(lpCart: LP_CART) {
+    const item = new CartItem();
+    item.id = lpCart.id;
+    item.buyerId = lpCart.buyerId;
+    item.storeId = lpCart.storeId;
+    item.productId = lpCart.productId;
+    item.quantity = lpCart.quantity;
+    item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
+    item.buyingTimeOption = lpCart.buyingTimeOption;
+    item.buyingPeriod = lpCart.buyingPeriod;
+    item.startBuyingDate = moment(lpCart.startBuyingDate).format(DATE_FORTMAT);
+
+    item.product = ProductFromLP_PRODUCT(lpCart.product);
+    return item;
+  }
+
 }
-
-export const ProductRequestToLP_CART = (
-  input: ProductRequest,
-): LP_CARTAttributes => {
-  const startBuyingDate = moment(input.startBuyingDate, DATE_FORTMAT).toDate();
-
-  return {
-    buyerId: input.buyerId,
-    storeId: input.storeId,
-    productId: input.productId,
-    quantity: input.quantity,
-    buyingTimeOption: input.buyingTimeOption,
-    buyingPeriod: input.buyingPeriod,
-    isSubscription: booleanToTINYINT(input.isSubscription)!,
-    startBuyingDate: startBuyingDate,
-  };
-};
