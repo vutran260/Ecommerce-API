@@ -53,10 +53,6 @@ export class CartUsecase {
 
   public updateItem = async (cartItem: CartItem) => {
     if (cartItem.isSubscription) {
-      if (cartItem.buyingTimeOption === null) {
-        throw new BadRequestError('Missing buying time option');
-      }
-
       if (cartItem.buyingPeriod === null) {
         throw new BadRequestError('Missing buying period');
       }

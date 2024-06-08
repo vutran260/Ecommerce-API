@@ -10,6 +10,7 @@ import { DATE_FORTMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
 import { ResponseData } from '../../lib/http/Response';
 import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
+import { ApiError, BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class CartEndpoint {
   private cartUsecase: CartUsecase;
@@ -32,6 +33,7 @@ export class CartEndpoint {
     const updateItemRequest = plainToInstance(CartItem, req.body);
     updateItemRequest.buyerId = req.user.id;
     updateItemRequest.storeId = req.storeId;
+
     await validatorRequest(updateItemRequest);
     await this.cartUsecase.updateItem(updateItemRequest);
     return ResponseData("update product success!!!", res);

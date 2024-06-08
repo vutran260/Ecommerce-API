@@ -81,7 +81,7 @@ CREATE TABLE LP_PRODUCT (
     store_id VARCHAR(36) NOT NULL,
     is_subscription TINYINT(1) NOT NULL,
     
-    buying_time_option VARCHAR(255),
+    
     buying_period VARCHAR(255),
 
     is_discount TINYINT NOT NULL,
@@ -204,7 +204,6 @@ CREATE TABLE LP_CART (
   is_subscription TINYINT NOT NULL,
 
 
-  buying_time_option TINYINT UNSIGNED,
   buying_period TINYINT UNSIGNED,
   start_buying_date TIMESTAMP,
 
