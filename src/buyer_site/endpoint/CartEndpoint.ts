@@ -98,8 +98,8 @@ export class CartItem {
   @IsNotEmpty()
   isSubscription: boolean;
 
-  buyingTimeOption?: number;
   buyingPeriod?: number;
+
   startBuyingDate: string;
 
   product: Product;
@@ -112,7 +112,6 @@ export class CartItem {
       storeId: this.storeId,
       productId: this.productId,
       quantity: this.quantity,
-      buyingTimeOption: this.buyingTimeOption,
       buyingPeriod: this.buyingPeriod,
       isSubscription: booleanToTINYINT(this.isSubscription)!,
       startBuyingDate: startBuyingDate,
@@ -127,7 +126,6 @@ export class CartItem {
     item.productId = lpCart.productId;
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
-    item.buyingTimeOption = lpCart.buyingTimeOption;
     item.buyingPeriod = lpCart.buyingPeriod;
     item.startBuyingDate = moment(lpCart.startBuyingDate).format(DATE_FORTMAT);
 

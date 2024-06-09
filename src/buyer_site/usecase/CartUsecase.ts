@@ -15,37 +15,43 @@ export class CartUsecase {
   }
 
   public addItem = async (addItemRequest: CartItem) => {
-    if (addItemRequest.isSubscription) {
-      if (addItemRequest.buyingTimeOption === null) {
-        throw new BadRequestError('Missing buying time option');
-      }
 
-      if (addItemRequest.buyingPeriod === null) {
+    if (addItemRequest.isSubscription) {
+
+      if (addItemRequest.buyingPeriod === undefined || addItemRequest.buyingPeriod === null) {
         throw new BadRequestError('Missing buying period');
       }
 
-      if (addItemRequest.startBuyingDate === null) {
+      if (addItemRequest.startBuyingDate === undefined || addItemRequest.startBuyingDate === null) {
         throw new BadRequestError('Missing start buying date');
       }
 
       const product = await this.productRepo.getProductId(addItemRequest.productId);
       if (!product.isSubscription) {
         throw new BadRequestError('Product is not subscription');
-      }
-    }
 
-    if (!addItemRequest.isSubscription) {
-      const item = await this.cartRepo.getNomalItemInCart(
+
+      }
+      const subscriptionItem = await this.cartRepo.getSubscriptionItemInCart(addItemRequest.ToLP_CART());
+      if (!!subscriptionItem) {
+        Logger.info("Subscription item already exists in cart increase quantity");
+        await this.cartRepo.increaseQuantityProductCart(subscriptionItem.id, addItemRequest.quantity);
+        return this.cartRepo.getItemById(subscriptionItem.id);
+      }
+    } else {
+      const item = await this.cartRepo.getNormalItemInCart(
         addItemRequest.productId,
         addItemRequest.storeId,
         addItemRequest.buyerId);
 
       if (!!item && !item.isSubscription) {
-        Logger.info("Product already exists in cart increase quantity");
+        Logger.info("item already exists in cart increase quantity");
         await this.cartRepo.increaseQuantityProductCart(item.id, addItemRequest.quantity);
         return this.cartRepo.getItemById(item.id);
       }
     }
+
+
     await this.cartRepo.addItemToCart(addItemRequest.ToLP_CART());
   }
 
@@ -63,7 +69,16 @@ export class CartUsecase {
 
       const product = await this.productRepo.getProductId(cartItem.productId);
       if (!product.isSubscription) {
-        throw new BadRequestError('Product is not subscription');
+        throw new BadRequestError('item has not subscription');
+      }
+
+      const subscriptionItem = await this.cartRepo.getSubscriptionItemInCart(
+        cartItem.ToLP_CART());
+      if (!!subscriptionItem && cartItem.id !== subscriptionItem.id) {
+        Logger.info("Subscription item already exists in cart increase quantity");
+        await this.cartRepo.increaseQuantityProductCart(subscriptionItem.id, cartItem.quantity);
+        await this.deleteItem(cartItem.id);
+        return this.cartRepo.getItemById(subscriptionItem.id);
       }
     }
 

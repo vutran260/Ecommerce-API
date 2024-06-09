@@ -12,7 +12,6 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
-  buyingTimeOption?: string;
   buyingPeriod?: string;
   isDiscount: number;
   discountPercentage?: number;
@@ -45,14 +44,13 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
   id!: string;
   storeId!: string;
   isSubscription!: number;
-  buyingTimeOption?: string;
   buyingPeriod?: string;
   isDiscount!: number;
   discountPercentage?: number;
@@ -181,11 +179,6 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       type: DataTypes.BOOLEAN,
       allowNull: false,
       field: 'is_subscription'
-    },
-    buyingTimeOption: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'buying_time_option'
     },
     buyingPeriod: {
       type: DataTypes.STRING(255),

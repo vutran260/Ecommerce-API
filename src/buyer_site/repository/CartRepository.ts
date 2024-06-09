@@ -10,7 +10,7 @@ export class CartRepository {
     await LP_CART.create(input);
   }
 
-  
+
   public getItemById = async (id: string) => {
     const product = await LP_CART.findOne(
       {
@@ -21,20 +21,23 @@ export class CartRepository {
     return product
   }
 
-  public getSubscriptionItemInCart = async (productId: string, storeId: string, buyerId: string) => {
+  public getSubscriptionItemInCart = async (input: LP_CARTCreationAttributes) => {
     const product = await LP_CART.findOne(
       {
         where: {
-          productId: productId,
-          buyerId: buyerId,
-          storeId: storeId,
+          productId: input.productId,
+          buyerId: input.buyerId,
+          storeId: input.storeId,
+          buyingPeriod: input.buyingPeriod,
+          startBuyingDate: input.startBuyingDate,
           isSubscription: true
+
         }
       });
     return product
   }
 
-  public getNomalItemInCart = async (productId: string, storeId: string, buyerId: string) => {
+  public getNormalItemInCart = async (productId: string, storeId: string, buyerId: string) => {
     const product = await LP_CART.findOne(
       {
         where: {
@@ -75,7 +78,6 @@ export class CartRepository {
     await LP_CART.update(
       {
         quantity: input.quantity,
-        buyingTimeOption: input.buyingTimeOption,
         buyingPeriod: input.buyingPeriod,
         startBuyingDate: input.startBuyingDate,
         updatedBy: input.buyerId,
@@ -83,7 +85,7 @@ export class CartRepository {
       },
       {
         where: {
-            id: input.id,
+          id: input.id,
         },
       },
 
@@ -117,7 +119,7 @@ export class CartRepository {
     });
   }
 
-  public getListItemInCart = async (storeId: string, buyerId: string):Promise<LP_CART[]>  => {
+  public getListItemInCart = async (storeId: string, buyerId: string): Promise<LP_CART[]> => {
     let product = []
     product = await LP_CART.findAll({
       include: [

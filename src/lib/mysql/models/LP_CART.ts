@@ -11,7 +11,6 @@ export interface LP_CARTAttributes {
   productId: string;
   quantity: number;
   isSubscription: number;
-  buyingTimeOption?: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
   createdAt?: Date;
@@ -22,7 +21,7 @@ export interface LP_CARTAttributes {
 
 export type LP_CARTPk = "id";
 export type LP_CARTId = LP_CART[LP_CARTPk];
-export type LP_CARTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "startBuyingDate" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
+export type LP_CARTOptionalAttributes = "id" | "buyingPeriod" | "startBuyingDate" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_CARTCreationAttributes = Optional<LP_CARTAttributes, LP_CARTOptionalAttributes>;
 
 export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes> implements LP_CARTAttributes {
@@ -32,7 +31,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
   productId!: string;
   quantity!: number;
   isSubscription!: number;
-  buyingTimeOption?: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
   createdAt?: Date;
@@ -99,11 +97,6 @@ export class LP_CART extends Model<LP_CARTAttributes, LP_CARTCreationAttributes>
       type: DataTypes.TINYINT,
       allowNull: false,
       field: 'is_subscription'
-    },
-    buyingTimeOption: {
-      type: DataTypes.TINYINT.UNSIGNED,
-      allowNull: true,
-      field: 'buying_time_option'
     },
     buyingPeriod: {
       type: DataTypes.TINYINT.UNSIGNED,

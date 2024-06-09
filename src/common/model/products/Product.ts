@@ -20,8 +20,7 @@ export default class Product {
   @IsNotEmpty()
   isDiscount: boolean;
 
-  @IsArray()
-  buyingTimeOption?: number[];
+
 
   @IsArray()
   buyingPeriod?: number[];
@@ -105,7 +104,7 @@ export default class Product {
 
   discountPercentage?: number;
 
-  hasDiscountSchedule?:boolean;
+  hasDiscountSchedule?: boolean;
 
   discountTimeFrom?: string;
 
@@ -123,7 +122,6 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     storeId: product.storeId,
     isSubscription: booleanToTINYINT(product.isSubscription)!,
     isDiscount: booleanToTINYINT(product.isDiscount)!,
-    buyingTimeOption: product.buyingTimeOption?.join(','),
     buyingPeriod: product.buyingPeriod?.join(','),
     isRecomend: booleanToTINYINT(product.isRecomend)!,
     productName: product.productName,
@@ -137,7 +135,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     notificationNumber: product.notificationNumber,
     notification: product.notification,
     hasOption: booleanToTINYINT(product.hasOption)!,
-    price:product.price,
+    price: product.price,
     priceSubscription: product.priceSubscription,
     cost: parseFloat(product.cost),
     stockItem: product.stockItem,
@@ -146,9 +144,9 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     isDeleted: 0,
 
     discountPercentage: product.discountPercentage,
-    hasDiscountSchedule: booleanToTINYINT(product.hasDiscountSchedule), 
-    discountTimeFrom: product.discountTimeFrom?new Date(product.discountTimeFrom):undefined, 
-    discountTimeTo: product.discountTimeTo?new Date(product.discountTimeTo):undefined,
+    hasDiscountSchedule: booleanToTINYINT(product.hasDiscountSchedule),
+    discountTimeFrom: product.discountTimeFrom ? new Date(product.discountTimeFrom) : undefined,
+    discountTimeTo: product.discountTimeTo ? new Date(product.discountTimeTo) : undefined,
   };
 };
 
@@ -165,9 +163,7 @@ export const ProductFromLP_PRODUCT = (
     storeId: lpProduct.storeId,
     isSubscription: TINYINTToBoolean(lpProduct.isSubscription)!,
     isDiscount: TINYINTToBoolean(lpProduct.isDiscount)!,
-    buyingTimeOption: lpProduct.buyingTimeOption
-      ? lpProduct.buyingTimeOption.split(',').map(Number)
-      : [],
+
     buyingPeriod: lpProduct.buyingPeriod
       ? lpProduct.buyingPeriod.split(',').map(Number)
       : [],
@@ -198,16 +194,16 @@ export const ProductFromLP_PRODUCT = (
     optionPrices: [],
     categories: [],
     discountPercentage: lpProduct.discountPercentage,
-    hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule), 
-    discountTimeFrom: lpProduct.discountTimeFrom?.toISOString(), 
+    hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
+    discountTimeFrom: lpProduct.discountTimeFrom?.toISOString(),
     discountTimeTo: lpProduct.discountTimeTo?.toISOString(),
-    caculatedNormalPrice:  calculatedProductNormalPrice(lpProduct),
+    caculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     caculatedSubscriptionPrice: calculatedProductSubcriptionPrice(lpProduct),
   };
 };
 
 
-const calculatedProductNormalPrice = (LpProduct:LP_PRODUCTAttributes): number => {
+const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number => {
   let price = LpProduct.price!;
 
   if (!LpProduct.isDiscount) {
@@ -215,11 +211,11 @@ const calculatedProductNormalPrice = (LpProduct:LP_PRODUCTAttributes): number =>
   }
 
   const now = new Date();
-  if (!LpProduct.hasDiscountSchedule || 
+  if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
       now <= LpProduct.discountTimeTo! &&
       now >= LpProduct.discountTimeFrom!
-    ) )
+    ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
     return price;
@@ -227,23 +223,23 @@ const calculatedProductNormalPrice = (LpProduct:LP_PRODUCTAttributes): number =>
   return price
 };
 
-const calculatedProductSubcriptionPrice = (LpProduct:LP_PRODUCTAttributes): number|undefined => {
+const calculatedProductSubcriptionPrice = (LpProduct: LP_PRODUCTAttributes): number | undefined => {
   if (!LpProduct.isSubscription) {
     return undefined;
   }
   let price = LpProduct.priceSubscription!;
-  
+
 
   if (!LpProduct.isDiscount) {
     return price;
   }
 
   const now = new Date();
-  if (!LpProduct.hasDiscountSchedule || 
+  if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
       now <= LpProduct.discountTimeTo! &&
       now >= LpProduct.discountTimeFrom!
-    ) )
+    ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
     return price;
