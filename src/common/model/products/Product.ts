@@ -43,31 +43,24 @@ export default class Product {
   productDescription: string;
 
   @IsString()
-  @IsNotEmpty()
   capacity: string;
 
-  @IsNotEmpty()
   @IsString()
   expirationUseDate: string;
 
   @IsString()
-  @IsNotEmpty()
   storageMethod: string;
 
   @IsString()
-  @IsNotEmpty()
   intakeMethod: string;
 
   @IsString()
-  @IsNotEmpty()
   ingredient: string;
 
   @IsString()
-  @IsNotEmpty()
   notificationNumber: string;
 
   @IsString()
-  @IsNotEmpty()
   notification: string;
 
   @IsBoolean()
@@ -75,7 +68,6 @@ export default class Product {
   hasOption: boolean;
 
   @IsString()
-  @IsNotEmpty()
   productTag: string;
 
   @IsString()
