@@ -12,6 +12,8 @@ import { CategoryRepository } from '../repository/CategoryRepository';
 import Product from '../../common/model/products/Product';
 import ProductOption from '../../common/model/products/ProductOption';
 import ProductOptionPrice from '../../common/model/products/ProductOptionPrice';
+import moment from 'moment';
+import { DATE_FORMAT } from '../../lib/constant/Constant';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -21,7 +23,7 @@ export class ProductUsecase {
     categoryRepo: CategoryRepository
   ) {
     this.productRepo = productRepo;
-    this.categoryRepo= categoryRepo;
+    this.categoryRepo = categoryRepo;
   }
 
   public createProduct = async (input: Product) => {
@@ -41,8 +43,8 @@ export class ProductUsecase {
   };
 
 
-  private validateProduct (input: Product) {
-    if (input.hasOption){
+  private validateProduct(input: Product) {
+    if (input.hasOption) {
       this.validateOption(input.options, input.optionPrices);
     } else {
       this.validatePrice(input);
@@ -51,12 +53,12 @@ export class ProductUsecase {
     this.validateDiscount(input)
 
     if (input.isSubscription) {
-      if (input.buyingPeriod?.length === 0 || input.buyingTimeOption?.length ===0) {
-        throw new BadRequestError('subscription product must have buying period or buying time option');
+      if (input.buyingPeriod?.length === 0) {
+        throw new BadRequestError('subscription product must have buying period');
       }
     }
 
-    if (!input.hasOption && (input.optionPrices?.length>0 || input.options?.length>0) ) {
+    if (!input.hasOption && (input.optionPrices?.length > 0 || input.options?.length > 0)) {
       throw new BadRequestError('fix price product must not have option or option price');
     }
   }
@@ -88,8 +90,8 @@ export class ProductUsecase {
   ) => {
     let categoryIds = null
     if (!!categoryId) {
-    categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
-    } 
+      categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
+    }
 
 
     return this.productRepo.getProducts(filter, order, paging, categoryIds);
@@ -98,15 +100,14 @@ export class ProductUsecase {
 
 
   private mapToCreateProductRepoInput = (
-    input: Product 
+    input: Product
   ) => {
     const createProduct: CreateProductInput = {
       storeId: input.storeId,
       isSubscription: input.isSubscription ? 1 : 0,
       isDiscount: input.isDiscount ? 1 : 0,
-      buyingTimeOption: input.buyingTimeOption?.join(','),
       buyingPeriod: input.buyingPeriod?.join(','),
-      isRecomend: input.isRecomend ? 1 : 0,
+      isRecommend: input.isRecommend ? 1 : 0,
       productName: input.productName,
       productImage: input.productImage?.join(','),
       productDescription: input.productDescription,
@@ -158,9 +159,9 @@ export class ProductUsecase {
       cost: parseFloat(input.cost),
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,
-      hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule), 
-      discountTimeFrom: input.discountTimeFrom?new Date(input.discountTimeFrom):undefined, 
-      discountTimeTo: input.discountTimeTo?new Date(input.discountTimeTo):undefined,
+      hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule),
+      discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
+      discountTimeTo: input.discountTimeTo ? moment(input.discountTimeTo, DATE_FORMAT).toDate() : undefined,
     };
 
     return createProduct;
@@ -214,7 +215,7 @@ export class ProductUsecase {
   };
 
   private validatePrice = (input: Product) => {
-    if (!input.price || !input.stockItem) { 
+    if (!input.price || !input.stockItem) {
       throw new BadRequestError('invalid price setting');
     }
 
@@ -248,6 +249,6 @@ export class ProductUsecase {
       throw new BadRequestError('discountTimeFrom must be before discountTimeTo')
     }
 
-    
+
   }
 }

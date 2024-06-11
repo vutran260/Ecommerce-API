@@ -21,11 +21,9 @@ export function addMillisToCurrentDate(millis: number) {
 }
 
 export const booleanToTINYINT = (value?: boolean) => {
-  if (value === undefined) return value
   return value ? 1 : 0
 };
 
 export const TINYINTToBoolean = (value?: number) => {
-  if (value === undefined) return value
   return !!value
 };

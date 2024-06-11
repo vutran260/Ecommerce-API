@@ -44,7 +44,7 @@ export class LP_PRODUCT_COMPONENT extends Model<LP_PRODUCT_COMPONENTAttributes, 
       field: 'product_id'
     },
     amount: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
     },
     unit: {

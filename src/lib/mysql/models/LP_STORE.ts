@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
+import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
@@ -56,6 +57,18 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   hasBuyerIdLpBuyer!: Sequelize.BelongsToManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
   hasBuyerIdLpBuyers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
   countBuyerIdLpBuyers!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_CART via storeId
+  lpCarts!: LP_CART[];
+  getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
+  setLpCarts!: Sequelize.HasManySetAssociationsMixin<LP_CART, LP_CARTId>;
+  addLpCart!: Sequelize.HasManyAddAssociationMixin<LP_CART, LP_CARTId>;
+  addLpCarts!: Sequelize.HasManyAddAssociationsMixin<LP_CART, LP_CARTId>;
+  createLpCart!: Sequelize.HasManyCreateAssociationMixin<LP_CART>;
+  removeLpCart!: Sequelize.HasManyRemoveAssociationMixin<LP_CART, LP_CARTId>;
+  removeLpCarts!: Sequelize.HasManyRemoveAssociationsMixin<LP_CART, LP_CARTId>;
+  hasLpCart!: Sequelize.HasManyHasAssociationMixin<LP_CART, LP_CARTId>;
+  hasLpCarts!: Sequelize.HasManyHasAssociationsMixin<LP_CART, LP_CARTId>;
+  countLpCarts!: Sequelize.HasManyCountAssociationsMixin;
   // LP_STORE hasMany LP_CATEGORY via storeId
   lpCategories!: LP_CATEGORY[];
   getLpCategories!: Sequelize.HasManyGetAssociationsMixin<LP_CATEGORY>;

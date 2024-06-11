@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
@@ -11,14 +12,13 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
-  buyingTimeOption?: string;
   buyingPeriod?: string;
   isDiscount: number;
   discountPercentage?: number;
   hasDiscountSchedule?: number;
   discountTimeFrom?: Date;
   discountTimeTo?: Date;
-  isRecomend: number;
+  isRecommend: number;
   productName: string;
   productImage: string;
   productDescription: string;
@@ -30,7 +30,7 @@ export interface LP_PRODUCTAttributes {
   notificationNumber?: string;
   notification?: string;
   hasOption: number;
-  price?: number;
+  price: number;
   priceSubscription?: number;
   cost?: number;
   stockItem?: number;
@@ -44,21 +44,20 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingTimeOption" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "price" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
   id!: string;
   storeId!: string;
   isSubscription!: number;
-  buyingTimeOption?: string;
   buyingPeriod?: string;
   isDiscount!: number;
   discountPercentage?: number;
   hasDiscountSchedule?: number;
   discountTimeFrom?: Date;
   discountTimeTo?: Date;
-  isRecomend!: number;
+  isRecommend!: number;
   productName!: string;
   productImage!: string;
   productDescription!: string;
@@ -70,7 +69,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   notificationNumber?: string;
   notification?: string;
   hasOption!: number;
-  price?: number;
+  price!: number;
   priceSubscription?: number;
   cost?: number;
   stockItem?: number;
@@ -81,6 +80,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   updatedAt?: Date;
   deletedAt?: Date;
 
+  // LP_PRODUCT hasMany LP_CART via productId
+  lpCarts!: LP_CART[];
+  getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
+  setLpCarts!: Sequelize.HasManySetAssociationsMixin<LP_CART, LP_CARTId>;
+  addLpCart!: Sequelize.HasManyAddAssociationMixin<LP_CART, LP_CARTId>;
+  addLpCarts!: Sequelize.HasManyAddAssociationsMixin<LP_CART, LP_CARTId>;
+  createLpCart!: Sequelize.HasManyCreateAssociationMixin<LP_CART>;
+  removeLpCart!: Sequelize.HasManyRemoveAssociationMixin<LP_CART, LP_CARTId>;
+  removeLpCarts!: Sequelize.HasManyRemoveAssociationsMixin<LP_CART, LP_CARTId>;
+  hasLpCart!: Sequelize.HasManyHasAssociationMixin<LP_CART, LP_CARTId>;
+  hasLpCarts!: Sequelize.HasManyHasAssociationsMixin<LP_CART, LP_CARTId>;
+  countLpCarts!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT belongsToMany LP_CATEGORY via productId and categoryId
   categoryIdLpCategories!: LP_CATEGORY[];
   getCategoryIdLpCategories!: Sequelize.BelongsToManyGetAssociationsMixin<LP_CATEGORY>;
@@ -169,23 +180,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: false,
       field: 'is_subscription'
     },
-    buyingTimeOption: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'buying_time_option'
-    },
     buyingPeriod: {
       type: DataTypes.STRING(255),
       allowNull: true,
       field: 'buying_period'
     },
     isDiscount: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       field: 'is_discount'
     },
     discountPercentage: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TINYINT.UNSIGNED,
       allowNull: true,
       field: 'discount_percentage'
     },
@@ -204,10 +210,10 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: true,
       field: 'discount_time_to'
     },
-    isRecomend: {
-      type: DataTypes.BOOLEAN,
+    isRecommend: {
+      type: DataTypes.TINYINT,
       allowNull: false,
-      field: 'is_recomend'
+      field: 'is_recommend'
     },
     productName: {
       type: DataTypes.STRING(255),
@@ -257,25 +263,25 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: true
     },
     hasOption: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       field: 'has_option'
     },
     price: {
-      type: DataTypes.DECIMAL(10,4),
-      allowNull: true
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
     priceSubscription: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       field: 'price_subscription'
     },
     cost: {
-      type: DataTypes.DECIMAL(10,4),
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true
     },
     stockItem: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
       field: 'stock_item'
     },
@@ -289,7 +295,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: true
     },
     isDeleted: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 0,
       field: 'is_deleted'

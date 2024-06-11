@@ -10,6 +10,9 @@ import { ProductEndpoint } from './endpoint/ProductEndpoint';
 import { StoreRepository } from './repository/StoreRepository';
 import { StoreUsecase } from './usecase/StoreUsecase';
 import { StoreEndpoint } from './endpoint/StoreEndpoint';
+import { CartEndpoint } from './endpoint/CartEndpoint';
+import { CartUsecase } from './usecase/CartUsecase';
+import { CartRepository } from './repository/CartRepository';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -28,7 +31,15 @@ export class buyerSiteRouter {
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
 
+
+    const cartRepo = new CartRepository();
+    const cartUseCase = new CartUsecase(productRepo, cartRepo);
+    const cartEndpoint = new CartEndpoint(cartUseCase);
+
     router.use('/buyer', buyerEndpoint.getRouter());
+    router.use(BuyerAuthenMiddlleware);
+    router.use('/cart', cartEndpoint.getRouter());
+
 
     router.use(BuyerAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());

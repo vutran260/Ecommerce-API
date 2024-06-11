@@ -1,14 +1,9 @@
 import express, { Request, Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
-import Logger from '../../lib/core/Logger';
-import Product from '../../common/model/products/Product';
-import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
-import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
-import { plainToClass } from 'class-transformer';
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;

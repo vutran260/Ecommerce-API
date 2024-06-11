@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { ResponseData } from '../../lib/http/Response';

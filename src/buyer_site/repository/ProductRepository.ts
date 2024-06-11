@@ -1,6 +1,5 @@
 import Product, {
   ProductFromLP_PRODUCT,
-  ProductToLP_PRODUCT,
 } from '../../common/model/products/Product';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
@@ -22,7 +21,6 @@ import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/pro
 import { ProductOptionFromLP_PRODUCT_OPTION } from '../../common/model/products/ProductOption';
 import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../../common/model/products/ProductOptionPrice';
 import {
-  LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
