@@ -229,11 +229,14 @@ const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): nu
     return price;
   }
 
-  const now = new Date();
+  
+  const now = moment(new Date()).format(DATE_FORMAT);
+  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
+  const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= LpProduct.discountTimeTo! &&
-      now >= LpProduct.discountTimeFrom!
+      now <= discountTimeFrom &&
+      now >= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
