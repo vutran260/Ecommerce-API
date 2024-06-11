@@ -6,7 +6,7 @@ import { validatorRequest } from '../../lib/helpers/validate';
 import { LP_CART, LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../lib/helpers/utils';
 import moment from 'moment';
-import { DATE_FORTMAT } from '../../lib/constant/Constant';
+import { DATE_FORMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
 import { ResponseData } from '../../lib/http/Response';
 import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
@@ -105,7 +105,7 @@ export class CartItem {
   product: Product;
 
   public ToLP_CART(): LP_CARTAttributes {
-    const startBuyingDate = this.startBuyingDate ? moment(this.startBuyingDate, DATE_FORTMAT).toDate() : undefined;
+    const startBuyingDate = this.startBuyingDate ? moment(this.startBuyingDate, DATE_FORMAT).toDate() : undefined;
     return {
       id: this.id,
       buyerId: this.buyerId,
@@ -127,7 +127,7 @@ export class CartItem {
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
     item.buyingPeriod = lpCart.buyingPeriod;
-    item.startBuyingDate = moment(lpCart.startBuyingDate).format(DATE_FORTMAT);
+    item.startBuyingDate = moment(lpCart.startBuyingDate).format(DATE_FORMAT);
 
     item.product = ProductFromLP_PRODUCT(lpCart.product);
     return item;

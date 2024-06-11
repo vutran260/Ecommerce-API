@@ -105,7 +105,7 @@ export class ProductUsecase {
       isSubscription: input.isSubscription ? 1 : 0,
       isDiscount: input.isDiscount ? 1 : 0,
       buyingPeriod: input.buyingPeriod?.join(','),
-      isRecomend: input.isRecomend ? 1 : 0,
+      isRecommend: input.isRecommend ? 1 : 0,
       productName: input.productName,
       productImage: input.productImage?.join(','),
       productDescription: input.productDescription,

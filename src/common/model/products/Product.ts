@@ -4,6 +4,9 @@ import ProductOption from './ProductOption';
 import ProductOptionPrice from './ProductOptionPrice';
 import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
+import moment from 'moment';
+import { DATE_FORMAT as DATE_FORMAT } from '../../../lib/constant/Constant';
+import { DATE } from 'sequelize';
 
 export default class Product {
   id: string;
@@ -27,7 +30,7 @@ export default class Product {
 
   @IsBoolean()
   @IsNotEmpty()
-  isRecomend: boolean;
+  isRecommend: boolean;
 
   @IsString()
   @IsNotEmpty()
@@ -110,20 +113,23 @@ export default class Product {
 
   discountTimeTo?: string;
 
-  caculatedNormalPrice: number;
+  calculatedNormalPrice: number;
 
-  caculatedSubscriptionPrice?: number;
+  calculatedSubscriptionPrice?: number;
 
 }
 
 export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
+
+  // const discountTimeFrom = this.discountTimeFrom ? moment(this.discountTimeFrom, DATE_FORMAT).toDate() : undefined;
+
   return {
     id: product.id,
     storeId: product.storeId,
     isSubscription: booleanToTINYINT(product.isSubscription)!,
     isDiscount: booleanToTINYINT(product.isDiscount)!,
     buyingPeriod: product.buyingPeriod?.join(','),
-    isRecomend: booleanToTINYINT(product.isRecomend)!,
+    isRecommend: booleanToTINYINT(product.isRecommend)!,
     productName: product.productName,
     productImage: product.productImage?.join(','),
     productDescription: product.productDescription,
@@ -145,8 +151,8 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
 
     discountPercentage: product.discountPercentage,
     hasDiscountSchedule: booleanToTINYINT(product.hasDiscountSchedule),
-    discountTimeFrom: product.discountTimeFrom ? new Date(product.discountTimeFrom) : undefined,
-    discountTimeTo: product.discountTimeTo ? new Date(product.discountTimeTo) : undefined,
+    discountTimeFrom: product.discountTimeFrom ? moment(product.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
+    discountTimeTo: product.discountTimeTo ? moment(product.discountTimeTo, DATE_FORMAT).toDate() : undefined,
   };
 };
 
@@ -167,7 +173,7 @@ export const ProductFromLP_PRODUCT = (
     buyingPeriod: lpProduct.buyingPeriod
       ? lpProduct.buyingPeriod.split(',').map(Number)
       : [],
-    isRecomend: TINYINTToBoolean(lpProduct.isRecomend)!,
+    isRecommend: TINYINTToBoolean(lpProduct.isRecommend)!,
     productName: lpProduct.productName,
     productImage: lpProduct.productImage ? lpProduct.productImage.split(',') : [],
     productDescription: lpProduct.productDescription,
@@ -195,10 +201,10 @@ export const ProductFromLP_PRODUCT = (
     categories: [],
     discountPercentage: lpProduct.discountPercentage,
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
-    discountTimeFrom: lpProduct.discountTimeFrom?.toISOString(),
-    discountTimeTo: lpProduct.discountTimeTo?.toISOString(),
-    caculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
-    caculatedSubscriptionPrice: calculatedProductSubcriptionPrice(lpProduct),
+    discountTimeFrom: moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
+    discountTimeTo: moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
+    calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
+    calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
   };
 };
 
@@ -223,7 +229,7 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
   return price
 };
 
-const calculatedProductSubcriptionPrice = (LpProduct: LP_PRODUCTAttributes): number | undefined => {
+const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): number | undefined => {
   if (!LpProduct.isSubscription) {
     return undefined;
   }
