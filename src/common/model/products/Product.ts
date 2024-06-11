@@ -6,7 +6,6 @@ import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORMAT as DATE_FORMAT } from '../../../lib/constant/Constant';
-import { DATE } from 'sequelize';
 
 export default class Product {
   id: string;
@@ -22,8 +21,6 @@ export default class Product {
   @IsBoolean()
   @IsNotEmpty()
   isDiscount: boolean;
-
-
 
   @IsArray()
   buyingPeriod?: number[];

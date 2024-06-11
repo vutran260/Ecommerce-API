@@ -12,6 +12,8 @@ import { CategoryRepository } from '../repository/CategoryRepository';
 import Product from '../../common/model/products/Product';
 import ProductOption from '../../common/model/products/ProductOption';
 import ProductOptionPrice from '../../common/model/products/ProductOptionPrice';
+import moment from 'moment';
+import { DATE_FORMAT } from '../../lib/constant/Constant';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -158,8 +160,8 @@ export class ProductUsecase {
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,
       hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule),
-      discountTimeFrom: input.discountTimeFrom ? new Date(input.discountTimeFrom) : undefined,
-      discountTimeTo: input.discountTimeTo ? new Date(input.discountTimeTo) : undefined,
+      discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
+      discountTimeTo: input.discountTimeTo ? moment(input.discountTimeTo, DATE_FORMAT).toDate() : undefined,
     };
 
     return createProduct;
