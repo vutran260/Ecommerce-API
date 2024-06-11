@@ -8,11 +8,9 @@ export default class ProductComponent {
   productId: string;
 
   @IsNumber()
-  @IsNotEmpty()
   amount: number;
   
   @IsString()
-  @IsNotEmpty()
   unit: string;
 }
 
