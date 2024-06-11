@@ -91,7 +91,7 @@ CREATE TABLE LP_PRODUCT (
     discount_time_to TIMESTAMP,
 
 
-    is_recomend TINYINT NOT NULL,
+    is_recommend TINYINT NOT NULL,
     product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(512) NOT NULL,
     product_description VARCHAR(512) NOT NULL,
