@@ -160,9 +160,7 @@ export class ProductRepository {
           ? [
               {
                 association: LP_PRODUCT.associations.lpProductCategories,
-                where: categoryIds
-                  ? { categoryId: { [Op.in]: categoryIds } }
-                  : undefined,
+                where: { categoryId: { [Op.in]: categoryIds } },
               },
             ]
           : undefined,
