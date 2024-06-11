@@ -160,184 +160,184 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_PRODUCT {
     return LP_PRODUCT.init({
-      id: {
-        type: DataTypes.STRING(36),
-        allowNull: false,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+    id: {
+      type: DataTypes.STRING(36),
+      allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    storeId: {
+      type: DataTypes.STRING(36),
+      allowNull: false,
+      references: {
+        model: 'LP_STORE',
+        key: 'id'
       },
-      storeId: {
-        type: DataTypes.STRING(36),
-        allowNull: false,
-        references: {
-          model: 'LP_STORE',
-          key: 'id'
-        },
-        field: 'store_id'
+      field: 'store_id'
+    },
+    isSubscription: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: 'is_subscription'
+    },
+    buyingPeriod: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'buying_period'
+    },
+    isDiscount: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      field: 'is_discount'
+    },
+    discountPercentage: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true,
+      field: 'discount_percentage'
+    },
+    hasDiscountSchedule: {
+      type: DataTypes.TINYINT,
+      allowNull: true,
+      field: 'has_discount_schedule'
+    },
+    discountTimeFrom: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'discount_time_from'
+    },
+    discountTimeTo: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'discount_time_to'
+    },
+    isRecommend: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      field: 'is_recommend'
+    },
+    productName: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'product_name'
+    },
+    productImage: {
+      type: DataTypes.STRING(512),
+      allowNull: false,
+      field: 'product_image'
+    },
+    productDescription: {
+      type: DataTypes.STRING(512),
+      allowNull: false,
+      field: 'product_description'
+    },
+    capacity: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    expirationUseDate: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'expiration_use_date'
+    },
+    storageMethod: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'storage_method'
+    },
+    intakeMethod: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'intake_method'
+    },
+    ingredient: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    notificationNumber: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'notification_number'
+    },
+    notification: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    hasOption: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      field: 'has_option'
+    },
+    price: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
+    },
+    priceSubscription: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      field: 'price_subscription'
+    },
+    cost: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true
+    },
+    stockItem: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: true,
+      field: 'stock_item'
+    },
+    productTag: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'product_tag'
+    },
+    status: {
+      type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    isDeleted: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'is_deleted'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'deleted_at'
+    }
+  }, {
+    sequelize,
+    tableName: 'LP_PRODUCT',
+    timestamps: false,
+    indexes: [
+      {
+        name: "PRIMARY",
+        unique: true,
+        using: "BTREE",
+        fields: [
+          { name: "id" },
+        ]
       },
-      isSubscription: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        field: 'is_subscription'
+      {
+        name: "fk_store_id_product",
+        using: "BTREE",
+        fields: [
+          { name: "store_id" },
+        ]
       },
-      buyingPeriod: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'buying_period'
-      },
-      isDiscount: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        field: 'is_discount'
-      },
-      discountPercentage: {
-        type: DataTypes.TINYINT.UNSIGNED,
-        allowNull: true,
-        field: 'discount_percentage'
-      },
-      hasDiscountSchedule: {
-        type: DataTypes.TINYINT,
-        allowNull: true,
-        field: 'has_discount_schedule'
-      },
-      discountTimeFrom: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'discount_time_from'
-      },
-      discountTimeTo: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'discount_time_to'
-      },
-      isRecommend: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        field: 'is_recomend'
-      },
-      productName: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        field: 'product_name'
-      },
-      productImage: {
-        type: DataTypes.STRING(512),
-        allowNull: false,
-        field: 'product_image'
-      },
-      productDescription: {
-        type: DataTypes.STRING(512),
-        allowNull: false,
-        field: 'product_description'
-      },
-      capacity: {
-        type: DataTypes.STRING(255),
-        allowNull: true
-      },
-      expirationUseDate: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'expiration_use_date'
-      },
-      storageMethod: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'storage_method'
-      },
-      intakeMethod: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'intake_method'
-      },
-      ingredient: {
-        type: DataTypes.STRING(255),
-        allowNull: true
-      },
-      notificationNumber: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'notification_number'
-      },
-      notification: {
-        type: DataTypes.STRING(255),
-        allowNull: true
-      },
-      hasOption: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        field: 'has_option'
-      },
-      price: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-      },
-      priceSubscription: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true,
-        field: 'price_subscription'
-      },
-      cost: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true
-      },
-      stockItem: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true,
-        field: 'stock_item'
-      },
-      productTag: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-        field: 'product_tag'
-      },
-      status: {
-        type: DataTypes.STRING(255),
-        allowNull: true
-      },
-      isDeleted: {
-        type: DataTypes.TINYINT,
-        allowNull: false,
-        defaultValue: 0,
-        field: 'is_deleted'
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
-        field: 'created_at'
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
-        field: 'updated_at'
-      },
-      deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'deleted_at'
-      }
-    }, {
-      sequelize,
-      tableName: 'LP_PRODUCT',
-      timestamps: false,
-      indexes: [
-        {
-          name: "PRIMARY",
-          unique: true,
-          using: "BTREE",
-          fields: [
-            { name: "id" },
-          ]
-        },
-        {
-          name: "fk_store_id_product",
-          using: "BTREE",
-          fields: [
-            { name: "store_id" },
-          ]
-        },
-      ]
-    });
+    ]
+  });
   }
 }
