@@ -89,10 +89,17 @@ export class ProductRepository {
   public updateProduct = async (input: Product): Promise<Product> => {
     try {
       const lpProduct = await LP_PRODUCT.findByPk(input.id);
-      if (!lpProduct) {
+      if (!lpProduct || lpProduct.isDeleted) {
         throw new NotFoundError(`Product with id ${input.id} not found`);
       }
-      await lpProduct.update(ProductToLP_PRODUCT(input));
+      // await lpProduct.update(ProductToLP_PRODUCT(input));
+
+      await LP_PRODUCT.update(ProductToLP_PRODUCT(input),
+        {
+          where: {
+            id: input.id
+          }
+        });
 
       (await lpProduct.getLpProductComponents()).forEach(async (component) => {
         await component.destroy();
@@ -147,7 +154,7 @@ export class ProductRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    categoryIds: string[]|null,
+    categoryIds: string[] | null,
   ) => {
     try {
       filter.push({
@@ -158,21 +165,21 @@ export class ProductRepository {
       const count = await LP_PRODUCT.count({
         include: categoryIds
           ? [
-              {
-                association: LP_PRODUCT.associations.lpProductCategories,
-                where: { categoryId: { [Op.in]: categoryIds } },
-              },
-            ]
+            {
+              association: LP_PRODUCT.associations.lpProductCategories,
+              where: { categoryId: { [Op.in]: categoryIds } },
+            },
+          ]
           : undefined,
         where: BuildQuery(filter),
       });
       paging.total = count;
 
       const results = await LP_PRODUCT.findAll({
-        include:[
+        include: [
           {
             association: LP_PRODUCT.associations.lpProductCategories,
-            where: categoryIds? {categoryId: {[Op.in]:categoryIds}} : undefined
+            where: categoryIds ? { categoryId: { [Op.in]: categoryIds } } : undefined
           },
           {
             association: LP_PRODUCT.associations.categoryIdLpCategories,
@@ -196,15 +203,15 @@ export class ProductRepository {
 
   public activeProductId = async (id: string) => {
     await LP_PRODUCT.update(
-      {status: "ACTIVE"},
-      {where: {id: id}}
+      { status: "ACTIVE" },
+      { where: { id: id } }
     )
   }
 
   public inactiveProductId = async (id: string) => {
     await LP_PRODUCT.update(
-      {status: "INACTIVE"},
-      {where: {id: id}}
+      { status: "INACTIVE" },
+      { where: { id: id } }
     )
   }
 }
