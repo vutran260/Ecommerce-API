@@ -7,19 +7,19 @@ export default class ProductComponent {
 
   productId: string;
 
-  @IsNumber()
-  amount: number;
+  @IsString()
+  componentValue: string;
   
   @IsString()
-  unit: string;
+  componentName: string;
 }
 
 export const ProductCompomentFromLP_PRODUCT_COMPONENT = (component: LP_PRODUCT_COMPONENTAttributes): ProductComponent => {
   return {
     id: component.id,
     productId: component.productId,
-    amount: component.amount,
-    unit: component.unit? component.unit: '',
+    componentValue: component.componentValue,
+    componentName: component.componentName? component.componentName: '',
   }
 }
 
@@ -27,7 +27,7 @@ export const ProductCompomentToLP_PRODUCT_COMPONENT = (component: ProductCompone
   return {
     id: component.id,
     productId: component.productId,
-    amount: component.amount,
-    unit: component.unit
+    componentValue: component.componentValue,
+    componentName: component.componentName
   }
 }
