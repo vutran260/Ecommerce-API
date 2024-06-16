@@ -6,6 +6,7 @@ import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORMAT as DATE_FORMAT } from '../../../lib/constant/Constant';
+import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
 
 export default class Product {
   id: string;
@@ -98,8 +99,10 @@ export default class Product {
 
   hasDiscountSchedule?: boolean;
 
+  @IsYYYYMMDD()
   discountTimeFrom?: string;
 
+  @IsYYYYMMDD()
   discountTimeTo?: string;
 
   calculatedNormalPrice: number;
@@ -205,11 +208,13 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
     return price;
   }
 
-  const now = new Date();
+  const now = moment(new Date()).format(DATE_FORMAT);
+  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
+  const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= LpProduct.discountTimeTo! &&
-      now >= LpProduct.discountTimeFrom!
+      now <= discountTimeFrom &&
+      now >= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
