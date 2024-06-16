@@ -61,12 +61,24 @@ export class ProductUsecase {
     if (!input.hasOption && (input.optionPrices?.length > 0 || input.options?.length > 0)) {
       throw new BadRequestError('fix price product must not have option or option price');
     }
+
+    if (this.hasDuplicateProductComponentName(input)) {
+      throw new BadRequestError('product component name must be unique')
+    }
+
+  }
+
+  private hasDuplicateProductComponentName(input: Product): boolean {
+    const lifOfComponents = input.components.filter(
+      component => component.componentName !== undefined
+    ).map(
+      component => component.componentName.toLocaleLowerCase());
+    return new Set(lifOfComponents).size !== lifOfComponents.length;
   }
 
   public deleteProduct = async (id: string) => {
     return this.productRepo.deleteProducts([id]);
   };
-
 
   public deleteProducts = async (ids: string[]) => {
     return this.productRepo.deleteProducts(ids);
@@ -128,8 +140,8 @@ export class ProductUsecase {
       lpProductComponents: input.components.map((component) => {
         return {
           productId: '',
-          amount: component.amount,
-          unit: component.unit,
+          componentValue: component.componentValue,
+          componentName: component.componentName,
         };
       }),
       lpProductOptions: input.options.map((option) => {

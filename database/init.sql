@@ -129,9 +129,9 @@ CREATE TABLE LP_PRODUCT (
 CREATE TABLE LP_PRODUCT_COMPONENT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     product_id VARCHAR(36) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
-    unit VARCHAR(255),
-
+    component_value VARCHAR(255) NOT NULL,
+    component_name VARCHAR(255),
+    UNIQUE(id,component_name),
     CONSTRAINT fk_product_id_component FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
