@@ -6,6 +6,7 @@ import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORMAT as DATE_FORMAT } from '../../../lib/constant/Constant';
+import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
 
 export default class Product {
   id: string;
@@ -98,8 +99,10 @@ export default class Product {
 
   hasDiscountSchedule?: boolean;
 
+  @IsYYYYMMDD()
   discountTimeFrom?: string;
 
+  @IsYYYYMMDD()
   discountTimeTo?: string;
 
   calculatedNormalPrice: number;
@@ -190,8 +193,8 @@ export const ProductFromLP_PRODUCT = (
     categories: [],
     discountPercentage: lpProduct.discountPercentage,
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
-    discountTimeFrom: moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
-    discountTimeTo: moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
+    discountTimeFrom: !lpProduct.discountTimeFrom ? undefined : moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
+    discountTimeTo: !lpProduct.discountTimeTo ? undefined : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
     calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
   };
@@ -205,11 +208,13 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
     return price;
   }
 
-  const now = new Date();
+  const now = moment(new Date()).format(DATE_FORMAT);
+  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
+  const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= LpProduct.discountTimeTo! &&
-      now >= LpProduct.discountTimeFrom!
+      now <= discountTimeFrom &&
+      now >= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
@@ -229,7 +234,7 @@ const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): nu
     return price;
   }
 
-  
+
   const now = moment(new Date()).format(DATE_FORMAT);
   const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);

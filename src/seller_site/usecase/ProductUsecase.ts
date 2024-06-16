@@ -9,7 +9,7 @@ import {
 } from '../../lib/http/custom_error/ApiError';
 import { booleanToTINYINT } from '../../lib/helpers/utils';
 import { CategoryRepository } from '../repository/CategoryRepository';
-import Product from '../../common/model/products/Product';
+import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
 import ProductOption from '../../common/model/products/ProductOption';
 import ProductOptionPrice from '../../common/model/products/ProductOptionPrice';
 import moment from 'moment';
@@ -106,7 +106,11 @@ export class ProductUsecase {
     }
 
 
-    return this.productRepo.getProducts(filter, order, paging, categoryIds);
+    const products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
+    const result = products.map((product) => {
+     return ProductFromLP_PRODUCT(product)
+    })
+    return result;
   };
 
 
@@ -172,8 +176,9 @@ export class ProductUsecase {
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,
       hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule),
-      discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
-      discountTimeTo: input.discountTimeTo ? moment(input.discountTimeTo, DATE_FORMAT).toDate() : undefined,
+      // discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
+      discountTimeFrom: !input.discountTimeFrom ? undefined : moment(input.discountTimeFrom, DATE_FORMAT).toDate(),
+      discountTimeTo: !input.discountTimeTo ? undefined : moment(input.discountTimeTo, DATE_FORMAT).toDate(),
     };
 
     return createProduct;
