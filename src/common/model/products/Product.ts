@@ -190,8 +190,8 @@ export const ProductFromLP_PRODUCT = (
     categories: [],
     discountPercentage: lpProduct.discountPercentage,
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
-    discountTimeFrom: moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
-    discountTimeTo: moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
+    discountTimeFrom: !lpProduct.discountTimeFrom ? undefined : moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
+    discountTimeTo: !lpProduct.discountTimeTo ? undefined : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
     calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
   };
@@ -229,7 +229,7 @@ const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): nu
     return price;
   }
 
-  
+
   const now = moment(new Date()).format(DATE_FORMAT);
   const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);

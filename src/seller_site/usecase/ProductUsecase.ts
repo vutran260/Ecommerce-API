@@ -160,8 +160,9 @@ export class ProductUsecase {
       stockItem: input.stockItem,
       discountPercentage: input.discountPercentage,
       hasDiscountSchedule: booleanToTINYINT(input.hasDiscountSchedule),
-      discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
-      discountTimeTo: input.discountTimeTo ? moment(input.discountTimeTo, DATE_FORMAT).toDate() : undefined,
+      // discountTimeFrom: input.discountTimeFrom ? moment(input.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
+      discountTimeFrom: !input.discountTimeFrom ? undefined : moment(input.discountTimeFrom, DATE_FORMAT).toDate(),
+      discountTimeTo: !input.discountTimeTo ? undefined : moment(input.discountTimeTo, DATE_FORMAT).toDate(),
     };
 
     return createProduct;
