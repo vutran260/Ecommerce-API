@@ -12,12 +12,9 @@ import {
 import CategoryCreateRequest from '../../common/model/categories/CategoryCreateRequest';
 import {
   LP_CATEGORY,
-  LP_CATEGORYAttributes,
 } from '../../lib/mysql/models/LP_CATEGORY';
-import { Sequelize } from 'sequelize-typescript';
 import { lpSequelize } from '../../lib/mysql/Connection';
-import { Attributes, FindAndCountOptions, Op, QueryTypes } from 'sequelize';
-import { range } from 'lodash';
+import { Attributes, FindAndCountOptions, QueryTypes, Transaction } from 'sequelize';
 import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
@@ -26,10 +23,11 @@ export class CategoryRepository {
   public createCategory = async (
     categoryCreateRequest: CategoryCreateRequest,
     storeId: string,
+    t?: Transaction,
   ) => {
     try {
       if (categoryCreateRequest.parentId != null) {
-        await this.getCategoryId(categoryCreateRequest.parentId, storeId);
+        await this.getCategoryId(categoryCreateRequest.parentId, storeId, t);
       }
 
       const existingCategoryName = await LP_CATEGORY.findOne({
@@ -37,12 +35,13 @@ export class CategoryRepository {
           categoryName: categoryCreateRequest.categoryName,
           storeId: storeId,
         },
+        transaction: t,
       });
       if (existingCategoryName) {
         throw new DataExists();
       }
 
-      const results = await LP_CATEGORY.create(categoryCreateRequest)
+      const results = await LP_CATEGORY.create(categoryCreateRequest, { transaction: t })
         .then((category) => {
           return category.dataValues;
         })
@@ -60,24 +59,26 @@ export class CategoryRepository {
     categoryCreateRequest: CategoryCreateRequest,
     id: string,
     storeId: string,
+    t?: Transaction,
   ) => {
     try {
-      const category = await this.getCategoryId(id, storeId);
+      const category = await this.getCategoryId(id, storeId, t);
       if (categoryCreateRequest.parentId != null) {
-        await this.getCategoryId(categoryCreateRequest.parentId, storeId);
+        await this.getCategoryId(categoryCreateRequest.parentId, storeId, t);
       }
       const existingCategoryName = await LP_CATEGORY.findOne({
         where: {
           categoryName: categoryCreateRequest.categoryName,
           storeId: storeId,
         },
+        transaction: t,
       });
       if (existingCategoryName) {
         throw new DataExists();
       }
 
       if (category) {
-        return await category.update(categoryCreateRequest);
+        return await category.update(categoryCreateRequest, { transaction: t });
       }
     } catch (error: any) {
       Logger.error(error.message);
@@ -85,15 +86,15 @@ export class CategoryRepository {
     }
   };
 
-  public deleteCategory = async (ids: string[], storeId: string) => {
+  public deleteCategory = async (ids: string[], storeId: string, t?: Transaction) => {
     try {
       for (let index = 0; index < ids.length; index++) {
         const id = ids[index];
-        const category = await this.getCategoryId(id, storeId);
+        const category = await this.getCategoryId(id, storeId, t);
 
         // Get all the same category parent.
         const categoriesTheSameLevel: any[any] =
-          await this.getCategoriesTheSameLevel(category?.parentId, storeId);
+          await this.getCategoriesTheSameLevel(category?.parentId, storeId, t);
 
         // Filter categories have filed order level grater of order level category input
         const filterCategories = await categoriesTheSameLevel.filter(
@@ -103,8 +104,9 @@ export class CategoryRepository {
           where: {
             categoryId: id,
           },
+          transaction: t,
         });
-        await category.destroy();
+        await category.destroy({ transaction: t });
 
         if (filterCategories.length > 0) {
           filterCategories.forEach(async (res: any, index: number) => {
@@ -120,6 +122,7 @@ export class CategoryRepository {
               updateCategory,
               filterCategories[index].dataValues.id,
               storeId,
+              t
             );
           });
         }
@@ -130,12 +133,13 @@ export class CategoryRepository {
     }
   };
 
-  public getCategoryId = async (id: string, storeId: string) => {
-    const result: any = await LP_CATEGORY.findOne({
+  public getCategoryId = async (id: string, storeId: string, t?: Transaction) => {
+    const result = await LP_CATEGORY.findOne({
       where: {
         id: id,
         storeId: storeId,
       },
+      transaction: t,
     });
     if (result) {
       return result;
@@ -144,10 +148,11 @@ export class CategoryRepository {
     }
   };
 
-  public getCategories = async (filter: Filter[], paging: Paging) => {
+  public getCategories = async (filter: Filter[], paging: Paging, t?: Transaction) => {
     try {
       const count = await LP_CATEGORY.count({
         where: BuildQuery(filter),
+        transaction: t,
       });
       paging.total = count;
 
@@ -155,6 +160,7 @@ export class CategoryRepository {
         where: BuildQuery(filter),
         offset: GetOffset(paging),
         limit: paging.limit,
+        transaction: t,
       });
       return results;
     } catch (error: any) {
@@ -164,7 +170,7 @@ export class CategoryRepository {
     }
   };
 
-  public getAllLeafInSub = async (categoryId: string): Promise<string[]> => {
+  public getAllLeafInSub = async (categoryId: string, t?: Transaction): Promise<string[]> => {
     const query =
       'WITH RECURSIVE cte AS ' +
       '(SELECT a.id, a.parent_id ' +
@@ -178,13 +184,14 @@ export class CategoryRepository {
     const record = await lpSequelize.query(query, {
       raw: true,
       type: QueryTypes.SELECT,
+      transaction: t
     });
 
     return record.map((res: any) => res.id);
     
   };
 
-  public getCategoriesWithHierarchy = async (storeId: string, id = '') => {
+  public getCategoriesWithHierarchy = async (storeId: string, id = '', t?: Transaction) => {
     const query =
       'WITH RECURSIVE cte AS ' +
       '(SELECT a.*, CAST(a.id AS CHAR(200)) AS path, 0 as depth, ' +
@@ -206,6 +213,7 @@ export class CategoryRepository {
       type: QueryTypes.SELECT,
       mapToModel: true,
       model: CategoryHierarchie,
+      transaction: t
     });
     const out: CategoryHierarchie[] = [];
     const mapCte = new Map<string, CategoryHierarchie>();
@@ -238,25 +246,27 @@ export class CategoryRepository {
     input: MovePositionRequest,
     id: string,
     storeId: string,
+    t?: Transaction
   ) => {
     try {
-      const category = await this.getCategoryId(id, storeId);
+      const category = await this.getCategoryId(id, storeId, t);
       if (input.parentId != null) {
-        await this.getCategoryId(input.parentId, storeId);
+        await this.getCategoryId(input.parentId, storeId, t);
       }
 
       const categoriesTheSameLevel = await this.getCategoriesTheSameLevel(
         category.parentId,
         storeId,
+        t
       );
 
       categoriesTheSameLevel.length > 0 &&
-        categoriesTheSameLevel.map((res: any) => {
+        categoriesTheSameLevel.map((res: LP_CATEGORY) => {
           switch (input.typeAction) {
             case CategoryTypeAction.UP:
               if (
-                res.orderLevel ==
-                category.orderLevel - CategoryValue.VALUE_ONE
+                res.orderLevel == (
+                category.orderLevel - CategoryValue.VALUE_ONE)
               ) {
                 res.orderLevel += CategoryValue.VALUE_ONE;
                 res.save();
@@ -268,19 +278,19 @@ export class CategoryRepository {
                 category.orderLevel + CategoryValue.VALUE_ONE
               ) {
                 res.orderLevel -= CategoryValue.VALUE_ONE;
-                res.save();
+                res.save({ transaction: t });
               }
               break;
             case CategoryTypeAction.TOP:
               if (res.orderLevel < category.orderLevel) {
                 res.orderLevel++;
-                res.save();
+                res.save({transaction: t});
               }
               break;
             case CategoryTypeAction.BOTTOM:
               if (res.orderLevel > category.orderLevel) {
                 res.orderLevel--;
-                res.save();
+                res.save({transaction: t});
               }
               break;
             default:
@@ -290,19 +300,19 @@ export class CategoryRepository {
       switch (input.typeAction) {
         case CategoryTypeAction.UP:
           category.orderLevel -= CategoryValue.VALUE_ONE;
-          category.save();
+          category.save({transaction: t});
           break;
         case CategoryTypeAction.DOWN:
           category.orderLevel += CategoryValue.VALUE_ONE;
-          category.save();
+          category.save({transaction: t});
           break;
         case CategoryTypeAction.TOP:
           category.orderLevel = CategoryValue.VALUE_ONE;
-          category.save();
+          category.save({transaction: t});
           break;
         case CategoryTypeAction.BOTTOM:
           category.orderLevel = categoriesTheSameLevel.length;
-          category.save();
+          category.save({transaction:t});
           break;
         default:
       }
@@ -315,6 +325,7 @@ export class CategoryRepository {
   public getCategoriesTheSameLevel = async (
     parentId?: string,
     storeId?: string,
+    t?: Transaction,
   ) => {
     const options: Omit<
       FindAndCountOptions<Attributes<LP_CATEGORY>>,
@@ -329,6 +340,7 @@ export class CategoryRepository {
     const categories = await LP_CATEGORY.findAll({
       ...options,
       order: [['orderLevel', 'ASC']],
+      transaction:t,
     });
 
     return await categories;

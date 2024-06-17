@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
-import Logger from '../../lib/core/Logger';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
