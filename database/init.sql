@@ -129,9 +129,9 @@ CREATE TABLE LP_PRODUCT (
 CREATE TABLE LP_PRODUCT_COMPONENT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
     product_id VARCHAR(36) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
-    unit VARCHAR(255),
-
+    component_value VARCHAR(255) NOT NULL,
+    component_name VARCHAR(255),
+    UNIQUE(id,component_name),
     CONSTRAINT fk_product_id_component FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
@@ -173,7 +173,7 @@ CREATE TABLE LP_CATEGORY (
     category_name VARCHAR(255),
     category_tag VARCHAR(255),
     status VARCHAR(255),
-    order_level INT(11),
+    order_level INT(11) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
