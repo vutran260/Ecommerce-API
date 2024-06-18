@@ -105,7 +105,8 @@ export default class Product {
   calculatedNormalPrice: number;
 
   calculatedSubscriptionPrice?: number;
-
+  createAt?: Date
+  updateAt?: Date
 }
 
 export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
@@ -194,6 +195,8 @@ export const ProductFromLP_PRODUCT = (
     discountTimeTo: !lpProduct.discountTimeTo ? undefined : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
     calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
+    createAt: lpProduct.createdAt,
+    updateAt: lpProduct.updatedAt
   };
 };
 
