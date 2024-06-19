@@ -158,22 +158,15 @@ export class ProductRepository {
   };
 
   public deleteProducts = async (ids: string[], t?: Transaction) => {
-    try {
-      ids.forEach(async (id) => {
-        const lpProduct = await LP_PRODUCT.findByPk(id, { transaction: t });
-        if (!lpProduct) {
-          throw new NotFoundError(`Product with id ${id} not found`);
-        }
-        await lpProduct.update(
-          { isDeleted: 1, deletedAt: new Date() },
-          { transaction: t },
-        );
+    await LP_PRODUCT.update(
+      { isDeleted: 1, deletedAt: new Date() },
+      {
+        where: {
+          id: { [Op.in]: ids },
+        },
+        transaction: t
       });
-    } catch (error: any) {
-      Logger.error('Fail to delete products', error);
-      Logger.error(error);
-      throw error;
-    }
+
   };
 
   public getProducts = async (
@@ -192,11 +185,11 @@ export class ProductRepository {
       const count = await LP_PRODUCT.count({
         include: categoryIds
           ? [
-              {
-                association: LP_PRODUCT.associations.lpProductCategories,
-                where: { categoryId: { [Op.in]: categoryIds } },
-              },
-            ]
+            {
+              association: LP_PRODUCT.associations.lpProductCategories,
+              where: { categoryId: { [Op.in]: categoryIds } },
+            },
+          ]
           : undefined,
         where: BuildQuery(filter),
         transaction: t,

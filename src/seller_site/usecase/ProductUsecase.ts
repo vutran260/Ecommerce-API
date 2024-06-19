@@ -105,31 +105,11 @@ export class ProductUsecase {
   }
 
   public deleteProduct = async (id: string) => {
-    const t = await lpSequelize.transaction();
-    try {
-      this.productRepo.deleteProducts([id], t);
-      await t.commit();
-      return;
-    } catch (error) {
-      await t.rollback();
-      Logger.error('Fail to delete product');
-      Logger.error(error);
-      throw error;
-    }
+    this.productRepo.deleteProducts([id]);
   };
 
   public deleteProducts = async (ids: string[]) => {
-    const t = await lpSequelize.transaction();
-    try {
-      this.productRepo.deleteProducts(ids, t);
-      await t.commit();
-      return;
-    } catch (error) {
-      await t.rollback();
-      Logger.error('Fail to delete products');
-      Logger.error(error);
-      throw error;
-    }
+    await this.productRepo.deleteProducts(ids);
   };
 
   public detailProduct = async (id: string) => {
@@ -153,16 +133,13 @@ export class ProductUsecase {
       categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
     }
 
-    const products = await this.productRepo.getProducts(
+    return await this.productRepo.getProducts(
       filter,
       order,
       paging,
       categoryIds,
     );
-    const result = products.map((product) => {
-      return ProductFromLP_PRODUCT(product);
-    });
-    return result;
+
   };
 
   private mapToCreateProductRepoInput = (input: Product) => {

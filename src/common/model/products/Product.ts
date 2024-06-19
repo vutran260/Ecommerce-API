@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import ProductComponent from './ProductCompoment';
 import ProductOption from './ProductOption';
 import ProductOptionPrice from './ProductOptionPrice';
@@ -80,6 +80,8 @@ export default class Product {
 
   cost: string;
 
+  @IsNotEmpty()
+  @IsNumber()
   stockItem: number;
 
   @IsArray()
