@@ -4,6 +4,7 @@ import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
+import type { LP_PRODUCT_FAQ, LP_PRODUCT_FAQId } from './LP_PRODUCT_FAQ';
 import type { LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId } from './LP_PRODUCT_OPTION';
 import type { LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId } from './LP_PRODUCT_OPTION_PRICE';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
@@ -128,6 +129,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasLpProductComponent!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId>;
   hasLpProductComponents!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId>;
   countLpProductComponents!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_PRODUCT_FAQ via productId
+  lpProductFaqs!: LP_PRODUCT_FAQ[];
+  getLpProductFaqs!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_FAQ>;
+  setLpProductFaqs!: Sequelize.HasManySetAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  addLpProductFaq!: Sequelize.HasManyAddAssociationMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  addLpProductFaqs!: Sequelize.HasManyAddAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  createLpProductFaq!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_FAQ>;
+  removeLpProductFaq!: Sequelize.HasManyRemoveAssociationMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  removeLpProductFaqs!: Sequelize.HasManyRemoveAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  hasLpProductFaq!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  hasLpProductFaqs!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
+  countLpProductFaqs!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_PRODUCT_OPTION via productId
   lpProductOptions!: LP_PRODUCT_OPTION[];
   getLpProductOptions!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_OPTION>;

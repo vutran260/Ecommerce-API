@@ -131,8 +131,16 @@ CREATE TABLE LP_PRODUCT_COMPONENT (
     product_id VARCHAR(36) NOT NULL,
     component_value VARCHAR(255) NOT NULL,
     component_name VARCHAR(255),
-    UNIQUE(id,component_name),
+    UNIQUE(product_id,component_name),
     CONSTRAINT fk_product_id_component FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
+  );
+
+CREATE TABLE LP_PRODUCT_FAQ (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    product_id VARCHAR(36) NOT NULL,
+    question VARCHAR(511) NOT NULL,
+    answer VARCHAR(511) NOT NULL,
+    CONSTRAINT fk_product_id_faq FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
 CREATE TABLE LP_PRODUCT_OPTION (
