@@ -753,18 +753,17 @@ graph TD
     I -- Yes --> N{Cards exist?}
     N -- No --> M
     N -- Yes --> O[Return list of cards to user]
-    M --> P{List of cards is empty?}
+    M --> P[ ADD CREDIT CARD ]
     O --> X
-    P -- Yes --> Q[Enter credit card information]
-    Q --> R[Encrypt card info]
+    P --> Q[Enter credit card information]
+    Q --> R[Encrypt card information]
     R --> S[Request to add credit card]
     S --> T[Save credit card to GMO gateway]
     T --> U[Return result from GMO gateway]
     U --> V{Save credit card got error?}
     V -- Yes --> H
-    V -- No --> W[Return list of cards to user]
-    W --> X[End]
-    P -- No --> X
+    V -- No --> O
+    H-->X[End]
 
 ```
 
