@@ -653,7 +653,10 @@ sequenceDiagram
     SV->>  GG:  REQUEST TO CHECK FRAUD
     NOTE RIGHT OF SV: SIFT API
     GG->> SV: RETURN CHECK POINT 
+    rect rgb(255,255,0)
+    NOTE RIGHT OF SV: Q&A nội bộ câu 17 ý số 5
     SV->> SV: VALIDATE ORDER BASE ON CHECK POINT
+    END
     ALT DATA IS INVALID
         SV->>DB: UPDATE ORDER STATUS
         SV ->> W: PAYMENT GOT ERROR, PLEASE CHECK YOUR INFORMATION
@@ -683,10 +686,16 @@ sequenceDiagram
     participant W AS EC_WEB
     participant SV AS EC_SERVER
     participant GG AS GMO_GATEWAY
+    participant LQ AS LINQ_SERVER
 
     W->>W: USER PRESS 'Proceed to order'
     W->>SV: REQUEST TO GET CARD LIST BY USER ID
-    SV->>GG: REQUEST SEARCH CARDS
+    rect rgb(255,255,0)
+    NOTE RIGHT OF SV: Q&A nội bộ câu 17 ý số 4
+    SV->>LQ: REQUEST TO GET MEMBER ID
+    LQ ->> SV: RETURN RESULT
+    END
+    SV->>GG: REQUEST SEARCH CARDS BY MEMBER ID
     GG->> SV: RETURN RESULT
 
     ALT IF GOT ERROR
@@ -721,6 +730,42 @@ sequenceDiagram
             SV->>W: RETURN LIST CARDS
         END
     END
+```
+
+```mermaid
+---
+title: Activity Diagram for Adding Credit Card Process
+---
+graph TD
+    A[Start] --> B[User presses 'Proceed to order']
+    B --> C[Request to get card list by user ID]
+    C --> D[Request to get member ID]
+    D --> E[Return result from LINQ server]
+    E --> F[Request search cards by member ID]
+    F --> G{Got error?}
+    G -- Yes --> H[Return message error to user]
+    G -- No --> I{User registered as GMO member?}
+    I -- No --> J[Request to register member]
+    J --> K[Return result from GMO gateway]
+    K --> L{Got error?}
+    L -- Yes --> H
+    L -- No --> M[Return empty list to user]
+    I -- Yes --> N{Cards exist?}
+    N -- No --> M
+    N -- Yes --> O[Return list of cards to user]
+    M --> P{List of cards is empty?}
+    O --> X
+    P -- Yes --> Q[Enter credit card information]
+    Q --> R[Encrypt card info]
+    R --> S[Request to add credit card]
+    S --> T[Save credit card to GMO gateway]
+    T --> U[Return result from GMO gateway]
+    U --> V{Save credit card got error?}
+    V -- Yes --> H
+    V -- No --> W[Return list of cards to user]
+    W --> X[End]
+    P -- No --> X
+
 ```
 
 ### API LIST
