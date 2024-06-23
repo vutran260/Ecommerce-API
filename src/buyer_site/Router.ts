@@ -13,6 +13,9 @@ import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { CartEndpoint } from './endpoint/CartEndpoint';
 import { CartUsecase } from './usecase/CartUsecase';
 import { CartRepository } from './repository/CartRepository';
+import { AddressRepository } from './repository/AddressRepository';
+import { AddressUsecase } from './usecase/AddressUsecase';
+import { AddressEndpoint } from './endpoint/AddressEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -22,15 +25,17 @@ export class buyerSiteRouter {
     const categorytRepo = new CategoryRepository();
     const productRepo = new ProductRepository();
     const storeRepo = new StoreRepository();
+    const addressRepo = new AddressRepository()
 
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storeUsecase = new StoreUsecase(storeRepo);
+    const addressUsecase = new AddressUsecase(addressRepo)
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
-
+    const addressEndpoint = new AddressEndpoint(addressUsecase)
 
     const cartRepo = new CartRepository();
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
@@ -40,7 +45,7 @@ export class buyerSiteRouter {
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
 
-
+    router.use('/address', addressEndpoint.getRouter())
     router.use(BuyerAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());
     router.use('/store', storeEndpoint.getRouter());
