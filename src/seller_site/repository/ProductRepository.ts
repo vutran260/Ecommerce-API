@@ -27,6 +27,8 @@ import Product, {
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
 import { ProductOptionFromLP_PRODUCT_OPTION } from '../../common/model/products/ProductOption';
 import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../../common/model/products/ProductOptionPrice';
+import { LP_PRODUCT_FAQCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_FAQ';
+import { ProductFaqToLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductFaq';
 
 export class ProductRepository {
   public createProduct = async (
@@ -50,6 +52,12 @@ export class ProductRepository {
         return product.createLpProductOptionPrice(optionPrice, {
           transaction: t,
         });
+      }),
+    );
+
+    await Promise.all(
+      input.lpProductFaqs.map((faq) => {
+        return product.createLpProductFaq(faq, { transaction: t });
       }),
     );
 
@@ -94,6 +102,10 @@ export class ProductRepository {
       (category) => out.categories.push(category.dataValues.categoryId),
     );
 
+    (await result.getLpProductFaqs({ transaction: t })).forEach(
+      (faq) => out.faqs.push(faq.dataValues),
+    );
+
     return out;
   };
 
@@ -125,6 +137,21 @@ export class ProductRepository {
         input.components.map((component) => {
           return lpProduct.createLpProductComponent(
             ProductCompomentFromLP_PRODUCT_COMPONENT(component),
+            { transaction: t },
+          );
+        }),
+      );
+
+      (await lpProduct.getLpProductFaqs({ transaction: t })).forEach(
+        async (faq) => {
+          await faq.destroy({ transaction: t });
+        },
+      );
+
+      await Promise.all(
+        input.faqs.map((faq) => {
+          return lpProduct.createLpProductFaq(
+            ProductFaqToLP_PRODUCT_COMPONENT(faq),
             { transaction: t },
           );
         }),
@@ -241,6 +268,7 @@ export class ProductRepository {
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
+  lpProductFaqs: LP_PRODUCT_FAQCreationAttributes[];
   lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
   lpProductOptions: LP_PRODUCT_OPTIONCreationAttributes[];
   lpProductOptionPrices: LP_PRODUCT_OPTION_PRICECreationAttributes[];

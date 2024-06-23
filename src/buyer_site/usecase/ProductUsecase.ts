@@ -1,11 +1,9 @@
-import lodash from "lodash";
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
 import {
   ProductRepository,
 } from '../repository/ProductRepository';
 import { CategoryRepository } from '../repository/CategoryRepository';
-import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
 import { ProductFromLP_PRODUCT } from "../../common/model/products/Product";
 
 export class ProductUsecase {

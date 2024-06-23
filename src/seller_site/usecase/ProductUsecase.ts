@@ -169,6 +169,13 @@ export class ProductUsecase {
           componentName: component.componentName,
         };
       }),
+      lpProductFaqs: input.faqs.map((faq) => {
+        return {
+          productId: '',
+          question: faq.question,
+          answer: faq.answer,
+        };
+      }),
       lpProductOptions: input.options.map((option) => {
         return {
           productId: '',

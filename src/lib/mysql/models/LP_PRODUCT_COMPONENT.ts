@@ -67,19 +67,12 @@ export class LP_PRODUCT_COMPONENT extends Model<LP_PRODUCT_COMPONENTAttributes, 
         ]
       },
       {
-        name: "id",
+        name: "product_id",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
-          { name: "component_name" },
-        ]
-      },
-      {
-        name: "fk_product_id_component",
-        using: "BTREE",
-        fields: [
           { name: "product_id" },
+          { name: "component_name" },
         ]
       },
     ]

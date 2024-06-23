@@ -7,6 +7,7 @@ import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORMAT as DATE_FORMAT } from '../../../lib/constant/Constant';
 import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
+import ProductFaq from '../../../common/model/products/ProductFaq';
 
 export default class Product {
   id: string;
@@ -92,6 +93,9 @@ export default class Product {
 
   @IsArray()
   optionPrices: ProductOptionPrice[];
+
+  @IsArray()
+  faqs: ProductFaq[];
 
   @IsArray()
   categories: string[];
@@ -194,6 +198,7 @@ export const ProductFromLP_PRODUCT = (
     options: [],
     optionPrices: [],
     categories: [],
+    faqs: [],
     discountPercentage: lpProduct.discountPercentage,
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
     discountTimeFrom: !lpProduct.discountTimeFrom ? undefined : moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),

@@ -54,6 +54,10 @@ export class ProductRepository {
       out.categories.push(category.dataValues.categoryId),
     );
 
+    (await result.getLpProductFaqs()).forEach((faq) =>
+      out.faqs.push(faq.dataValues),
+    );
+
     return out;
   };
 
@@ -70,14 +74,14 @@ export class ProductRepository {
         attribute: 'isDeleted',
       });
       const count = await LP_PRODUCT.count({
-        include: [
-          {
-            association: LP_PRODUCT.associations.lpProductCategories,
-            where: categoryIds
-              ? { categoryId: { [Op.in]: categoryIds } }
-              : undefined,
-          },
-        ],
+        include: categoryIds
+          ? [
+            {
+              association: LP_PRODUCT.associations.lpProductCategories,
+              where: { categoryId: { [Op.in]: categoryIds } },
+            },
+          ]
+          : undefined,
         where: BuildQuery(filter),
       });
       paging.total = count;
