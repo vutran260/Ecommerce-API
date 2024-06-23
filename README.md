@@ -675,30 +675,52 @@ sequenceDiagram
 
 ```
 
-### 2.2 ADD CREDIT CARD FLOW
+### 2.2 CREDIT CARD FLOW
 [1. ĐĂNG KÍ THÔNG TIN THẺ](https://docs.google.com/presentation/d/1F5zihH70pPHeQn99koyrDkblBSIR3tWA/edit#slide=id.p4)
 
 ```mermaid
 sequenceDiagram
     participant W AS EC_WEB
-    participant SV AS LINQ
+    participant SV AS EC_SERVER
     participant GG AS GMO_GATEWAY
 
-    W->>W: ENTER THEIR CREDIT CARD
-    NOTE RIGHT OF W: OPTIONAL
-    W->>W: ENCRYPT CREDIT CARD INFO
-    
-    W->>SV: GET MEMBER ID 
-    SV->> W: RETURN MEMBER ID
+    W->>W: USER PRESS 'Proceed to order'
+    W->>SV: REQUEST TO GET CARD LIST BY USER ID
+    SV->>GG: REQUEST SEARCH CARDS
+    GG->> SV: RETURN RESULT
 
-    W->>GG: REQUEST ADD CREDIT CARD
-    GG->>W: RETURN RESULT
-    ALT IF ADD CREDIT CARD GOT ERROR
-        W->>W: SHOW MESSAGES ERROR
-    ELSE SUCCESS
-        W->>W: SHOW CARD ITEM    
+    ALT IF GOT ERROR
+        SV->>W: RETURN MESSAGE ERROR
     END
 
+    ALT IF USER DO NOT REGISTRY GMO MEMBER YET
+       SV->>GG: REQUEST TO REGISTRY MEMBER
+       GG->>SV: RETURN RESULT
+        ALT IF GOT ERROR
+        SV->>W: RETURN MESSAGE ERROR
+        END
+       SV->>W: RETURN EMPTY LIST
+    ELSE USER IS GMO MEMBER
+       ALT  IF CARDS IS NOT EXISTED
+       SV->>W: RETURN EMPTY LIST
+       ELSE CARD IS EXISTED
+       SV->>W: RETURN LIST CARDS
+       END
+    END
+
+    NOTE RIGHT OF W : ADD CREDIT CARD
+    ALT IF LIST CARDS IS EMPTY
+        W->>W: ENTER THEIR CREDIT CARD
+        W->>W: ENCRYPT CARD INFO
+        W->>SV: REQUEST ADD CREDIT CARD
+        SV->>GG: SAVE CREDIT CARD
+        GG->>SV: RETURN RESULT
+        ALT IF SAVE CREDIT CARD GOT ERROR
+            SV->>W: RETURN MESSAGE ERROR
+        ELSE SUCCESS
+            SV->>W: RETURN LIST CARDS
+        END
+    END
 ```
 
 ### API LIST
