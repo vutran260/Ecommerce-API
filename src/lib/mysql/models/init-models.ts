@@ -7,6 +7,8 @@ import { LP_CART as _LP_CART } from "./LP_CART";
 import type { LP_CARTAttributes, LP_CARTCreationAttributes } from "./LP_CART";
 import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
 import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
+import { LP_PREFECTURES as _LP_PREFECTURES } from "./LP_PREFECTURES";
+import type { LP_PREFECTURESAttributes, LP_PREFECTURESCreationAttributes } from "./LP_PREFECTURES";
 import { LP_PRODUCT as _LP_PRODUCT } from "./LP_PRODUCT";
 import type { LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes } from "./LP_PRODUCT";
 import { LP_PRODUCT_CATEGORY as _LP_PRODUCT_CATEGORY } from "./LP_PRODUCT_CATEGORY";
@@ -27,6 +29,7 @@ export {
   _LP_BUYER as LP_BUYER,
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
+  _LP_PREFECTURES as LP_PREFECTURES,
   _LP_PRODUCT as LP_PRODUCT,
   _LP_PRODUCT_CATEGORY as LP_PRODUCT_CATEGORY,
   _LP_PRODUCT_COMPONENT as LP_PRODUCT_COMPONENT,
@@ -45,6 +48,8 @@ export type {
   LP_CARTCreationAttributes,
   LP_CATEGORYAttributes,
   LP_CATEGORYCreationAttributes,
+  LP_PREFECTURESAttributes,
+  LP_PREFECTURESCreationAttributes,
   LP_PRODUCTAttributes,
   LP_PRODUCTCreationAttributes,
   LP_PRODUCT_CATEGORYAttributes,
@@ -66,6 +71,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_BUYER = _LP_BUYER.initModel(sequelize);
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
+  const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
   const LP_PRODUCT = _LP_PRODUCT.initModel(sequelize);
   const LP_PRODUCT_CATEGORY = _LP_PRODUCT_CATEGORY.initModel(sequelize);
   const LP_PRODUCT_COMPONENT = _LP_PRODUCT_COMPONENT.initModel(sequelize);
@@ -108,6 +114,7 @@ export function initModels(sequelize: Sequelize) {
     LP_BUYER: LP_BUYER,
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
+    LP_PREFECTURES: LP_PREFECTURES,
     LP_PRODUCT: LP_PRODUCT,
     LP_PRODUCT_CATEGORY: LP_PRODUCT_CATEGORY,
     LP_PRODUCT_COMPONENT: LP_PRODUCT_COMPONENT,
