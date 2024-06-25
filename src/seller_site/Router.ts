@@ -13,6 +13,9 @@ import { StoreUsecase } from './usecase/StoreUsecase';
 import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { SellerAuthenMiddlleware as SellerAuthenMiddlleware } from './middleware/SellerAuthenMiddleware';
 import { StoreAuthenMiddlleware } from './middleware/StoreAuthenMiddllware';
+import { CardUsecase } from '../buyer_site/usecase/CardUsecase';
+import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
+import { CardEndpoint } from '../buyer_site/endpoint/CardEndpoint';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -28,7 +31,6 @@ export class sellerSiteRouter {
     const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
 
-    
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase)

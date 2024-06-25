@@ -26,6 +26,7 @@
   "author": "Janishar Ali",
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^1.7.2",
     "base64url": "^3.0.1",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",

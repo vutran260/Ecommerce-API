@@ -13,6 +13,9 @@ import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { CartEndpoint } from './endpoint/CartEndpoint';
 import { CartUsecase } from './usecase/CartUsecase';
 import { CartRepository } from './repository/CartRepository';
+import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
+import { CardUsecase } from './usecase/CardUsecase';
+import { CardEndpoint } from './endpoint/CardEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -23,9 +26,14 @@ export class buyerSiteRouter {
     const productRepo = new ProductRepository();
     const storeRepo = new StoreRepository();
 
+    //3-party
+    const gmoGetwaySerivce = new GMOPaymentService();
+
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storeUsecase = new StoreUsecase(storeRepo);
+    const cardUsecase = new CardUsecase(gmoGetwaySerivce);
+
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -35,11 +43,13 @@ export class buyerSiteRouter {
     const cartRepo = new CartRepository();
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
+    const cardEndpoint = new CardEndpoint(cardUsecase);
 
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
 
+    router.use('/card',cardEndpoint.getRouter());
 
     router.use(BuyerAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());
