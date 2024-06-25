@@ -5,8 +5,6 @@ import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
 import type { LP_PRODUCT_FAQ, LP_PRODUCT_FAQId } from './LP_PRODUCT_FAQ';
-import type { LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId } from './LP_PRODUCT_OPTION';
-import type { LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId } from './LP_PRODUCT_OPTION_PRICE';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_PRODUCTAttributes {
@@ -23,14 +21,7 @@ export interface LP_PRODUCTAttributes {
   productName: string;
   productImage: string;
   productDescription: string;
-  capacity?: string;
-  expirationUseDate?: string;
-  storageMethod?: string;
-  intakeMethod?: string;
-  ingredient?: string;
-  notificationNumber?: string;
-  notification?: string;
-  hasOption: number;
+  productOverview: string;
   price: number;
   priceSubscription?: number;
   cost?: number;
@@ -45,7 +36,7 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
@@ -62,14 +53,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   productName!: string;
   productImage!: string;
   productDescription!: string;
-  capacity?: string;
-  expirationUseDate?: string;
-  storageMethod?: string;
-  intakeMethod?: string;
-  ingredient?: string;
-  notificationNumber?: string;
-  notification?: string;
-  hasOption!: number;
+  productOverview!: string;
   price!: number;
   priceSubscription?: number;
   cost?: number;
@@ -141,30 +125,6 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasLpProductFaq!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
   hasLpProductFaqs!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
   countLpProductFaqs!: Sequelize.HasManyCountAssociationsMixin;
-  // LP_PRODUCT hasMany LP_PRODUCT_OPTION via productId
-  lpProductOptions!: LP_PRODUCT_OPTION[];
-  getLpProductOptions!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_OPTION>;
-  setLpProductOptions!: Sequelize.HasManySetAssociationsMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  addLpProductOption!: Sequelize.HasManyAddAssociationMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  addLpProductOptions!: Sequelize.HasManyAddAssociationsMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  createLpProductOption!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_OPTION>;
-  removeLpProductOption!: Sequelize.HasManyRemoveAssociationMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  removeLpProductOptions!: Sequelize.HasManyRemoveAssociationsMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  hasLpProductOption!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  hasLpProductOptions!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_OPTION, LP_PRODUCT_OPTIONId>;
-  countLpProductOptions!: Sequelize.HasManyCountAssociationsMixin;
-  // LP_PRODUCT hasMany LP_PRODUCT_OPTION_PRICE via productId
-  lpProductOptionPrices!: LP_PRODUCT_OPTION_PRICE[];
-  getLpProductOptionPrices!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_OPTION_PRICE>;
-  setLpProductOptionPrices!: Sequelize.HasManySetAssociationsMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  addLpProductOptionPrice!: Sequelize.HasManyAddAssociationMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  addLpProductOptionPrices!: Sequelize.HasManyAddAssociationsMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  createLpProductOptionPrice!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_OPTION_PRICE>;
-  removeLpProductOptionPrice!: Sequelize.HasManyRemoveAssociationMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  removeLpProductOptionPrices!: Sequelize.HasManyRemoveAssociationsMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  hasLpProductOptionPrice!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  hasLpProductOptionPrices!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_OPTION_PRICE, LP_PRODUCT_OPTION_PRICEId>;
-  countLpProductOptionPrices!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
@@ -243,42 +203,10 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       allowNull: false,
       field: 'product_description'
     },
-    capacity: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    expirationUseDate: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'expiration_use_date'
-    },
-    storageMethod: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'storage_method'
-    },
-    intakeMethod: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'intake_method'
-    },
-    ingredient: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    notificationNumber: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'notification_number'
-    },
-    notification: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    hasOption: {
-      type: DataTypes.TINYINT,
+    productOverview: {
+      type: DataTypes.TEXT,
       allowNull: false,
-      field: 'has_option'
+      field: 'product_overview'
     },
     price: {
       type: DataTypes.INTEGER.UNSIGNED,

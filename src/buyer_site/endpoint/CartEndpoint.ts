@@ -10,7 +10,7 @@ import { DATE_FORMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
 import { ResponseData } from '../../lib/http/Response';
 import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
-import { ApiError, BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { IsYYYYMMDD } from '../../common/custom_validator/IsYYYYMMDD';
 
 export class CartEndpoint {
   private cartUsecase: CartUsecase;
@@ -69,7 +69,7 @@ export class CartEndpoint {
     router.post('/', this.addItem);
     router.get('/', this.getCart)
     router.delete('/:id', this.deleteItem);
-    router.delete('/items', this.deleteItems)
+    router.delete('/', this.deleteItems)
     router.put('/', this.updateItem)
     return router;
   }
@@ -100,6 +100,7 @@ export class CartItem {
 
   buyingPeriod?: number;
 
+  @IsYYYYMMDD()
   startBuyingDate: string;
 
   product: Product;

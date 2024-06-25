@@ -95,18 +95,9 @@ CREATE TABLE LP_PRODUCT (
     product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(512) NOT NULL,
     product_description VARCHAR(512) NOT NULL,
+    product_overview TEXT NOT NULL,
 
-    capacity VARCHAR(255),
-    expiration_use_date VARCHAR(255),
-    storage_method VARCHAR(255),
-    intake_method VARCHAR(255),
-
-    ingredient VARCHAR(255),
-    ## component
-    notification_number VARCHAR(255),
-    notification VARCHAR(255),
-
-    has_option TINYINT NOT NULL,
+    
 
 
     price INT UNSIGNED NOT NULL,
@@ -143,35 +134,6 @@ CREATE TABLE LP_PRODUCT_FAQ (
     CONSTRAINT fk_product_id_faq FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
-CREATE TABLE LP_PRODUCT_OPTION (
-    product_id VARCHAR(36) NOT NULL,
-    option_type VARCHAR(72) NOT NULL,
-    option_value VARCHAR(255) NOT NULL,
-    option_order INT UNSIGNED NOT NULL,
-
-    CONSTRAINT fk_product_id_option FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
-
-    PRIMARY KEY (product_id, option_type)
-);
-
-
-CREATE TABLE LP_PRODUCT_OPTION_PRICE (
-    product_id VARCHAR(36) NOT NULL,
-    option_value_1 VARCHAR(72) NOT NULL,
-    option_value_2 VARCHAR(72),
-    option_value_3 VARCHAR(72),
-
-
-    price INT UNSIGNED NOT NULL,
-    price_before_discount INT UNSIGNED,
-    cost INT UNSIGNED NOT NULL,
-    stock_item INT UNSIGNED NOT NULL,
-
-
-    CONSTRAINT fk_product_id_option_price FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
-
-    PRIMARY KEY (product_id, option_value_1, option_value_2, option_value_3)
-);
 
 
 CREATE TABLE LP_CATEGORY (
@@ -223,4 +185,60 @@ CREATE TABLE LP_CART (
   CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
   CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
   CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
-)
+);
+
+CREATE TABLE LP_PREFECTURES (
+  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  prefecture_name CHAR(225)
+);
+SET NAMES utf8;
+
+INSERT INTO LP_PREFECTURES (prefecture_name)
+VALUES
+('北海道'),
+('青森県'),
+('岩手県'),
+('宮城県'),
+('秋田県'),
+('山形県'),
+('福島県'),
+('茨城県'),
+('栃木県'),
+('群馬県'),
+('埼玉県'),
+('千葉県'),
+('東京都'),
+('神奈川県'),
+('新潟県'),
+('富山県'),
+('石川県'),
+('福井県'),
+('山梨県'),
+('長野県'),
+('岐阜県'),
+('静岡県'),
+('愛知県'),
+('三重県'),
+('滋賀県'),
+('京都府'),
+('大阪府'),
+('兵庫県'),
+('奈良県'),
+('和歌山県'),
+('鳥取県'),
+('島根県'),
+('岡山県'),
+('広島県'),
+('山口県'),
+('徳島県'),
+('香川県'),
+('愛媛県'),
+('高知県'),
+('福岡県'),
+('佐賀県'),
+('長崎県'),
+('熊本県'),
+('大分県'),
+('宮崎県'),
+('鹿児島県'),
+('沖縄県');

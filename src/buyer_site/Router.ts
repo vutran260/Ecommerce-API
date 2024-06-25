@@ -13,6 +13,9 @@ import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { CartEndpoint } from './endpoint/CartEndpoint';
 import { CartUsecase } from './usecase/CartUsecase';
 import { CartRepository } from './repository/CartRepository';
+import { PrefectureRepository } from './repository/PrefectureRepository';
+import { PrefectureUsecase } from './usecase/PrefectureUsecase';
+import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardUsecase } from './usecase/CardUsecase';
 import { CardEndpoint } from './endpoint/CardEndpoint';
@@ -25,6 +28,7 @@ export class buyerSiteRouter {
     const categorytRepo = new CategoryRepository();
     const productRepo = new ProductRepository();
     const storeRepo = new StoreRepository();
+    const prefectureRepo = new PrefectureRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -32,23 +36,26 @@ export class buyerSiteRouter {
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storeUsecase = new StoreUsecase(storeRepo);
+    const prefectureUsecase = new PrefectureUsecase(prefectureRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
 
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
-
+    const prefectureEndpoint = new PrefectureEndpoint(prefectureUsecase);
 
     const cartRepo = new CartRepository();
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
 
+    router.use('/prefectures', prefectureEndpoint.getRouter())
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
 
+    router.use(BuyerAuthenMiddlleware);
     router.use('/card',cardEndpoint.getRouter());
 
     router.use(BuyerAuthenMiddlleware)

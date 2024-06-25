@@ -43,30 +43,10 @@ export default class Product {
   @IsNotEmpty()
   productDescription: string;
 
-  @IsString()
-  capacity: string;
 
   @IsString()
-  expirationUseDate: string;
-
-  @IsString()
-  storageMethod: string;
-
-  @IsString()
-  intakeMethod: string;
-
-  @IsString()
-  ingredient: string;
-
-  @IsString()
-  notificationNumber: string;
-
-  @IsString()
-  notification: string;
-
-  @IsBoolean()
   @IsNotEmpty()
-  hasOption: boolean;
+  productOverview: string
 
   @IsString()
   productTag: string;
@@ -88,11 +68,6 @@ export default class Product {
   @IsArray()
   components: ProductComponent[];
 
-  @IsArray()
-  options: ProductOption[];
-
-  @IsArray()
-  optionPrices: ProductOptionPrice[];
 
   @IsArray()
   faqs: ProductFaq[];
@@ -132,14 +107,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
     productName: product.productName,
     productImage: product.productImage?.join(','),
     productDescription: product.productDescription,
-    capacity: product.capacity,
-    expirationUseDate: product.expirationUseDate,
-    storageMethod: product.storageMethod,
-    intakeMethod: product.intakeMethod,
-    ingredient: product.ingredient,
-    notificationNumber: product.notificationNumber,
-    notification: product.notification,
-    hasOption: booleanToTINYINT(product.hasOption)!,
+    productOverview: product.productOverview,
     price: product.price,
     priceSubscription: product.priceSubscription,
     cost: parseFloat(product.cost),
@@ -176,18 +144,7 @@ export const ProductFromLP_PRODUCT = (
     productName: lpProduct.productName,
     productImage: lpProduct.productImage ? lpProduct.productImage.split(',') : [],
     productDescription: lpProduct.productDescription,
-    capacity: lpProduct.capacity ? lpProduct.capacity : '',
-    expirationUseDate: lpProduct.expirationUseDate
-      ? lpProduct.expirationUseDate
-      : '',
-    storageMethod: lpProduct.storageMethod ? lpProduct.storageMethod : '',
-    intakeMethod: lpProduct.intakeMethod ? lpProduct.intakeMethod : '',
-    ingredient: lpProduct.ingredient ? lpProduct.ingredient : '',
-    notificationNumber: lpProduct.notificationNumber
-      ? lpProduct.notificationNumber
-      : '',
-    notification: lpProduct.notification ? lpProduct.notification : '',
-    hasOption: TINYINTToBoolean(lpProduct.hasOption)!,
+    productOverview: lpProduct.productOverview,
     price: lpProduct.price,
     priceSubscription: lpProduct.priceSubscription,
     cost: lpProduct.cost ? lpProduct.cost.toString() : '0',
@@ -195,8 +152,6 @@ export const ProductFromLP_PRODUCT = (
     productTag: lpProduct.productTag ? lpProduct.productTag : '',
     status: lpProduct.status ? lpProduct.status : '',
     components: [],
-    options: [],
-    optionPrices: [],
     categories: [],
     faqs: [],
     discountPercentage: lpProduct.discountPercentage,
@@ -223,8 +178,8 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= discountTimeFrom &&
-      now >= discountTimeTo
+      now >= discountTimeFrom &&
+      now <= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
@@ -250,8 +205,8 @@ const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): nu
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= discountTimeFrom &&
-      now >= discountTimeTo
+      now >= discountTimeFrom &&
+      now <= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);

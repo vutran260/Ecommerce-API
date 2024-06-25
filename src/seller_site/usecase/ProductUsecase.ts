@@ -67,9 +67,7 @@ export class ProductUsecase {
   };
 
   private validateProduct(input: Product) {
-    if (input.hasOption) {
-      this.validateOption(input.options, input.optionPrices);
-    } else {
+    if (input) {
       this.validatePrice(input);
     }
 
@@ -83,14 +81,6 @@ export class ProductUsecase {
       }
     }
 
-    if (
-      !input.hasOption &&
-      (input.optionPrices?.length > 0 || input.options?.length > 0)
-    ) {
-      throw new BadRequestError(
-        'fix price product must not have option or option price',
-      );
-    }
 
     if (this.hasDuplicateProductComponentName(input)) {
       throw new BadRequestError('product component name must be unique');
@@ -152,14 +142,7 @@ export class ProductUsecase {
       productName: input.productName,
       productImage: input.productImage?.join(','),
       productDescription: input.productDescription,
-      capacity: input.capacity,
-      expirationUseDate: input.expirationUseDate,
-      storageMethod: input.storageMethod,
-      intakeMethod: input.intakeMethod,
-      ingredient: input.ingredient,
-      notificationNumber: input.notificationNumber,
-      notification: input.notification,
-      hasOption: input.hasOption ? 1 : 0,
+      productOverview: input.productOverview,
       productTag: input.productTag,
       status: input.status,
       lpProductComponents: input.components.map((component) => {
@@ -174,26 +157,6 @@ export class ProductUsecase {
           productId: '',
           question: faq.question,
           answer: faq.answer,
-        };
-      }),
-      lpProductOptions: input.options.map((option) => {
-        return {
-          productId: '',
-          optionType: option.optionType,
-          optionValue: option.optionValue.join(','),
-          optionOrder: option.order,
-        };
-      }),
-      lpProductOptionPrices: input.optionPrices.map((optionPrice) => {
-        return {
-          productId: '',
-          optionValue1: optionPrice.optionValue1,
-          optionValue2: optionPrice.optionValue2,
-          optionValue3: optionPrice.optionValue3,
-          price: parseFloat(optionPrice.price),
-          priceBeforeDiscount: parseFloat(optionPrice.priceBeforeDiscount),
-          cost: parseFloat(optionPrice.cost),
-          stockItem: optionPrice.stockItem,
         };
       }),
       lpProductCategories: input.categories.map((category) => {
@@ -220,55 +183,6 @@ export class ProductUsecase {
     return createProduct;
   };
 
-  private validateOption = (
-    options: ProductOption[],
-    optionPrices: ProductOptionPrice[],
-  ) => {
-    if (
-      options == null ||
-      optionPrices == null ||
-      options.length === 0 ||
-      optionPrices.length === 0
-    ) {
-      throw new BadRequestError('invalid option price setting');
-    }
-
-    const lengthOptionPrices = options.reduce(
-      (length, option) => length * option.optionValue.length,
-      1,
-    );
-
-    if (optionPrices.length !== lengthOptionPrices) {
-      throw new BadRequestError('invalid option price setting');
-    }
-
-    const optionOrder = options.sort((a, b) => {
-      return a.order - b.order;
-    });
-
-    optionPrices.forEach((optionPrice) => {
-      if (
-        optionPrice.optionValue1 === null ||
-        !optionOrder[0].optionValue.includes(optionPrice.optionValue1)
-      ) {
-        throw new BadRequestError('invalid option price setting');
-      }
-      if (
-        optionPrice.optionValue2 !== null &&
-        optionOrder.length > 1 &&
-        !optionOrder[1].optionValue.includes(optionPrice.optionValue2)
-      ) {
-        throw new BadRequestError('invalid option price setting');
-      }
-      if (
-        optionPrice.optionValue3 !== null &&
-        optionOrder.length > 2 &&
-        !optionOrder[2].optionValue.includes(optionPrice.optionValue3)
-      ) {
-        throw new BadRequestError('invalid option price setting');
-      }
-    });
-  };
 
   private validatePrice = (input: Product) => {
     if (!input.price || !input.stockItem) {
