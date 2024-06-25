@@ -2,7 +2,6 @@ import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivc
 import { isEmpty, isNull } from 'lodash';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import Logger from '../../lib/core/Logger';
-import { SearchCardResponse } from '../../third_party/gmo_getway/response/SearchCardResponse';
 
 
 export class CardUsecase {
