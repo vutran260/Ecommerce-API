@@ -1,7 +1,8 @@
 import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNull } from 'lodash';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import Logger from '../../lib/core/Logger';
+import { SearchCardResponse } from '../../third_party/gmo_getway/response/SearchCardResponse';
 
 
 export class CardUsecase {
@@ -19,9 +20,20 @@ export class CardUsecase {
       throw new BadRequestError('user id must be not empty')
     }
 
-    //TODO call to LINQ to get GMO member ID
+    const result: any[]=[];
 
-    return this.gmoPaymentService.searchCard(userId);
+    //TODO call to LINQ to get GMO member ID
+    const getMemberResponse  = await this.gmoPaymentService.getMemberById(userId);
+
+    if(!isNull(getMemberResponse)){
+      Logger.info("Member is existed, search card")
+      const card  = await this.gmoPaymentService.searchCard(userId, "0");
+      if (card!== null ){
+        result.push(card);
+      }
+    }
+
+    return  result;
   }
 
   public saveCards = async (userId: string, token: string) => {
@@ -39,15 +51,16 @@ export class CardUsecase {
 
     try {
       // check member id from GMO
-      const getMemberResponse  = await this.gmoPaymentService.getMemberDetails(userId);
+      const getMemberResponse  = await this.gmoPaymentService.getMemberById(userId);
 
-      if(isEmpty(getMemberResponse)){
+      if(isNull(getMemberResponse)){
+        Logger.info("Member is not existed, register new member by user id")
         await  this.gmoPaymentService.registerMember(userId);
       }
 
       await this.gmoPaymentService.saveCard(userId, token);
 
-      return await this.gmoPaymentService.searchCard(userId);
+      return await this.gmoPaymentService.searchCard(userId,"0");
     } catch (error){
       Logger.error('Fail to save cards');
       Logger.error(error);

@@ -1,15 +1,14 @@
 import axios, { AxiosInstance } from 'axios';
-import { SaveMemberRequest } from './request/SaveMemberRequest';
 import { gmo } from '../../Config'
-import { convertToRecordString, getErrorInfo, GMO_ERROR_USER_NOT_EXIST, hasError } from './GMOUtils';
 import { InternalErrorResponse } from '../../lib/http/ApiResponse';
 import { SearchCardResponse } from './response/SearchCardResponse';
 import Logger from '../../lib/core/Logger';
-import { SaveCardRequest } from './request/SaveCardRequest';
+import { MemberResponse } from './response/MemberResponse';
 import { GMOError } from './response/GMOError';
-import { any } from 'joi';
+import { isEmpty } from 'lodash';
 
 export class GMOPaymentService {
+
     private axiosInstance: AxiosInstance;
 
     constructor() {
@@ -23,27 +22,31 @@ export class GMOPaymentService {
         });
     }
 
-    public getMemberDetails = async (memberId: string) => {
+    public getMemberById = async (memberId: string) => {
         try {
 
-            Logger.info("getMemberDetails", memberId);
-            const request = new SaveMemberRequest(memberId, gmo.siteId, gmo.sitePassword);
-            const params = new URLSearchParams(convertToRecordString(request));
+            Logger.info("getMemberDetails");
+
+            const params = new URLSearchParams();
+            params.append('SiteID', gmo.siteId);
+            params.append('SitePass', gmo.sitePassword);
+            params.append('MemberID', memberId)
 
             const response = await this.axiosInstance.post(`/payment/SearchMember.idPass`,
-                params
+                {}, { params }
             );
+            Logger.info(response.data);
 
-            if (this.memberIsNotExited(response.data)){
-                return  "";
+            const error = new GMOError(response.data);
+            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
+                if (this.resourceNotfound(error)) {
+                    Logger.info("Member is not existed")
+                    return null;
+                }
+                this.handleError(error);
             }
 
-            if (hasError(response.data)) {
-                this.handleError(response.data);
-
-            }
-
-            return  response.data.get("MemberID");
+            return new MemberResponse(response.data);
         } catch (error) {
             Logger.error("GetMemberDetails got error");
             Logger.error(error);
@@ -51,24 +54,24 @@ export class GMOPaymentService {
         }
     }
 
-
-
     public registerMember = async (memberId: string) => {
         try {
-            Logger.info("registerMember", memberId);
-
-            const request = new SaveMemberRequest(memberId, gmo.siteId, gmo.sitePassword);
-            const params = new URLSearchParams(convertToRecordString(request));
+            Logger.info("registerMember");
+            const params = new URLSearchParams();
+            params.append('SiteID', gmo.siteId);
+            params.append('SitePass', gmo.sitePassword);
+            params.append('MemberID', memberId);
 
             const response = await this.axiosInstance.post(`/payment/SaveMember.idPass`,
-                params
+                {}, { params }
             );
 
-            if (hasError(response.data)) {
-                this.handleError(response.data);
+            const error = new GMOError(response.data);
+            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
+                this.handleError(error);
             }
 
-            return response.data.get("MemberID");
+            return new MemberResponse(response.data);
         } catch (error) {
             Logger.error("registerMember got error");
             Logger.error(error);
@@ -80,17 +83,22 @@ export class GMOPaymentService {
         try {
             Logger.info("saveCard", memberId, token);
 
-            const request = new SaveCardRequest(memberId, gmo.siteId, gmo.sitePassword, token);
-            const params = new URLSearchParams(convertToRecordString(request));
+            const params = new URLSearchParams();
+            params.append('SiteID', gmo.siteId);
+            params.append('SitePass', gmo.sitePassword);
+            params.append('MemberID', memberId);
+            params.append('Token', token);
+
             const response = await this.axiosInstance.post(`/payment/SaveCard.idPass`,
-                params
+                {}, { params }
             );
 
-            if (hasError(response.data)) {
-                this.handleError(response.data);
+            const error = new GMOError(response.data);
+            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
+                this.handleError(error);
             }
 
-            return response.data.get("MemberID");
+            return new MemberResponse(response.data);
         } catch (error) {
             Logger.error("saveCard got error", error);
             Logger.error(error);
@@ -98,16 +106,25 @@ export class GMOPaymentService {
         }
     }
 
-    public searchCard = async (memberId: string) => {
+    public searchCard = async (memberId: string, cardSeq: string) => {
         try {
-            const request = new SaveMemberRequest(memberId, gmo.siteId, gmo.sitePassword);
-            const params = new URLSearchParams(convertToRecordString(request));
+            const params = new URLSearchParams();
+            params.append('SiteID', gmo.siteId);
+            params.append('SitePass', gmo.sitePassword);
+            params.append('MemberID', memberId);
+            params.append('CardSeq', cardSeq);
             const response = await this.axiosInstance.post(`/payment/SearchCard.idPass`,
-                params
+                {}, { params }
             );
+            Logger.info(response.data);
 
-            if (hasError(response.data)) {
-                this.handleError(response.data);
+            const error = new GMOError(response.data);
+            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
+                if (this.resourceNotfound(error)) {
+                    Logger.info("Card is not existed")
+                    return null;
+                }
+                this.handleError(error);
             }
 
             return new SearchCardResponse(response.data);
@@ -118,20 +135,16 @@ export class GMOPaymentService {
         }
     }
 
-    private handleError(data: string) {
-        const errorInfo = getErrorInfo(data);
+    private handleError(error: GMOError) {
         Logger.error("GMO respond error ");
-        Logger.error(data);
-        throw new InternalErrorResponse(errorInfo);
+        Logger.error(error);
+        throw new InternalErrorResponse(error.errInfo);
     }
 
-    private memberIsNotExited(data: string) {
-        const errorInfo = getErrorInfo(data);
-        return errorInfo === GMO_ERROR_USER_NOT_EXIST
-
+    private resourceNotfound(data: GMOError) {
+        return data.errCode === GMO_RESOURCE_NOT_FOUND;
     }
-
-
 }
 
+export const GMO_RESOURCE_NOT_FOUND = "E01"
 

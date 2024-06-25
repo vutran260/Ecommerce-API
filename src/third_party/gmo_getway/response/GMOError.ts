@@ -1,8 +1,14 @@
 export class GMOError{
 
-  errorInfo :string;
+  errInfo :string;
+  errCode:string;
 
-  constructor(errorInfo: string) {
-    this.errorInfo = errorInfo;
+  constructor(response :string) {
+    const params = new URLSearchParams(response);
+
+    const errorInfo = params.get('ErrInfo') || '';
+    const errCode = params.get('ErrCode') || '';
+    this.errInfo = errorInfo;
+    this.errCode = errCode;
   }
 }

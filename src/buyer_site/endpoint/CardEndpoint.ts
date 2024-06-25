@@ -19,7 +19,7 @@ export class CardEndpoint{
   }
 
   private addCard= async (req: Request, res: Response)=>{
-    const results = await this.cardUsecase.saveCards(req.body.userId, req.body.Token);
+    const results = await this.cardUsecase.saveCards(req.body.userId, req.body.token);
     return ResponseData(results, res);
   }
 
@@ -27,7 +27,7 @@ export class CardEndpoint{
     const router = express.Router();
     router.use(BuyerAuthenMiddlleware);
     router.post('/', this.addCard);
-    router.get('/:userId', this.getCardByUserId)
+    router.get('/:id', this.getCardByUserId)
     return router;
   }
 
