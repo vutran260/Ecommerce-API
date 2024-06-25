@@ -205,7 +205,8 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
     },
     productOverview: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      field: 'product_overview'
     },
     price: {
       type: DataTypes.INTEGER.UNSIGNED,
