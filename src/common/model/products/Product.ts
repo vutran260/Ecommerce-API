@@ -178,8 +178,8 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= discountTimeFrom &&
-      now >= discountTimeTo
+      now >= discountTimeFrom &&
+      now <= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
@@ -205,8 +205,8 @@ const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): nu
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
   if (!LpProduct.hasDiscountSchedule ||
     (LpProduct.hasDiscountSchedule && (
-      now <= discountTimeFrom &&
-      now >= discountTimeTo
+      now >= discountTimeFrom &&
+      now <= discountTimeTo
     ))
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
