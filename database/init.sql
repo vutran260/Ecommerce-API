@@ -95,18 +95,9 @@ CREATE TABLE LP_PRODUCT (
     product_name VARCHAR(255) NOT NULL,
     product_image VARCHAR(512) NOT NULL,
     product_description VARCHAR(512) NOT NULL,
+    productOverview TEXT NOT NULL,
 
-    capacity VARCHAR(255),
-    expiration_use_date VARCHAR(255),
-    storage_method VARCHAR(255),
-    intake_method VARCHAR(255),
-
-    ingredient VARCHAR(255),
-    ## component
-    notification_number VARCHAR(255),
-    notification VARCHAR(255),
-
-    has_option TINYINT NOT NULL,
+    
 
 
     price INT UNSIGNED NOT NULL,
@@ -143,35 +134,6 @@ CREATE TABLE LP_PRODUCT_FAQ (
     CONSTRAINT fk_product_id_faq FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
-CREATE TABLE LP_PRODUCT_OPTION (
-    product_id VARCHAR(36) NOT NULL,
-    option_type VARCHAR(72) NOT NULL,
-    option_value VARCHAR(255) NOT NULL,
-    option_order INT UNSIGNED NOT NULL,
-
-    CONSTRAINT fk_product_id_option FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
-
-    PRIMARY KEY (product_id, option_type)
-);
-
-
-CREATE TABLE LP_PRODUCT_OPTION_PRICE (
-    product_id VARCHAR(36) NOT NULL,
-    option_value_1 VARCHAR(72) NOT NULL,
-    option_value_2 VARCHAR(72),
-    option_value_3 VARCHAR(72),
-
-
-    price INT UNSIGNED NOT NULL,
-    price_before_discount INT UNSIGNED,
-    cost INT UNSIGNED NOT NULL,
-    stock_item INT UNSIGNED NOT NULL,
-
-
-    CONSTRAINT fk_product_id_option_price FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
-
-    PRIMARY KEY (product_id, option_value_1, option_value_2, option_value_3)
-);
 
 
 CREATE TABLE LP_CATEGORY (

@@ -40,15 +40,6 @@ export class ProductRepository {
         ProductCompomentFromLP_PRODUCT_COMPONENT(component.dataValues),
       ),
     );
-    (await result.getLpProductOptions()).forEach((option) =>
-      out.options.push(ProductOptionFromLP_PRODUCT_OPTION(option.dataValues)),
-    );
-
-    (await result.getLpProductOptionPrices()).forEach((optionPrice) =>
-      out.optionPrices.push(
-        ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE(optionPrice.dataValues),
-      ),
-    );
 
     (await result.getLpProductCategories()).forEach((category) =>
       out.categories.push(category.dataValues.categoryId),
@@ -117,7 +108,5 @@ export class ProductRepository {
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
   lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
-  lpProductOptions: LP_PRODUCT_OPTIONCreationAttributes[];
-  lpProductOptionPrices: LP_PRODUCT_OPTION_PRICECreationAttributes[];
   lpProductCategories: LP_PRODUCT_CATEGORYCreationAttributes[];
 }
