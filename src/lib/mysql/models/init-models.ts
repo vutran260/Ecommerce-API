@@ -9,16 +9,16 @@ import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
 import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
 import { LP_CUSTOMER_SHIPPING_INFORMATION as _LP_CUSTOMER_SHIPPING_INFORMATION } from "./LP_CUSTOMER_SHIPPING_INFORMATION";
 import type { LP_CUSTOMER_SHIPPING_INFORMATIONAttributes, LP_CUSTOMER_SHIPPING_INFORMATIONCreationAttributes } from "./LP_CUSTOMER_SHIPPING_INFORMATION";
+import { LP_PREFECTURES as _LP_PREFECTURES } from "./LP_PREFECTURES";
+import type { LP_PREFECTURESAttributes, LP_PREFECTURESCreationAttributes } from "./LP_PREFECTURES";
 import { LP_PRODUCT as _LP_PRODUCT } from "./LP_PRODUCT";
 import type { LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes } from "./LP_PRODUCT";
 import { LP_PRODUCT_CATEGORY as _LP_PRODUCT_CATEGORY } from "./LP_PRODUCT_CATEGORY";
 import type { LP_PRODUCT_CATEGORYAttributes, LP_PRODUCT_CATEGORYCreationAttributes } from "./LP_PRODUCT_CATEGORY";
 import { LP_PRODUCT_COMPONENT as _LP_PRODUCT_COMPONENT } from "./LP_PRODUCT_COMPONENT";
 import type { LP_PRODUCT_COMPONENTAttributes, LP_PRODUCT_COMPONENTCreationAttributes } from "./LP_PRODUCT_COMPONENT";
-import { LP_PRODUCT_OPTION as _LP_PRODUCT_OPTION } from "./LP_PRODUCT_OPTION";
-import type { LP_PRODUCT_OPTIONAttributes, LP_PRODUCT_OPTIONCreationAttributes } from "./LP_PRODUCT_OPTION";
-import { LP_PRODUCT_OPTION_PRICE as _LP_PRODUCT_OPTION_PRICE } from "./LP_PRODUCT_OPTION_PRICE";
-import type { LP_PRODUCT_OPTION_PRICEAttributes, LP_PRODUCT_OPTION_PRICECreationAttributes } from "./LP_PRODUCT_OPTION_PRICE";
+import { LP_PRODUCT_FAQ as _LP_PRODUCT_FAQ } from "./LP_PRODUCT_FAQ";
+import type { LP_PRODUCT_FAQAttributes, LP_PRODUCT_FAQCreationAttributes } from "./LP_PRODUCT_FAQ";
 import { LP_SELLER as _LP_SELLER } from "./LP_SELLER";
 import type { LP_SELLERAttributes, LP_SELLERCreationAttributes } from "./LP_SELLER";
 import { LP_STORE as _LP_STORE } from "./LP_STORE";
@@ -32,11 +32,11 @@ export {
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
   _LP_CUSTOMER_SHIPPING_INFORMATION as LP_CUSTOMER_SHIPPING_INFORMATION,
+  _LP_PREFECTURES as LP_PREFECTURES,
   _LP_PRODUCT as LP_PRODUCT,
   _LP_PRODUCT_CATEGORY as LP_PRODUCT_CATEGORY,
   _LP_PRODUCT_COMPONENT as LP_PRODUCT_COMPONENT,
-  _LP_PRODUCT_OPTION as LP_PRODUCT_OPTION,
-  _LP_PRODUCT_OPTION_PRICE as LP_PRODUCT_OPTION_PRICE,
+  _LP_PRODUCT_FAQ as LP_PRODUCT_FAQ,
   _LP_SELLER as LP_SELLER,
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
@@ -53,16 +53,16 @@ export type {
   LP_CATEGORYCreationAttributes,
   LP_CUSTOMER_SHIPPING_INFORMATIONAttributes,
   LP_CUSTOMER_SHIPPING_INFORMATIONCreationAttributes,
+  LP_PREFECTURESAttributes,
+  LP_PREFECTURESCreationAttributes,
   LP_PRODUCTAttributes,
   LP_PRODUCTCreationAttributes,
   LP_PRODUCT_CATEGORYAttributes,
   LP_PRODUCT_CATEGORYCreationAttributes,
   LP_PRODUCT_COMPONENTAttributes,
   LP_PRODUCT_COMPONENTCreationAttributes,
-  LP_PRODUCT_OPTIONAttributes,
-  LP_PRODUCT_OPTIONCreationAttributes,
-  LP_PRODUCT_OPTION_PRICEAttributes,
-  LP_PRODUCT_OPTION_PRICECreationAttributes,
+  LP_PRODUCT_FAQAttributes,
+  LP_PRODUCT_FAQCreationAttributes,
   LP_SELLERAttributes,
   LP_SELLERCreationAttributes,
   LP_STOREAttributes,
@@ -77,11 +77,11 @@ export function initModels(sequelize: Sequelize) {
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
   const LP_CUSTOMER_SHIPPING_INFORMATION = _LP_CUSTOMER_SHIPPING_INFORMATION.initModel(sequelize);
+  const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
   const LP_PRODUCT = _LP_PRODUCT.initModel(sequelize);
   const LP_PRODUCT_CATEGORY = _LP_PRODUCT_CATEGORY.initModel(sequelize);
   const LP_PRODUCT_COMPONENT = _LP_PRODUCT_COMPONENT.initModel(sequelize);
-  const LP_PRODUCT_OPTION = _LP_PRODUCT_OPTION.initModel(sequelize);
-  const LP_PRODUCT_OPTION_PRICE = _LP_PRODUCT_OPTION_PRICE.initModel(sequelize);
+  const LP_PRODUCT_FAQ = _LP_PRODUCT_FAQ.initModel(sequelize);
   const LP_SELLER = _LP_SELLER.initModel(sequelize);
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
@@ -104,10 +104,8 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_CATEGORY, { as: "lpProductCategories", foreignKey: "productId"});
   LP_PRODUCT_COMPONENT.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
-  LP_PRODUCT_OPTION.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
-  LP_PRODUCT.hasMany(LP_PRODUCT_OPTION, { as: "lpProductOptions", foreignKey: "productId"});
-  LP_PRODUCT_OPTION_PRICE.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
-  LP_PRODUCT.hasMany(LP_PRODUCT_OPTION_PRICE, { as: "lpProductOptionPrices", foreignKey: "productId"});
+  LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
+  LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_CART, { as: "lpCarts", foreignKey: "storeId"});
   LP_CATEGORY.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
@@ -125,11 +123,11 @@ export function initModels(sequelize: Sequelize) {
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
     LP_CUSTOMER_SHIPPING_INFORMATION: LP_CUSTOMER_SHIPPING_INFORMATION,
+    LP_PREFECTURES: LP_PREFECTURES,
     LP_PRODUCT: LP_PRODUCT,
     LP_PRODUCT_CATEGORY: LP_PRODUCT_CATEGORY,
     LP_PRODUCT_COMPONENT: LP_PRODUCT_COMPONENT,
-    LP_PRODUCT_OPTION: LP_PRODUCT_OPTION,
-    LP_PRODUCT_OPTION_PRICE: LP_PRODUCT_OPTION_PRICE,
+    LP_PRODUCT_FAQ: LP_PRODUCT_FAQ,
     LP_SELLER: LP_SELLER,
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
