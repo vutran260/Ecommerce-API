@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId } from './LP_ADDRESS_BUYER';
 import type { LP_CART, LP_CARTId } from './LP_CART';
-import type { LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId } from './LP_CUSTOMER_SHIPPING_INFORMATION';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 
@@ -33,6 +33,18 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   updatedAt?: Date;
   deletedAt?: Date;
 
+  // LP_BUYER hasMany LP_ADDRESS_BUYER via buyerId
+  lpAddressBuyers!: LP_ADDRESS_BUYER[];
+  getLpAddressBuyers!: Sequelize.HasManyGetAssociationsMixin<LP_ADDRESS_BUYER>;
+  setLpAddressBuyers!: Sequelize.HasManySetAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  addLpAddressBuyer!: Sequelize.HasManyAddAssociationMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  addLpAddressBuyers!: Sequelize.HasManyAddAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  createLpAddressBuyer!: Sequelize.HasManyCreateAssociationMixin<LP_ADDRESS_BUYER>;
+  removeLpAddressBuyer!: Sequelize.HasManyRemoveAssociationMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  removeLpAddressBuyers!: Sequelize.HasManyRemoveAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  hasLpAddressBuyer!: Sequelize.HasManyHasAssociationMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  hasLpAddressBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
+  countLpAddressBuyers!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER hasMany LP_CART via buyerId
   lpCarts!: LP_CART[];
   getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
@@ -45,18 +57,6 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   hasLpCart!: Sequelize.HasManyHasAssociationMixin<LP_CART, LP_CARTId>;
   hasLpCarts!: Sequelize.HasManyHasAssociationsMixin<LP_CART, LP_CARTId>;
   countLpCarts!: Sequelize.HasManyCountAssociationsMixin;
-  // LP_BUYER hasMany LP_CUSTOMER_SHIPPING_INFORMATION via buyerId
-  lpCustomerShippingInformations!: LP_CUSTOMER_SHIPPING_INFORMATION[];
-  getLpCustomerShippingInformations!: Sequelize.HasManyGetAssociationsMixin<LP_CUSTOMER_SHIPPING_INFORMATION>;
-  setLpCustomerShippingInformations!: Sequelize.HasManySetAssociationsMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  addLpCustomerShippingInformation!: Sequelize.HasManyAddAssociationMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  addLpCustomerShippingInformations!: Sequelize.HasManyAddAssociationsMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  createLpCustomerShippingInformation!: Sequelize.HasManyCreateAssociationMixin<LP_CUSTOMER_SHIPPING_INFORMATION>;
-  removeLpCustomerShippingInformation!: Sequelize.HasManyRemoveAssociationMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  removeLpCustomerShippingInformations!: Sequelize.HasManyRemoveAssociationsMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  hasLpCustomerShippingInformation!: Sequelize.HasManyHasAssociationMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  hasLpCustomerShippingInformations!: Sequelize.HasManyHasAssociationsMixin<LP_CUSTOMER_SHIPPING_INFORMATION, LP_CUSTOMER_SHIPPING_INFORMATIONId>;
-  countLpCustomerShippingInformations!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER belongsToMany LP_STORE via buyerId and storeId
   storeIdLpStores!: LP_STORE[];
   getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;

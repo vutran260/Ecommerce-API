@@ -74,5 +74,12 @@ export class AddressUsecase {
         return results
     }
 
+    public getAddressByStoreId = async (storeId: string) => {
+
+        const results = await this.AddressRepo.getAddressByStoreId(storeId)
+        return results
+    }
+
+
 
 }

@@ -20,7 +20,7 @@ export class AddressEndpoint {
     private createAddress = async (req: ProtectedRequest, res: Response) => {
         const addAddressRequest = plainToInstance(Address, req.body);
         addAddressRequest.buyerId = req.user.id;
-        // addAddressRequest.storeId = req.storeId;
+        addAddressRequest.storeId = req.storeId;
 
         await validatorRequest(addAddressRequest);
         await this.addressUsecase.addAddress(addAddressRequest);
@@ -57,11 +57,18 @@ export class AddressEndpoint {
         const results = await this.addressUsecase.getAddressByBuyerId(id);
 
         return ResponseData(results, res)
+    }
+
+    private getAddressByStoreId = async (req: ProtectedRequest, res: Response) => {
+        const storeId: string = req.storeId
+
+
+        const results = await this.addressUsecase.getAddressByStoreId(storeId);
+
+        return ResponseData(results, res)
 
 
     }
-
-
 
 
     public getRouter() {
@@ -72,7 +79,7 @@ export class AddressEndpoint {
         router.delete('/:id', this.deleteAddress);
         router.put('/', this.updateAddress)
         router.get('/', this.getAddressByBuyerId)
-
+        router.get('/store/storeId/', this.getAddressByStoreId)
         return router;
     }
 }
@@ -82,6 +89,10 @@ export class Address {
     @IsString()
     @IsNotEmpty()
     buyerId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    storeId: string;
 
     @IsString()
     @IsNotEmpty()
