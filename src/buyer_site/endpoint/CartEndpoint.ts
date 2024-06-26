@@ -101,12 +101,12 @@ export class CartItem {
   buyingPeriod?: number;
 
   @IsYYYYMMDD()
-  startBuyingDate: string;
+  startBuyingDate?: string;
 
   product: Product;
 
   public ToLP_CART(): LP_CARTAttributes {
-    const startBuyingDate = this.startBuyingDate ? moment(this.startBuyingDate, DATE_FORMAT).toDate() : undefined;
+    const startBuyingDate = !this.startBuyingDate ? undefined : moment(this.startBuyingDate, DATE_FORMAT).toDate();
     return {
       id: this.id,
       buyerId: this.buyerId,
@@ -128,8 +128,7 @@ export class CartItem {
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
     item.buyingPeriod = lpCart.buyingPeriod;
-    item.startBuyingDate = moment(lpCart.startBuyingDate).format(DATE_FORMAT);
-
+    item.startBuyingDate = !item.startBuyingDate ? undefined : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
     item.product = ProductFromLP_PRODUCT(lpCart.product);
     return item;
   }
