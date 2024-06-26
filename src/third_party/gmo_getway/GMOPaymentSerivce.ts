@@ -6,7 +6,7 @@ import { SiteRequest } from './request/SiteRequest';
 import { SaveCardRequest } from './request/SaveCardRequest';
 import { GMOError } from './response/GMOError';
 import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
-import { errorCodes } from './utils/error-codes';
+import { errorCodesConstant } from './utils/ErrorCodesConstant';
 
 export class GMOPaymentService {
 
@@ -154,19 +154,19 @@ export class GMOPaymentService {
         switch (response.status) {
             case 400:
                 errorList.forEach((error: GMOError) => {
-                    const description :string = errorCodes[error.errInfo];
+                    const description :string = errorCodesConstant[error.errInfo];
                     throw new BadRequestError(description);
                 })
 
             case 500:
                 errorList.forEach((error: GMOError) => {
-                    const description :string = errorCodes[error.errInfo];
+                    const description :string = errorCodesConstant[error.errInfo];
                     throw new InternalError(description);
                 })
             break;
             case 502:
                 errorList.forEach((error: GMOError) => {
-                    const description :string = errorCodes[error.errInfo];
+                    const description :string = errorCodesConstant[error.errInfo];
                     throw new InternalError(description);
                 })
                 break;

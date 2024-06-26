@@ -1,7 +1,7 @@
 interface ErrorCodeMap {
   [key: string]: string;
 }
-export const errorCodes: ErrorCodeMap = {
+export const errorCodesConstant: ErrorCodeMap = {
   "42C010000": "通信エラー(CAFISまたはカード会社障害)/カード所有者に取引失敗を表示し、問い吅わせにて状況を確認して下さい。",
   "42C030000": "通信エラー(CAFISまたはカード会社障害)/カード所有者に取引失敗を表示し、問い吅わせにて状況を確認して下さい。",
   "42C120000": "通信エラー(CAFISまたはカード会社障害)/カード所有者に取引失敗を表示し、問い吅わせにて状況を確認して下さい。",
