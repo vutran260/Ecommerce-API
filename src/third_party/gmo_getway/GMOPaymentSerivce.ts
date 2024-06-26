@@ -1,149 +1,180 @@
-import axios, { AxiosInstance } from 'axios';
 import { gmo } from '../../Config'
-import { InternalErrorResponse } from '../../lib/http/ApiResponse';
-import { SearchCardResponse } from './response/SearchCardResponse';
+import { CardResponse } from './response/CardResponse';
 import Logger from '../../lib/core/Logger';
 import { MemberResponse } from './response/MemberResponse';
+import { SiteRequest } from './request/SiteRequest';
+import { SaveCardRequest } from './request/SaveCardRequest';
 import { GMOError } from './response/GMOError';
-import { isEmpty } from 'lodash';
+import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
+import { errorCodes } from './utils/error-codes';
 
 export class GMOPaymentService {
 
-    private axiosInstance: AxiosInstance;
+    public getMemberById = async (memberId: string) => {
+        Logger.info("getMemberDetails");
 
-    constructor() {
-        const apiUrl = gmo.url;
-        this.axiosInstance = axios.create({
-            baseURL: apiUrl,
+        const endpoint = `${gmo.url}/payment/SearchMember.json`;
+        const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
+        const requestJson = JSON.stringify(request);
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': `application/json`
-            }
+            },
+            body: requestJson,
         });
-    }
 
-    public getMemberById = async (memberId: string) => {
-        try {
-
-            Logger.info("getMemberDetails");
-
-            const params = new URLSearchParams();
-            params.append('SiteID', gmo.siteId);
-            params.append('SitePass', gmo.sitePassword);
-            params.append('MemberID', memberId)
-
-            const response = await this.axiosInstance.post(`/payment/SearchMember.idPass`,
-                {}, { params }
-            );
-            Logger.info(response.data);
-
-            const error = new GMOError(response.data);
-            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
-                if (this.resourceNotfound(error)) {
-                    Logger.info("Member is not existed")
-                    return null;
-                }
-                this.handleError(error);
+        const jsonData = await response.json();
+        console.log('Received data:', jsonData, 'status', response.status);
+        if (!response.ok) {
+            if (this.isResourceNotfound(jsonData)) {
+                return null;
             }
-
-            return new MemberResponse(response.data);
-        } catch (error) {
-            Logger.error("GetMemberDetails got error");
-            Logger.error(error);
-            throw error;
+            this.handlerError(response,jsonData);
         }
+
+        return new MemberResponse(jsonData.memberID, jsonData.memberName, jsonData.deleteFlag);
     }
 
     public registerMember = async (memberId: string) => {
-        try {
-            Logger.info("registerMember");
-            const params = new URLSearchParams();
-            params.append('SiteID', gmo.siteId);
-            params.append('SitePass', gmo.sitePassword);
-            params.append('MemberID', memberId);
+        Logger.info("registerMember");
 
-            const response = await this.axiosInstance.post(`/payment/SaveMember.idPass`,
-                {}, { params }
-            );
+        const endpoint = `${gmo.url}/payment/SaveMember.json`;
+        const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
+        const requestJson = JSON.stringify(request);
 
-            const error = new GMOError(response.data);
-            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
-                this.handleError(error);
-            }
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: requestJson,
+        });
 
-            return new MemberResponse(response.data);
-        } catch (error) {
-            Logger.error("registerMember got error");
-            Logger.error(error);
-            throw error;
+        const jsonData = await response.json();
+        console.log('Received data:', jsonData, 'status', response.status);
+
+        if (!response.ok) {
+            this.handlerError(response,jsonData);
         }
+
+        return new MemberResponse(jsonData.memberID, jsonData.memberName, jsonData.DeleteFlag);
+
     }
 
     public saveCard = async (memberId: string, token: string) => {
-        try {
-            Logger.info("saveCard", memberId, token);
 
-            const params = new URLSearchParams();
-            params.append('SiteID', gmo.siteId);
-            params.append('SitePass', gmo.sitePassword);
-            params.append('MemberID', memberId);
-            params.append('Token', token);
+        Logger.info("saveCard", memberId, token);
 
-            const response = await this.axiosInstance.post(`/payment/SaveCard.idPass`,
-                {}, { params }
-            );
+        const endpoint = `${gmo.url}/payment/SaveCard.json`;
+        const request = new SaveCardRequest(gmo.siteId, gmo.sitePassword, memberId, token);
+        const requestJson = JSON.stringify(request);
 
-            const error = new GMOError(response.data);
-            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
-                this.handleError(error);
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: requestJson,
+        });
+
+        const jsonData = await response.json();
+        console.log('Received data:', jsonData, 'status', response.status);
+
+        if (!response.ok) {
+            this.handlerError(response,jsonData);
+        }
+
+        return new CardResponse(jsonData.cardSeq,
+            jsonData.cardNo,
+            jsonData.expire,
+            jsonData.defaultFlag,
+            jsonData.cardName,
+            jsonData.holderName,
+            jsonData.deleteFlag,
+            jsonData.brand,
+            jsonData.domesticFlag,
+            jsonData.issuerCode,
+            jsonData.debitPrepaidFlag,
+            jsonData.debitPrepaidIssuerName,
+            jsonData.forwardFinal);
+    }
+
+    public searchCard = async (memberId: string) => {
+        const endpoint = `${gmo.url}/payment/SearchCard.json`;
+        const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
+
+        const requestJson = JSON.stringify(request);
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: requestJson,
+        });
+
+        const jsonData = await response.json();
+        if (!response.ok) {
+            if (this.isResourceNotfound(jsonData)) {
+                return null;
             }
+             this.handlerError(response,jsonData);
+        }
 
-            return new MemberResponse(response.data);
-        } catch (error) {
-            Logger.error("saveCard got error", error);
-            Logger.error(error);
-            throw error;
+        console.log('Received data:', jsonData, 'status', response.status);
+
+        const results: CardResponse[] = [];
+        jsonData.forEach((card: CardResponse) => {
+            results.push(new CardResponse(card.cardSeq,
+                card.cardNo,
+                card.expire,
+                card.defaultFlag,
+                card.cardName,
+                card.holderName,
+                card.deleteFlag,
+                card.brand,
+                card.domesticFlag,
+                card.issuerCode,
+                card.debitPrepaidFlag,
+                card.debitPrepaidIssuerName,
+                card.forwardFinal))
+        })
+
+        return results;
+
+    }
+
+    private isResourceNotfound(data: any) {
+        return data.filter((gmoError: GMOError) => { return gmoError.errCode === GMO_RESOURCE_NOT_FOUND });
+    }
+
+    private handlerError =  (response: Response, errorList: any) => {
+        console.log(errorList)
+        switch (response.status) {
+            case 400:
+                errorList.forEach((error: GMOError) => {
+                    const description :string = errorCodes[error.errInfo];
+                    throw new BadRequestError(description);
+                })
+
+            case 500:
+                errorList.forEach((error: GMOError) => {
+                    const description :string = errorCodes[error.errInfo];
+                    throw new InternalError(description);
+                })
+            break;
+            case 502:
+                errorList.forEach((error: GMOError) => {
+                    const description :string = errorCodes[error.errInfo];
+                    throw new InternalError(description);
+                })
+                break;
+            default:
+                throw new InternalError("GMO server got eror");
         }
     }
 
-    public searchCard = async (memberId: string, cardSeq: string) => {
-        try {
-            const params = new URLSearchParams();
-            params.append('SiteID', gmo.siteId);
-            params.append('SitePass', gmo.sitePassword);
-            params.append('MemberID', memberId);
-            params.append('CardSeq', cardSeq);
-            const response = await this.axiosInstance.post(`/payment/SearchCard.idPass`,
-                {}, { params }
-            );
-            Logger.info(response.data);
-
-            const error = new GMOError(response.data);
-            if (!isEmpty(error.errCode) && !isEmpty(error.errInfo)) {
-                if (this.resourceNotfound(error)) {
-                    Logger.info("Card is not existed")
-                    return null;
-                }
-                this.handleError(error);
-            }
-
-            return new SearchCardResponse(response.data);
-        } catch (error) {
-            Logger.error("searchCard got error");
-            Logger.error(error);
-            throw error;
-        }
-    }
-
-    private handleError(error: GMOError) {
-        Logger.error("GMO respond error ");
-        Logger.error(error);
-        throw new InternalErrorResponse(error.errInfo);
-    }
-
-    private resourceNotfound(data: GMOError) {
-        return data.errCode === GMO_RESOURCE_NOT_FOUND;
-    }
 }
 
 export const GMO_RESOURCE_NOT_FOUND = "E01"

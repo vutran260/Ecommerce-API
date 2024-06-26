@@ -26,7 +26,7 @@ export class CardEndpoint{
   public getRouter() {
     const router = express.Router();
     router.use(BuyerAuthenMiddlleware);
-    router.post('/', this.addCard);
+    router.post('/', this.addCard)
     router.get('/:id', this.getCardByUserId)
     return router;
   }

@@ -8,7 +8,6 @@ export class CardUsecase {
 
   private gmoPaymentService: GMOPaymentService;
 
-
   constructor(gmoPaymentService: GMOPaymentService) {
     this.gmoPaymentService = gmoPaymentService;
   }
@@ -19,20 +18,14 @@ export class CardUsecase {
       throw new BadRequestError('user id must be not empty')
     }
 
-    const result: any[]=[];
-
     //TODO call to LINQ to get GMO member ID
     const getMemberResponse  = await this.gmoPaymentService.getMemberById(userId);
 
-    if(!isNull(getMemberResponse)){
-      Logger.info("Member is existed, search card")
-      const card  = await this.gmoPaymentService.searchCard(userId, "0");
-      if (card!== null ){
-        result.push(card);
-      }
+    if (!isNull(getMemberResponse)){
+      return  await this.gmoPaymentService.searchCard(userId);
     }
 
-    return  result;
+    return [];
   }
 
   public saveCards = async (userId: string, token: string) => {
@@ -57,9 +50,14 @@ export class CardUsecase {
         await  this.gmoPaymentService.registerMember(userId);
       }
 
-      await this.gmoPaymentService.saveCard(userId, token);
+      const searchCardResponse   = await this.gmoPaymentService.searchCard(userId);
+      if(!isNull(searchCardResponse)){
+        Logger.info("Card is existed, can not add more")
+        Logger.info(searchCardResponse)
+        throw new BadRequestError("Can not add more than one card");
+      }
 
-      return await this.gmoPaymentService.searchCard(userId,"0");
+      return await this.gmoPaymentService.saveCard(userId, token);
     } catch (error){
       Logger.error('Fail to save cards');
       Logger.error(error);
