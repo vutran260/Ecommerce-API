@@ -15,7 +15,10 @@ export class CartUsecase {
   }
 
   public addItem = async (addItemRequest: CartItem) => {
-
+    const product = await this.productRepo.getProductId(addItemRequest.productId);
+    if (addItemRequest.quantity > product.stockItem) {
+      throw new BadRequestError('The quantity of products left in stock is not enough')
+    }
     if (addItemRequest.isSubscription) {
 
       if (addItemRequest.buyingPeriod === undefined || addItemRequest.buyingPeriod === null) {
@@ -26,14 +29,19 @@ export class CartUsecase {
         throw new BadRequestError('Missing start buying date');
       }
 
-      const product = await this.productRepo.getProductId(addItemRequest.productId);
       if (!product.isSubscription) {
         throw new BadRequestError('Product is not subscription');
 
 
       }
       const subscriptionItem = await this.cartRepo.getSubscriptionItemInCart(addItemRequest.ToLP_CART());
+
       if (!!subscriptionItem) {
+
+        if (subscriptionItem.quantity + addItemRequest.quantity > product.stockItem) {
+          throw new BadRequestError('The quantity of products left in stock is not enough');
+        }
+
         Logger.info("Subscription item already exists in cart increase quantity");
         await this.cartRepo.increaseQuantityProductCart(subscriptionItem.id, addItemRequest.quantity);
         return this.cartRepo.getItemById(subscriptionItem.id);
@@ -45,6 +53,9 @@ export class CartUsecase {
         addItemRequest.buyerId);
 
       if (!!item && !item.isSubscription) {
+        if (item.quantity + addItemRequest.quantity > product.stockItem) {
+          throw new BadRequestError('The quantity of products left in stock is not enough');
+        }
         Logger.info("item already exists in cart increase quantity");
         await this.cartRepo.increaseQuantityProductCart(item.id, addItemRequest.quantity);
         return this.cartRepo.getItemById(item.id);
