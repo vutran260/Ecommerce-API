@@ -197,13 +197,15 @@ export class CategoryRepository {
       '(SELECT a.*, CAST(a.id AS CHAR(200)) AS path, 0 as depth, ' +
       `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
       (!id
-        ? 'AND parent_id IS NULL) as brotherCount '
-        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotherCount `) +
+        ? 'AND parent_id IS NULL) as brotherCount, '
+        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotherCount, `) +
+      '(SELECT count(*) FROM LP_PRODUCT_CATEGORY WHERE category_id = a.id) as productsCount ' +
       `FROM LP_CATEGORY as a WHERE store_id = '${storeId}' AND ` +
       (!id ? 'parent_id IS NULL ' : `id = '${id}' `) +
       'UNION ALL ' +
       "SELECT c.*, CONCAT(cte.path, ',', c.id), cte.depth + 1, " +
-      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brotherCount ' +
+      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brotherCount, ' +
+      '(SELECT count(*) FROM LP_PRODUCT_CATEGORY WHERE category_id = c.id) as productsCount ' +
       'FROM LP_CATEGORY c ' +
       'JOIN cte ON cte.id = c.parent_id ) ' +
       'SELECT * FROM cte ORDER BY depth ASC, order_level ASC;';
