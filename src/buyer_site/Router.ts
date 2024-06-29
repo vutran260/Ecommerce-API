@@ -13,6 +13,9 @@ import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { CartEndpoint } from './endpoint/CartEndpoint';
 import { CartUsecase } from './usecase/CartUsecase';
 import { CartRepository } from './repository/CartRepository';
+import { AddressRepository } from './repository/AddressRepository';
+import { AddressUsecase } from './usecase/AddressUsecase';
+import { AddressEndpoint } from './endpoint/AddressEndpoint';
 import { PrefectureRepository } from './repository/PrefectureRepository';
 import { PrefectureUsecase } from './usecase/PrefectureUsecase';
 import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
@@ -28,6 +31,7 @@ export class buyerSiteRouter {
     const categorytRepo = new CategoryRepository();
     const productRepo = new ProductRepository();
     const storeRepo = new StoreRepository();
+    const addressRepo = new AddressRepository()
     const prefectureRepo = new PrefectureRepository();
 
     //3-party
@@ -36,6 +40,7 @@ export class buyerSiteRouter {
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storeUsecase = new StoreUsecase(storeRepo);
+    const addressUsecase = new AddressUsecase(addressRepo)
     const prefectureUsecase = new PrefectureUsecase(prefectureRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
 
@@ -43,6 +48,7 @@ export class buyerSiteRouter {
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
+    const addressEndpoint = new AddressEndpoint(addressUsecase)
     const prefectureEndpoint = new PrefectureEndpoint(prefectureUsecase);
 
     const cartRepo = new CartRepository();
@@ -54,11 +60,8 @@ export class buyerSiteRouter {
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
-
-    router.use(BuyerAuthenMiddlleware);
     router.use('/card',cardEndpoint.getRouter());
-
-    router.use(BuyerAuthenMiddlleware)
+    router.use('/address', addressEndpoint.getRouter())
     router.use('/product', productEndpoint.getRouter());
     router.use('/store', storeEndpoint.getRouter());
 

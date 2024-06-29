@@ -1,4 +1,6 @@
 import type { Sequelize } from "sequelize";
+import { LP_ADDRESS_BUYER as _LP_ADDRESS_BUYER } from "./LP_ADDRESS_BUYER";
+import type { LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYERCreationAttributes } from "./LP_ADDRESS_BUYER";
 import { LP_ADMIN as _LP_ADMIN } from "./LP_ADMIN";
 import type { LP_ADMINAttributes, LP_ADMINCreationAttributes } from "./LP_ADMIN";
 import { LP_BUYER as _LP_BUYER } from "./LP_BUYER";
@@ -25,6 +27,7 @@ import { LP_STORE_BUYER as _LP_STORE_BUYER } from "./LP_STORE_BUYER";
 import type { LP_STORE_BUYERAttributes, LP_STORE_BUYERCreationAttributes } from "./LP_STORE_BUYER";
 
 export {
+  _LP_ADDRESS_BUYER as LP_ADDRESS_BUYER,
   _LP_ADMIN as LP_ADMIN,
   _LP_BUYER as LP_BUYER,
   _LP_CART as LP_CART,
@@ -40,6 +43,8 @@ export {
 };
 
 export type {
+  LP_ADDRESS_BUYERAttributes,
+  LP_ADDRESS_BUYERCreationAttributes,
   LP_ADMINAttributes,
   LP_ADMINCreationAttributes,
   LP_BUYERAttributes,
@@ -67,6 +72,7 @@ export type {
 };
 
 export function initModels(sequelize: Sequelize) {
+  const LP_ADDRESS_BUYER = _LP_ADDRESS_BUYER.initModel(sequelize);
   const LP_ADMIN = _LP_ADMIN.initModel(sequelize);
   const LP_BUYER = _LP_BUYER.initModel(sequelize);
   const LP_CART = _LP_CART.initModel(sequelize);
@@ -84,6 +90,8 @@ export function initModels(sequelize: Sequelize) {
   LP_CATEGORY.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_PRODUCT_CATEGORY, foreignKey: "categoryId", otherKey: "productId" });
   LP_PRODUCT.belongsToMany(LP_CATEGORY, { as: 'categoryIdLpCategories', through: LP_PRODUCT_CATEGORY, foreignKey: "productId", otherKey: "categoryId" });
   LP_STORE.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyers', through: LP_STORE_BUYER, foreignKey: "storeId", otherKey: "buyerId" });
+  LP_ADDRESS_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "buyerId"});
   LP_CART.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_CART, { as: "lpCarts", foreignKey: "buyerId"});
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
@@ -98,6 +106,8 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
   LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
+  LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "storeId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_CART, { as: "lpCarts", foreignKey: "storeId"});
   LP_CATEGORY.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
@@ -110,6 +120,7 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "storeId"});
 
   return {
+    LP_ADDRESS_BUYER: LP_ADDRESS_BUYER,
     LP_ADMIN: LP_ADMIN,
     LP_BUYER: LP_BUYER,
     LP_CART: LP_CART,
