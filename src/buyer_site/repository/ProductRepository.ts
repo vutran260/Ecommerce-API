@@ -15,11 +15,7 @@ import {
 } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
-import { LP_PRODUCT_OPTIONCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
-import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
-import { ProductOptionFromLP_PRODUCT_OPTION } from '../../common/model/products/ProductOption';
-import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../../common/model/products/ProductOptionPrice';
 import {
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
@@ -74,6 +70,8 @@ export class ProductRepository {
           ]
           : undefined,
         where: BuildQuery(filter),
+        distinct:true,
+        col: 'id'
       });
       paging.total = count;
 

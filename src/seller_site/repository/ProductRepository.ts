@@ -12,8 +12,6 @@ import {
 } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
-import { LP_PRODUCT_OPTIONCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION';
-import { LP_PRODUCT_OPTION_PRICECreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_OPTION_PRICE';
 import {
   LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
@@ -25,8 +23,6 @@ import Product, {
   ProductToLP_PRODUCT,
 } from '../../common/model/products/Product';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
-import { ProductOptionFromLP_PRODUCT_OPTION } from '../../common/model/products/ProductOption';
-import { ProductOptionPriceFromLP_PRODUCT_OPTION_PRICE } from '../../common/model/products/ProductOptionPrice';
 import { LP_PRODUCT_FAQCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_FAQ';
 import { ProductFaqToLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductFaq';
 
@@ -199,6 +195,8 @@ export class ProductRepository {
           : undefined,
         where: BuildQuery(filter),
         transaction: t,
+        distinct:true,
+        col: 'id'
       });
       paging.total = count;
 
