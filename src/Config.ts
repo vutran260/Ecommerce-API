@@ -35,3 +35,11 @@ export const caching = {
     process.env.CONTENT_CACHE_DURATION_MILLIS || '600000',
   ),
 };
+
+export const gmo = {
+  siteId: process.env.GMO_SITE_ID || '',
+  sitePassword: process.env.GMO_SITE_PASSWORD || '',
+  shopId: process.env.GMO_SHOP_ID || '',
+  shopPassword: process.env.GMO_SHOP_PASSWORD || '',
+  url: process.env.GMO_URL || '',
+}
