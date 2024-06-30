@@ -37,10 +37,9 @@ export class ProductUsecase {
         categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
         products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
       }
-      if(!!categoryId &&categoryId ===NO_CATEGORY){
+      if(categoryId ===NO_CATEGORY){
         products = await this.productRepo.getProductsWithoutCategories(filter, order, paging);
       }
-
     }else{
       products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
     }
