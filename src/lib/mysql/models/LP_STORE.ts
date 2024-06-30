@@ -14,6 +14,8 @@ export interface LP_STOREAttributes {
   storeKey?: string;
   storeName?: string;
   storeNameKana?: string;
+  companyName: string;
+  companyAddress: string;
   owner?: string;
   zipCode?: string;
   phone?: string;
@@ -36,6 +38,8 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   storeKey?: string;
   storeName?: string;
   storeNameKana?: string;
+  companyName!: string;
+  companyAddress!: string;
   owner?: string;
   zipCode?: string;
   phone?: string;
@@ -160,6 +164,16 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
       type: DataTypes.STRING(255),
       allowNull: true,
       field: 'store_name_kana'
+    },
+    companyName: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'company_name'
+    },
+    companyAddress: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'company_address'
     },
     owner: {
       type: DataTypes.STRING(255),

@@ -21,6 +21,10 @@ CREATE TABLE LP_STORE (
     store_key VARCHAR(255) unique,
     store_name VARCHAR(255),
     store_name_kana VARCHAR(255),
+
+    company_name VARCHAR(255) NOT NULL,
+    company_address VARCHAR(255) NOT NULL,
+
     owner VARCHAR(255),
     zip_code VARCHAR(255),
     phone VARCHAR(255),

@@ -16,7 +16,16 @@ export default class StoreCreateRequest {
 
   @IsString()
   @IsNotEmpty()
+  companyAddress: string;
+
+  @IsString()
+  @IsNotEmpty()
+  companyName: string;
+
+  @IsString()
+  @IsNotEmpty()
   status: string;
+
 }
 
 
@@ -25,5 +34,8 @@ export const StoreCreateRequestToLP_STORECreationAttributes = (request: StoreCre
     contractId: request.contractId,
     storeKey: request.storeKey,
     storeName: request.storeName,
-    status: request.status}
+    status: request.status,
+    companyAddress: request.companyAddress,
+    companyName: request.companyName,
+  }
 }
