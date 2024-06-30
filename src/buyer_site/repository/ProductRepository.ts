@@ -102,6 +102,66 @@ export class ProductRepository {
       throw error;
     }
   };
+
+  public getProductsWithoutCategories = async (
+    filter: Filter[],
+    order: LpOrder[],
+    paging: Paging,
+  ) => {
+    try {
+      filter.push({
+        operation: 'eq',
+        value: 0,
+        attribute: 'is_deleted',
+      });
+      const count = await LP_PRODUCT.count({
+        include:
+           [
+            {
+              association: LP_PRODUCT.associations.lpProductCategories,
+              required: false,
+            },
+          ],
+        where:{
+          [Op.and]:[
+            BuildQuery(filter),
+            { '$lpProductCategories.category_id$': null,}
+          ]
+        },
+      });
+      paging.total = count;
+
+      const results = await LP_PRODUCT.findAll({
+        subQuery: false,
+        include:
+          [
+            {
+              association: LP_PRODUCT.associations.lpProductCategories,
+              required: false,
+            },
+          ],
+        where:{
+          [Op.and]:[
+            BuildQuery(filter),
+            { '$lpProductCategories.category_id$': null,}
+          ]
+        },
+        offset: GetOffset(paging),
+        order: BuildOrderQuery(order),
+        limit: paging.limit,
+      });
+
+      forEach(results, (result) => {
+        lodash.unset(result.dataValues, 'lpProductCategories');
+      });
+
+      return results;
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      throw error;
+    }
+  };
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
