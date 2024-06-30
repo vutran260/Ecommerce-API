@@ -31,13 +31,18 @@ export class ProductUsecase {
     
     let categoryIds = null
     let products : LP_PRODUCT[]=[];
-    if (!!categoryId&&categoryId !==NO_CATEGORY){
-     categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
-     products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
-    }
 
-    if(!!categoryId &&categoryId ===NO_CATEGORY){
-       products = await this.productRepo.getProductsWithoutCategories(filter, order, paging);
+    if (!!categoryId){
+      if(categoryIds !==NO_CATEGORY){
+        categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
+        products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
+      }
+      if(!!categoryId &&categoryId ===NO_CATEGORY){
+        products = await this.productRepo.getProductsWithoutCategories(filter, order, paging);
+      }
+
+    }else{
+      products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
     }
 
     return products.map((product) => {
