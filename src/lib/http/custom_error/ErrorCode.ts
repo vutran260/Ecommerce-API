@@ -9,4 +9,7 @@ export enum ErrorCode {
   ALREADY_EXISTS = '20003',
 
   TOKEN_EXPIRED = '30001',
+
+
+  OVER_STOCK = '40001',
 }
