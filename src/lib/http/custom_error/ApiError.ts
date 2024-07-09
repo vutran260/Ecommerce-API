@@ -83,3 +83,4 @@ export class DataExists extends ApiError {
     super(ErrorType.DATA_EXISTS, message, errorCode);
   }
 }
+
