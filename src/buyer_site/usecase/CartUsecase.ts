@@ -1,6 +1,6 @@
 import { CartItem } from "../endpoint/CartEndpoint";
 import { CartRepository } from "../repository/CartRepository";
-import { BadRequestError } from "../../lib/http/custom_error/ApiError";
+import { BadRequestError, OverStockError } from "../../lib/http/custom_error/ApiError";
 import Logger from "../../lib/core/Logger";
 import { ProductRepository } from '../repository/ProductRepository';
 import { ErrorCode } from "../../lib/http/custom_error/ErrorCode";
@@ -40,7 +40,7 @@ export class CartUsecase {
       if (!!subscriptionItem) {
 
         if (subscriptionItem.quantity + addItemRequest.quantity > product.stockItem) {
-          throw new BadRequestError('The quantity of products left in stock is not enough');
+          throw new OverStockError('The quantity of products left in stock is not enough');
         }
 
         Logger.info("Subscription item already exists in cart increase quantity");
@@ -55,7 +55,7 @@ export class CartUsecase {
 
       if (!!item && !item.isSubscription) {
         if (item.quantity + addItemRequest.quantity > product.stockItem) {
-          throw new BadRequestError('The quantity of products left in stock is not enough', ErrorCode.BAD_REQUEST);
+          throw new OverStockError('The quantity of products left in stock is not enough');
         }
         Logger.info("item already exists in cart increase quantity");
         await this.cartRepo.increaseQuantityProductCart(item.id, addItemRequest.quantity);
