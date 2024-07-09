@@ -84,8 +84,3 @@ export class DataExists extends ApiError {
   }
 }
 
-export class OverStockError extends ApiError {
-  constructor(message = 'Over stock', errorCode = ErrorCode.OVER_STOCK) {
-    super(ErrorType.OVER_STOCK, message, errorCode);
-  }
-}
