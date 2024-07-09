@@ -2,6 +2,7 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
+import type { LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId } from './LP_ITEM_SUBSCRIPTION';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
 import type { LP_PRODUCT_FAQ, LP_PRODUCT_FAQId } from './LP_PRODUCT_FAQ';
@@ -28,6 +29,7 @@ export interface LP_PRODUCTAttributes {
   stockItem?: number;
   productTag?: string;
   status?: string;
+  quantity?: number;
   isDeleted: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -36,7 +38,7 @@ export interface LP_PRODUCTAttributes {
 
 export type LP_PRODUCTPk = "id";
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
-export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_PRODUCTOptionalAttributes = "id" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "priceSubscription" | "cost" | "stockItem" | "productTag" | "status" | "quantity" | "isDeleted" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_PRODUCTCreationAttributes = Optional<LP_PRODUCTAttributes, LP_PRODUCTOptionalAttributes>;
 
 export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAttributes> implements LP_PRODUCTAttributes {
@@ -60,6 +62,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   stockItem?: number;
   productTag?: string;
   status?: string;
+  quantity?: number;
   isDeleted!: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -89,6 +92,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasCategoryIdLpCategory!: Sequelize.BelongsToManyHasAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
   hasCategoryIdLpCategories!: Sequelize.BelongsToManyHasAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
   countCategoryIdLpCategories!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_ITEM_SUBSCRIPTION via productId
+  lpItemSubscriptions!: LP_ITEM_SUBSCRIPTION[];
+  getLpItemSubscriptions!: Sequelize.HasManyGetAssociationsMixin<LP_ITEM_SUBSCRIPTION>;
+  setLpItemSubscriptions!: Sequelize.HasManySetAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  addLpItemSubscription!: Sequelize.HasManyAddAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  addLpItemSubscriptions!: Sequelize.HasManyAddAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  createLpItemSubscription!: Sequelize.HasManyCreateAssociationMixin<LP_ITEM_SUBSCRIPTION>;
+  removeLpItemSubscription!: Sequelize.HasManyRemoveAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  removeLpItemSubscriptions!: Sequelize.HasManyRemoveAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  hasLpItemSubscription!: Sequelize.HasManyHasAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  hasLpItemSubscriptions!: Sequelize.HasManyHasAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
+  countLpItemSubscriptions!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_PRODUCT_CATEGORY via productId
   lpProductCategories!: LP_PRODUCT_CATEGORY[];
   getLpProductCategories!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_CATEGORY>;
@@ -194,17 +209,17 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       field: 'product_name'
     },
     productImage: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_image'
     },
     productDescription: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_description'
     },
     productOverview: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_overview'
     },
@@ -233,6 +248,10 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
     },
     status: {
       type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
       allowNull: true
     },
     isDeleted: {

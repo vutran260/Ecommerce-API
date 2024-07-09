@@ -111,6 +111,7 @@ CREATE TABLE LP_PRODUCT (
 
     product_tag VARCHAR(255),
     status VARCHAR(255),
+    quantity INT, -- add with payment
     is_deleted TINYINT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -191,22 +192,24 @@ CREATE TABLE LP_CART (
   CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
 );
 
-CREATE TABLE LP_ADDRESS_BUYER(
-  id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-  buyer_id VARCHAR(36) NOT NULL,
-  store_id VARCHAR(36) NOT NULL,
-  name_kana VARCHAR(255) NOT NULL,
-  name_kanji VARCHAR(255) NOT NULL,
-  post_code VARCHAR(36) NOT NULL,
-  city_town VARCHAR(255) NOT NULL,
-  street_address VARCHAR(255) NOT NULL,
-  building_name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  telephone_number VARCHAR(36) NOT NULL,
-
-  CONSTRAINT fk_buyer_id FOREIGN KEY (buyer_id) REFERENCES LP_BUYER(id),
-  CONSTRAINT fk_store_id FOREIGN KEY (store_id) REFERENCES LP_STORE(id)
-
+CREATE TABLE LP_BUYER_ADDRESS (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    buyer_id VARCHAR(36),
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
+    gender VARCHAR(10),
+    postal_code INT,
+    city VARCHAR(255),
+    ward VARCHAR(255),
+    town VARCHAR(255),
+    village VARCHAR(255),
+    block VARCHAR(255),
+    email_address VARCHAR(255),
+    phone_number VARCHAR(50),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id)
 );
 
 CREATE TABLE LP_PREFECTURES (
@@ -264,4 +267,134 @@ VALUES
 ('宮崎県'),
 ('鹿児島県'),
 ('沖縄県');
+
+
+CREATE TABLE LP_ORDER (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    buyer_id VARCHAR(36),
+    store_id VARCHAR(36),
+    order_receiver_id VARCHAR(36),
+    order_shipment_id VARCHAR(36),
+    order_payment_id VARCHAR(36),
+    order_status INT,
+    total_order_item_fee DECIMAL(10, 2),
+    shipment_fee DECIMAL(10, 2),
+    total_fee DECIMAL(10, 2),
+    order_payment_datetime DATETIME,
+    order_shipment_start_datetime DATETIME,
+    order_shipment_end_datetime DATETIME,
+    order_cancel_datetime DATETIME,
+    order_created_at DATETIME,
+    order_created_by VARCHAR(255),
+    order_updated_at DATETIME,
+    order_updated_by VARCHAR(255),
+    CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
+    CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
+);
+
+CREATE TABLE LP_ORDER_ITEM (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    buying_period INT,
+    is_discount VARCHAR(10),
+    discount_percentage VARCHAR(10),
+    has_discount_schedule VARCHAR(10),
+    discount_time_from DATETIME,
+    discount_time_to DATETIME,
+    product_name VARCHAR(255),
+    product_image TEXT,
+    product_description TEXT,
+    capacity VARCHAR(50),
+    expiration_use_date DATETIME,
+    storage_method VARCHAR(255),
+    intake_method VARCHAR(255),
+    ingredient TEXT,
+    notification_number VARCHAR(255),
+    notification TEXT,
+    has_option BOOLEAN,
+    price DECIMAL(10, 2),
+    price_subscription DECIMAL(10, 2),
+    cost DECIMAL(10, 2),
+    product_tag VARCHAR(255),
+    status VARCHAR(50),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_ORDER_PAYMENT (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    payment_type INT,
+    payment_status INT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_STORE_ADDRESS (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    store_id VARCHAR(36),
+    store_name VARCHAR(255),
+    store_name_kana VARCHAR(255),
+    owner VARCHAR(255),
+    zip_code VARCHAR(20),
+    phone VARCHAR(50),
+    city VARCHAR(255),
+    ward VARCHAR(255),
+    town VARCHAR(255),
+    village VARCHAR(255),
+    created_at DATETIME,
+    created_by VARCHAR(255),
+    updated_at DATETIME,
+    updated_by VARCHAR(255),
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
+);
+
+CREATE TABLE LP_SHIPMENT (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    shipment_fee DECIMAL(10, 2),
+    shipment_fee_discount DECIMAL(10, 2),
+    shipment_date DATETIME,
+    shipment_by VARCHAR(255),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_SHIPMENT_HISTORY (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    shipment_id VARCHAR(36),
+    shipment_history_date DATETIME,
+    shipment_status INT,
+    shipment_description TEXT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (shipment_id) REFERENCES LP_SHIPMENT(id)
+);
+
+CREATE TABLE LP_ITEM_SUBSCRIPTION (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    product_id VARCHAR(36),
+    order_id VARCHAR(36),
+    CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_STORE_PICKUP_ADDRESS (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    store_address_id VARCHAR(36),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id),
+    CONSTRAINT FOREIGN KEY (store_address_id) REFERENCES LP_STORE_ADDRESS (id)
+);
 
