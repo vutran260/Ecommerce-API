@@ -197,18 +197,33 @@ export class CategoryRepository {
       '(SELECT a.*, CAST(a.id AS CHAR(200)) AS path, 0 as depth, ' +
       `(SELECT count(*) from LP_CATEGORY where store_id = '${storeId}' ` +
       (!id
-        ? 'AND parent_id IS NULL) as brotherCount, '
-        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotherCount, `) +
-      '(SELECT count(*) FROM LP_PRODUCT_CATEGORY WHERE category_id = a.id) as productsCount ' +
+        ? 'AND parent_id IS NULL) as brotherCount '
+        : `AND parent_id = (SELECT parent_id FROM LP_CATEGORY where id = '${id}')) as brotherCount `) +
       `FROM LP_CATEGORY as a WHERE store_id = '${storeId}' AND ` +
       (!id ? 'parent_id IS NULL ' : `id = '${id}' `) +
       'UNION ALL ' +
       "SELECT c.*, CONCAT(cte.path, ',', c.id), cte.depth + 1, " +
-      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brotherCount, ' +
-      '(SELECT count(*) FROM LP_PRODUCT_CATEGORY WHERE category_id = c.id) as productsCount ' +
+      '(SELECT count(*) from LP_CATEGORY where parent_id = ( SELECT parent_id FROM LP_CATEGORY where id = c.id)) as brotherCount ' +
       'FROM LP_CATEGORY c ' +
       'JOIN cte ON cte.id = c.parent_id ) ' +
-      'SELECT * FROM cte ORDER BY depth ASC, order_level ASC;';
+      `SELECT 
+        *,
+        ( SELECT count(DISTINCT LP_PRODUCT_CATEGORY.product_id ) 
+         FROM LP_PRODUCT_CATEGORY WHERE category_id in 
+            ( SELECT CASE 
+                WHEN vpp.id IS NOT NULL THEN vpp.id
+                WHEN vp.id IS NOT NULL THEN vp.id 
+                ELSE v.id 
+              END AS VCL 
+              FROM LP_CATEGORY AS v 
+              LEFT JOIN LP_CATEGORY AS vp ON v.id = vp.parent_id 
+              LEFT JOIN LP_CATEGORY AS vpp ON vp.id = vpp.parent_id where v.id = cte.id
+              )
+  ) AS productsCount
+      FROM 
+          cte 
+      ORDER BY 
+      depth ASC; `;
 
     const record = await lpSequelize.query(query, {
       raw: true,
