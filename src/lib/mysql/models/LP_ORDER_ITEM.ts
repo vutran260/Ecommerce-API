@@ -5,15 +5,20 @@ import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 export interface LP_ORDER_ITEMAttributes {
   id: string;
   orderId?: string;
-  buyingPeriod?: number;
-  isDiscount?: string;
-  discountPercentage?: string;
-  hasDiscountSchedule?: string;
+  buyingPeriod?: string;
+  isDiscount: number;
+  discountPercentage?: number;
+  hasDiscountSchedule?: number;
   discountTimeFrom?: Date;
   discountTimeTo?: Date;
-  productName?: string;
-  productImage?: string;
-  productDescription?: string;
+  productName: string;
+  productImage: string;
+  productDescription: string;
+  price?: number;
+  priceSubscription?: number;
+  cost?: number;
+  productTag?: string;
+  quantity: number;
   capacity?: string;
   expirationUseDate?: Date;
   storageMethod?: string;
@@ -22,10 +27,6 @@ export interface LP_ORDER_ITEMAttributes {
   notificationNumber?: string;
   notification?: string;
   hasOption?: number;
-  price?: number;
-  priceSubscription?: number;
-  cost?: number;
-  productTag?: string;
   status?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -34,21 +35,26 @@ export interface LP_ORDER_ITEMAttributes {
 
 export type LP_ORDER_ITEMPk = "id";
 export type LP_ORDER_ITEMId = LP_ORDER_ITEM[LP_ORDER_ITEMPk];
-export type LP_ORDER_ITEMOptionalAttributes = "id" | "orderId" | "buyingPeriod" | "isDiscount" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "productName" | "productImage" | "productDescription" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "hasOption" | "price" | "priceSubscription" | "cost" | "productTag" | "status" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_ORDER_ITEMOptionalAttributes = "id" | "orderId" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "price" | "priceSubscription" | "cost" | "productTag" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "hasOption" | "status" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_ORDER_ITEMCreationAttributes = Optional<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMOptionalAttributes>;
 
 export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes> implements LP_ORDER_ITEMAttributes {
   id!: string;
   orderId?: string;
-  buyingPeriod?: number;
-  isDiscount?: string;
-  discountPercentage?: string;
-  hasDiscountSchedule?: string;
+  buyingPeriod?: string;
+  isDiscount!: number;
+  discountPercentage?: number;
+  hasDiscountSchedule?: number;
   discountTimeFrom?: Date;
   discountTimeTo?: Date;
-  productName?: string;
-  productImage?: string;
-  productDescription?: string;
+  productName!: string;
+  productImage!: string;
+  productDescription!: string;
+  price?: number;
+  priceSubscription?: number;
+  cost?: number;
+  productTag?: string;
+  quantity!: number;
   capacity?: string;
   expirationUseDate?: Date;
   storageMethod?: string;
@@ -57,10 +63,6 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
   notificationNumber?: string;
   notification?: string;
   hasOption?: number;
-  price?: number;
-  priceSubscription?: number;
-  cost?: number;
-  productTag?: string;
   status?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -90,22 +92,22 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
       field: 'order_id'
     },
     buyingPeriod: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(255),
       allowNull: true,
       field: 'buying_period'
     },
     isDiscount: {
-      type: DataTypes.STRING(10),
-      allowNull: true,
+      type: DataTypes.TINYINT,
+      allowNull: false,
       field: 'is_discount'
     },
     discountPercentage: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.TINYINT.UNSIGNED,
       allowNull: true,
       field: 'discount_percentage'
     },
     hasDiscountSchedule: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.TINYINT,
       allowNull: true,
       field: 'has_discount_schedule'
     },
@@ -121,18 +123,40 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
     },
     productName: {
       type: DataTypes.STRING(255),
-      allowNull: true,
+      allowNull: false,
       field: 'product_name'
     },
     productImage: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING(2000),
+      allowNull: false,
       field: 'product_image'
     },
     productDescription: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+      type: DataTypes.STRING(2000),
+      allowNull: false,
       field: 'product_description'
+    },
+    price: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true
+    },
+    priceSubscription: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+      field: 'price_subscription'
+    },
+    cost: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true
+    },
+    productTag: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'product_tag'
+    },
+    quantity: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
     capacity: {
       type: DataTypes.STRING(50),
@@ -170,24 +194,6 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
       type: DataTypes.BOOLEAN,
       allowNull: true,
       field: 'has_option'
-    },
-    price: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true
-    },
-    priceSubscription: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true,
-      field: 'price_subscription'
-    },
-    cost: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true
-    },
-    productTag: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'product_tag'
     },
     status: {
       type: DataTypes.STRING(50),

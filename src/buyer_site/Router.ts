@@ -22,6 +22,10 @@ import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardUsecase } from './usecase/CardUsecase';
 import { CardEndpoint } from './endpoint/CardEndpoint';
+import { OrderRepository } from './repository/OrderRepository';
+import { OrderUsecase } from './usecase/OrderUsecase';
+import { OrderEndpoint } from './endpoint/OrderEndpoint';
+import { OrderItemRepository } from './repository/OrderItemRepository';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -31,8 +35,11 @@ export class buyerSiteRouter {
     const categorytRepo = new CategoryRepository();
     const productRepo = new ProductRepository();
     const storeRepo = new StoreRepository();
-    const addressRepo = new AddressRepository()
+    const addressRepo = new AddressRepository();
     const prefectureRepo = new PrefectureRepository();
+    const orderRepo = new OrderRepository();
+    const orderItemRepo = new OrderItemRepository();
+    const cartRepo = new CartRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -40,30 +47,31 @@ export class buyerSiteRouter {
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storeUsecase = new StoreUsecase(storeRepo);
-    const addressUsecase = new AddressUsecase(addressRepo)
+    const addressUsecase = new AddressUsecase(addressRepo);
     const prefectureUsecase = new PrefectureUsecase(prefectureRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
-
+    const orderUsecase = new OrderUsecase(orderRepo, orderItemRepo, cartRepo);
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
-    const addressEndpoint = new AddressEndpoint(addressUsecase)
+    const addressEndpoint = new AddressEndpoint(addressUsecase);
     const prefectureEndpoint = new PrefectureEndpoint(prefectureUsecase);
 
-    const cartRepo = new CartRepository();
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
+    const orderEndpoint = new OrderEndpoint(orderUsecase);
 
-    router.use('/prefectures', prefectureEndpoint.getRouter())
+    router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
-    router.use('/card',cardEndpoint.getRouter());
-    router.use('/address', addressEndpoint.getRouter())
+    router.use('/card', cardEndpoint.getRouter());
+    router.use('/address', addressEndpoint.getRouter());
     router.use('/product', productEndpoint.getRouter());
     router.use('/store', storeEndpoint.getRouter());
+    router.use('/order', orderEndpoint.getRouter());
 
     return router;
   };
