@@ -5,11 +5,45 @@ import {
   LP_BUYERCreationAttributes,
 } from '../../lib/mysql/models/LP_BUYER';
 import { LP_CATEGORY } from '../../lib/mysql/models/LP_CATEGORY';
+import { LP_ADDRESS_BUYER_SSO } from '../../lib/mysql/models/LP_ADDRESS_BUYER_SSO';
+import { LP_BUYER_PERSONAL_INFORMATION } from '../../lib/mysql/models/LP_BUYER_PERSONAL_INFORMATION';
 
 export class BuyerRepository {
   public createBuyer = async (input: LP_BUYERCreationAttributes) => {
     const buyer = await LP_BUYER.create(input);
     return await this.getBuyerById(buyer.id);
+  };
+
+
+  public getBuyerInfo = async (buyerId: string) => {
+    try {
+      LP_BUYER.hasOne(LP_ADDRESS_BUYER_SSO, {
+        foreignKey: 'buyer_id',
+        as: 'addressInfo', // Đảm bảo rằng alias này khớp
+      });
+      LP_BUYER.hasOne(LP_BUYER_PERSONAL_INFORMATION, {
+        foreignKey: 'buyer_id',
+        as: 'personalInfo', // Đảm bảo rằng alias này khớp
+      });
+      const buyerInfo = await LP_BUYER.findOne({
+        where: { id: buyerId },
+        include: [
+          {
+            model: LP_ADDRESS_BUYER_SSO,
+            as: 'addressInfo' // Đặt tên alias cho association
+          },
+          {
+            model: LP_BUYER_PERSONAL_INFORMATION,
+            as: 'personalInfo' // Đặt tên alias cho association
+          }
+        ]
+      });
+
+      return buyerInfo;
+    } catch (error) {
+      console.error('Error fetching buyer info:', error);
+      throw error;
+    }
   };
 
   public getBuyerById = async (id: string) => {
