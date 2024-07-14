@@ -44,11 +44,11 @@ export class LP_PRODUCT_FAQ extends Model<LP_PRODUCT_FAQAttributes, LP_PRODUCT_F
       field: 'product_id'
     },
     question: {
-      type: DataTypes.STRING(511),
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     answer: {
-      type: DataTypes.STRING(511),
+      type: DataTypes.STRING(100),
       allowNull: false
     }
   }, {

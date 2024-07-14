@@ -16,6 +16,9 @@ import { StoreAuthenMiddlleware } from './middleware/StoreAuthenMiddllware';
 import { CardUsecase } from '../buyer_site/usecase/CardUsecase';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardEndpoint } from '../buyer_site/endpoint/CardEndpoint';
+import { StoreNotificationEndpoint } from './endpoint/StoreNotificationEndpoint';
+import { StoreNotificationUsecase } from './usecase/StoreNotificationUsecase';
+import { StoreNotificationRepository } from './repository/StoreNotificationRepository';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -25,21 +28,25 @@ export class sellerSiteRouter {
     const storeRepo = new StoreRepository()
     const productRepo = new ProductRepository();
     const categorytRepo = new CategoryRepository();
+    const storeNotificationRepo = new StoreNotificationRepository()
 
     const sellerUsecase = new SellerUsecase(sellerRepo);
     const storeUsecase = new StoreUsecase(storeRepo, sellerRepo)
     const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
+    const storeNotificationUsecase = new StoreNotificationUsecase(storeNotificationRepo)
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase)
     const sellerEndpoint = new SellerEndpoint(sellerUsecase);
+    const storeNotificationEndpoint = new StoreNotificationEndpoint(storeNotificationUsecase);
 
 
     router.use('/seller', sellerEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware)
     router.use('/store', storeEndpoint.getRouter())
+    router.use('/notification', storeNotificationEndpoint.getRouter())
 
     router.use(StoreAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());
@@ -49,4 +56,4 @@ export class sellerSiteRouter {
 }
 
 // module.exports = { timestamps: false }
-    // "gen-model": "sequelize-auto -o ./src/lib/mysql/models -l ts -a ./config.js -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"
+// "gen-model": "sequelize-auto -o ./src/lib/mysql/models -l ts -a ./config.js -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql"
