@@ -8,11 +8,12 @@ export interface LP_STORE_NOTIFICATIONAttributes {
   notificationImage: string;
   title: string;
   details: string;
+  status?: string;
 }
 
 export type LP_STORE_NOTIFICATIONPk = "id";
 export type LP_STORE_NOTIFICATIONId = LP_STORE_NOTIFICATION[LP_STORE_NOTIFICATIONPk];
-export type LP_STORE_NOTIFICATIONOptionalAttributes = "id";
+export type LP_STORE_NOTIFICATIONOptionalAttributes = "id" | "status";
 export type LP_STORE_NOTIFICATIONCreationAttributes = Optional<LP_STORE_NOTIFICATIONAttributes, LP_STORE_NOTIFICATIONOptionalAttributes>;
 
 export class LP_STORE_NOTIFICATION extends Model<LP_STORE_NOTIFICATIONAttributes, LP_STORE_NOTIFICATIONCreationAttributes> implements LP_STORE_NOTIFICATIONAttributes {
@@ -21,6 +22,7 @@ export class LP_STORE_NOTIFICATION extends Model<LP_STORE_NOTIFICATIONAttributes
   notificationImage!: string;
   title!: string;
   details!: string;
+  status?: string;
 
   // LP_STORE_NOTIFICATION belongsTo LP_STORE via storeId
   store!: LP_STORE;
@@ -57,6 +59,10 @@ export class LP_STORE_NOTIFICATION extends Model<LP_STORE_NOTIFICATIONAttributes
     details: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    status: {
+      type: DataTypes.STRING(255),
+      allowNull: true
     }
   }, {
     sequelize,

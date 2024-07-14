@@ -42,10 +42,12 @@ export class StoreNotificationUsecase {
     return notification
   }
 
-
-
-
-
+  public activeNotification = async (id: string) => {
+    return this.storeNotificationRepo.activeNotificationId(id);
+  };
+  public inactiveNotification = async (id: string) => {
+    return this.storeNotificationRepo.inactiveNotificationId(id);
+  };
 
 
 }

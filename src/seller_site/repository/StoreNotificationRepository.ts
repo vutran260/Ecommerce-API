@@ -34,5 +34,18 @@ export class StoreNotificationRepository {
       where: { id: id }
     });
   }
-};
+  public activeNotificationId = async (id: string) => {
+    await LP_STORE_NOTIFICATION.update(
+      { status: 'ACTIVE' },
+      { where: { id: id } },
+    );
+  };
+
+  public inactiveNotificationId = async (id: string) => {
+    await LP_STORE_NOTIFICATION.update(
+      { status: 'INACTIVE' },
+      { where: { id: id } },
+    );
+  };
+}
 

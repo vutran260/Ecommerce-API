@@ -48,7 +48,16 @@ export class StoreNotificationEndpoint {
     return ResponseData(results, res)
   }
 
-
+  private activeNotification = async (req: ProtectedRequest, res: Response) => {
+    const id: string = req.params.id;
+    await this.storeNotificationUsecase.activeNotification(id);
+    return ResponseData({ message: 'Active is successfully!' }, res);
+  }
+  private inactiveNotification = async (req: ProtectedRequest, res: Response) => {
+    const id: string = req.params.id;
+    await this.storeNotificationUsecase.inactiveNotification(id);
+    return ResponseData({ message: 'Inactive is successfully!' }, res);
+  }
 
   public getRouter() {
     const router = express.Router();
@@ -57,6 +66,8 @@ export class StoreNotificationEndpoint {
     router.get('/:id', this.getNotification);
     router.delete('/:id', this.deleteNotification);
     router.put('/', this.updateNotification);
+    router.put('/active/:id', this.activeNotification);
+    router.put('/inactive/:id', this.inactiveNotification);
     return router;
   }
 }
@@ -81,4 +92,8 @@ export class StoreNotification {
   @IsString()
   @IsNotEmpty()
   details: string;
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
 }
