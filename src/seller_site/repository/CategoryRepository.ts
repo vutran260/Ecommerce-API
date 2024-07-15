@@ -208,18 +208,24 @@ export class CategoryRepository {
       'JOIN cte ON cte.id = c.parent_id ) ' +
       `SELECT 
         *,
-        ( SELECT count(DISTINCT LP_PRODUCT_CATEGORY.product_id ) 
-         FROM LP_PRODUCT_CATEGORY WHERE category_id in 
-            ( SELECT CASE 
-                WHEN vpp.id IS NOT NULL THEN vpp.id
+        ( 
+	        SELECT count(DISTINCT lpc.product_id ) 
+          FROM LP_PRODUCT_CATEGORY lpc 
+          LEFT JOIN LP_PRODUCT lp ON lpc.product_id = lp.id 
+          WHERE 
+            category_id in 
+              ( 
+              SELECT CASE 
+                WHEN vpp.id IS NOT NULL THEN vpp.id 
                 WHEN vp.id IS NOT NULL THEN vp.id 
-                ELSE v.id 
-              END AS VCL 
+                ELSE v.id END AS VCL 
               FROM LP_CATEGORY AS v 
               LEFT JOIN LP_CATEGORY AS vp ON v.id = vp.parent_id 
-              LEFT JOIN LP_CATEGORY AS vpp ON vp.id = vpp.parent_id where v.id = cte.id
-              )
-  ) AS productsCount
+              LEFT JOIN LP_CATEGORY AS vpp ON vp.id = vpp.parent_id 
+              WHERE v.id = cte.id
+              ) 
+              AND lp.is_deleted = 0
+        ) AS productsCount
       FROM 
           cte 
       ORDER BY 

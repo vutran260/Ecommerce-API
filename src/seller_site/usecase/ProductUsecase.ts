@@ -82,9 +82,9 @@ export class ProductUsecase {
     }
 
 
-    if (this.hasDuplicateProductComponentName(input)) {
-      throw new BadRequestError('product component name must be unique');
-    }
+    // if (this.hasDuplicateProductComponentName(input)) {
+    //   throw new BadRequestError('product component name must be unique');
+    // }
   }
 
   private hasDuplicateProductComponentName(input: Product): boolean {
