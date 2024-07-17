@@ -229,7 +229,7 @@ export class CategoryRepository {
       FROM 
           cte 
       ORDER BY 
-      depth ASC; `;
+      depth ASC, order_level ASC; `;
 
     const record = await lpSequelize.query(query, {
       raw: true,
