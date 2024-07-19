@@ -2,6 +2,8 @@ import moment from 'moment';
 import { DATE_FORMAT } from '../../../../src/lib/constant/Constant';
 import { LP_CART } from '../../../../src/lib/mysql/models/LP_CART';
 import { LP_ORDER } from '../../../../src/lib/mysql/models/LP_ORDER';
+import { LP_ORDER_PAYMENT } from '../../../../src/lib/mysql/models/LP_ORDER_PAYMENT';
+import { LP_SHIPMENT } from '../../../../src/lib/mysql/models/LP_SHIPMENT';
 
 export class Order {
   id: string;
@@ -143,5 +145,42 @@ export class CreateOrderItemRequest {
     this.status = '';
     this.createdAt = new Date();
     this.updatedAt = new Date();
+  }
+}
+
+export class CreateOrderPaymentRequest {
+  orderId?: string;
+  paymentType?: number;
+  paymentStatus?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  constructor(lpOrderPayment: LP_ORDER_PAYMENT) {
+    this.orderId = lpOrderPayment.orderId;
+    this.paymentType = lpOrderPayment.paymentType;
+    this.paymentStatus = lpOrderPayment.paymentStatus;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
+  }
+}
+
+export class CreateShipmentRequest {
+  orderId?: string;
+  shipmentFee?: number;
+  shipmentFeeDiscount?: number;
+  shipmentDate?: Date;
+  shipmentBy?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+
+  constructor(lpShipment: LP_SHIPMENT) {
+    this.orderId = lpShipment.orderId;
+    this.shipmentFee = lpShipment.shipmentFee;
+    this.shipmentFeeDiscount = lpShipment.shipmentFeeDiscount;
+    this.shipmentDate = lpShipment.shipmentDate;
+    this.shipmentBy = lpShipment.shipmentBy;
+    this.createdAt = new Date();
+    this.createdAt = new Date();
   }
 }

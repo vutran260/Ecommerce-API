@@ -1,5 +1,11 @@
 import lodash, { forEach } from 'lodash';
+import { Transaction } from 'sequelize';
+import {
+  CreateOrderRequest,
+  UpdateOrderRequest,
+} from '../../../src/common/model/orders/Order';
 import Logger from '../../../src/lib/core/Logger';
+import { LP_BUYER } from '../../../src/lib/mysql/models/LP_BUYER';
 import { BuildOrderQuery, LpOrder } from '../../../src/lib/paging/Order';
 import {
   BuildQuery,
@@ -8,11 +14,6 @@ import {
   Paging,
 } from '../../../src/lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
-import { Transaction, where } from 'sequelize';
-import {
-  CreateOrderRequest,
-  UpdateOrderRequest,
-} from '../../../src/common/model/orders/Order';
 
 export class OrderRepository {
   public createOrder = async (
@@ -58,6 +59,11 @@ export class OrderRepository {
   public getOrderById = async (id: string, t?: Transaction) => {
     const result = await LP_ORDER.findOne({
       where: { id },
+      include: [
+        {
+          association: LP_BUYER.associations.lpBuyerAddresses,
+        },
+      ],
       transaction: t,
     });
 

@@ -20,7 +20,10 @@ export class OrderEndpoint {
     orderCreateRequest.storeId = req.storeId;
 
     await validatorRequest(orderCreateRequest);
-    const results = await this.orderUsecase.createOrder(orderCreateRequest);
+    const results = await this.orderUsecase.createOrder(
+      orderCreateRequest,
+      req.body.token,
+    );
     return ResponseData(results, res);
   };
 
@@ -41,11 +44,47 @@ export class OrderEndpoint {
     return ResponseListData(result, res, req.paging);
   };
 
+  private checkFraud = async (req: ProtectedRequest, res: Response) => {
+    const results = await this.orderUsecase.checkFraud(
+      req.body.type,
+      req.body.userId,
+    );
+    return ResponseData(results, res);
+  };
+
+  private entryTran = async (req: ProtectedRequest, res: Response) => {
+    const transactionRequest = {
+      orderID: req.body.orderID,
+      jobCd: req.body.jobCd,
+      amount: req.body.amount,
+      tax: req.body.tax,
+    };
+
+    const results = await this.orderUsecase.entryTran(transactionRequest);
+    return ResponseData(results, res);
+  };
+
+  private execTran = async (req: ProtectedRequest, res: Response) => {
+    const execTransactionRequest = {
+      accessID: req.body.accessID,
+      accessPass: req.body.accessPass,
+      orderID: req.body.orderID,
+      method: req.body.method,
+      token: req.body.token,
+    };
+
+    const results = await this.orderUsecase.execTran(execTransactionRequest);
+    return ResponseData(results, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get('/', PagingMiddelware, this.getOrders);
     router.get('/:id', this.getOrderDetail);
     router.post('/', this.createOrder);
+    router.post('/fraud', this.checkFraud);
+    router.post('/entry', this.entryTran);
+    router.post('/exec', this.execTran);
     return router;
   }
 }

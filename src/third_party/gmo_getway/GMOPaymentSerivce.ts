@@ -12,6 +12,13 @@ import {
 import { errorCodesConstant } from './utils/ErrorCodesConstant';
 import { CheckPointRequest } from './request/CheckPointRequest';
 import { CheckPointResponse } from './response/CheckPointResponse';
+import {
+  EntryTransactionRequest,
+  TransactionRequest,
+} from './request/EntryTransactionRequest';
+import { EntryTransactionResponse } from './response/EntryTransactionResponse';
+import { ExecTransactionRequest } from './request/ExecTransactionRequest';
+import { ExecTransactionResponse } from './response/ExecTransactionResponse';
 
 export class GMOPaymentService {
   public getMemberById = async (memberId: string) => {
@@ -197,15 +204,15 @@ export class GMOPaymentService {
     }
   };
 
-  public checkFraud = async (memberId: string, type: string) => {
-    Logger.info('checkpoint', memberId, type);
+  public checkFraud = async (type: string, userId: string) => {
+    Logger.info('checkpoint', userId, type);
 
     const endpoint = `${gmo.url}/payment/SiftEvents.json`;
     const request = new CheckPointRequest(
       gmo.shopId,
       gmo.shopPassword,
       type,
-      memberId,
+      userId,
     );
     const requestJson = JSON.stringify(request);
 
@@ -225,11 +232,71 @@ export class GMOPaymentService {
     }
 
     return new CheckPointResponse(
-      jsonData.memberID,
-      jsonData.memberName,
       jsonData.siftOrderID,
       jsonData.paymentAbuseScore,
     );
+  };
+
+  public entryTran = async (input: TransactionRequest) => {
+    Logger.info('entry transaction', input.orderID);
+
+    const endpoint = `${gmo.url}/payment/EntryTran.json`;
+    const request = new EntryTransactionRequest(
+      gmo.shopId,
+      gmo.shopPassword,
+      input.orderID,
+      input.jobCd,
+      input.amount,
+    );
+    const requestJson = JSON.stringify(request);
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: requestJson,
+    });
+
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
+
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
+    }
+
+    return new EntryTransactionResponse(jsonData.accessID, jsonData.accessPass);
+  };
+
+  public execTran = async (input: ExecTransactionRequest) => {
+    Logger.info('exec transaction', input.orderID);
+
+    const endpoint = `${gmo.url}/payment/ExecTran.json`;
+    const request = new ExecTransactionRequest(
+      input.accessID,
+      input.accessPass,
+      input.orderID,
+      input.method,
+      input.token,
+    );
+    const requestJson = JSON.stringify(request);
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: requestJson,
+    });
+
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
+
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
+    }
+
+    return new ExecTransactionResponse(jsonData.acs, jsonData.redirectUrl);
   };
 }
 

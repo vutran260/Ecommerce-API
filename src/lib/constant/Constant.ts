@@ -31,3 +31,21 @@ export enum PaymentSatus {
   REFUNDED = 5,
   CANCELLED = 6,
 }
+
+export enum JobCd {
+  Check = 'CHECK',
+  Capture = 'CAPTURE',
+  Auth = 'AUTH',
+  Sauth = 'SAUTH',
+}
+
+export enum ChargeMethod {
+  Bulk = '1',
+  Installment = '2',
+  Bonus = '3',
+  Revolving = '5',
+}
+
+export enum TypeShift {
+  CREATE_ORDER = '$create_order',
+}
