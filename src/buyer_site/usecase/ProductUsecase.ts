@@ -9,11 +9,12 @@ export class ProductUsecase {
   private productRepo: ProductRepository;
   private categoryRepo: CategoryRepository;
 
-  constructor(productRepo: ProductRepository,
-    categoryRepo: CategoryRepository
+  constructor(
+    productRepo: ProductRepository,
+    categoryRepo: CategoryRepository,
   ) {
     this.productRepo = productRepo;
-    this.categoryRepo= categoryRepo;
+    this.categoryRepo = categoryRepo;
   }
 
   public detailProduct = async (id: string) => {
@@ -26,26 +27,23 @@ export class ProductUsecase {
     paging: Paging,
     categoryId: string,
   ) => {
+    const NO_CATEGORY = '0';
 
-    const  NO_CATEGORY= "0"
-    
-    let categoryIds = null
-    let products : LP_PRODUCT[]=[];
+    let categoryIds = null;
 
-    if (!!categoryId){
-      if(categoryIds !==NO_CATEGORY){
-        categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
-        products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
-      }
-      if(categoryId ===NO_CATEGORY){
-        products = await this.productRepo.getProductsWithoutCategories(filter, order, paging);
-      }
-    }else{
-      products = await this.productRepo.getProducts(filter, order, paging, categoryIds);
+    if (!!categoryId) {
+      categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
     }
+    const products = await this.productRepo.getProducts(
+      filter,
+      order,
+      paging,
+      categoryIds,
+      NO_CATEGORY === categoryId,
+    );
 
     return products.map((product) => {
-      return ProductFromLP_PRODUCT(product)
+      return ProductFromLP_PRODUCT(product);
     });
   };
 }

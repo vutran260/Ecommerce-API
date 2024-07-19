@@ -20,7 +20,7 @@ import {
   LP_PRODUCT_CATEGORYCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 
 export class ProductRepository {
   public getProductId = async (id: string): Promise<Product> => {
@@ -53,108 +53,97 @@ export class ProductRepository {
     order: LpOrder[],
     paging: Paging,
     categoryIds: string[] | null,
+    isNoCategory: boolean,
   ) => {
     try {
+      this.filterSortByPrice(order);
+
       filter.push({
         operation: 'eq',
         value: 0,
         attribute: 'isDeleted',
       });
-      const count = await LP_PRODUCT.count({
-        include: categoryIds
-          ? [
-            {
-              association: LP_PRODUCT.associations.lpProductCategories,
-              where: { categoryId: { [Op.in]: categoryIds } },
-            },
+
+      let query = BuildQuery(filter);
+
+      if(isNoCategory){
+        query = {
+          [Op.and]:[
+            query,
+            { '$categoryIdLpCategories.id$': null,}
           ]
-          : undefined,
-        where: BuildQuery(filter),
+        }
+      }
+
+
+      const  include: any[] = [
+        {
+          association: LP_PRODUCT.associations.categoryIdLpCategories,
+          
+        },
+      ]
+
+      if (categoryIds !== null && !isNoCategory) { 
+        include.push (
+        {
+          association: LP_PRODUCT.associations.lpProductCategories,
+          where: { categoryId: { [Op.in]: categoryIds } },
+        }
+        )
+      }
+
+      const count = await LP_PRODUCT.count({
+        include: include,
+        where: query,
         distinct:true,
         col: 'id'
       });
       paging.total = count;
 
-      const results = await LP_PRODUCT.findAll({
-        include: [
-          {
-            association: LP_PRODUCT.associations.lpProductCategories,
-            where: categoryIds
-              ? { categoryId: { [Op.in]: categoryIds } }
-              : undefined,
-          },
-          {
-            association: LP_PRODUCT.associations.categoryIdLpCategories,
-          },
-        ],
-        where: BuildQuery(filter),
-        offset: GetOffset(paging),
-        order: BuildOrderQuery(order),
-        limit: paging.limit,
-      });
-      forEach(results, (result) => {
-        lodash.unset(result.dataValues, 'lpProductCategories');
-      });
-      return results;
-    } catch (error: any) {
-      Logger.error(error);
-      Logger.error(error.message);
-      throw error;
-    }
-  };
 
-  public getProductsWithoutCategories = async (
-    filter: Filter[],
-    order: LpOrder[],
-    paging: Paging,
-  ) => {
-    try {
-      filter.push({
-        operation: 'eq',
-        value: 0,
-        attribute: 'is_deleted',
-      });
-      const count = await LP_PRODUCT.count({
-        include:
-           [
-            {
-              association: LP_PRODUCT.associations.lpProductCategories,
-              required: false,
-            },
-          ],
-        where:{
-          [Op.and]:[
-            BuildQuery(filter),
-            { '$lpProductCategories.category_id$': null,}
-          ]
-        },
-      });
-      paging.total = count;
+
 
       const results = await LP_PRODUCT.findAll({
         subQuery: false,
-        include:
-          [
-            {
-              association: LP_PRODUCT.associations.lpProductCategories,
-              required: false,
-            },
+
+        attributes: {
+          include: [
+            [Sequelize.literal(`
+        CASE
+        WHEN LP_PRODUCT.is_subscription = 0 AND LP_PRODUCT.is_discount = 0  THEN LP_PRODUCT.price
+        WHEN LP_PRODUCT.is_subscription = 1 AND LP_PRODUCT.is_discount = 0  THEN LP_PRODUCT.price_subscription
+        WHEN  LP_PRODUCT.is_discount = 1 AND 
+          ( LP_PRODUCT.has_discount_schedule = 0 OR
+            LP_PRODUCT.has_discount_schedule = 1 
+            AND CURRENT_DATE BETWEEN DATE_FORMAT(LP_PRODUCT.discount_time_from, '%Y-%m-%d') 
+            AND DATE_FORMAT(LP_PRODUCT.discount_time_to, '%Y-%m-%d')
+          )
+          AND LP_PRODUCT.is_subscription = 0
+          THEN ROUND(LP_PRODUCT.price * (100 - LP_PRODUCT.discount_percentage) / 100)
+        WHEN  LP_PRODUCT.is_discount = 1 AND 
+          ( LP_PRODUCT.has_discount_schedule = 0 OR
+            LP_PRODUCT.has_discount_schedule = 1 
+            AND CURRENT_DATE BETWEEN DATE_FORMAT(LP_PRODUCT.discount_time_from, '%Y-%m-%d') 
+            AND DATE_FORMAT(LP_PRODUCT.discount_time_to, '%Y-%m-%d')
+          )
+          AND LP_PRODUCT.is_subscription = 1
+          THEN ROUND(LP_PRODUCT.price_subscription * (100 - LP_PRODUCT.discount_percentage) / 100)
+        WHEN LP_PRODUCT.is_subscription = 1 THEN LP_PRODUCT.price_subscription
+        ELSE LP_PRODUCT.price
+        END`), 
+        'sortPrice']
           ],
-        where:{
-          [Op.and]:[
-            BuildQuery(filter),
-            { '$lpProductCategories.category_id$': null,}
-          ]
         },
+
+        include: include,
+        where: query,
         offset: GetOffset(paging),
         order: BuildOrderQuery(order),
         limit: paging.limit,
       });
-
       forEach(results, (result) => {
         lodash.unset(result.dataValues, 'lpProductCategories');
       });
-
       return results;
     } catch (error: any) {
       Logger.error(error);
@@ -162,9 +151,21 @@ export class ProductRepository {
       throw error;
     }
   };
+
+
+
+
+private filterSortByPrice = (orders: LpOrder[]) => {
+  orders.forEach(item => {
+    if (item.attribute === 'price') {
+      item.attribute = 'sortPrice';
+    }
+  });
+};
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
   lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
   lpProductCategories: LP_PRODUCT_CATEGORYCreationAttributes[];
 }
+

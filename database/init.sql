@@ -127,7 +127,6 @@ CREATE TABLE LP_PRODUCT_COMPONENT (
     product_id VARCHAR(36) NOT NULL,
     component_value VARCHAR(255) NOT NULL,
     component_name VARCHAR(255),
-    UNIQUE(product_id,component_name),
     CONSTRAINT fk_product_id_component FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
   );
 
