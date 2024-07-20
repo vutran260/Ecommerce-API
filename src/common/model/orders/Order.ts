@@ -32,6 +32,7 @@ export class Order {
 }
 
 export class CreateOrderRequest {
+  token: string;
   buyerId: string;
   storeId: string;
   orderReceiverId?: string;

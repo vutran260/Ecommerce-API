@@ -20,10 +20,7 @@ export class OrderEndpoint {
     orderCreateRequest.storeId = req.storeId;
 
     await validatorRequest(orderCreateRequest);
-    const results = await this.orderUsecase.createOrder(
-      orderCreateRequest,
-      req.body.token,
-    );
+    const results = await this.orderUsecase.createOrder(orderCreateRequest);
     return ResponseData(results, res);
   };
 

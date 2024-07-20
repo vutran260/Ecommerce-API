@@ -61,10 +61,7 @@ export class OrderUsecase {
     return await this.gmoPaymentService.execTran(execTransactionRequest);
   };
 
-  public createOrder = async (
-    orderCreateRequest: CreateOrderRequest,
-    token: string,
-  ) => {
+  public createOrder = async (orderCreateRequest: CreateOrderRequest) => {
     // TODO: check fraud
     // const theFraud = await this.checkFraud(orderCreateRequest.buyerId, '');
 
@@ -124,12 +121,14 @@ export class OrderUsecase {
           // TODO: calculate total cost and fee
           let totalCost =
             order.totalFee && order.totalOrderItemFee
-              ? order.totalFee + order.totalOrderItemFee
+              ? Number(order.totalFee) + Number(order.totalOrderItemFee)
               : 0;
 
           // Step 3: Entry transaction
+          // make orderID have length  = 27 match with gmo require
+          const orderIDForTran = order.id.substring(0, 27);
           const transactionRequest: TransactionRequest = {
-            orderID: order.id,
+            orderID: orderIDForTran,
             jobCd: JobCd.Capture,
             amount: totalCost,
           };
@@ -142,9 +141,9 @@ export class OrderUsecase {
             const execTransactionRequest = new ExecTransactionRequest(
               theTransInfo.accessID,
               theTransInfo.accessPass,
-              order.id,
+              orderIDForTran,
               ChargeMethod.Bulk, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
-              token,
+              orderCreateRequest.token,
             );
             await this.gmoPaymentService.execTran(execTransactionRequest);
           }
