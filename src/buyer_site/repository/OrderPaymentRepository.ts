@@ -23,4 +23,11 @@ export class OrderPaymentRepository {
     });
     return result?.dataValues;
   };
+
+  public getOrderPaymentByOrderId = async (orderId: string) => {
+    const result = await LP_ORDER_PAYMENT.findOne({
+      where: { orderId },
+    });
+    return result?.dataValues;
+  };
 }

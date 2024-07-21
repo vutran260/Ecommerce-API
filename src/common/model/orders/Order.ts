@@ -190,3 +190,20 @@ export class UpdateOrderStatusRequest {
   orderId: string;
   status: number;
 }
+
+export class OrderDetailResponse {
+  orderCreatedAt?: string;
+  orderNum?: string;
+  buyer?: string;
+  orderClass?: string;
+  orderStatus?: number;
+  paymentMethod?: number;
+  paymentStatus?: number;
+
+  // shipping info:
+  fullname?: string;
+  email?: string;
+  phone?: string;
+  postCode?: string;
+  address?: string;
+}

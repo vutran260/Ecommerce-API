@@ -63,7 +63,7 @@ export class OrderRepository {
       where: { id },
       include: [
         {
-          association: LP_BUYER.associations.lpBuyerAddresses,
+          association: LP_ORDER.associations.buyer,
         },
       ],
       transaction: t,

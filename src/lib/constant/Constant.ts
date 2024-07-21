@@ -11,6 +11,7 @@ export enum DefaultFormat {
   JP_DATE = 'YYYY年MM月DD日',
   JP_MONTH = 'YYYY年MM月',
   YEAR_MONTH_FORMAT = 'YYYY/MM',
+  DATETIME_WITHOUT_SECONDS = 'YYYY/MM/DD HH:mm',
 }
 
 export enum OrderStatus {

@@ -1,16 +1,20 @@
+import moment from 'moment';
 import {
   CreateOrderItemRequest,
   CreateOrderPaymentRequest,
   CreateOrderRequest,
   CreateShipmentRequest,
   Order,
+  OrderDetailResponse,
   UpdateOrderStatusRequest,
 } from '../../../src/common/model/orders/Order';
 import {
   ChargeMethod,
+  DefaultFormat,
   JobCd,
   OrderStatus,
   PaymentSatus,
+  PaymentType,
 } from '../../../src/lib/constant/Constant';
 import Logger from '../../../src/lib/core/Logger';
 import { lpSequelize } from '../../../src/lib/mysql/Connection';
@@ -26,6 +30,8 @@ import { OrderItemRepository } from '../repository/OrderItemRepository';
 import { OrderPaymentRepository } from '../repository/OrderPaymentRepository';
 import { OrderRepository } from '../repository/OrderRepository';
 import { ShipmentRepository } from '../repository/ShipmentRepository';
+import { BuyerRepository } from '../repository/BuyerRepository';
+import { AddressRepository } from '../repository/AddressRepository';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -33,6 +39,8 @@ export class OrderUsecase {
   private cartRepo: CartRepository;
   private orderPaymentRepo: OrderPaymentRepository;
   private shipmentRepository: ShipmentRepository;
+  private buyerRepository: BuyerRepository;
+  private addressRepository: AddressRepository;
   private gmoPaymentService: GMOPaymentService;
 
   constructor(
@@ -41,6 +49,8 @@ export class OrderUsecase {
     cartRepo: CartRepository,
     orderPaymentRepo: OrderPaymentRepository,
     shipmentRepository: ShipmentRepository,
+    buyerRepository: BuyerRepository,
+    addressRepository: AddressRepository,
     gmoPaymentService: GMOPaymentService,
   ) {
     this.orderRepo = orderRepo;
@@ -49,6 +59,8 @@ export class OrderUsecase {
     this.gmoPaymentService = gmoPaymentService;
     this.orderPaymentRepo = orderPaymentRepo;
     this.shipmentRepository = shipmentRepository;
+    this.buyerRepository = buyerRepository;
+    this.addressRepository = addressRepository;
   }
 
   public checkFraud = async (type: string, userId: string) => {
@@ -99,7 +111,7 @@ export class OrderUsecase {
           // add payment info
           const oreateOrderPaymentRequest: CreateOrderPaymentRequest = {
             orderId: order.id,
-            paymentType: 1,
+            paymentType: PaymentType.CREDIT_CARD,
             paymentStatus: PaymentSatus.PENDING,
           };
           await this.orderPaymentRepo.createOrderPayment(
@@ -186,7 +198,50 @@ export class OrderUsecase {
     if (!result) {
       throw new NotFoundError();
     }
-    return result;
+    // get shipment info:
+    const shipment = await this.shipmentRepository.getShipmentByOrderId(
+      result.id,
+    );
+    if (!result.buyerId) {
+      throw new NotFoundError();
+    }
+
+    // get buyer
+    const buyer = await this.buyerRepository.getBuyerById(result.buyerId);
+    if (!buyer) {
+      throw new NotFoundError();
+    }
+
+    // get buyer address
+
+    // get payment info
+    const payment = await this.orderPaymentRepo.getOrderPaymentByOrderId(
+      result.id,
+    );
+    if (!payment) {
+      throw new NotFoundError();
+    }
+
+    // map to order detail:
+    const orderDetail: OrderDetailResponse = {
+      orderCreatedAt: result.orderCreatedAt
+        ? moment(result.orderCreatedAt).format(
+            DefaultFormat.DATETIME_WITHOUT_SECONDS,
+          )
+        : '',
+      orderNum: result.id,
+      buyer: buyer.username,
+      orderStatus: result.orderStatus,
+      paymentMethod: payment.paymentType,
+      paymentStatus: payment.paymentStatus,
+      fullname: buyer.fullname,
+      email: buyer.email,
+      phone: buyer.phone,
+      postCode: '',
+      address: '',
+    };
+
+    return orderDetail;
   };
 
   public getOrders = async (

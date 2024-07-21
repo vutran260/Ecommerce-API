@@ -44,6 +44,8 @@ export class buyerSiteRouter {
     const cartRepo = new CartRepository();
     const orderPaymentRepo = new OrderPaymentRepository();
     const shipmentRepository = new ShipmentRepository();
+    const buyerRepository = new BuyerRepository();
+    const addressRepository = new AddressRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -60,6 +62,8 @@ export class buyerSiteRouter {
       cartRepo,
       orderPaymentRepo,
       shipmentRepository,
+      buyerRepository,
+      addressRepository,
       gmoGetwaySerivce,
     );
 
