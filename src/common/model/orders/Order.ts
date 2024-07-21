@@ -185,3 +185,8 @@ export class CreateShipmentRequest {
     this.createdAt = new Date();
   }
 }
+
+export class UpdateOrderStatusRequest {
+  orderId: string;
+  status: number;
+}

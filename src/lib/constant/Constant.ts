@@ -20,6 +20,8 @@ export enum OrderStatus {
   DELIVERED = 3,
   CANCELLED = 4,
   RETURNED = 5,
+  FAILED = 6,
+  SUCESS = 7,
 }
 
 export enum PaymentSatus {
@@ -33,19 +35,29 @@ export enum PaymentSatus {
 }
 
 export enum JobCd {
-  Check = 'CHECK',
-  Capture = 'CAPTURE',
-  Auth = 'AUTH',
-  Sauth = 'SAUTH',
+  CHECK = 'CHECK',
+  CAPTURE = 'CAPTURE',
+  AUTH = 'AUTH',
+  SAUTH = 'SAUTH',
 }
 
 export enum ChargeMethod {
-  Bulk = '1',
-  Installment = '2',
-  Bonus = '3',
-  Revolving = '5',
+  BULK = '1',
+  INSTALLMENT = '2',
+  BONUS = '3',
+  REVOLVING = '5',
 }
 
 export enum TypeShift {
   CREATE_ORDER = '$create_order',
+}
+
+export enum PaymentType {
+  CREDIT_CARD = 0,
+  DEBIT_CARD = 1,
+  BANK_TRANSFER = 2,
+  PAYPAL = 3,
+  CASH_ON_DELIVERY = 4,
+  MOBILE_PAYMENT = 5,
+  GIFT_CARD = 6,
 }

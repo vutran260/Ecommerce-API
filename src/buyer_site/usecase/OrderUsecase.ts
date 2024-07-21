@@ -4,10 +4,12 @@ import {
   CreateOrderRequest,
   CreateShipmentRequest,
   Order,
+  UpdateOrderStatusRequest,
 } from '../../../src/common/model/orders/Order';
 import {
   ChargeMethod,
   JobCd,
+  OrderStatus,
   PaymentSatus,
 } from '../../../src/lib/constant/Constant';
 import Logger from '../../../src/lib/core/Logger';
@@ -117,6 +119,12 @@ export class OrderUsecase {
             oreateShipmentRequest,
             t,
           );
+          //update order status: CONFIRMED after check point
+          const updateRequest: UpdateOrderStatusRequest = {
+            orderId: order.id,
+            status: OrderStatus.CONFIRMED,
+          };
+          this.orderRepo.updateOrderStatus(updateRequest, t);
 
           // TODO: calculate total cost and fee
           let totalCost =
@@ -129,7 +137,7 @@ export class OrderUsecase {
           const orderIDForTran = order.id.substring(0, 27);
           const transactionRequest: TransactionRequest = {
             orderID: orderIDForTran,
-            jobCd: JobCd.Capture,
+            jobCd: JobCd.CAPTURE,
             amount: totalCost,
           };
           const theTransInfo = await this.gmoPaymentService.entryTran(
@@ -142,17 +150,28 @@ export class OrderUsecase {
               theTransInfo.accessID,
               theTransInfo.accessPass,
               orderIDForTran,
-              ChargeMethod.Bulk, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
+              ChargeMethod.BULK, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
               orderCreateRequest.token,
             );
-            await this.gmoPaymentService.execTran(execTransactionRequest);
-          }
-          await t.commit();
-        } else {
-          await t.rollback();
-        }
-      }
+            const execTranResponse = await this.gmoPaymentService.execTran(
+              execTransactionRequest,
+            );
 
+            if (execTranResponse) {
+              // update order status: SUCESS
+              const updateRequest: UpdateOrderStatusRequest = {
+                orderId: order.id,
+                status: OrderStatus.SUCESS,
+              };
+
+              this.orderRepo.updateOrderStatus(updateRequest, t);
+            }
+          }
+        }
+        await t.commit();
+      } else {
+        await t.rollback();
+      }
       return order;
     } catch (error) {
       await t.rollback();

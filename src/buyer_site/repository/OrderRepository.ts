@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize';
 import {
   CreateOrderRequest,
   UpdateOrderRequest,
+  UpdateOrderStatusRequest,
 } from '../../../src/common/model/orders/Order';
 import Logger from '../../../src/lib/core/Logger';
 import { LP_BUYER } from '../../../src/lib/mysql/models/LP_BUYER';
@@ -14,6 +15,7 @@ import {
   Paging,
 } from '../../../src/lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
+import { BadRequestError } from '../../../src/lib/http/custom_error/ApiError';
 
 export class OrderRepository {
   public createOrder = async (
@@ -105,6 +107,23 @@ export class OrderRepository {
       Logger.error(error);
       Logger.error(error.message);
       throw error;
+    }
+  };
+
+  public updateOrderStatus = async (
+    input: UpdateOrderStatusRequest,
+    t?: Transaction,
+  ) => {
+    const os = await LP_ORDER.update(
+      { orderStatus: input.status },
+      {
+        where: { id: input.orderId },
+        transaction: t,
+      },
+    );
+
+    if (os[0] === 0) {
+      throw new BadRequestError();
     }
   };
 }
