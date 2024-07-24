@@ -9,6 +9,8 @@ export interface LP_SHIPMENTAttributes {
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   shipmentDate?: Date;
+  shipmentStartAt?: Date;
+  shipmentEndAt?: Date;
   shipmentBy?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -17,7 +19,7 @@ export interface LP_SHIPMENTAttributes {
 
 export type LP_SHIPMENTPk = "id";
 export type LP_SHIPMENTId = LP_SHIPMENT[LP_SHIPMENTPk];
-export type LP_SHIPMENTOptionalAttributes = "id" | "orderId" | "shipmentFee" | "shipmentFeeDiscount" | "shipmentDate" | "shipmentBy" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_SHIPMENTOptionalAttributes = "id" | "orderId" | "shipmentFee" | "shipmentFeeDiscount" | "shipmentDate" | "shipmentStartAt" | "shipmentEndAt" | "shipmentBy" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SHIPMENTCreationAttributes = Optional<LP_SHIPMENTAttributes, LP_SHIPMENTOptionalAttributes>;
 
 export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreationAttributes> implements LP_SHIPMENTAttributes {
@@ -26,6 +28,8 @@ export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreatio
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   shipmentDate?: Date;
+  shipmentStartAt?: Date;
+  shipmentEndAt?: Date;
   shipmentBy?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -67,12 +71,12 @@ export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreatio
       field: 'order_id'
     },
     shipmentFee: {
-      type: DataTypes.DECIMAL(10,2),
+      type: DataTypes.INTEGER,
       allowNull: true,
       field: 'shipment_fee'
     },
     shipmentFeeDiscount: {
-      type: DataTypes.DECIMAL(10,2),
+      type: DataTypes.INTEGER,
       allowNull: true,
       field: 'shipment_fee_discount'
     },
@@ -80,6 +84,16 @@ export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreatio
       type: DataTypes.DATE,
       allowNull: true,
       field: 'shipment_date'
+    },
+    shipmentStartAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'shipment_start_at'
+    },
+    shipmentEndAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'shipment_end_at'
     },
     shipmentBy: {
       type: DataTypes.STRING(255),

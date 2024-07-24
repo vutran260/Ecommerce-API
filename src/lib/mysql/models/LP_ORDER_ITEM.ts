@@ -1,33 +1,18 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
+import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 
 export interface LP_ORDER_ITEMAttributes {
   id: string;
   orderId?: string;
-  buyingPeriod?: string;
-  isDiscount: number;
-  discountPercentage?: number;
-  hasDiscountSchedule?: number;
-  discountTimeFrom?: Date;
-  discountTimeTo?: Date;
+  productId?: string;
   productName: string;
   productImage: string;
   productDescription: string;
+  productOverview: string;
   price?: number;
-  priceSubscription?: number;
-  cost?: number;
-  productTag?: string;
   quantity: number;
-  capacity?: string;
-  expirationUseDate?: Date;
-  storageMethod?: string;
-  intakeMethod?: string;
-  ingredient?: string;
-  notificationNumber?: string;
-  notification?: string;
-  hasOption?: number;
-  status?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -35,35 +20,19 @@ export interface LP_ORDER_ITEMAttributes {
 
 export type LP_ORDER_ITEMPk = "id";
 export type LP_ORDER_ITEMId = LP_ORDER_ITEM[LP_ORDER_ITEMPk];
-export type LP_ORDER_ITEMOptionalAttributes = "id" | "orderId" | "buyingPeriod" | "discountPercentage" | "hasDiscountSchedule" | "discountTimeFrom" | "discountTimeTo" | "price" | "priceSubscription" | "cost" | "productTag" | "capacity" | "expirationUseDate" | "storageMethod" | "intakeMethod" | "ingredient" | "notificationNumber" | "notification" | "hasOption" | "status" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_ORDER_ITEMOptionalAttributes = "id" | "orderId" | "productId" | "price" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_ORDER_ITEMCreationAttributes = Optional<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMOptionalAttributes>;
 
 export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes> implements LP_ORDER_ITEMAttributes {
   id!: string;
   orderId?: string;
-  buyingPeriod?: string;
-  isDiscount!: number;
-  discountPercentage?: number;
-  hasDiscountSchedule?: number;
-  discountTimeFrom?: Date;
-  discountTimeTo?: Date;
+  productId?: string;
   productName!: string;
   productImage!: string;
   productDescription!: string;
+  productOverview!: string;
   price?: number;
-  priceSubscription?: number;
-  cost?: number;
-  productTag?: string;
   quantity!: number;
-  capacity?: string;
-  expirationUseDate?: Date;
-  storageMethod?: string;
-  intakeMethod?: string;
-  ingredient?: string;
-  notificationNumber?: string;
-  notification?: string;
-  hasOption?: number;
-  status?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -73,6 +42,11 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
   getOrder!: Sequelize.BelongsToGetAssociationMixin<LP_ORDER>;
   setOrder!: Sequelize.BelongsToSetAssociationMixin<LP_ORDER, LP_ORDERId>;
   createOrder!: Sequelize.BelongsToCreateAssociationMixin<LP_ORDER>;
+  // LP_ORDER_ITEM belongsTo LP_PRODUCT via productId
+  product!: LP_PRODUCT;
+  getProduct!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT>;
+  setProduct!: Sequelize.BelongsToSetAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_ITEM {
     return LP_ORDER_ITEM.init({
@@ -91,35 +65,14 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
       },
       field: 'order_id'
     },
-    buyingPeriod: {
-      type: DataTypes.STRING(255),
+    productId: {
+      type: DataTypes.STRING(36),
       allowNull: true,
-      field: 'buying_period'
-    },
-    isDiscount: {
-      type: DataTypes.TINYINT,
-      allowNull: false,
-      field: 'is_discount'
-    },
-    discountPercentage: {
-      type: DataTypes.TINYINT.UNSIGNED,
-      allowNull: true,
-      field: 'discount_percentage'
-    },
-    hasDiscountSchedule: {
-      type: DataTypes.TINYINT,
-      allowNull: true,
-      field: 'has_discount_schedule'
-    },
-    discountTimeFrom: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'discount_time_from'
-    },
-    discountTimeTo: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'discount_time_to'
+      references: {
+        model: 'LP_PRODUCT',
+        key: 'id'
+      },
+      field: 'product_id'
     },
     productName: {
       type: DataTypes.STRING(255),
@@ -136,68 +89,18 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
       allowNull: false,
       field: 'product_description'
     },
+    productOverview: {
+      type: DataTypes.STRING(2000),
+      allowNull: false,
+      field: 'product_overview'
+    },
     price: {
-      type: DataTypes.DECIMAL(10,2),
+      type: DataTypes.INTEGER,
       allowNull: true
-    },
-    priceSubscription: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true,
-      field: 'price_subscription'
-    },
-    cost: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true
-    },
-    productTag: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'product_tag'
     },
     quantity: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false
-    },
-    capacity: {
-      type: DataTypes.STRING(50),
-      allowNull: true
-    },
-    expirationUseDate: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'expiration_use_date'
-    },
-    storageMethod: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'storage_method'
-    },
-    intakeMethod: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'intake_method'
-    },
-    ingredient: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    notificationNumber: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-      field: 'notification_number'
-    },
-    notification: {
-      type: DataTypes.TEXT,
-      allowNull: true
-    },
-    hasOption: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      field: 'has_option'
-    },
-    status: {
-      type: DataTypes.STRING(50),
-      allowNull: true
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -232,6 +135,13 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
         using: "BTREE",
         fields: [
           { name: "order_id" },
+        ]
+      },
+      {
+        name: "product_id",
+        using: "BTREE",
+        fields: [
+          { name: "product_id" },
         ]
       },
     ]

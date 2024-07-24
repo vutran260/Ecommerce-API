@@ -41,6 +41,20 @@ export class OrderEndpoint {
     return ResponseListData(result, res, req.paging);
   };
 
+  private getOrderItemsByOrderId = async (
+    req: PaginationRequest,
+    res: Response,
+  ) => {
+    const result = await this.orderUsecase.getOrderItemsByOrderId(
+      req.filterList,
+      req.order,
+      req.paging,
+      req.params.id,
+    );
+
+    return ResponseListData(result, res, req.paging);
+  };
+
   private checkFraud = async (req: ProtectedRequest, res: Response) => {
     const results = await this.orderUsecase.checkFraud(
       req.body.type,
@@ -79,6 +93,11 @@ export class OrderEndpoint {
     router.get('/', PagingMiddelware, this.getOrders);
     router.get('/:id', this.getOrderDetail);
     router.post('/', this.createOrder);
+    router.get(
+      '/order-items/:id',
+      PagingMiddelware,
+      this.getOrderItemsByOrderId,
+    );
     router.post('/fraud', this.checkFraud);
     router.post('/entry', this.entryTran);
     router.post('/exec', this.execTran);

@@ -4,30 +4,40 @@ import { LP_CART } from '../../../../src/lib/mysql/models/LP_CART';
 import { LP_ORDER } from '../../../../src/lib/mysql/models/LP_ORDER';
 import { LP_ORDER_PAYMENT } from '../../../../src/lib/mysql/models/LP_ORDER_PAYMENT';
 import { LP_SHIPMENT } from '../../../../src/lib/mysql/models/LP_SHIPMENT';
+import { LP_ORDER_ITEM } from '../../../../src/lib/mysql/models/LP_ORDER_ITEM';
 
 export class Order {
   id: string;
-  buyer_name: string;
-  total_amount: number;
-  order_status: number | null;
-  payment_status: number | null;
-  order_date: string | null;
+  buyerName?: string;
+  totalAmount?: number;
+  orderStatus?: number;
+  paymentStatus?: number;
+  orderDate?: string;
   constructor(order: LP_ORDER) {
     this.id = order.id;
-    this.buyer_name =
-      order && order.buyer && order.buyer.username ? order.buyer.username : '';
-    this.total_amount = order && order.totalFee ? order.totalFee : 0;
-    this.order_status = order && order.orderStatus ? order.orderStatus : null;
-    this.payment_status =
-      order &&
-      order.lpOrderPayments[0] &&
-      order.lpOrderPayments[0].paymentStatus
-        ? order.lpOrderPayments[0].paymentStatus
-        : null;
-    this.order_date =
-      order && order.orderCreatedAt
-        ? moment(order.orderCreatedAt).format(DATE_FORMAT)
-        : null;
+    this.buyerName = order.buyer.username;
+    this.totalAmount = order.totalAmount;
+    this.orderStatus = order.orderStatus;
+    this.paymentStatus = order.lpOrderPayments[0].paymentStatus;
+    this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
+  }
+}
+
+export class OrderItem {
+  id: string;
+  productName?: string;
+  productImage?: string;
+  quantity: number;
+  price: number;
+  total: number;
+  constructor(order: LP_ORDER_ITEM) {
+    const priceOfItem = order.price ? order.price : 1;
+    this.id = order.id;
+    this.productName = order.productName;
+    this.productImage = order.productImage;
+    this.quantity = order.quantity;
+    this.price = priceOfItem;
+    this.total = priceOfItem * order.quantity;
   }
 }
 
@@ -35,91 +45,39 @@ export class CreateOrderRequest {
   token: string;
   buyerId: string;
   storeId: string;
-  orderReceiverId?: string;
-  orderShipmentId?: string;
-  orderPaymentId?: string;
+  receiverId?: string;
   orderStatus?: number;
-  totalOrderItemFee?: number;
+  amount: number;
   shipmentFee?: number;
-  totalFee?: number;
-  orderPaymentDatetime?: Date;
-  orderShipmentStartDatetime?: Date;
-  orderShipmentEndDatetime?: Date;
-  orderCancelDatetime?: Date;
-  orderCreatedAt?: Date;
-  orderCreatedBy?: string;
-  orderUpdatedAt?: Date;
-  orderUpdatedBy?: string;
+  discount?: number;
+  totalAmount: number;
+  createdAt = new Date();
 }
 
 export class UpdateOrderRequest {
-  orderReceiverId?: string;
-  orderShipmentId?: string;
-  orderPaymentId?: string;
   orderStatus?: number;
-  totalOrderItemFee?: number;
+  amount?: number;
   shipmentFee?: number;
-  totalFee?: number;
-  orderPaymentDatetime?: Date;
-  orderShipmentStartDatetime?: Date;
-  orderShipmentEndDatetime?: Date;
-  orderCancelDatetime?: Date;
-  orderUpdatedAt?: Date;
-  orderUpdatedBy?: string;
+  discount?: number;
+  totalAmount?: number;
+  updatedAt = new Date();
+  updatedBy?: string;
 }
 
 export class CreateOrderItemRequest {
   id: string;
   orderId?: string;
-  buyingPeriod?: string;
-  isDiscount: number;
-  discountPercentage?: number;
-  hasDiscountSchedule?: number;
-  discountTimeFrom?: Date;
-  discountTimeTo?: Date;
   productName: string;
   productImage: string;
   productDescription: string;
+  productOverview: string;
   price?: number;
-  priceSubscription?: number;
-  cost?: number;
-  productTag?: string;
   quantity: number;
-  capacity?: string;
-  expirationUseDate?: Date;
-  storageMethod?: string;
-  intakeMethod?: string;
-  ingredient?: string;
-  notificationNumber?: string;
-  notification?: string;
-  hasOption?: number;
-  status?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt = new Date();
+  updatedAt = new Date();
   deletedAt?: Date;
 
   constructor(cart_item: LP_CART) {
-    this.buyingPeriod =
-      cart_item && cart_item.product ? cart_item.product.buyingPeriod : '';
-    this.isDiscount =
-      cart_item && cart_item.product && cart_item.product.isDiscount
-        ? cart_item.product.isDiscount
-        : 0;
-    this.discountPercentage =
-      cart_item && cart_item.product ? cart_item.product.discountPercentage : 0;
-    this.hasDiscountSchedule =
-      cart_item && cart_item.product
-        ? cart_item.product.hasDiscountSchedule
-        : 0;
-    this.discountTimeFrom =
-      cart_item && cart_item.product
-        ? cart_item.product.discountTimeFrom
-        : new Date();
-    this.discountTimeTo =
-      cart_item && cart_item.product
-        ? cart_item.product.discountTimeTo
-        : new Date();
-
     this.productName =
       cart_item && cart_item.product ? cart_item.product.productName : '';
     this.productImage =
@@ -128,22 +86,11 @@ export class CreateOrderItemRequest {
       cart_item && cart_item.product
         ? cart_item.product.productDescription
         : '';
+    this.productOverview =
+      cart_item && cart_item.product ? cart_item.product.productOverview : '';
+
     this.price = cart_item && cart_item.product ? cart_item.product.price : 0;
-    this.priceSubscription =
-      cart_item && cart_item.product ? cart_item.product.priceSubscription : 0;
-    this.cost = cart_item && cart_item.product ? cart_item.product.cost : 0;
-    this.productTag =
-      cart_item && cart_item.product ? cart_item.product.productTag : '';
     this.quantity = cart_item.quantity;
-    this.capacity = '';
-    this.expirationUseDate = new Date();
-    this.storageMethod = '';
-    this.intakeMethod = '';
-    this.ingredient = '';
-    this.notificationNumber = '';
-    this.notification = '';
-    this.hasOption = 0;
-    this.status = '';
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
@@ -171,9 +118,10 @@ export class CreateShipmentRequest {
   shipmentFeeDiscount?: number;
   shipmentDate?: Date;
   shipmentBy?: string;
+  shipmentStartAt?: Date;
+  shipmentEndAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
-  deletedAt?: Date;
 
   constructor(lpShipment: LP_SHIPMENT) {
     this.orderId = lpShipment.orderId;
@@ -181,8 +129,10 @@ export class CreateShipmentRequest {
     this.shipmentFeeDiscount = lpShipment.shipmentFeeDiscount;
     this.shipmentDate = lpShipment.shipmentDate;
     this.shipmentBy = lpShipment.shipmentBy;
+    this.shipmentStartAt = lpShipment.shipmentStartAt;
+    this.shipmentEndAt = lpShipment.shipmentEndAt;
     this.createdAt = new Date();
-    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 }
 
@@ -193,6 +143,7 @@ export class UpdateOrderStatusRequest {
 
 export class OrderDetailResponse {
   orderCreatedAt?: string;
+  orderItems?: [];
   orderNum?: string;
   buyer?: string;
   orderClass?: string;

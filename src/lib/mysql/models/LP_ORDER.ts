@@ -1,76 +1,54 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
-import type { LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId } from './LP_ITEM_SUBSCRIPTION';
 import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_ORDER_PAYMENT, LP_ORDER_PAYMENTId } from './LP_ORDER_PAYMENT';
 import type { LP_SHIPMENT, LP_SHIPMENTId } from './LP_SHIPMENT';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
-import type { LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId } from './LP_STORE_PICKUP_ADDRESS';
 
 export interface LP_ORDERAttributes {
   id: string;
   buyerId?: string;
   storeId?: string;
-  orderReceiverId?: string;
-  orderShipmentId?: string;
-  orderPaymentId?: string;
+  receiverId?: string;
   orderStatus?: number;
-  totalOrderItemFee?: number;
+  amount: number;
   shipmentFee?: number;
-  totalFee?: number;
-  orderPaymentDatetime?: Date;
-  orderShipmentStartDatetime?: Date;
-  orderShipmentEndDatetime?: Date;
-  orderCancelDatetime?: Date;
-  orderCreatedAt?: Date;
-  orderCreatedBy?: string;
-  orderUpdatedAt?: Date;
-  orderUpdatedBy?: string;
+  discount?: number;
+  totalAmount: number;
+  cancelAt?: Date;
+  createdAt?: Date;
+  createdBy?: string;
+  updatedAt?: Date;
+  updatedBy?: string;
 }
 
 export type LP_ORDERPk = "id";
 export type LP_ORDERId = LP_ORDER[LP_ORDERPk];
-export type LP_ORDEROptionalAttributes = "id" | "buyerId" | "storeId" | "orderReceiverId" | "orderShipmentId" | "orderPaymentId" | "orderStatus" | "totalOrderItemFee" | "shipmentFee" | "totalFee" | "orderPaymentDatetime" | "orderShipmentStartDatetime" | "orderShipmentEndDatetime" | "orderCancelDatetime" | "orderCreatedAt" | "orderCreatedBy" | "orderUpdatedAt" | "orderUpdatedBy";
+export type LP_ORDEROptionalAttributes = "id" | "buyerId" | "storeId" | "receiverId" | "orderStatus" | "shipmentFee" | "discount" | "cancelAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_ORDERCreationAttributes = Optional<LP_ORDERAttributes, LP_ORDEROptionalAttributes>;
 
 export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttributes> implements LP_ORDERAttributes {
   id!: string;
   buyerId?: string;
   storeId?: string;
-  orderReceiverId?: string;
-  orderShipmentId?: string;
-  orderPaymentId?: string;
+  receiverId?: string;
   orderStatus?: number;
-  totalOrderItemFee?: number;
+  amount!: number;
   shipmentFee?: number;
-  totalFee?: number;
-  orderPaymentDatetime?: Date;
-  orderShipmentStartDatetime?: Date;
-  orderShipmentEndDatetime?: Date;
-  orderCancelDatetime?: Date;
-  orderCreatedAt?: Date;
-  orderCreatedBy?: string;
-  orderUpdatedAt?: Date;
-  orderUpdatedBy?: string;
+  discount?: number;
+  totalAmount!: number;
+  cancelAt?: Date;
+  createdAt?: Date;
+  createdBy?: string;
+  updatedAt?: Date;
+  updatedBy?: string;
 
   // LP_ORDER belongsTo LP_BUYER via buyerId
   buyer!: LP_BUYER;
   getBuyer!: Sequelize.BelongsToGetAssociationMixin<LP_BUYER>;
   setBuyer!: Sequelize.BelongsToSetAssociationMixin<LP_BUYER, LP_BUYERId>;
   createBuyer!: Sequelize.BelongsToCreateAssociationMixin<LP_BUYER>;
-  // LP_ORDER hasMany LP_ITEM_SUBSCRIPTION via orderId
-  lpItemSubscriptions!: LP_ITEM_SUBSCRIPTION[];
-  getLpItemSubscriptions!: Sequelize.HasManyGetAssociationsMixin<LP_ITEM_SUBSCRIPTION>;
-  setLpItemSubscriptions!: Sequelize.HasManySetAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  addLpItemSubscription!: Sequelize.HasManyAddAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  addLpItemSubscriptions!: Sequelize.HasManyAddAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  createLpItemSubscription!: Sequelize.HasManyCreateAssociationMixin<LP_ITEM_SUBSCRIPTION>;
-  removeLpItemSubscription!: Sequelize.HasManyRemoveAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  removeLpItemSubscriptions!: Sequelize.HasManyRemoveAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  hasLpItemSubscription!: Sequelize.HasManyHasAssociationMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  hasLpItemSubscriptions!: Sequelize.HasManyHasAssociationsMixin<LP_ITEM_SUBSCRIPTION, LP_ITEM_SUBSCRIPTIONId>;
-  countLpItemSubscriptions!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER hasMany LP_ORDER_ITEM via orderId
   lpOrderItems!: LP_ORDER_ITEM[];
   getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;
@@ -107,18 +85,6 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
   hasLpShipment!: Sequelize.HasManyHasAssociationMixin<LP_SHIPMENT, LP_SHIPMENTId>;
   hasLpShipments!: Sequelize.HasManyHasAssociationsMixin<LP_SHIPMENT, LP_SHIPMENTId>;
   countLpShipments!: Sequelize.HasManyCountAssociationsMixin;
-  // LP_ORDER hasMany LP_STORE_PICKUP_ADDRESS via orderId
-  lpStorePickupAddresses!: LP_STORE_PICKUP_ADDRESS[];
-  getLpStorePickupAddresses!: Sequelize.HasManyGetAssociationsMixin<LP_STORE_PICKUP_ADDRESS>;
-  setLpStorePickupAddresses!: Sequelize.HasManySetAssociationsMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  addLpStorePickupAddress!: Sequelize.HasManyAddAssociationMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  addLpStorePickupAddresses!: Sequelize.HasManyAddAssociationsMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  createLpStorePickupAddress!: Sequelize.HasManyCreateAssociationMixin<LP_STORE_PICKUP_ADDRESS>;
-  removeLpStorePickupAddress!: Sequelize.HasManyRemoveAssociationMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  removeLpStorePickupAddresses!: Sequelize.HasManyRemoveAssociationsMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  hasLpStorePickupAddress!: Sequelize.HasManyHasAssociationMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  hasLpStorePickupAddresses!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_PICKUP_ADDRESS, LP_STORE_PICKUP_ADDRESSId>;
-  countLpStorePickupAddresses!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
@@ -151,80 +117,58 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
       },
       field: 'store_id'
     },
-    orderReceiverId: {
+    receiverId: {
       type: DataTypes.STRING(36),
       allowNull: true,
-      field: 'order_receiver_id'
-    },
-    orderShipmentId: {
-      type: DataTypes.STRING(36),
-      allowNull: true,
-      field: 'order_shipment_id'
-    },
-    orderPaymentId: {
-      type: DataTypes.STRING(36),
-      allowNull: true,
-      field: 'order_payment_id'
+      field: 'receiver_id'
     },
     orderStatus: {
       type: DataTypes.INTEGER,
       allowNull: true,
       field: 'order_status'
     },
-    totalOrderItemFee: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true,
-      field: 'total_order_item_fee'
+    amount: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false
     },
     shipmentFee: {
-      type: DataTypes.DECIMAL(10,2),
+      type: DataTypes.INTEGER,
       allowNull: true,
       field: 'shipment_fee'
     },
-    totalFee: {
-      type: DataTypes.DECIMAL(10,2),
-      allowNull: true,
-      field: 'total_fee'
+    discount: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
-    orderPaymentDatetime: {
+    totalAmount: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      field: 'total_amount'
+    },
+    cancelAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: 'order_payment_datetime'
+      field: 'cancel_at'
     },
-    orderShipmentStartDatetime: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: 'order_shipment_start_datetime'
+      field: 'created_at'
     },
-    orderShipmentEndDatetime: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'order_shipment_end_datetime'
-    },
-    orderCancelDatetime: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'order_cancel_datetime'
-    },
-    orderCreatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'order_created_at'
-    },
-    orderCreatedBy: {
+    createdBy: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      field: 'order_created_by'
+      field: 'created_by'
     },
-    orderUpdatedAt: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: 'order_updated_at'
+      field: 'updated_at'
     },
-    orderUpdatedBy: {
+    updatedBy: {
       type: DataTypes.STRING(255),
       allowNull: true,
-      field: 'order_updated_by'
+      field: 'updated_by'
     }
   }, {
     sequelize,

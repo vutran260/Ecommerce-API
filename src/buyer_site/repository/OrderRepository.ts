@@ -6,7 +6,7 @@ import {
   UpdateOrderStatusRequest,
 } from '../../../src/common/model/orders/Order';
 import Logger from '../../../src/lib/core/Logger';
-import { LP_BUYER } from '../../../src/lib/mysql/models/LP_BUYER';
+import { BadRequestError } from '../../../src/lib/http/custom_error/ApiError';
 import { BuildOrderQuery, LpOrder } from '../../../src/lib/paging/Order';
 import {
   BuildQuery,
@@ -15,7 +15,6 @@ import {
   Paging,
 } from '../../../src/lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
-import { BadRequestError } from '../../../src/lib/http/custom_error/ApiError';
 
 export class OrderRepository {
   public createOrder = async (
@@ -33,20 +32,13 @@ export class OrderRepository {
   ) => {
     await LP_ORDER.update(
       {
-        orderReceiverId: updateCreateRequest.orderReceiverId,
-        orderShipmentId: updateCreateRequest.orderShipmentId,
-        orderPaymentId: updateCreateRequest.orderPaymentId,
         orderStatus: updateCreateRequest.orderStatus,
-        totalOrderItemFee: updateCreateRequest.totalOrderItemFee,
+        amount: updateCreateRequest.amount,
         shipmentFee: updateCreateRequest.shipmentFee,
-        totalFee: updateCreateRequest.totalFee,
-        orderPaymentDatetime: updateCreateRequest.orderPaymentDatetime,
-        orderShipmentStartDatetime:
-          updateCreateRequest.orderShipmentStartDatetime,
-        orderShipmentEndDatetime: updateCreateRequest.orderShipmentEndDatetime,
-        orderCancelDatetime: updateCreateRequest.orderCancelDatetime,
-        orderUpdatedAt: new Date(),
-        orderUpdatedBy: updateCreateRequest.orderUpdatedBy,
+        discount: updateCreateRequest.discount,
+        totalAmount: updateCreateRequest.totalAmount,
+        updatedAt: new Date(),
+        updatedBy: '',
       },
       {
         where: {
@@ -64,6 +56,15 @@ export class OrderRepository {
       include: [
         {
           association: LP_ORDER.associations.buyer,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderItems,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderPayments,
+        },
+        {
+          association: LP_ORDER.associations.lpShipments,
         },
       ],
       transaction: t,
