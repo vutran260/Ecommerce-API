@@ -29,7 +29,7 @@ export class ProductRepository {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
-    if (result.dataValues.isDeleted === 0 || result.dataValues.status === 'INACTIVE') {
+    if (result.dataValues.isDeleted === 1 || result.dataValues.status === 'INACTIVE') {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
