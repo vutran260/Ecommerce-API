@@ -16,9 +16,9 @@ import { StoreAuthenMiddlleware } from './middleware/StoreAuthenMiddllware';
 import { CardUsecase } from '../buyer_site/usecase/CardUsecase';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardEndpoint } from '../buyer_site/endpoint/CardEndpoint';
-import { StoreNotificationEndpoint } from './endpoint/StoreNotificationEndpoint';
-import { StoreNotificationUsecase } from './usecase/StoreNotificationUsecase';
-import { StoreNotificationRepository } from './repository/StoreNotificationRepository';
+import { StorePostEndpoint } from './endpoint/StorePostEndpoint';
+import { StorePostUsecase } from './usecase/StorePostUsecase';
+import { StorePostRepository } from './repository/StorePostRepository';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -28,25 +28,25 @@ export class sellerSiteRouter {
     const storeRepo = new StoreRepository()
     const productRepo = new ProductRepository();
     const categorytRepo = new CategoryRepository();
-    const storeNotificationRepo = new StoreNotificationRepository()
+    const storePostRepo = new StorePostRepository()
 
     const sellerUsecase = new SellerUsecase(sellerRepo);
     const storeUsecase = new StoreUsecase(storeRepo, sellerRepo)
     const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
-    const storeNotificationUsecase = new StoreNotificationUsecase(storeNotificationRepo)
+    const storePostUsecase = new StorePostUsecase(storePostRepo)
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase)
     const sellerEndpoint = new SellerEndpoint(sellerUsecase);
-    const storeNotificationEndpoint = new StoreNotificationEndpoint(storeNotificationUsecase);
+    const storePostEndpoint = new StorePostEndpoint(storePostUsecase);
 
 
     router.use('/seller', sellerEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware)
     router.use('/store', storeEndpoint.getRouter())
-    router.use('/notification', storeNotificationEndpoint.getRouter())
+    router.use('/post', storePostEndpoint.getRouter())
 
     router.use(StoreAuthenMiddlleware)
     router.use('/product', productEndpoint.getRouter());
