@@ -194,17 +194,17 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       field: 'product_name'
     },
     productImage: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_image'
     },
     productDescription: {
-      type: DataTypes.STRING(512),
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_description'
     },
     productOverview: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING(2000),
       allowNull: false,
       field: 'product_overview'
     },
