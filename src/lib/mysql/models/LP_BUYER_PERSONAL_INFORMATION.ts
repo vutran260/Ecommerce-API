@@ -52,28 +52,27 @@ export class LP_BUYER_PERSONAL_INFORMATION extends Model<LP_BUYER_PERSONAL_INFOR
     },
     nickname: {
       type: DataTypes.TEXT,
-      allowNull: false,
-      field: 'NICKNAME'
+      allowNull: false
     },
     firstName: {
       type: DataTypes.TEXT,
       allowNull: false,
-      field: 'FIRST_NAME'
+      field: 'first_name'
     },
     lastName: {
       type: DataTypes.TEXT,
       allowNull: false,
-      field: 'LAST_NAME'
+      field: 'last_name'
     },
     firstNameKana: {
       type: DataTypes.TEXT,
       allowNull: false,
-      field: 'FIRST_NAME_KANA'
+      field: 'first_name_kana'
     },
     lastNameKana: {
       type: DataTypes.TEXT,
       allowNull: false,
-      field: 'LAST_NAME_KANA'
+      field: 'last_name_kana'
     },
     prefectureCode: {
       type: DataTypes.CHAR(2),
@@ -82,18 +81,15 @@ export class LP_BUYER_PERSONAL_INFORMATION extends Model<LP_BUYER_PERSONAL_INFOR
     },
     gender: {
       type: DataTypes.TINYINT.UNSIGNED,
-      allowNull: true,
-      field: 'GENDER'
+      allowNull: true
     },
     birthday: {
       type: DataTypes.DATEONLY,
-      allowNull: true,
-      field: 'BIRTHDAY'
+      allowNull: true
     },
     age: {
       type: DataTypes.CHAR(3),
-      allowNull: true,
-      field: 'AGE'
+      allowNull: true
     }
   }, {
     sequelize,
