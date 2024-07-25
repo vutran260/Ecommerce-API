@@ -28,7 +28,11 @@ export class BuyerUsecase {
       throw error;
     }
   };
+  public getBuyerInfo = async (buyerId: string) => {
+    const buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId)
+    return buyerInfo
 
+  }
   public getCategoriesWithHierarchy = async (store_id: string, id = '') => {
     return this.buyerRepo.getCategoriesWithHierarchy(store_id, id);
   };

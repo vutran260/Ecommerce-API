@@ -1,15 +1,14 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId } from './LP_ADDRESS_BUYER';
+import type { LP_ADDRESS_BUYER_SSO, LP_ADDRESS_BUYER_SSOCreationAttributes, LP_ADDRESS_BUYER_SSOId } from './LP_ADDRESS_BUYER_SSO';
+import type { LP_BUYER_PERSONAL_INFORMATION, LP_BUYER_PERSONAL_INFORMATIONCreationAttributes, LP_BUYER_PERSONAL_INFORMATIONId } from './LP_BUYER_PERSONAL_INFORMATION';
 import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 
 export interface LP_BUYERAttributes {
   id: string;
-  email?: string;
-  phone?: string;
-  password?: string;
   username?: string;
   fullname?: string;
   createdAt?: Date;
@@ -19,14 +18,11 @@ export interface LP_BUYERAttributes {
 
 export type LP_BUYERPk = "id";
 export type LP_BUYERId = LP_BUYER[LP_BUYERPk];
-export type LP_BUYEROptionalAttributes = "id" | "email" | "phone" | "password" | "username" | "fullname" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_BUYEROptionalAttributes = "id" | "username" | "fullname" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_BUYERCreationAttributes = Optional<LP_BUYERAttributes, LP_BUYEROptionalAttributes>;
 
 export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttributes> implements LP_BUYERAttributes {
   id!: string;
-  email?: string;
-  phone?: string;
-  password?: string;
   username?: string;
   fullname?: string;
   createdAt?: Date;
@@ -45,6 +41,16 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   hasLpAddressBuyer!: Sequelize.HasManyHasAssociationMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
   hasLpAddressBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
   countLpAddressBuyers!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_BUYER hasOne LP_ADDRESS_BUYER_SSO via buyerId
+  lpAddressBuyerSso!: LP_ADDRESS_BUYER_SSO;
+  getLpAddressBuyerSso!: Sequelize.HasOneGetAssociationMixin<LP_ADDRESS_BUYER_SSO>;
+  setLpAddressBuyerSso!: Sequelize.HasOneSetAssociationMixin<LP_ADDRESS_BUYER_SSO, LP_ADDRESS_BUYER_SSOId>;
+  createLpAddressBuyerSso!: Sequelize.HasOneCreateAssociationMixin<LP_ADDRESS_BUYER_SSO>;
+  // LP_BUYER hasOne LP_BUYER_PERSONAL_INFORMATION via buyerId
+  lpBuyerPersonalInformation!: LP_BUYER_PERSONAL_INFORMATION;
+  getLpBuyerPersonalInformation!: Sequelize.HasOneGetAssociationMixin<LP_BUYER_PERSONAL_INFORMATION>;
+  setLpBuyerPersonalInformation!: Sequelize.HasOneSetAssociationMixin<LP_BUYER_PERSONAL_INFORMATION, LP_BUYER_PERSONAL_INFORMATIONId>;
+  createLpBuyerPersonalInformation!: Sequelize.HasOneCreateAssociationMixin<LP_BUYER_PERSONAL_INFORMATION>;
   // LP_BUYER hasMany LP_CART via buyerId
   lpCarts!: LP_CART[];
   getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
@@ -89,18 +95,6 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
-    },
-    email: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    },
-    phone: {
-      type: DataTypes.STRING(225),
-      allowNull: true
-    },
-    password: {
-      type: DataTypes.STRING(225),
-      allowNull: true
     },
     username: {
       type: DataTypes.STRING(225),

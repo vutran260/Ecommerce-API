@@ -1,10 +1,14 @@
 import type { Sequelize } from "sequelize";
 import { LP_ADDRESS_BUYER as _LP_ADDRESS_BUYER } from "./LP_ADDRESS_BUYER";
 import type { LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYERCreationAttributes } from "./LP_ADDRESS_BUYER";
+import { LP_ADDRESS_BUYER_SSO as _LP_ADDRESS_BUYER_SSO } from "./LP_ADDRESS_BUYER_SSO";
+import type { LP_ADDRESS_BUYER_SSOAttributes, LP_ADDRESS_BUYER_SSOCreationAttributes } from "./LP_ADDRESS_BUYER_SSO";
 import { LP_ADMIN as _LP_ADMIN } from "./LP_ADMIN";
 import type { LP_ADMINAttributes, LP_ADMINCreationAttributes } from "./LP_ADMIN";
 import { LP_BUYER as _LP_BUYER } from "./LP_BUYER";
 import type { LP_BUYERAttributes, LP_BUYERCreationAttributes } from "./LP_BUYER";
+import { LP_BUYER_PERSONAL_INFORMATION as _LP_BUYER_PERSONAL_INFORMATION } from "./LP_BUYER_PERSONAL_INFORMATION";
+import type { LP_BUYER_PERSONAL_INFORMATIONAttributes, LP_BUYER_PERSONAL_INFORMATIONCreationAttributes } from "./LP_BUYER_PERSONAL_INFORMATION";
 import { LP_CART as _LP_CART } from "./LP_CART";
 import type { LP_CARTAttributes, LP_CARTCreationAttributes } from "./LP_CART";
 import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
@@ -30,8 +34,10 @@ import type { LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes } from ".
 
 export {
   _LP_ADDRESS_BUYER as LP_ADDRESS_BUYER,
+  _LP_ADDRESS_BUYER_SSO as LP_ADDRESS_BUYER_SSO,
   _LP_ADMIN as LP_ADMIN,
   _LP_BUYER as LP_BUYER,
+  _LP_BUYER_PERSONAL_INFORMATION as LP_BUYER_PERSONAL_INFORMATION,
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
   _LP_PREFECTURES as LP_PREFECTURES,
@@ -48,10 +54,14 @@ export {
 export type {
   LP_ADDRESS_BUYERAttributes,
   LP_ADDRESS_BUYERCreationAttributes,
+  LP_ADDRESS_BUYER_SSOAttributes,
+  LP_ADDRESS_BUYER_SSOCreationAttributes,
   LP_ADMINAttributes,
   LP_ADMINCreationAttributes,
   LP_BUYERAttributes,
   LP_BUYERCreationAttributes,
+  LP_BUYER_PERSONAL_INFORMATIONAttributes,
+  LP_BUYER_PERSONAL_INFORMATIONCreationAttributes,
   LP_CARTAttributes,
   LP_CARTCreationAttributes,
   LP_CATEGORYAttributes,
@@ -78,8 +88,10 @@ export type {
 
 export function initModels(sequelize: Sequelize) {
   const LP_ADDRESS_BUYER = _LP_ADDRESS_BUYER.initModel(sequelize);
+  const LP_ADDRESS_BUYER_SSO = _LP_ADDRESS_BUYER_SSO.initModel(sequelize);
   const LP_ADMIN = _LP_ADMIN.initModel(sequelize);
   const LP_BUYER = _LP_BUYER.initModel(sequelize);
+  const LP_BUYER_PERSONAL_INFORMATION = _LP_BUYER_PERSONAL_INFORMATION.initModel(sequelize);
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
@@ -98,6 +110,10 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyers', through: LP_STORE_BUYER, foreignKey: "storeId", otherKey: "buyerId" });
   LP_ADDRESS_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "buyerId"});
+  LP_ADDRESS_BUYER_SSO.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasOne(LP_ADDRESS_BUYER_SSO, { as: "lpAddressBuyerSso", foreignKey: "buyerId"});
+  LP_BUYER_PERSONAL_INFORMATION.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasOne(LP_BUYER_PERSONAL_INFORMATION, { as: "lpBuyerPersonalInformation", foreignKey: "buyerId"});
   LP_CART.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_CART, { as: "lpCarts", foreignKey: "buyerId"});
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
@@ -129,8 +145,10 @@ export function initModels(sequelize: Sequelize) {
 
   return {
     LP_ADDRESS_BUYER: LP_ADDRESS_BUYER,
+    LP_ADDRESS_BUYER_SSO: LP_ADDRESS_BUYER_SSO,
     LP_ADMIN: LP_ADMIN,
     LP_BUYER: LP_BUYER,
+    LP_BUYER_PERSONAL_INFORMATION: LP_BUYER_PERSONAL_INFORMATION,
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
     LP_PREFECTURES: LP_PREFECTURES,
