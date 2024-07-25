@@ -29,6 +29,8 @@ import { LP_STORE as _LP_STORE } from "./LP_STORE";
 import type { LP_STOREAttributes, LP_STORECreationAttributes } from "./LP_STORE";
 import { LP_STORE_BUYER as _LP_STORE_BUYER } from "./LP_STORE_BUYER";
 import type { LP_STORE_BUYERAttributes, LP_STORE_BUYERCreationAttributes } from "./LP_STORE_BUYER";
+import { LP_STORE_POST as _LP_STORE_POST } from "./LP_STORE_POST";
+import type { LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes } from "./LP_STORE_POST";
 
 export {
   _LP_ADDRESS_BUYER as LP_ADDRESS_BUYER,
@@ -46,6 +48,7 @@ export {
   _LP_SELLER as LP_SELLER,
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
+  _LP_STORE_POST as LP_STORE_POST,
 };
 
 export type {
@@ -79,6 +82,8 @@ export type {
   LP_STORECreationAttributes,
   LP_STORE_BUYERAttributes,
   LP_STORE_BUYERCreationAttributes,
+  LP_STORE_POSTAttributes,
+  LP_STORE_POSTCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -97,6 +102,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_SELLER = _LP_SELLER.initModel(sequelize);
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
+  const LP_STORE_POST = _LP_STORE_POST.initModel(sequelize);
 
   LP_BUYER.belongsToMany(LP_STORE, { as: 'storeIdLpStores', through: LP_STORE_BUYER, foreignKey: "buyerId", otherKey: "storeId" });
   LP_CATEGORY.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_PRODUCT_CATEGORY, foreignKey: "categoryId", otherKey: "productId" });
@@ -134,6 +140,8 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.hasMany(LP_SELLER, { as: "lpSellers", foreignKey: "storeId"});
   LP_STORE_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "storeId"});
+  LP_STORE_POST.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_STORE_POST, { as: "lpStorePosts", foreignKey: "storeId"});
 
   return {
     LP_ADDRESS_BUYER: LP_ADDRESS_BUYER,
@@ -151,5 +159,6 @@ export function initModels(sequelize: Sequelize) {
     LP_SELLER: LP_SELLER,
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
+    LP_STORE_POST: LP_STORE_POST,
   };
 }

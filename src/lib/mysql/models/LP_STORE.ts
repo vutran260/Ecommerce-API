@@ -7,6 +7,7 @@ import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
+import type { LP_STORE_POST, LP_STORE_POSTId } from './LP_STORE_POST';
 
 export interface LP_STOREAttributes {
   id: string;
@@ -134,6 +135,18 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   hasLpStoreBuyer!: Sequelize.HasManyHasAssociationMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
   hasLpStoreBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_BUYER, LP_STORE_BUYERId>;
   countLpStoreBuyers!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_STORE_POST via storeId
+  lpStorePosts!: LP_STORE_POST[];
+  getLpStorePosts!: Sequelize.HasManyGetAssociationsMixin<LP_STORE_POST>;
+  setLpStorePosts!: Sequelize.HasManySetAssociationsMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  addLpStorePost!: Sequelize.HasManyAddAssociationMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  addLpStorePosts!: Sequelize.HasManyAddAssociationsMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  createLpStorePost!: Sequelize.HasManyCreateAssociationMixin<LP_STORE_POST>;
+  removeLpStorePost!: Sequelize.HasManyRemoveAssociationMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  removeLpStorePosts!: Sequelize.HasManyRemoveAssociationsMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  hasLpStorePost!: Sequelize.HasManyHasAssociationMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  hasLpStorePosts!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_POST, LP_STORE_POSTId>;
+  countLpStorePosts!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_STORE {
     return LP_STORE.init({
