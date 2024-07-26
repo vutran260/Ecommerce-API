@@ -24,6 +24,10 @@ export class StorePostUsecase {
 
   }
 
+  public getPostByStoreId = async (storeId: string) => {
+    return await this.storePostRepo.getAllPostsByStoreId(storeId)
+  }
+
   public updatePost = async (updatePostRequest: StorePost) => {
 
     const post = await this.storePostRepo.getPostById(updatePostRequest.id);

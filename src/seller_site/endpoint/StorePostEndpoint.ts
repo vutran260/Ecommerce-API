@@ -22,6 +22,11 @@ export class StorePostEndpoint {
     await this.storePostUsecase.CreatePost(addPostRequest);
     return ResponseData("add post success!!!", res);
   };
+  private getPostsByStoreId = async (req: ProtectedRequest, res: Response) => {
+    const storeId = req.storeId
+    const posts = await this.storePostUsecase.getPostByStoreId(storeId)
+    return ResponseData(posts, res);
+  }
 
   private updatePost = async (req: ProtectedRequest, res: Response) => {
     const updatePostsRequest = plainToInstance(StorePost, req.body);
@@ -62,6 +67,7 @@ export class StorePostEndpoint {
   public getRouter() {
     const router = express.Router();
 
+    router.get('/', this.getPostsByStoreId);
     router.post('/', this.createPost);
     router.get('/:id', this.getPost);
     router.delete('/:id', this.deletePost);

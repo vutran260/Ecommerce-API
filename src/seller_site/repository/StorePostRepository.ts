@@ -16,9 +16,11 @@ export class StorePostRepository {
     return post
   }
 
-  public getAllPosts = async () => {
+  public getAllPostsByStoreId = async (storeId: string) => {
 
-    const posts = await LP_STORE_POST.findAll();
+    const posts = await LP_STORE_POST.findAll({
+      where: { storeId: storeId }
+    });
     return posts
   };
 
