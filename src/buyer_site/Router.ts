@@ -28,6 +28,9 @@ import { OrderEndpoint } from './endpoint/OrderEndpoint';
 import { OrderItemRepository } from './repository/OrderItemRepository';
 import { OrderPaymentRepository } from './repository/OrderPaymentRepository';
 import { ShipmentRepository } from './repository/ShipmentRepository';
+import { BuyerPostUsecase } from './usecase/BuyerPostUsecase';
+import { BuyerPostRepository } from './repository/BuyerPostRepository';
+import { BuyerPostEndpoint } from './endpoint/BuyerPostEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -46,6 +49,7 @@ export class buyerSiteRouter {
     const shipmentRepository = new ShipmentRepository();
     const buyerRepository = new BuyerRepository();
     const addressRepository = new AddressRepository();
+    const buyerPostRepo = new BuyerPostRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -66,12 +70,14 @@ export class buyerSiteRouter {
       addressRepository,
       gmoGetwaySerivce,
     );
+    const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
     const storeEndpoint = new StoreEndpoint(storeUsecase);
     const addressEndpoint = new AddressEndpoint(addressUsecase);
     const prefectureEndpoint = new PrefectureEndpoint(prefectureUsecase);
+    const buyerPostEndpoint = new BuyerPostEndpoint(buyerPostUsecase);
 
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
@@ -87,6 +93,7 @@ export class buyerSiteRouter {
     router.use('/product', productEndpoint.getRouter());
     router.use('/store', storeEndpoint.getRouter());
     router.use('/order', orderEndpoint.getRouter());
+    router.use('/post', buyerPostEndpoint.getRouter());
 
     return router;
   };

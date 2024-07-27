@@ -1,6 +1,8 @@
+import { Filter, Paging } from "../../lib/paging/Request";
 import { BadRequestError } from "../../lib/http/custom_error/ApiError";
 import { StorePost } from "../endpoint/StorePostEndpoint";
 import { StorePostRepository } from "../repository/StorePostRepository";
+import { LpOrder } from "../../lib/paging/Order";
 
 export class StorePostUsecase {
   private storePostRepo: StorePostRepository
@@ -22,6 +24,14 @@ export class StorePostUsecase {
     }
     await this.storePostRepo.createPost(Post)
 
+  }
+
+  public getPosts = async (
+    filter: Filter[],
+    order: LpOrder[],
+    paging: Paging,
+  ) => {
+    return await this.storePostRepo.getPosts( paging, order, filter)
   }
 
   public updatePost = async (updatePostRequest: StorePost) => {
