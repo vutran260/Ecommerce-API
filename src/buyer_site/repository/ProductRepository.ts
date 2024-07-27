@@ -60,7 +60,7 @@ export class ProductRepository {
     isNoCategory: boolean,
   ) => {
     try {
-      this.filterSortByPrice(order);
+      const orderQuery = this.filterSortByPrice(order);
 
       filter.push({
         operation: 'eq',
@@ -112,8 +112,6 @@ export class ProductRepository {
 
 
       const results = await LP_PRODUCT.findAll({
-        subQuery: false,
-
         attributes: {
           include: [
             [Sequelize.literal(`
@@ -146,7 +144,7 @@ export class ProductRepository {
         include: include,
         where: query,
         offset: GetOffset(paging),
-        order: BuildOrderQuery(order),
+        order: orderQuery,
         limit: paging.limit,
       });
       forEach(results, (result) => {
@@ -160,16 +158,26 @@ export class ProductRepository {
     }
   };
 
+  private filterSortByPrice = (orders: LpOrder[]): any => {
+    let isSortPrice = false;
+    let sortPriceDirection = '';
 
+    orders.forEach(item => {
+      if (item.attribute === 'price') {
+        item.attribute = 'sortPrice';
+        isSortPrice = true;
+        sortPriceDirection = item.direction;
+      }
+    });
 
-
-private filterSortByPrice = (orders: LpOrder[]) => {
-  orders.forEach(item => {
-    if (item.attribute === 'price') {
-      item.attribute = 'sortPrice';
+    if (isSortPrice) {
+      return [
+        [Sequelize.literal('sortPrice'), sortPriceDirection ]
+      ];
     }
-  });
-};
+
+    return BuildOrderQuery(orders);
+  };
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
