@@ -7,11 +7,7 @@ import {
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { booleanToTINYINT } from '../../lib/helpers/utils';
 import { CategoryRepository } from '../repository/CategoryRepository';
-import Product, {
-  ProductFromLP_PRODUCT,
-} from '../../common/model/products/Product';
-import ProductOption from '../../common/model/products/ProductOption';
-import ProductOptionPrice from '../../common/model/products/ProductOptionPrice';
+import Product from '../../common/model/products/Product';
 import moment from 'moment';
 import { DATE_FORMAT } from '../../lib/constant/Constant';
 import { lpSequelize } from '../../lib/mysql/Connection';

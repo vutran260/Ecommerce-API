@@ -29,6 +29,10 @@ export class ProductRepository {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
+    if (result.dataValues.isDeleted === 1 || result.dataValues.status === 'INACTIVE') {
+      throw new NotFoundError(`Product with id ${id} not found`);
+    }
+
     const out: Product = ProductFromLP_PRODUCT(result.dataValues);
 
     (await result.getLpProductComponents()).forEach((component) =>
@@ -62,6 +66,10 @@ export class ProductRepository {
         operation: 'eq',
         value: 0,
         attribute: 'isDeleted',
+      }, {
+        operation: 'eq',
+        value: 'ACTIVE',
+        attribute: 'status',
       });
 
       let query = BuildQuery(filter);
