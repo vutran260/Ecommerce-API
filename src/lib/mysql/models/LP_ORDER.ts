@@ -10,8 +10,7 @@ export interface LP_ORDERAttributes {
   id: string;
   buyerId?: string;
   storeId?: string;
-  receiverId?: string;
-  orderStatus?: number;
+  orderStatus?: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
@@ -25,15 +24,14 @@ export interface LP_ORDERAttributes {
 
 export type LP_ORDERPk = "id";
 export type LP_ORDERId = LP_ORDER[LP_ORDERPk];
-export type LP_ORDEROptionalAttributes = "id" | "buyerId" | "storeId" | "receiverId" | "orderStatus" | "shipmentFee" | "discount" | "cancelAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
+export type LP_ORDEROptionalAttributes = "id" | "buyerId" | "storeId" | "orderStatus" | "shipmentFee" | "discount" | "cancelAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_ORDERCreationAttributes = Optional<LP_ORDERAttributes, LP_ORDEROptionalAttributes>;
 
 export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttributes> implements LP_ORDERAttributes {
   id!: string;
   buyerId?: string;
   storeId?: string;
-  receiverId?: string;
-  orderStatus?: number;
+  orderStatus?: string;
   amount!: number;
   shipmentFee?: number;
   discount?: number;
@@ -117,13 +115,8 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
       },
       field: 'store_id'
     },
-    receiverId: {
-      type: DataTypes.STRING(36),
-      allowNull: true,
-      field: 'receiver_id'
-    },
     orderStatus: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(100),
       allowNull: true,
       field: 'order_status'
     },

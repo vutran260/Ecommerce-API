@@ -10,8 +10,8 @@ export class Order {
   id: string;
   buyerName?: string;
   totalAmount?: number;
-  orderStatus?: number;
-  paymentStatus?: number;
+  orderStatus?: string;
+  paymentStatus?: string;
   orderDate?: string;
   constructor(order: LP_ORDER) {
     this.id = order.id;
@@ -46,7 +46,7 @@ export class CreateOrderRequest {
   buyerId: string;
   storeId: string;
   receiverId?: string;
-  orderStatus?: number;
+  orderStatus?: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
@@ -55,7 +55,7 @@ export class CreateOrderRequest {
 }
 
 export class UpdateOrderRequest {
-  orderStatus?: number;
+  orderStatus?: string;
   amount?: number;
   shipmentFee?: number;
   discount?: number;
@@ -67,6 +67,7 @@ export class UpdateOrderRequest {
 export class CreateOrderItemRequest {
   id: string;
   orderId?: string;
+  productId?: string;
   productName: string;
   productImage: string;
   productDescription: string;
@@ -98,8 +99,8 @@ export class CreateOrderItemRequest {
 
 export class CreateOrderPaymentRequest {
   orderId?: string;
-  paymentType?: number;
-  paymentStatus?: number;
+  paymentType?: string;
+  paymentStatus?: string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -116,10 +117,10 @@ export class CreateShipmentRequest {
   orderId?: string;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
-  shipmentDate?: Date;
+  arrivedAt?: Date;
   shipmentBy?: string;
-  shipmentStartAt?: Date;
-  shipmentEndAt?: Date;
+  planArrivedFrom?: Date;
+  planArrivedTo?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -127,10 +128,10 @@ export class CreateShipmentRequest {
     this.orderId = lpShipment.orderId;
     this.shipmentFee = lpShipment.shipmentFee;
     this.shipmentFeeDiscount = lpShipment.shipmentFeeDiscount;
-    this.shipmentDate = lpShipment.shipmentDate;
+    this.arrivedAt = lpShipment.arrivedAt;
     this.shipmentBy = lpShipment.shipmentBy;
-    this.shipmentStartAt = lpShipment.shipmentStartAt;
-    this.shipmentEndAt = lpShipment.shipmentEndAt;
+    this.planArrivedFrom = lpShipment.planArrivedFrom;
+    this.planArrivedTo = lpShipment.planArrivedTo;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
@@ -138,7 +139,7 @@ export class CreateShipmentRequest {
 
 export class UpdateOrderStatusRequest {
   orderId: string;
-  status: number;
+  status: string;
 }
 
 export class OrderDetailResponse {

@@ -55,6 +55,7 @@ export class OrderEndpoint {
     return ResponseListData(result, res, req.paging);
   };
 
+  // API testing check point on server SIFT
   private checkFraud = async (req: ProtectedRequest, res: Response) => {
     const results = await this.orderUsecase.checkFraud(
       req.body.type,
@@ -63,6 +64,7 @@ export class OrderEndpoint {
     return ResponseData(results, res);
   };
 
+  // API testing create transaction for payment on GMO
   private entryTran = async (req: ProtectedRequest, res: Response) => {
     const transactionRequest = {
       orderID: req.body.orderID,
@@ -75,6 +77,7 @@ export class OrderEndpoint {
     return ResponseData(results, res);
   };
 
+  // API testing excecute transaction for payment on GMO
   private execTran = async (req: ProtectedRequest, res: Response) => {
     const execTransactionRequest = {
       accessID: req.body.accessID,
@@ -98,9 +101,9 @@ export class OrderEndpoint {
       PagingMiddelware,
       this.getOrderItemsByOrderId,
     );
-    router.post('/fraud', this.checkFraud);
-    router.post('/entry', this.entryTran);
-    router.post('/exec', this.execTran);
+    router.post('/test/fraud', this.checkFraud);
+    router.post('/test/entry', this.entryTran);
+    router.post('/test/exec', this.execTran);
     return router;
   }
 }

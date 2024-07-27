@@ -76,115 +76,118 @@ export class OrderUsecase {
 
   public createOrder = async (orderCreateRequest: CreateOrderRequest) => {
     // TODO: check fraud
+    // Step 1: Shift Events
+    Logger.info('Start calculate point');
     // const theFraud = await this.checkFraud(orderCreateRequest.buyerId, '');
 
-    // Step 1: Shift Events
-    // if (theFraud && Number(theFraud.paymentAbuseScore) >= 20) {
-    // }
     const t = await lpSequelize.transaction();
 
-    // Step 2: Create order
     try {
-      // create order after click Proceed to order at Cart screen
+      Logger.info('Start create order');
       const order = await this.orderRepo.createOrder(orderCreateRequest, t);
 
-      if (order) {
-        // add products from cart to order item
-        const productsInMyCart = await this.cartRepo.getListItemInCart(
-          orderCreateRequest.storeId,
-          orderCreateRequest.buyerId,
-        );
-
-        if (productsInMyCart && productsInMyCart.length <= 0) {
-          throw new BadRequestError('Opps, have no any items in your cart');
-        }
-        const cartItemLength = productsInMyCart.length;
-        for (let i = 0; i < cartItemLength; i++) {
-          const cartItem = productsInMyCart[i];
-          let input = new CreateOrderItemRequest(cartItem);
-          input.orderId = order.id;
-          await this.orderItemRepo.createOrderItem(input, t);
-
-          // delete cart item
-          await this.cartRepo.deleteItem(cartItem.id, t);
-        }
-
-        // add payment info
-        const oreateOrderPaymentRequest: CreateOrderPaymentRequest = {
-          orderId: order.id,
-          paymentType: PaymentType.CREDIT_CARD,
-          paymentStatus: PaymentSatus.PENDING,
-        };
-        await this.orderPaymentRepo.createOrderPayment(
-          oreateOrderPaymentRequest,
-          t,
-        );
-
-        // add shipment info
-        const oreateShipmentRequest: CreateShipmentRequest = {
-          orderId: order.id,
-          shipmentFee: order.shipmentFee,
-          shipmentFeeDiscount: 0,
-          shipmentDate: new Date(),
-          shipmentBy: '',
-          shipmentStartAt: new Date(),
-          shipmentEndAt: new Date(),
-        };
-        await this.shipmentRepository.createShipment(oreateShipmentRequest, t);
-
-        //update order status: CONFIRMED after check point
-        const updateRequest: UpdateOrderStatusRequest = {
-          orderId: order.id,
-          status: OrderStatus.CONFIRMED,
-        };
-        this.orderRepo.updateOrderStatus(updateRequest, t);
-
-        // Step 3: Entry transaction
-        // make orderID have length  = 27 match with gmo require
-        const orderIDForTran = order.id.substring(0, 27);
-        if (
-          !order.totalAmount ||
-          (order.totalAmount && order.totalAmount <= 0)
-        ) {
-          throw new BadRequestError();
-        }
-        const transactionRequest: TransactionRequest = {
-          orderID: orderIDForTran,
-          jobCd: JobCd.CAPTURE,
-          amount: order.totalAmount,
-        };
-        const theTransInfo = await this.gmoPaymentService.entryTran(
-          transactionRequest,
-        );
-
-        // Step 4: Execute transaction
-        if (theTransInfo) {
-          const execTransactionRequest = new ExecTransactionRequest(
-            theTransInfo.accessID,
-            theTransInfo.accessPass,
-            orderIDForTran,
-            ChargeMethod.BULK, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
-            orderCreateRequest.token,
-          );
-          const execTranResponse = await this.gmoPaymentService.execTran(
-            execTransactionRequest,
-          );
-
-          if (execTranResponse) {
-            // update order status: SUCESS
-            const updateRequest: UpdateOrderStatusRequest = {
-              orderId: order.id,
-              status: OrderStatus.SUCESS,
-            };
-
-            this.orderRepo.updateOrderStatus(updateRequest, t);
-          }
-        }
-
-        await t.commit();
-      } else {
-        await t.rollback();
+      if (!order) {
+        throw new BadRequestError('Unable to create order');
       }
+      Logger.info('Start add products from cart to order item');
+      const productsInMyCart = await this.cartRepo.getListItemInCart(
+        orderCreateRequest.storeId,
+        orderCreateRequest.buyerId,
+      );
+
+      Logger.info(productsInMyCart);
+      if (productsInMyCart && productsInMyCart.length <= 0) {
+        throw new BadRequestError('Opps, have no any items in your cart');
+      }
+      const cartItemLength = productsInMyCart.length;
+      for (let i = 0; i < cartItemLength; i++) {
+        const cartItem = productsInMyCart[i];
+        let input = new CreateOrderItemRequest(cartItem);
+        input.orderId = order.id;
+        input.productId = cartItem.productId;
+        await this.orderItemRepo.createOrderItem(input, t);
+
+        Logger.info('Start delete items from cart');
+        //await this.cartRepo.deleteItem(cartItem.id, t);
+      }
+
+      Logger.info('Start add payment info');
+      const oreateOrderPaymentRequest: CreateOrderPaymentRequest = {
+        orderId: order.id,
+        paymentType: PaymentType.CREDIT_CARD,
+        paymentStatus: PaymentSatus.PENDING,
+      };
+      await this.orderPaymentRepo.createOrderPayment(
+        oreateOrderPaymentRequest,
+        t,
+      );
+
+      Logger.info('Start add shipment info');
+      var currentDate = new Date();
+      const oreateShipmentRequest: CreateShipmentRequest = {
+        orderId: order.id,
+        shipmentFee: order.shipmentFee,
+        shipmentFeeDiscount: 0,
+        arrivedAt: new Date(currentDate.setDate(currentDate.getDate() + 3)), // TODO: need to calculate
+        shipmentBy: '',
+        planArrivedFrom: new Date(),
+        planArrivedTo: new Date(currentDate.setDate(currentDate.getDate() + 3)), // TODO: need to calculate
+      };
+      await this.shipmentRepository.createShipment(oreateShipmentRequest, t);
+
+      Logger.info('Start update order status: CONFIRMED after check point');
+      const updateRequest: UpdateOrderStatusRequest = {
+        orderId: order.id,
+        status: OrderStatus.CONFIRMED,
+      };
+      this.orderRepo.updateOrderStatus(updateRequest, t);
+
+      Logger.info('Start create transaction');
+      // make orderID have length  = 27 match with gmo require
+      const orderIDForTran = order.id.substring(0, 27);
+      if (!order.totalAmount || (order.totalAmount && order.totalAmount <= 0)) {
+        throw new BadRequestError();
+      }
+      const transactionRequest: TransactionRequest = {
+        orderID: orderIDForTran,
+        jobCd: JobCd.CAPTURE,
+        amount: order.totalAmount,
+      };
+      const theTransInfo = await this.gmoPaymentService.entryTran(
+        transactionRequest,
+      );
+      Logger.info(theTransInfo);
+
+      Logger.info('Start execute transaction');
+      if (theTransInfo) {
+        const execTransactionRequest = new ExecTransactionRequest(
+          theTransInfo.accessID,
+          theTransInfo.accessPass,
+          orderIDForTran,
+          ChargeMethod.BULK, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
+          orderCreateRequest.token,
+        );
+        const execTranResponse = await this.gmoPaymentService.execTran(
+          execTransactionRequest,
+        );
+
+        if (execTranResponse) {
+          Logger.info('Start update order status: SUCESS');
+          const updateRequest: UpdateOrderStatusRequest = {
+            orderId: order.id,
+            status: OrderStatus.SUCESS,
+          };
+          this.orderRepo.updateOrderStatus(updateRequest, t);
+
+          Logger.info('Start update payment status: PAID');
+          await this.orderPaymentRepo.updateOrderPaymentStatus(
+            order.id,
+            PaymentSatus.PAID,
+            t,
+          );
+        }
+      }
+      await t.commit();
       return order;
     } catch (error) {
       await t.rollback();

@@ -6,7 +6,7 @@ export interface LP_SHIPMENT_HISTORYAttributes {
   id: string;
   shipmentId?: string;
   shipmentHistoryDate?: Date;
-  shipmentStatus?: number;
+  shipmentStatus?: string;
   shipmentDescription?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -22,7 +22,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
   id!: string;
   shipmentId?: string;
   shipmentHistoryDate?: Date;
-  shipmentStatus?: number;
+  shipmentStatus?: string;
   shipmentDescription?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -57,7 +57,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
       field: 'shipment_history_date'
     },
     shipmentStatus: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(100),
       allowNull: true,
       field: 'shipment_status'
     },

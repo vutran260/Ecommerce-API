@@ -59,6 +59,7 @@ export class OrderRepository {
         },
         {
           association: LP_ORDER.associations.lpOrderItems,
+          limit: 5,
         },
         {
           association: LP_ORDER.associations.lpOrderPayments,

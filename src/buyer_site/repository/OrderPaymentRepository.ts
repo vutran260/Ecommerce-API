@@ -1,4 +1,5 @@
 import { Transaction } from 'sequelize';
+import { PaymentSatus } from '../../../src/lib/constant/Constant';
 import { LP_ORDER_PAYMENT } from '../../../src/lib/mysql/models/LP_ORDER_PAYMENT';
 import { CreateOrderPaymentRequest } from '../../common/model/orders/Order';
 
@@ -29,5 +30,19 @@ export class OrderPaymentRepository {
       where: { orderId },
     });
     return result?.dataValues;
+  };
+
+  public updateOrderPaymentStatus = async (
+    orderId: string,
+    status: PaymentSatus,
+    t?: Transaction,
+  ) => {
+    await LP_ORDER_PAYMENT.update(
+      { paymentStatus: status, updatedAt: new Date() },
+      {
+        where: { orderId: orderId },
+        transaction: t,
+      },
+    );
   };
 }

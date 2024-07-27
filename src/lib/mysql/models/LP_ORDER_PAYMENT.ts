@@ -5,8 +5,8 @@ import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 export interface LP_ORDER_PAYMENTAttributes {
   id: string;
   orderId?: string;
-  paymentType?: number;
-  paymentStatus?: number;
+  paymentType?: string;
+  paymentStatus?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -20,8 +20,8 @@ export type LP_ORDER_PAYMENTCreationAttributes = Optional<LP_ORDER_PAYMENTAttrib
 export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTCreationAttributes> implements LP_ORDER_PAYMENTAttributes {
   id!: string;
   orderId?: string;
-  paymentType?: number;
-  paymentStatus?: number;
+  paymentType?: string;
+  paymentStatus?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -50,12 +50,12 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
       field: 'order_id'
     },
     paymentType: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(255),
       allowNull: true,
       field: 'payment_type'
     },
     paymentStatus: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(100),
       allowNull: true,
       field: 'payment_status'
     },
