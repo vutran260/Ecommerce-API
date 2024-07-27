@@ -108,7 +108,7 @@ export class OrderUsecase {
         await this.orderItemRepo.createOrderItem(input, t);
 
         Logger.info('Start delete items from cart');
-        //await this.cartRepo.deleteItem(cartItem.id, t);
+        await this.cartRepo.deleteItem(cartItem.id, t);
       }
 
       Logger.info('Start add payment info');
