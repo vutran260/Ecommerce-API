@@ -49,16 +49,33 @@ export class ProductUsecase {
     });
   };
 
-  public updateBuyerFavoriteProduct = async (productId: string, buyerId: string) => {
+  public getFavoriteProduct = async (buyerId: string) => {
+      return await this.productRepo.getFavoriteProduct(buyerId);
+  };
+
+  public addFavoriteProduct = async (productId: string, buyerId: string) => {
     try {
       const product = await this.productRepo.getProductId(productId);
       if (!product) {
         throw new BadRequestError('Product not found');
       }
-      await this.productRepo.updateBuyerFavoriteProduct(productId, buyerId);
-      return product;
+      return await this.productRepo.addFavoriteProduct(productId, buyerId);
     } catch (error) {
-      Logger.error('Fail to update favorite product');
+      Logger.error('Fail to add favorite product');
+      Logger.error(error);
+      throw error;
+    }
+  };
+
+  public removeFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const product = await this.productRepo.getProductId(productId);
+      if (!product) {
+        throw new BadRequestError('Product not found');
+      }
+      return await this.productRepo.removeFavoriteProduct(productId, buyerId);
+    } catch (error) {
+      Logger.error('Fail to remove favorite product');
       Logger.error(error);
       throw error;
     }

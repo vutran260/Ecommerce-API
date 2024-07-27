@@ -4,6 +4,7 @@ import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
+import { EmptyResultError } from 'sequelize';
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;
@@ -28,11 +29,24 @@ export class ProductEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
-  private updateBuyerFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+  private getFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+    const buyerId = req.user.id;
+    const results = await this.productUsecase.getFavoriteProduct(buyerId);
+    return ResponseListData(results, res, req.paging);
+  };
+
+  private addFavoriteProduct = async (req: PaginationRequest, res: Response) => {
     const buyerId = req.user.id;
     const productId: string = req.params.productId;
-    await this.productUsecase.updateBuyerFavoriteProduct(productId, buyerId);
-    return ResponseData({ message: 'Favorite status updated successfully!' }, res);
+    const result = await this.productUsecase.addFavoriteProduct(productId, buyerId);
+    return ResponseListData(result, res, req.paging);
+  };
+
+  private removeFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+    const buyerId = req.user.id;
+    const productId: string = req.params.productId;
+    const result = await this.productUsecase.removeFavoriteProduct(productId, buyerId);
+    return ResponseListData(result, res, req.paging);
   };
 
   public getRouter() {
@@ -44,7 +58,9 @@ export class ProductEndpoint {
       StoreFilterMiddelware,
       this.getProducts,
     );
-    router.put('/favorite/:id', this.updateBuyerFavoriteProduct);
+    router.get('/favorite', this.getFavoriteProduct);
+    router.post('/favorite/:productId', this.addFavoriteProduct);
+    router.delete('/favorite/:productId', this.removeFavoriteProduct);
 
     return router;
   }

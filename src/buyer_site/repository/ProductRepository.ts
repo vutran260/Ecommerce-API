@@ -15,8 +15,10 @@ import {
 } from '../../lib/mysql/models/LP_PRODUCT';
 import {
   LP_FAVORITE,
-  LP_FAVORITEAttributes,
 } from '../../lib/mysql/models/LP_FAVORITE';
+import {
+  LP_BUYER,
+} from '../../lib/mysql/models/LP_BUYER';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
@@ -164,25 +166,91 @@ export class ProductRepository {
     }
   };
 
-  public updateBuyerFavoriteProduct = async (productId: string, buyerId: string): Promise<void> => {
+  public getFavoriteProduct = async (buyerId: string) => {
     try {
-      const product = await LP_PRODUCT.findByPk(productId);
-      if (!product) {
-        throw new NotFoundError(`Product with id ${productId} not found`);
-      }
+      const favorites = await LP_FAVORITE.findAll({
+        where: {
+          buyerId,
+        },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            include: [
+              {
+                association: LP_PRODUCT.associations.lpProductComponents,
+              },
+              {
+                association: LP_PRODUCT.associations.lpProductCategories,
+              },
+              {
+                association: LP_PRODUCT.associations.lpProductFaqs,
+              },
+            ],
+          },
+        ],
+      });
 
-      const buyerProductFavorite = await LP_FAVORITE.findOne({
+      return favorites;
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      throw error;
+    }
+  };
+
+  public addFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const existingFavorite = await LP_FAVORITE.findOne({
         where: {
           buyerId,
           productId,
         },
       });
 
-      if (buyerProductFavorite) {
-        await buyerProductFavorite.destroy();
-      } else {
-        await LP_FAVORITE.create({ buyerId, productId });
+      if (existingFavorite) {
+        throw new Error('Favorite product already exists.');
       }
+
+      await LP_FAVORITE.create({
+        buyerId,
+        productId,
+        createdAt: new Date(),
+      });
+
+      return { message: 'Product added to favorites successfully.' };
+    } catch (error) {
+      Logger.error(error);
+      Logger.error(error.message);
+      throw error;
+    }
+  }
+
+  public removeFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      if (typeof buyerId !== 'string' || typeof productId !== 'string') {
+        throw new Error('Invalid data types for buyerId or productId.');
+      }
+
+      const buyer = await LP_BUYER.findByPk(buyerId);
+      const product = await LP_PRODUCT.findByPk(productId);
+
+      if (!buyer || !product) {
+        throw new NotFoundError('Invalid buyerId or productId.');
+      }
+
+      const result = await LP_FAVORITE.destroy({
+        where: {
+          buyerId,
+          productId,
+        },
+      });
+
+      if (result === 0) {
+        throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
+      }
+
+      return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
     } catch (error: any) {
       Logger.error(error);
       Logger.error(error.message);
