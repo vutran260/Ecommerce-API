@@ -4,6 +4,8 @@ import { ProductRepository } from '../repository/ProductRepository';
 import { CategoryRepository } from '../repository/CategoryRepository';
 import { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
 import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
+import Logger from '../../lib/core/Logger';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -45,5 +47,20 @@ export class ProductUsecase {
     return products.map((product) => {
       return ProductFromLP_PRODUCT(product);
     });
+  };
+
+  public updateBuyerFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const product = await this.productRepo.getProductId(productId);
+      if (!product) {
+        throw new BadRequestError('Product not found');
+      }
+      await this.productRepo.updateBuyerFavoriteProduct(productId, buyerId);
+      return product;
+    } catch (error) {
+      Logger.error('Fail to update favorite product');
+      Logger.error(error);
+      throw error;
+    }
   };
 }

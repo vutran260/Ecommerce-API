@@ -28,6 +28,13 @@ export class ProductEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
+  private updateBuyerFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+    const buyerId = req.user.id;
+    const productId: string = req.params.productId;
+    await this.productUsecase.updateBuyerFavoriteProduct(productId, buyerId);
+    return ResponseData({ message: 'Favorite status updated successfully!' }, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get('/detail/:id', this.getDetailProduct);
@@ -37,6 +44,7 @@ export class ProductEndpoint {
       StoreFilterMiddelware,
       this.getProducts,
     );
+    router.put('/favorite/:id', this.updateBuyerFavoriteProduct);
 
     return router;
   }

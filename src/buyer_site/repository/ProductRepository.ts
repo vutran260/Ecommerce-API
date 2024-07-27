@@ -13,6 +13,10 @@ import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
+import {
+  LP_FAVORITE,
+  LP_FAVORITEAttributes,
+} from '../../lib/mysql/models/LP_FAVORITE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
@@ -160,16 +164,39 @@ export class ProductRepository {
     }
   };
 
+  public updateBuyerFavoriteProduct = async (productId: string, buyerId: string): Promise<void> => {
+    try {
+      const product = await LP_PRODUCT.findByPk(productId);
+      if (!product) {
+        throw new NotFoundError(`Product with id ${productId} not found`);
+      }
 
+      const buyerProductFavorite = await LP_FAVORITE.findOne({
+        where: {
+          buyerId,
+          productId,
+        },
+      });
 
-
-private filterSortByPrice = (orders: LpOrder[]) => {
-  orders.forEach(item => {
-    if (item.attribute === 'price') {
-      item.attribute = 'sortPrice';
+      if (buyerProductFavorite) {
+        await buyerProductFavorite.destroy();
+      } else {
+        await LP_FAVORITE.create({ buyerId, productId });
+      }
+    } catch (error: any) {
+      Logger.error(error);
+      Logger.error(error.message);
+      throw error;
     }
-  });
-};
+  };
+
+  private filterSortByPrice = (orders: LpOrder[]) => {
+    orders.forEach(item => {
+      if (item.attribute === 'price') {
+        item.attribute = 'sortPrice';
+      }
+    });
+  };
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
