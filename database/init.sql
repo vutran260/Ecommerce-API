@@ -188,17 +188,14 @@ CREATE TABLE LP_CART (
   CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
 );
 CREATE TABLE LP_FAVORITE (
-  id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
   buyer_id VARCHAR(36) NOT NULL,
-  store_id VARCHAR(36) NOT NULL,
   product_id VARCHAR(36) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_buyer_id_favorite FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
-  CONSTRAINT fk_store_id_favorite FOREIGN KEY (store_id) REFERENCES LP_STORE (id),
   CONSTRAINT fk_product_id_favorite FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
 
-  UNIQUE (buyer_id, store_id, product_id)
+  PRIMARY KEY (buyer_id, product_id)
 );
 
 CREATE TABLE LP_ADDRESS_BUYER(
