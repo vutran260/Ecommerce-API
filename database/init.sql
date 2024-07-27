@@ -203,7 +203,6 @@ CREATE TABLE LP_ADDRESS_BUYER(
 
   CONSTRAINT fk_buyer_id FOREIGN KEY (buyer_id) REFERENCES LP_BUYER(id),
   CONSTRAINT fk_store_id FOREIGN KEY (store_id) REFERENCES LP_STORE(id)
-
 );
 
 CREATE TABLE LP_STORE_POST (
@@ -302,4 +301,79 @@ VALUES
 ('宮崎県'),
 ('鹿児島県'),
 ('沖縄県');
+
+-- start for payment section
+CREATE TABLE LP_ORDER (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    buyer_id VARCHAR(36),
+    store_id VARCHAR(36),
+    order_status VARCHAR(100),
+    amount INT UNSIGNED NOT NULL,
+    shipment_fee INT,
+    discount INT,
+    total_amount INT UNSIGNED NOT NULL,
+    cancel_at DATETIME,
+    created_at DATETIME,
+    created_by VARCHAR(255),
+    updated_at DATETIME,
+    updated_by VARCHAR(255),
+    CONSTRAINT FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
+    CONSTRAINT FOREIGN KEY (store_id) REFERENCES LP_STORE (id)
+);
+
+CREATE TABLE LP_ORDER_ITEM (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    product_id VARCHAR(36),
+    product_name VARCHAR(255) NOT NULL,
+    product_image VARCHAR(2000) NOT NULL,
+    product_description VARCHAR(2000) NOT NULL,
+    product_overview VARCHAR(2000) NOT NULL,
+    price INT,
+    quantity INT UNSIGNED NOT NULL,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id),
+    CONSTRAINT FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id)
+);
+
+CREATE TABLE LP_ORDER_PAYMENT (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    payment_type VARCHAR(255),
+    payment_status VARCHAR(100),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_SHIPMENT (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    order_id VARCHAR(36),
+    shipment_fee INT,
+    shipment_fee_discount INT,
+    arrived_at DATETIME,
+    plan_arrived_from DATETIME,
+    plan_arrived_to DATETIME,
+    shipment_by VARCHAR(255),
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER (id)
+);
+
+CREATE TABLE LP_SHIPMENT_HISTORY (
+    id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
+    shipment_id VARCHAR(36),
+    shipment_history_date DATETIME,
+    shipment_status VARCHAR(100),
+    shipment_description TEXT,
+    created_at DATETIME,
+    updated_at DATETIME,
+    deleted_at DATETIME,
+    CONSTRAINT FOREIGN KEY (shipment_id) REFERENCES LP_SHIPMENT(id)
+);
+
 

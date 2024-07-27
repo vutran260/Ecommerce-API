@@ -2,6 +2,7 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
+import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
 import type { LP_PRODUCT_FAQ, LP_PRODUCT_FAQId } from './LP_PRODUCT_FAQ';
@@ -89,6 +90,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasCategoryIdLpCategory!: Sequelize.BelongsToManyHasAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
   hasCategoryIdLpCategories!: Sequelize.BelongsToManyHasAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
   countCategoryIdLpCategories!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_ORDER_ITEM via productId
+  lpOrderItems!: LP_ORDER_ITEM[];
+  getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;
+  setLpOrderItems!: Sequelize.HasManySetAssociationsMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  addLpOrderItem!: Sequelize.HasManyAddAssociationMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  addLpOrderItems!: Sequelize.HasManyAddAssociationsMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  createLpOrderItem!: Sequelize.HasManyCreateAssociationMixin<LP_ORDER_ITEM>;
+  removeLpOrderItem!: Sequelize.HasManyRemoveAssociationMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  removeLpOrderItems!: Sequelize.HasManyRemoveAssociationsMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  hasLpOrderItem!: Sequelize.HasManyHasAssociationMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  hasLpOrderItems!: Sequelize.HasManyHasAssociationsMixin<LP_ORDER_ITEM, LP_ORDER_ITEMId>;
+  countLpOrderItems!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_PRODUCT_CATEGORY via productId
   lpProductCategories!: LP_PRODUCT_CATEGORY[];
   getLpProductCategories!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_CATEGORY>;
