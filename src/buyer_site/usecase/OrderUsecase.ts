@@ -102,7 +102,7 @@ export class OrderUsecase {
       const cartItemLength = productsInMyCart.length;
       for (let i = 0; i < cartItemLength; i++) {
         const cartItem = productsInMyCart[i];
-        let input = new CreateOrderItemRequest(cartItem);
+        const input = new CreateOrderItemRequest(cartItem);
         input.orderId = order.id;
         input.productId = cartItem.productId;
         await this.orderItemRepo.createOrderItem(input, t);
@@ -123,7 +123,7 @@ export class OrderUsecase {
       );
 
       Logger.info('Start add shipment info');
-      var currentDate = new Date();
+      const currentDate = new Date();
       const oreateShipmentRequest: CreateShipmentRequest = {
         orderId: order.id,
         shipmentFee: order.shipmentFee,
