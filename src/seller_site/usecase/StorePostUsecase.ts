@@ -43,8 +43,8 @@ export class StorePostUsecase {
     await this.storePostRepo.deletePost(id)
   }
 
-  public deletePosts = async (ids: string[]) => {
-    await this.storePostRepo.deletePosts(ids)
+  public deletePosts = async (ids: string[], storeId: string) => {
+    await this.storePostRepo.deletePosts(ids, storeId)
   }
 
   public getPost = async (id: string,) => {

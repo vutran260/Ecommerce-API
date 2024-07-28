@@ -55,11 +55,12 @@ export class StorePostRepository {
   }
 
 
-  public deletePosts = async (ids: string[]) => {
+  public deletePosts = async (ids: string[], storeId: string) => {
     await LP_STORE_POST.destroy(
       {
         where: {
           id: { [Op.in]: ids },
+          storeId: storeId
         },
       });
   };
