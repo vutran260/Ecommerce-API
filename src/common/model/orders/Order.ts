@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { DATE_FORMAT } from '../../../../src/lib/constant/Constant';
-import { LP_CART } from '../../../../src/lib/mysql/models/LP_CART';
-import { LP_ORDER } from '../../../../src/lib/mysql/models/LP_ORDER';
-import { LP_ORDER_PAYMENT } from '../../../../src/lib/mysql/models/LP_ORDER_PAYMENT';
-import { LP_SHIPMENT } from '../../../../src/lib/mysql/models/LP_SHIPMENT';
-import { LP_ORDER_ITEM } from '../../../../src/lib/mysql/models/LP_ORDER_ITEM';
+import { DATE_FORMAT } from '../../../lib/constant/Constant';
+import { LP_CART } from '../../../lib/mysql/models/LP_CART';
+import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER_PAYMENT } from '../../../lib/mysql/models/LP_ORDER_PAYMENT';
+import { LP_SHIPMENT } from '../../../lib/mysql/models/LP_SHIPMENT';
+import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 
 export class Order {
   id: string;
