@@ -75,6 +75,12 @@ export class StorePostEndpoint {
     return ResponseData({ message: 'Inactive is successfully!' }, res);
   }
 
+  private deletePosts = async (req: ProtectedRequest, res: Response) => {
+    const ids: string[] = req.body.ids;
+    await this.storePostUsecase.deletePosts(ids);
+    return ResponseData({ message: 'Deleted is successfully!' }, res);
+  }
+
   public getRouter() {
     const router = express.Router();
 
@@ -82,6 +88,7 @@ export class StorePostEndpoint {
     router.post('/', this.createPost);
     router.get('/:id', this.getPost);
     router.delete('/:id', this.deletePost);
+    router.delete('/posts', this.deletePosts);
     router.put('/', this.updatePost);
     router.put('/active/:id', this.activePost);
     router.put('/inactive/:id', this.inactivePost);

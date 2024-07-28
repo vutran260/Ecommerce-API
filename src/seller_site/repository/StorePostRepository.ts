@@ -1,6 +1,7 @@
 import { LP_STORE_POST, LP_STORE_POSTAttributes } from '../../lib/mysql/models/LP_STORE_POST';
 import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
+import { Op } from 'sequelize';
 
 
 export class StorePostRepository {
@@ -52,6 +53,17 @@ export class StorePostRepository {
       where: { id: id }
     });
   }
+
+
+  public deletePosts = async (ids: string[]) => {
+    await LP_STORE_POST.destroy(
+      {
+        where: {
+          id: { [Op.in]: ids },
+        },
+      });
+  };
+
   public activePostId = async (id: string) => {
     await LP_STORE_POST.update(
       { status: 'ACTIVE' },

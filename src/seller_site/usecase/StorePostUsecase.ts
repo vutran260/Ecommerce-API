@@ -42,6 +42,11 @@ export class StorePostUsecase {
     }
     await this.storePostRepo.deletePost(id)
   }
+
+  public deletePosts = async (ids: string[]) => {
+    await this.storePostRepo.deletePosts(ids)
+  }
+
   public getPost = async (id: string,) => {
     const post = await this.storePostRepo.getPostById(id)
     return post
