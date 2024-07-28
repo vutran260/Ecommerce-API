@@ -62,3 +62,9 @@ export enum PaymentType {
   MOBILE_PAYMENT = 'MOBILE_PAYMENT',
   GIFT_CARD = 'GIFT_CARD',
 }
+
+export enum ShipmentPrice {
+  MAX_PRICE_APPY_FEE = 7000,
+  MIN_FEE = 0,
+  MAX_FEE = 500,
+}

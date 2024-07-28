@@ -1,24 +1,27 @@
 import { gmo } from '../../Config';
-import { CardResponse } from './response/CardResponse';
 import Logger from '../../lib/core/Logger';
-import { MemberResponse } from './response/MemberResponse';
-import { SiteRequest } from './request/SiteRequest';
-import { SaveCardRequest } from './request/SaveCardRequest';
-import { GMOError } from './response/GMOError';
 import {
   BadRequestError,
   InternalError,
 } from '../../lib/http/custom_error/ApiError';
-import { errorCodesConstant } from './utils/ErrorCodesConstant';
 import { CheckPointRequest } from './request/CheckPointRequest';
-import { CheckPointResponse } from './response/CheckPointResponse';
 import {
   EntryTransactionRequest,
   TransactionRequest,
 } from './request/EntryTransactionRequest';
+import {
+  ExecTransactionRequest,
+  PreExecTransactionRequest,
+} from './request/ExecTransactionRequest';
+import { SaveCardRequest } from './request/SaveCardRequest';
+import { SiteRequest } from './request/SiteRequest';
+import { CardResponse } from './response/CardResponse';
+import { CheckPointResponse } from './response/CheckPointResponse';
 import { EntryTransactionResponse } from './response/EntryTransactionResponse';
-import { ExecTransactionRequest } from './request/ExecTransactionRequest';
 import { ExecTransactionResponse } from './response/ExecTransactionResponse';
+import { GMOError } from './response/GMOError';
+import { MemberResponse } from './response/MemberResponse';
+import { errorCodesConstant } from './utils/ErrorCodesConstant';
 
 export class GMOPaymentService {
   public getMemberById = async (memberId: string) => {
@@ -269,15 +272,18 @@ export class GMOPaymentService {
   };
 
   public execTran = async (input: ExecTransactionRequest) => {
-    Logger.info('exec transaction', input.orderID);
+    Logger.info('exec transaction with MemberID', input.memberID);
 
     const endpoint = `${gmo.url}/payment/ExecTran.json`;
-    const request = new ExecTransactionRequest(
+    const request = new PreExecTransactionRequest(
+      gmo.siteId,
+      gmo.sitePassword,
       input.accessID,
       input.accessPass,
+      input.memberID,
+      input.cardSeq,
       input.orderID,
       input.method,
-      input.token,
     );
     const requestJson = JSON.stringify(request);
 

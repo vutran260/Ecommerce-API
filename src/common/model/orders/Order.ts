@@ -1,10 +1,10 @@
 import moment from 'moment';
+import { CartItem } from '../../../buyer_site/endpoint/CartEndpoint';
 import { DATE_FORMAT } from '../../../lib/constant/Constant';
-import { LP_CART } from '../../../lib/mysql/models/LP_CART';
 import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 import { LP_ORDER_PAYMENT } from '../../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { LP_SHIPMENT } from '../../../lib/mysql/models/LP_SHIPMENT';
-import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 
 export class Order {
   id: string;
@@ -42,19 +42,18 @@ export class OrderItem {
 }
 
 export class CreateOrderRequest {
-  token: string;
-  buyerId: string;
-  storeId: string;
-  receiverId?: string;
   orderStatus?: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
   totalAmount: number;
   createdAt = new Date();
+  createdBy?: string;
 }
 
 export class UpdateOrderRequest {
+  buyerId: string;
+  storeId: string;
   orderStatus?: string;
   amount?: number;
   shipmentFee?: number;
@@ -78,20 +77,17 @@ export class CreateOrderItemRequest {
   updatedAt = new Date();
   deletedAt?: Date;
 
-  constructor(cart_item: LP_CART) {
-    this.productName =
-      cart_item && cart_item.product ? cart_item.product.productName : '';
-    this.productImage =
-      cart_item && cart_item.product ? cart_item.product.productImage : '';
-    this.productDescription =
-      cart_item && cart_item.product
-        ? cart_item.product.productDescription
-        : '';
-    this.productOverview =
-      cart_item && cart_item.product ? cart_item.product.productOverview : '';
-
-    this.price = cart_item && cart_item.product ? cart_item.product.price : 0;
-    this.quantity = cart_item.quantity;
+  constructor(cartItem: CartItem) {
+    const finalItemPrice = cartItem.isSubscription
+      ? cartItem.product.calculatedSubscriptionPrice
+      : cartItem.product.calculatedNormalPrice;
+    this.productId = cartItem.productId;
+    this.productName = cartItem.product.productName;
+    this.productImage = cartItem.product.productImage.toString();
+    this.productDescription = cartItem.product.productDescription;
+    this.productOverview = cartItem.product.productOverview;
+    this.price = finalItemPrice;
+    this.quantity = cartItem.quantity;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }

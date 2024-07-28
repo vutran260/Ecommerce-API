@@ -5,6 +5,7 @@ import {
   CreateShipmentRequest,
   Order,
   OrderItem,
+  UpdateOrderRequest,
   UpdateOrderStatusRequest,
 } from '../../common/model/orders/Order';
 import {
@@ -13,8 +14,13 @@ import {
   OrderStatus,
   PaymentSatus,
   PaymentType,
+  ShipmentPrice,
 } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
+import {
+  BadRequestError,
+  NotFoundError,
+} from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
@@ -23,7 +29,7 @@ import { Filter, Paging } from '../../lib/paging/Request';
 import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
 import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTransactionRequest';
 import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
-import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { CartItem } from '../endpoint/CartEndpoint';
 import { AddressRepository } from '../repository/AddressRepository';
 import { BuyerRepository } from '../repository/BuyerRepository';
 import { CartRepository } from '../repository/CartRepository';
@@ -70,11 +76,17 @@ export class OrderUsecase {
     return await this.gmoPaymentService.entryTran(transactionRequest);
   };
 
-  public execTran = async (execTransactionRequest: ExecTransactionRequest) => {
-    return await this.gmoPaymentService.execTran(execTransactionRequest);
+  public execTran = async (
+    preExecTransactionRequest: ExecTransactionRequest,
+  ) => {
+    return await this.gmoPaymentService.execTran(preExecTransactionRequest);
   };
 
-  public createOrder = async (orderCreateRequest: CreateOrderRequest) => {
+  public createOrder = async (
+    cardSeq: string,
+    buyerId: string,
+    storeId: string,
+  ) => {
     // TODO: check fraud
     // Step 1: Shift Events
     Logger.info('Start calculate point');
@@ -84,32 +96,53 @@ export class OrderUsecase {
 
     try {
       Logger.info('Start create order');
-      const order = await this.orderRepo.createOrder(orderCreateRequest, t);
+      const createOrderRequest: CreateOrderRequest = {
+        orderStatus: OrderStatus.PENDING,
+        amount: 0,
+        shipmentFee: 0,
+        discount: 0,
+        totalAmount: 0,
+        createdAt: new Date(),
+        createdBy: buyerId,
+      };
+      const order = await this.orderRepo.createOrder(createOrderRequest, t);
 
       if (!order) {
-        throw new BadRequestError('Unable to create order');
+        throw new NotFoundError('Order not found');
       }
+
       Logger.info('Start add products from cart to order item');
-      const productsInMyCart = await this.cartRepo.getListItemInCart(
-        orderCreateRequest.storeId,
-        orderCreateRequest.buyerId,
-      );
+      const items = await this.cartRepo.getListItemInCart(storeId, buyerId);
+
+      const productsInMyCart = items.map((item) => CartItem.FromLP_CART(item));
 
       Logger.info(productsInMyCart);
       if (productsInMyCart && productsInMyCart.length <= 0) {
         throw new BadRequestError('Opps, have no any items in your cart');
       }
       const cartItemLength = productsInMyCart.length;
+      let totalAmount = 0;
       for (let i = 0; i < cartItemLength; i++) {
         const cartItem = productsInMyCart[i];
         const input = new CreateOrderItemRequest(cartItem);
         input.orderId = order.id;
-        input.productId = cartItem.productId;
         await this.orderItemRepo.createOrderItem(input, t);
+        if (!input.price || (input.price && input.price <= 0)) {
+          Logger.error('Bad price');
+          throw new BadRequestError('The price of item must be greater than 0');
+        }
+
+        totalAmount += input.price * input.quantity;
 
         Logger.info('Start delete items from cart');
         await this.cartRepo.deleteItem(cartItem.id, t);
       }
+
+      const shipmentFee =
+        totalAmount > ShipmentPrice.MAX_PRICE_APPY_FEE
+          ? ShipmentPrice.MIN_FEE
+          : ShipmentPrice.MAX_FEE;
+      const finalAmount = totalAmount - shipmentFee;
 
       Logger.info('Start add payment info');
       const oreateOrderPaymentRequest: CreateOrderPaymentRequest = {
@@ -126,7 +159,7 @@ export class OrderUsecase {
       const currentDate = new Date();
       const oreateShipmentRequest: CreateShipmentRequest = {
         orderId: order.id,
-        shipmentFee: order.shipmentFee,
+        shipmentFee: shipmentFee,
         shipmentFeeDiscount: 0,
         arrivedAt: new Date(currentDate.setDate(currentDate.getDate() + 3)), // TODO: need to calculate
         shipmentBy: '',
@@ -145,13 +178,14 @@ export class OrderUsecase {
       Logger.info('Start create transaction');
       // make orderID have length  = 27 match with gmo require
       const orderIDForTran = order.id.substring(0, 27);
-      if (!order.totalAmount || (order.totalAmount && order.totalAmount <= 0)) {
-        throw new BadRequestError();
+      if (finalAmount <= 0) {
+        Logger.error('Bad total amount');
+        throw new BadRequestError('Your total amount must be greater than 0');
       }
       const transactionRequest: TransactionRequest = {
         orderID: orderIDForTran,
         jobCd: JobCd.CAPTURE,
-        amount: order.totalAmount,
+        amount: finalAmount,
       };
       const theTransInfo = await this.gmoPaymentService.entryTran(
         transactionRequest,
@@ -160,23 +194,19 @@ export class OrderUsecase {
 
       Logger.info('Start execute transaction');
       if (theTransInfo) {
-        const execTransactionRequest = new ExecTransactionRequest(
-          theTransInfo.accessID,
-          theTransInfo.accessPass,
-          orderIDForTran,
-          ChargeMethod.BULK, // 1: Bulk 2: Installment 3: Bonus (One time) 5: Revolving
-          orderCreateRequest.token,
-        );
+        const execTransactionRequest: ExecTransactionRequest = {
+          accessID: theTransInfo.accessID,
+          accessPass: theTransInfo.accessPass,
+          memberID: buyerId,
+          cardSeq: cardSeq,
+          orderID: orderIDForTran,
+          method: ChargeMethod.BULK,
+        };
         const execTranResponse = await this.gmoPaymentService.execTran(
           execTransactionRequest,
         );
 
         if (execTranResponse) {
-          Logger.info('Start update order status: SUCESS');
-          const updateRequest: UpdateOrderStatusRequest = {
-            orderId: order.id,
-            status: OrderStatus.SUCESS,
-          };
           this.orderRepo.updateOrderStatus(updateRequest, t);
 
           Logger.info('Start update payment status: PAID');
@@ -188,7 +218,25 @@ export class OrderUsecase {
         }
       }
       await t.commit();
-      return order;
+
+      // update order
+      const updateCreateRequest: UpdateOrderRequest = {
+        buyerId: buyerId,
+        storeId: storeId,
+        orderStatus: OrderStatus.SUCESS,
+        amount: totalAmount,
+        shipmentFee: shipmentFee,
+        discount: 0,
+        totalAmount: finalAmount,
+        updatedAt: new Date(),
+        updatedBy: buyerId,
+      };
+      const orderUpdated = await this.orderRepo.updateOrder(
+        order.id,
+        updateCreateRequest,
+      );
+
+      return orderUpdated;
     } catch (error) {
       await t.rollback();
       Logger.error('Fail to create order');
@@ -206,9 +254,10 @@ export class OrderUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    buyerId: string,
   ) => {
     let orders: LP_ORDER[] = [];
-    orders = await this.orderRepo.getOrders(filter, order, paging);
+    orders = await this.orderRepo.getOrders(filter, order, paging, buyerId);
     return orders.map((order) => {
       return new Order(order);
     });

@@ -18,27 +18,29 @@ import Logger from '../../lib/core/Logger';
 
 export class OrderRepository {
   public createOrder = async (
-    orderCreateRequest: CreateOrderRequest,
+    createOrderRequest: CreateOrderRequest,
     t?: Transaction,
   ) => {
-    const order = await LP_ORDER.create(orderCreateRequest, { transaction: t });
+    const order = await LP_ORDER.create(createOrderRequest, { transaction: t });
     return this.getOrderById(order.id, t);
   };
 
   public updateOrder = async (
     id: string,
-    updateCreateRequest: UpdateOrderRequest,
+    updateOrderRequest: UpdateOrderRequest,
     t?: Transaction,
   ) => {
     await LP_ORDER.update(
       {
-        orderStatus: updateCreateRequest.orderStatus,
-        amount: updateCreateRequest.amount,
-        shipmentFee: updateCreateRequest.shipmentFee,
-        discount: updateCreateRequest.discount,
-        totalAmount: updateCreateRequest.totalAmount,
+        buyerId: updateOrderRequest.buyerId,
+        storeId: updateOrderRequest.storeId,
+        orderStatus: updateOrderRequest.orderStatus,
+        amount: updateOrderRequest.amount,
+        shipmentFee: updateOrderRequest.shipmentFee,
+        discount: updateOrderRequest.discount,
+        totalAmount: updateOrderRequest.totalAmount,
         updatedAt: new Date(),
-        updatedBy: '',
+        updatedBy: updateOrderRequest.updatedBy,
       },
       {
         where: {
@@ -81,8 +83,15 @@ export class OrderRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    buyerId: string,
   ) => {
     try {
+      filter.push({
+        operation: 'eq',
+        value: buyerId,
+        attribute: 'buyerId',
+      });
+
       const count = await LP_ORDER.count({
         where: BuildQuery(filter),
         distinct: true,
