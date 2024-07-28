@@ -1,15 +1,15 @@
 import { Transaction } from 'sequelize';
-import { LP_ORDER_ITEM } from '../../../src/lib/mysql/models/LP_ORDER_ITEM';
+import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { CreateOrderItemRequest } from '../../common/model/orders/Order';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from '../../../src/lib/paging/Request';
-import { BuildOrderQuery, LpOrder } from '../../../src/lib/paging/Order';
+} from '../../lib/paging/Request';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import lodash, { forEach } from 'lodash';
-import Logger from '../../../src/lib/core/Logger';
+import Logger from '../../lib/core/Logger';
 
 export class OrderItemRepository {
   public createOrderItem = async (

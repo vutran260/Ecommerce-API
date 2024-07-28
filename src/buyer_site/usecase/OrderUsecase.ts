@@ -13,13 +13,13 @@ import {
   OrderStatus,
   PaymentSatus,
   PaymentType,
-} from '../../../src/lib/constant/Constant';
-import Logger from '../../../src/lib/core/Logger';
-import { lpSequelize } from '../../../src/lib/mysql/Connection';
-import { LP_ORDER } from '../../../src/lib/mysql/models/LP_ORDER';
-import { LP_ORDER_ITEM } from '../../../src/lib/mysql/models/LP_ORDER_ITEM';
-import { LpOrder } from '../../../src/lib/paging/Order';
-import { Filter, Paging } from '../../../src/lib/paging/Request';
+} from '../../lib/constant/Constant';
+import Logger from '../../lib/core/Logger';
+import { lpSequelize } from '../../lib/mysql/Connection';
+import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
+import { LpOrder } from '../../lib/paging/Order';
+import { Filter, Paging } from '../../lib/paging/Request';
 import { GMOPaymentService } from '../../../src/third_party/gmo_getway/GMOPaymentSerivce';
 import { TransactionRequest } from '../../../src/third_party/gmo_getway/request/EntryTransactionRequest';
 import { ExecTransactionRequest } from '../../../src/third_party/gmo_getway/request/ExecTransactionRequest';

@@ -5,15 +5,15 @@ import {
   UpdateOrderRequest,
   UpdateOrderStatusRequest,
 } from '../../../src/common/model/orders/Order';
-import Logger from '../../../src/lib/core/Logger';
-import { BadRequestError } from '../../../src/lib/http/custom_error/ApiError';
-import { BuildOrderQuery, LpOrder } from '../../../src/lib/paging/Order';
+import Logger from '../../lib/core/Logger';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from '../../../src/lib/paging/Request';
+} from '../../lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 
 export class OrderRepository {

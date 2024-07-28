@@ -1,8 +1,8 @@
 import express, { Response } from 'express';
-import { ProtectedRequest } from '../../../src/lib/http/app-request';
-import { ResponseData, ResponseListData } from '../../../src/lib/http/Response';
-import { PagingMiddelware } from '../../../src/lib/paging/Middelware';
-import { PaginationRequest } from '../../../src/lib/paging/Request';
+import { ProtectedRequest } from '../../lib/http/app-request';
+import { ResponseData, ResponseListData } from '../../lib/http/Response';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
+import { PaginationRequest } from '../../lib/paging/Request';
 import { OrderUsecase } from '../usecase/OrderUsecase';
 
 export class OrderEndpoint {

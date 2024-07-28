@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize';
-import { LP_SHIPMENT } from '../../../src/lib/mysql/models/LP_SHIPMENT';
+import { LP_SHIPMENT } from '../../lib/mysql/models/LP_SHIPMENT';
 import { LP_ORDER_PAYMENT } from '../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { CreateShipmentRequest } from '../../../src/common/model/orders/Order';
 

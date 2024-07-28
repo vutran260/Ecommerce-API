@@ -1,8 +1,8 @@
 import { Order, OrderItem } from '../../../src/common/model/orders/Order';
-import { LP_ORDER } from '../../../src/lib/mysql/models/LP_ORDER';
-import { LP_ORDER_ITEM } from '../../../src/lib/mysql/models/LP_ORDER_ITEM';
-import { LpOrder } from '../../../src/lib/paging/Order';
-import { Filter, Paging } from '../../../src/lib/paging/Request';
+import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
+import { LpOrder } from '../../lib/paging/Order';
+import { Filter, Paging } from '../../lib/paging/Request';
 import { OrderItemRepository } from '../repository/OrderItemRepository';
 import { OrderRepository } from '../repository/OrderRepository';
 

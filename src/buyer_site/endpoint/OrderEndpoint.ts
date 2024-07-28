@@ -1,9 +1,9 @@
 import { plainToClass } from 'class-transformer';
 import express, { Response } from 'express';
 import { CreateOrderRequest } from '../../../src/common/model/orders/Order';
-import { validatorRequest } from '../../../src/lib/helpers/validate';
-import { PagingMiddelware } from '../../../src/lib/paging/Middelware';
-import { PaginationRequest } from '../../../src/lib/paging/Request';
+import { validatorRequest } from '../../lib/helpers/validate';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
+import { PaginationRequest } from '../../lib/paging/Request';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { OrderUsecase } from '../usecase/OrderUsecase';

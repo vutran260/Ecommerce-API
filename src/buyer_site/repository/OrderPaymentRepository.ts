@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize';
-import { PaymentSatus } from '../../../src/lib/constant/Constant';
-import { LP_ORDER_PAYMENT } from '../../../src/lib/mysql/models/LP_ORDER_PAYMENT';
+import { PaymentSatus } from '../../lib/constant/Constant';
+import { LP_ORDER_PAYMENT } from '../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { CreateOrderPaymentRequest } from '../../common/model/orders/Order';
 
 export class OrderPaymentRepository {

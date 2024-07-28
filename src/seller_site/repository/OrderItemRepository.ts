@@ -1,14 +1,14 @@
 import lodash, { forEach } from 'lodash';
 import { Transaction } from 'sequelize';
-import Logger from '../../../src/lib/core/Logger';
-import { LP_ORDER_ITEM } from '../../../src/lib/mysql/models/LP_ORDER_ITEM';
-import { BuildOrderQuery, LpOrder } from '../../../src/lib/paging/Order';
+import Logger from '../../lib/core/Logger';
+import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from '../../../src/lib/paging/Request';
+} from '../../lib/paging/Request';
 
 export class OrderItemRepository {
   public getListOrderItemByOrderId = async (
