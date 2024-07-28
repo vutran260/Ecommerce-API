@@ -159,24 +159,19 @@ export class ProductRepository {
   };
 
   private filterSortByPrice = (orders: LpOrder[]): any => {
-    let isSortPrice = false;
-    let sortPriceDirection = '';
-
     orders.forEach(item => {
       if (item.attribute === 'price') {
         item.attribute = 'sortPrice';
-        isSortPrice = true;
-        sortPriceDirection = item.direction;
       }
     });
 
-    if (isSortPrice) {
-      return [
-        [Sequelize.literal('sortPrice'), sortPriceDirection ]
-      ];
-    }
-
-    return BuildOrderQuery(orders);
+    const orderQueries = BuildOrderQuery(orders);
+    return lodash.map(orderQueries, order => {
+      if (lodash.get(order, '[0]') === 'sortPrice') {
+        return [Sequelize.literal('sortPrice'), lodash.get(order, '[1]')];
+      }
+      return order;
+    });
   };
 }
 
