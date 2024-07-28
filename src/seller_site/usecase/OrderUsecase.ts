@@ -1,4 +1,4 @@
-import { Order, OrderItem } from '../../../src/common/model/orders/Order';
+import { Order, OrderItem } from '../../common/model/orders/Order';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { LpOrder } from '../../lib/paging/Order';
