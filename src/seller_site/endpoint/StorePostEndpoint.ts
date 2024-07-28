@@ -8,6 +8,7 @@ import { IsNotEmpty, IsString } from "class-validator";
 import { PaginationRequest } from "../../lib/paging/Request";
 import { StoreFilterMiddelware } from "../../seller_site/middleware/StoreFilterMiddelware";
 import { PagingMiddelware } from "../../lib/paging/Middelware";
+import { LP_STORE_POSTAttributes } from "../../lib/mysql/models/LP_STORE_POST";
 
 
 export class StorePostEndpoint {
@@ -22,7 +23,12 @@ export class StorePostEndpoint {
     addPostRequest.storeId = req.storeId;
 
     await validatorRequest(addPostRequest);
-    await this.storePostUsecase.CreatePost(addPostRequest);
+
+    const addPostInput = addPostRequest.toLpPost();
+    addPostInput.createdBy = req.user.id;
+    addPostInput.updatedBy = req.user.id;
+
+    await this.storePostUsecase.CreatePost(addPostInput);
     return ResponseData("add post success!!!", res);
   };
   private getPosts = async (req: PaginationRequest, res: Response) => {
@@ -33,10 +39,13 @@ export class StorePostEndpoint {
   private updatePost = async (req: ProtectedRequest, res: Response) => {
     const updatePostsRequest = plainToInstance(StorePost, req.body);
     updatePostsRequest.storeId = req.storeId
-    // updateItemRequest.storeId = req.storeId;
 
     await validatorRequest(updatePostsRequest);
-    await this.storePostUsecase.updatePost(updatePostsRequest);
+
+    const updatePostInput = updatePostsRequest.toLpPost();
+    updatePostInput.updatedBy = req.user.id;
+
+    await this.storePostUsecase.updatePost(updatePostInput);
     return ResponseData("update post success!!!", res);
   }
 
@@ -104,4 +113,16 @@ export class StorePost {
   @IsString()
   @IsNotEmpty()
   status: string;
+
+  toLpPost = ():LP_STORE_POSTAttributes =>{ 
+    return {
+      id: this.id,
+      storeId: this.storeId,
+      title: this.title,
+      postImage: this.postImage,
+      details: this.details,
+      status: this.status
+    }
+  }
 }
+

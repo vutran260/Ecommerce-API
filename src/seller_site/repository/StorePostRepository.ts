@@ -1,13 +1,12 @@
-import { StorePost } from '../endpoint/StorePostEndpoint';
-import { LP_STORE_POST } from '../../lib/mysql/models/LP_STORE_POST';
+import { LP_STORE_POST, LP_STORE_POSTAttributes } from '../../lib/mysql/models/LP_STORE_POST';
 import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 
 export class StorePostRepository {
 
-  public createPost = async (postData: StorePost) => {
-    const post = await LP_STORE_POST.create(postData)
+  public createPost = async (postData: LP_STORE_POSTAttributes) => {
+    await LP_STORE_POST.create(postData)
     return
   }
 
@@ -40,13 +39,14 @@ export class StorePostRepository {
     return posts
   };
 
-  public updatePost = async (id: string, updateData: any) => {
+  public updatePost = async (updateData: LP_STORE_POSTAttributes) => {
 
     const result = await LP_STORE_POST.update(updateData, {
-      where: { id: id }
+      where: { id: updateData.id }
     });
     return result
   };
+
   public deletePost = async (id: string) => {
     const result = await LP_STORE_POST.destroy({
       where: { id: id }

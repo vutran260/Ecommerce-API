@@ -1,8 +1,8 @@
 import { Filter, Paging } from "../../lib/paging/Request";
 import { BadRequestError } from "../../lib/http/custom_error/ApiError";
-import { StorePost } from "../endpoint/StorePostEndpoint";
 import { StorePostRepository } from "../repository/StorePostRepository";
 import { LpOrder } from "../../lib/paging/Order";
+import { LP_STORE_POSTAttributes } from "../../lib/mysql/models/LP_STORE_POST";
 
 export class StorePostUsecase {
   private storePostRepo: StorePostRepository
@@ -12,18 +12,8 @@ export class StorePostUsecase {
     this.storePostRepo = storePostRepo
   }
 
-  public CreatePost = async (Post: StorePost) => {
-    if (!Post.postImage) {
-      throw new BadRequestError('Missing image')
-    }
-    if (!Post.title) {
-      throw new BadRequestError('Missing title')
-    }
-    if (!Post.details) {
-      throw new BadRequestError('Missing details')
-    }
+  public CreatePost = async (Post: LP_STORE_POSTAttributes) => {
     await this.storePostRepo.createPost(Post)
-
   }
 
   public getPosts = async (
@@ -34,14 +24,15 @@ export class StorePostUsecase {
     return await this.storePostRepo.getPosts( paging, order, filter)
   }
 
-  public updatePost = async (updatePostRequest: StorePost) => {
+  public updatePost = async (updatePostInput: LP_STORE_POSTAttributes) => {
 
-    const post = await this.storePostRepo.getPostById(updatePostRequest.id);
+    const post = await this.storePostRepo.getPostById(updatePostInput.id);
     if (!post) {
       throw new BadRequestError('post not exist');
     }
-    await this.storePostRepo.updatePost(updatePostRequest.id, updatePostRequest);
-    return this.storePostRepo.getPostById(updatePostRequest.id);
+
+    await this.storePostRepo.updatePost(updatePostInput);
+    return this.storePostRepo.getPostById(updatePostInput.id);
   }
 
   public deletePost = async (id: string) => {
