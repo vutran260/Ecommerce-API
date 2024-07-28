@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import express, { Response } from 'express';
-import { CreateOrderRequest } from '../../../src/common/model/orders/Order';
+import { CreateOrderRequest } from '../../common/model/orders/Order';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';

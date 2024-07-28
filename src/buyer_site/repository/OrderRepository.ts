@@ -4,8 +4,7 @@ import {
   CreateOrderRequest,
   UpdateOrderRequest,
   UpdateOrderStatusRequest,
-} from '../../../src/common/model/orders/Order';
-import Logger from '../../lib/core/Logger';
+} from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
@@ -15,6 +14,7 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
+import Logger from '../../lib/core/Logger';
 
 export class OrderRepository {
   public createOrder = async (

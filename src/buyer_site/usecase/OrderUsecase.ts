@@ -6,7 +6,7 @@ import {
   Order,
   OrderItem,
   UpdateOrderStatusRequest,
-} from '../../../src/common/model/orders/Order';
+} from '../../common/model/orders/Order';
 import {
   ChargeMethod,
   JobCd,
@@ -20,9 +20,9 @@ import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
-import { GMOPaymentService } from '../../../src/third_party/gmo_getway/GMOPaymentSerivce';
-import { TransactionRequest } from '../../../src/third_party/gmo_getway/request/EntryTransactionRequest';
-import { ExecTransactionRequest } from '../../../src/third_party/gmo_getway/request/ExecTransactionRequest';
+import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
+import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTransactionRequest';
+import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { AddressRepository } from '../repository/AddressRepository';
 import { BuyerRepository } from '../repository/BuyerRepository';
