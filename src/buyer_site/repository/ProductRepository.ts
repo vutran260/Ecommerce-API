@@ -189,13 +189,13 @@ export class ProductRepository {
             ],
           },
         ],
+            order: [['createdAt', 'DESC']],
       });
 
-      return favorites;
-    } catch (error: any) {
-      Logger.error(error);
-      Logger.error(error.message);
-      throw error;
+        return { favorites, total: favorites.length };
+    } catch (error) {
+        Logger.error(error);
+        throw new Error('Failed to retrieve favorite products.');
     }
   };
 
@@ -221,40 +221,22 @@ export class ProductRepository {
       return { message: 'Product added to favorites successfully.' };
     } catch (error) {
       Logger.error(error);
-      Logger.error(error.message);
       throw error;
     }
   }
 
   public removeFavoriteProduct = async (productId: string, buyerId: string) => {
     try {
-      if (typeof buyerId !== 'string' || typeof productId !== 'string') {
-        throw new Error('Invalid data types for buyerId or productId.');
-      }
+        const result = await LP_FAVORITE.destroy({ where: { buyerId, productId } });
 
-      const buyer = await LP_BUYER.findByPk(buyerId);
-      const product = await LP_PRODUCT.findByPk(productId);
+        if (result === 0) {
+            throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
+        }
 
-      if (!buyer || !product) {
-        throw new NotFoundError('Invalid buyerId or productId.');
-      }
-
-      const result = await LP_FAVORITE.destroy({
-        where: {
-          buyerId,
-          productId,
-        },
-      });
-
-      if (result === 0) {
-        throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
-      }
-
-      return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
-    } catch (error: any) {
-      Logger.error(error);
-      Logger.error(error.message);
-      throw error;
+        return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
+    } catch (error) {
+        Logger.error(error);
+        throw error;
     }
   };
 
