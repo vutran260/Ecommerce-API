@@ -127,8 +127,12 @@ export class OrderUsecase {
         const input = new CreateOrderItemRequest(cartItem);
         input.orderId = order.id;
         await this.orderItemRepo.createOrderItem(input, t);
-        const price = input.price ? input.price : 1;
-        totalAmount += price * input.quantity;
+        if (!input.price || (input.price && input.price <= 0)) {
+          Logger.error('Bad price');
+          throw new BadRequestError('The price of item must be greater than 0');
+        }
+
+        totalAmount += input.price * input.quantity;
 
         Logger.info('Start delete items from cart');
         await this.cartRepo.deleteItem(cartItem.id, t);
@@ -175,7 +179,8 @@ export class OrderUsecase {
       // make orderID have length  = 27 match with gmo require
       const orderIDForTran = order.id.substring(0, 27);
       if (finalAmount <= 0) {
-        throw new BadRequestError();
+        Logger.error('Bad total amount');
+        throw new BadRequestError('Your total amount must be greater than 0');
       }
       const transactionRequest: TransactionRequest = {
         orderID: orderIDForTran,

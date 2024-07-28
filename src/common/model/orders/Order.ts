@@ -68,7 +68,7 @@ export class CreateOrderItemRequest {
   orderId?: string;
   productId?: string;
   productName: string;
-  productImage: string; // con tros nayf
+  productImage: string;
   productDescription: string;
   productOverview: string;
   price?: number;
@@ -78,10 +78,9 @@ export class CreateOrderItemRequest {
   deletedAt?: Date;
 
   constructor(cartItem: CartItem) {
-    const finalItemPrice =
-      cartItem.isSubscription == true
-        ? cartItem.product.calculatedSubscriptionPrice
-        : cartItem.product.calculatedNormalPrice;
+    const finalItemPrice = cartItem.isSubscription
+      ? cartItem.product.calculatedSubscriptionPrice
+      : cartItem.product.calculatedNormalPrice;
     this.productId = cartItem.productId;
     this.productName = cartItem.product.productName;
     this.productImage = cartItem.product.productImage.toString();
