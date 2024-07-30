@@ -2,6 +2,7 @@ import { LP_STORE_POST, LP_STORE_POSTAttributes } from '../../lib/mysql/models/L
 import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { Op } from 'sequelize';
+import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 
 
 export class StorePostRepository {
@@ -14,6 +15,9 @@ export class StorePostRepository {
   public getPostById = async (id: string) => {
 
     const post = await LP_STORE_POST.findByPk(id);
+    if (!post) {
+      throw new NotFoundError()
+    }
     return post
   }
 
