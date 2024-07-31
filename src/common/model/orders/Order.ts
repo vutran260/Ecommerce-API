@@ -158,7 +158,7 @@ export class OrderDetailResponse {
 }
 
 export class OrderAddressBuyerCreate {
-  orderId?: string;
+  orderId: string;
   nameKana: string;
   nameKanji: string;
   postCode: string;
