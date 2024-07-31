@@ -166,36 +166,36 @@ export class ProductRepository {
     }
   };
 
-  public getFavoriteProduct = async (buyerId: string) => {
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging) => {
     try {
+      const count = await LP_FAVORITE.count({
+        where: {
+          buyerId,
+          ...BuildQuery(filter),
+        },
+      });
+      paging.total = count;
+
       const favorites = await LP_FAVORITE.findAll({
         where: {
           buyerId,
+          ...BuildQuery(filter),
         },
         include: [
           {
             model: LP_PRODUCT,
             as: 'product',
-            include: [
-              {
-                association: LP_PRODUCT.associations.lpProductComponents,
-              },
-              {
-                association: LP_PRODUCT.associations.lpProductCategories,
-              },
-              {
-                association: LP_PRODUCT.associations.lpProductFaqs,
-              },
-            ],
           },
         ],
-            order: [['createdAt', 'DESC']],
+        order: [['createdAt', 'DESC']],
+        offset: GetOffset(paging),
+        limit: paging.limit,
       });
 
-        return { favorites, total: favorites.length };
+      return { favorites, total: count };
     } catch (error) {
-        Logger.error(error);
-        throw new Error('Failed to retrieve favorite products.');
+      Logger.error(error);
+      throw new Error('Failed to retrieve favorite products.');
     }
   };
 

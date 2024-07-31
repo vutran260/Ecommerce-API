@@ -49,8 +49,8 @@ export class ProductUsecase {
     });
   };
 
-  public getFavoriteProduct = async (buyerId: string) => {
-      return await this.productRepo.getFavoriteProduct(buyerId);
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging) => {
+      return await this.productRepo.getFavoriteProduct(buyerId, filter, paging);
   };
 
   public addFavoriteProduct = async (productId: string, buyerId: string) => {

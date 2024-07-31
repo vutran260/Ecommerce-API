@@ -31,7 +31,7 @@ export class ProductEndpoint {
 
   private getFavoriteProduct = async (req: PaginationRequest, res: Response) => {
     const buyerId = req.user.id;
-    const results = await this.productUsecase.getFavoriteProduct(buyerId);
+    const results = await this.productUsecase.getFavoriteProduct(buyerId, req.filterList, req.paging);
     return ResponseListData(results, res, req.paging);
   };
 
@@ -52,15 +52,10 @@ export class ProductEndpoint {
   public getRouter() {
     const router = express.Router();
     router.get('/detail/:id', this.getDetailProduct);
-    router.get(
-      '/products',
-      PagingMiddelware,
-      StoreFilterMiddelware,
-      this.getProducts,
-    );
-    router.get('/favorite', this.getFavoriteProduct);
-    router.post('/favorite/:productId', this.addFavoriteProduct);
-    router.delete('/favorite/:productId', this.removeFavoriteProduct);
+    router.get('/products', PagingMiddelware, StoreFilterMiddelware, this.getProducts);
+    router.get('/favorite', PagingMiddelware, StoreFilterMiddelware, this.getFavoriteProduct);
+    router.post('/favorite/:productId', PagingMiddelware, StoreFilterMiddelware, this.addFavoriteProduct);
+    router.delete('/favorite/:productId', PagingMiddelware, StoreFilterMiddelware, this.removeFavoriteProduct);
 
     return router;
   }
