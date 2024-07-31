@@ -58,19 +58,15 @@ export class OrderRepository {
       include: [
         {
           association: LP_ORDER.associations.buyer,
-          include: [
-            {
-              association: 'lpAddressBuyers',
-              limit: 1,
-              order: [['createdAt', 'DESC']],
-            },
-          ],
         },
         {
           association: LP_ORDER.associations.lpOrderPayments,
         },
         {
           association: LP_ORDER.associations.lpShipments,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderAddressBuyer,
         },
       ],
       transaction: t,

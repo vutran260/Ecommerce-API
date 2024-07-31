@@ -4,6 +4,7 @@ import {
   CreateOrderRequest,
   CreateShipmentRequest,
   Order,
+  OrderAddressBuyerCreate,
   OrderItem,
   UpdateOrderRequest,
   UpdateOrderStatusRequest,
@@ -31,8 +32,8 @@ import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTr
 import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
 import { CartItem } from '../endpoint/CartEndpoint';
 import { AddressRepository } from '../repository/AddressRepository';
-import { BuyerRepository } from '../repository/BuyerRepository';
 import { CartRepository } from '../repository/CartRepository';
+import { OrderAddressBuyerRepository } from '../repository/OrderAddressBuyerRepository';
 import { OrderItemRepository } from '../repository/OrderItemRepository';
 import { OrderPaymentRepository } from '../repository/OrderPaymentRepository';
 import { OrderRepository } from '../repository/OrderRepository';
@@ -44,9 +45,9 @@ export class OrderUsecase {
   private cartRepo: CartRepository;
   private orderPaymentRepo: OrderPaymentRepository;
   private shipmentRepository: ShipmentRepository;
-  private buyerRepository: BuyerRepository;
-  private addressRepository: AddressRepository;
+  private orderAddressBuyerRepository: OrderAddressBuyerRepository;
   private gmoPaymentService: GMOPaymentService;
+  private addressRepository: AddressRepository;
 
   constructor(
     orderRepo: OrderRepository,
@@ -54,7 +55,7 @@ export class OrderUsecase {
     cartRepo: CartRepository,
     orderPaymentRepo: OrderPaymentRepository,
     shipmentRepository: ShipmentRepository,
-    buyerRepository: BuyerRepository,
+    orderAddressBuyerRepository: OrderAddressBuyerRepository,
     addressRepository: AddressRepository,
     gmoPaymentService: GMOPaymentService,
   ) {
@@ -64,7 +65,7 @@ export class OrderUsecase {
     this.gmoPaymentService = gmoPaymentService;
     this.orderPaymentRepo = orderPaymentRepo;
     this.shipmentRepository = shipmentRepository;
-    this.buyerRepository = buyerRepository;
+    this.orderAddressBuyerRepository = orderAddressBuyerRepository;
     this.addressRepository = addressRepository;
   }
 
@@ -167,6 +168,18 @@ export class OrderUsecase {
         planArrivedTo: new Date(currentDate.setDate(currentDate.getDate() + 3)), // TODO: need to calculate
       };
       await this.shipmentRepository.createShipment(oreateShipmentRequest, t);
+
+      Logger.info('Insert latest address of buyer');
+      const latestAdsress =
+        await this.addressRepository.getLatestAddressByBuyerId(buyerId);
+
+      if (!latestAdsress) {
+        throw new NotFoundError('Address of buyer is not found');
+      }
+
+      const orderAddressBuyer = new OrderAddressBuyerCreate(latestAdsress);
+      orderAddressBuyer.orderId = order.id;
+      await this.orderAddressBuyerRepository.addAddress(orderAddressBuyer, t);
 
       Logger.info('Start update order status: CONFIRMED after check point');
       const updateRequest: UpdateOrderStatusRequest = {

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { CartItem } from '../../../buyer_site/endpoint/CartEndpoint';
 import { DATE_FORMAT } from '../../../lib/constant/Constant';
+import { LP_ADDRESS_BUYER } from '../../../lib/mysql/models/LP_ADDRESS_BUYER';
 import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 import { LP_ORDER_PAYMENT } from '../../../lib/mysql/models/LP_ORDER_PAYMENT';
@@ -154,4 +155,30 @@ export class OrderDetailResponse {
   phone?: string;
   postCode?: string;
   address?: string;
+}
+
+export class OrderAddressBuyerCreate {
+  orderId?: string;
+  nameKana: string;
+  nameKanji: string;
+  postCode: string;
+  cityTown: string;
+  streetAddress: string;
+  buildingName: string;
+  email: string;
+  telephoneNumber: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  constructor(lp_address_buyer: LP_ADDRESS_BUYER) {
+    this.nameKana = lp_address_buyer.nameKana;
+    this.nameKanji = lp_address_buyer.nameKanji;
+    this.postCode = lp_address_buyer.postCode;
+    this.cityTown = lp_address_buyer.cityTown;
+    this.streetAddress = lp_address_buyer.streetAddress;
+    this.buildingName = lp_address_buyer.buildingName;
+    this.email = lp_address_buyer.email;
+    this.telephoneNumber = lp_address_buyer.telephoneNumber;
+    this.createdAt = new Date();
+  }
 }

@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
+import type { LP_ORDER_ADDRESS_BUYER, LP_ORDER_ADDRESS_BUYERCreationAttributes, LP_ORDER_ADDRESS_BUYERId } from './LP_ORDER_ADDRESS_BUYER';
 import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_ORDER_PAYMENT, LP_ORDER_PAYMENTId } from './LP_ORDER_PAYMENT';
 import type { LP_SHIPMENT, LP_SHIPMENTId } from './LP_SHIPMENT';
@@ -47,6 +48,11 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
   getBuyer!: Sequelize.BelongsToGetAssociationMixin<LP_BUYER>;
   setBuyer!: Sequelize.BelongsToSetAssociationMixin<LP_BUYER, LP_BUYERId>;
   createBuyer!: Sequelize.BelongsToCreateAssociationMixin<LP_BUYER>;
+  // LP_ORDER hasOne LP_ORDER_ADDRESS_BUYER via orderId
+  lpOrderAddressBuyer!: LP_ORDER_ADDRESS_BUYER;
+  getLpOrderAddressBuyer!: Sequelize.HasOneGetAssociationMixin<LP_ORDER_ADDRESS_BUYER>;
+  setLpOrderAddressBuyer!: Sequelize.HasOneSetAssociationMixin<LP_ORDER_ADDRESS_BUYER, LP_ORDER_ADDRESS_BUYERId>;
+  createLpOrderAddressBuyer!: Sequelize.HasOneCreateAssociationMixin<LP_ORDER_ADDRESS_BUYER>;
   // LP_ORDER hasMany LP_ORDER_ITEM via orderId
   lpOrderItems!: LP_ORDER_ITEM[];
   getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;
