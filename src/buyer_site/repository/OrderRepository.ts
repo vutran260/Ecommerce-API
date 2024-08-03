@@ -60,10 +60,10 @@ export class OrderRepository {
           association: LP_ORDER.associations.buyer,
         },
         {
-          association: LP_ORDER.associations.lpOrderPayments,
+          association: LP_ORDER.associations.lpOrderPayment,
         },
         {
-          association: LP_ORDER.associations.lpShipments,
+          association: LP_ORDER.associations.lpShipment,
         },
         {
           association: LP_ORDER.associations.lpOrderAddressBuyer,
@@ -101,7 +101,7 @@ export class OrderRepository {
             association: LP_ORDER.associations.buyer,
           },
           {
-            association: LP_ORDER.associations.lpOrderPayments,
+            association: LP_ORDER.associations.lpOrderPayment,
           },
         ],
         where: BuildQuery(filter),

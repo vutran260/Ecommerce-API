@@ -1,6 +1,7 @@
 import lodash, { forEach } from 'lodash';
 import { Transaction } from 'sequelize';
 import Logger from '../../lib/core/Logger';
+import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
   BuildQuery,
@@ -8,7 +9,6 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
-import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 
 export class OrderRepository {
   public getOrderById = async (id: string, t?: Transaction) => {
@@ -19,10 +19,10 @@ export class OrderRepository {
           association: LP_ORDER.associations.buyer,
         },
         {
-          association: LP_ORDER.associations.lpOrderPayments,
+          association: LP_ORDER.associations.lpOrderPayment,
         },
         {
-          association: LP_ORDER.associations.lpShipments,
+          association: LP_ORDER.associations.lpShipment,
         },
         {
           association: LP_ORDER.associations.lpOrderAddressBuyer,
@@ -38,8 +38,17 @@ export class OrderRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    orderStatus: string,
   ) => {
     try {
+      if (orderStatus) {
+        filter.push({
+          operation: 'eq',
+          value: orderStatus,
+          attribute: 'orderStatus',
+        });
+      }
+
       const count = await LP_ORDER.count({
         where: BuildQuery(filter),
         distinct: true,
@@ -53,7 +62,7 @@ export class OrderRepository {
             association: LP_ORDER.associations.buyer,
           },
           {
-            association: LP_ORDER.associations.lpOrderPayments,
+            association: LP_ORDER.associations.lpOrderPayment,
           },
         ],
         where: BuildQuery(filter),

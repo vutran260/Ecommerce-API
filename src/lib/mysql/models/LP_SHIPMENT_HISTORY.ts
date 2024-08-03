@@ -4,7 +4,7 @@ import type { LP_SHIPMENT, LP_SHIPMENTId } from './LP_SHIPMENT';
 
 export interface LP_SHIPMENT_HISTORYAttributes {
   id: string;
-  shipmentId?: string;
+  shipmentId: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
@@ -15,12 +15,12 @@ export interface LP_SHIPMENT_HISTORYAttributes {
 
 export type LP_SHIPMENT_HISTORYPk = "id";
 export type LP_SHIPMENT_HISTORYId = LP_SHIPMENT_HISTORY[LP_SHIPMENT_HISTORYPk];
-export type LP_SHIPMENT_HISTORYOptionalAttributes = "id" | "shipmentId" | "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_SHIPMENT_HISTORYOptionalAttributes = "id" | "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SHIPMENT_HISTORYCreationAttributes = Optional<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYOptionalAttributes>;
 
 export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYCreationAttributes> implements LP_SHIPMENT_HISTORYAttributes {
   id!: string;
-  shipmentId?: string;
+  shipmentId!: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
@@ -44,11 +44,12 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
     },
     shipmentId: {
       type: DataTypes.STRING(36),
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'LP_SHIPMENT',
         key: 'id'
       },
+      unique: "LP_SHIPMENT_HISTORY_ibfk_1",
       field: 'shipment_id'
     },
     shipmentHistoryDate: {
@@ -96,6 +97,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
       },
       {
         name: "shipment_id",
+        unique: true,
         using: "BTREE",
         fields: [
           { name: "shipment_id" },

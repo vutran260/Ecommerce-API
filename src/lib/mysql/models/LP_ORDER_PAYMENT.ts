@@ -4,7 +4,7 @@ import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_ORDER_PAYMENTAttributes {
   id: string;
-  orderId?: string;
+  orderId: string;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -14,12 +14,12 @@ export interface LP_ORDER_PAYMENTAttributes {
 
 export type LP_ORDER_PAYMENTPk = "id";
 export type LP_ORDER_PAYMENTId = LP_ORDER_PAYMENT[LP_ORDER_PAYMENTPk];
-export type LP_ORDER_PAYMENTOptionalAttributes = "id" | "orderId" | "paymentType" | "paymentStatus" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_ORDER_PAYMENTOptionalAttributes = "id" | "paymentType" | "paymentStatus" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_ORDER_PAYMENTCreationAttributes = Optional<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTOptionalAttributes>;
 
 export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTCreationAttributes> implements LP_ORDER_PAYMENTAttributes {
   id!: string;
-  orderId?: string;
+  orderId!: string;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -42,11 +42,12 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
     },
     orderId: {
       type: DataTypes.STRING(36),
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'LP_ORDER',
         key: 'id'
       },
+      unique: "LP_ORDER_PAYMENT_ibfk_1",
       field: 'order_id'
     },
     paymentType: {
@@ -89,6 +90,7 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
       },
       {
         name: "order_id",
+        unique: true,
         using: "BTREE",
         fields: [
           { name: "order_id" },

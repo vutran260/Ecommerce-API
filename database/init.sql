@@ -338,7 +338,7 @@ CREATE TABLE LP_ORDER_ITEM (
 
 CREATE TABLE LP_ORDER_PAYMENT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    order_id VARCHAR(36),
+    order_id VARCHAR(36) NOT NULL UNIQUE,
     payment_type VARCHAR(255),
     payment_status VARCHAR(100),
     created_at DATETIME,
@@ -349,7 +349,7 @@ CREATE TABLE LP_ORDER_PAYMENT (
 
 CREATE TABLE LP_SHIPMENT (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    order_id VARCHAR(36),
+    order_id VARCHAR(36) NOT NULL UNIQUE,
     shipment_fee INT,
     shipment_fee_discount INT,
     arrived_at DATETIME,
@@ -364,7 +364,7 @@ CREATE TABLE LP_SHIPMENT (
 
 CREATE TABLE LP_SHIPMENT_HISTORY (
     id VARCHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-    shipment_id VARCHAR(36),
+    shipment_id VARCHAR(36)  NOT NULL UNIQUE,
     shipment_history_date DATETIME,
     shipment_status VARCHAR(100),
     shipment_description TEXT,

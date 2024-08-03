@@ -19,7 +19,7 @@ export class Order {
     this.buyerName = order.buyer.username;
     this.totalAmount = order.totalAmount;
     this.orderStatus = order.orderStatus;
-    this.paymentStatus = order.lpOrderPayments[0].paymentStatus;
+    this.paymentStatus = order.lpOrderPayment.paymentStatus;
     this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
   }
 }
@@ -95,7 +95,7 @@ export class CreateOrderItemRequest {
 }
 
 export class CreateOrderPaymentRequest {
-  orderId?: string;
+  orderId: string;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -111,7 +111,7 @@ export class CreateOrderPaymentRequest {
 }
 
 export class CreateShipmentRequest {
-  orderId?: string;
+  orderId: string;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   arrivedAt?: Date;

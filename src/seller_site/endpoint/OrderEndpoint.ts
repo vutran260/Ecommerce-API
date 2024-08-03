@@ -24,6 +24,7 @@ export class OrderEndpoint {
       req.filterList,
       req.order,
       req.paging,
+      req.body.orderStatus,
     );
 
     return ResponseListData(result, res, req.paging);

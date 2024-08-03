@@ -24,9 +24,10 @@ export class OrderUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
+    orderStatus: string,
   ) => {
     let orders: LP_ORDER[] = [];
-    orders = await this.orderRepo.getOrders(filter, order, paging);
+    orders = await this.orderRepo.getOrders(filter, order, paging, orderStatus);
     return orders.map((order) => {
       return new Order(order);
     });
