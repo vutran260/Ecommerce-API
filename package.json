@@ -17,7 +17,14 @@
     "upgrade": "npm update --save-dev && npm update --save",
     "test": "jest --forceExit --detectOpenHandles --coverage --verbose",
     "gen-model": "sequelize-auto -a ./src/lib/mysql/config.js -o ./src/lib/mysql/models --cp c -l ts -d link-palette-dev -h localhost -u link-palette -p 1111 -x P@ssw0rd -e mysql && npm run replace-uuid-gen",
-    "replace-uuid-gen": "replace-in-files --string=\"Sequelize.Sequelize.fn('uuid')\" --replacement=\"DataTypes.UUIDV4\" ./src/."
+    "replace-uuid-gen": "replace-in-files --string=\"Sequelize.Sequelize.fn('uuid')\" --replacement=\"DataTypes.UUIDV4\" ./src/.",
+    "make:migration": "npx sequelize-cli migration:generate --migrations-path database/migrations --name",
+    "make:seed": "npx sequelize-cli seed:generate --seeders-path database/seeders --name",
+    "db:migrate": "npx  sequelize-cli db:migrate --migrations-path database/migrations --config database/configs/config.js",
+    "db:revert": "npx  sequelize-cli db:migrate:undo --migrations-path database/migrations --config database/configs/config.js",
+    "db:revert:all": "npx  sequelize-cli db:migrate:undo:all --migrations-path database/migrations --config database/configs/config.js",
+    "db:seed": "npx  sequelize-cli db:seed --seeders-path database/seeders --config database/configs/config.js --seed",
+    "db:seed:all": "npx  sequelize-cli db:seed:all --seeders-path database/seeders --config database/configs/config.js"
   },
   "repository": {
     "type": "git",
@@ -73,6 +80,7 @@
     "jest": "^29.3.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.1",
+    "sequelize-cli": "^6.6.2",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
