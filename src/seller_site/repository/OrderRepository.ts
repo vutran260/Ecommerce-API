@@ -38,17 +38,8 @@ export class OrderRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    orderStatus: string,
   ) => {
     try {
-      if (orderStatus) {
-        filter.push({
-          operation: 'eq',
-          value: orderStatus,
-          attribute: 'orderStatus',
-        });
-      }
-
       const count = await LP_ORDER.count({
         where: BuildQuery(filter),
         distinct: true,
