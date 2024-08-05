@@ -3,7 +3,6 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_ORDER_PAYMENTAttributes {
-  id: string;
   orderId: string;
   paymentType?: string;
   paymentStatus?: string;
@@ -12,13 +11,12 @@ export interface LP_ORDER_PAYMENTAttributes {
   deletedAt?: Date;
 }
 
-export type LP_ORDER_PAYMENTPk = "id";
+export type LP_ORDER_PAYMENTPk = "orderId";
 export type LP_ORDER_PAYMENTId = LP_ORDER_PAYMENT[LP_ORDER_PAYMENTPk];
-export type LP_ORDER_PAYMENTOptionalAttributes = "id" | "paymentType" | "paymentStatus" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_ORDER_PAYMENTOptionalAttributes = "paymentType" | "paymentStatus" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_ORDER_PAYMENTCreationAttributes = Optional<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTOptionalAttributes>;
 
 export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTCreationAttributes> implements LP_ORDER_PAYMENTAttributes {
-  id!: string;
   orderId!: string;
   paymentType?: string;
   paymentStatus?: string;
@@ -34,20 +32,14 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_PAYMENT {
     return LP_ORDER_PAYMENT.init({
-    id: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
     orderId: {
       type: DataTypes.STRING(36),
       allowNull: false,
+      primaryKey: true,
       references: {
         model: 'LP_ORDER',
         key: 'id'
       },
-      unique: "LP_ORDER_PAYMENT_ibfk_1",
       field: 'order_id'
     },
     paymentType: {
@@ -82,14 +74,6 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
     indexes: [
       {
         name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "id" },
-        ]
-      },
-      {
-        name: "order_id",
         unique: true,
         using: "BTREE",
         fields: [

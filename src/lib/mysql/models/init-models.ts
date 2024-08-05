@@ -178,6 +178,8 @@ export function initModels(sequelize: Sequelize) {
   LP_ORDER.hasOne(LP_ORDER_PAYMENT, { as: "lpOrderPayment", foreignKey: "orderId"});
   LP_SHIPMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
   LP_ORDER.hasOne(LP_SHIPMENT, { as: "lpShipment", foreignKey: "orderId"});
+  LP_SHIPMENT_HISTORY.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistory", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
   LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
@@ -188,8 +190,6 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
   LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
-  LP_SHIPMENT_HISTORY.belongsTo(LP_SHIPMENT, { as: "shipment", foreignKey: "shipmentId"});
-  LP_SHIPMENT.hasOne(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistory", foreignKey: "shipmentId"});
   LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "storeId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});

@@ -1,10 +1,10 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { LP_SHIPMENT, LP_SHIPMENTId } from './LP_SHIPMENT';
+import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_SHIPMENT_HISTORYAttributes {
-  id: string;
-  shipmentId: string;
+  orderId: string;
+  historyId: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
@@ -13,14 +13,14 @@ export interface LP_SHIPMENT_HISTORYAttributes {
   deletedAt?: Date;
 }
 
-export type LP_SHIPMENT_HISTORYPk = "id";
+export type LP_SHIPMENT_HISTORYPk = "orderId";
 export type LP_SHIPMENT_HISTORYId = LP_SHIPMENT_HISTORY[LP_SHIPMENT_HISTORYPk];
-export type LP_SHIPMENT_HISTORYOptionalAttributes = "id" | "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_SHIPMENT_HISTORYOptionalAttributes = "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SHIPMENT_HISTORYCreationAttributes = Optional<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYOptionalAttributes>;
 
 export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYCreationAttributes> implements LP_SHIPMENT_HISTORYAttributes {
-  id!: string;
-  shipmentId!: string;
+  orderId!: string;
+  historyId!: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
@@ -28,29 +28,28 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
   updatedAt?: Date;
   deletedAt?: Date;
 
-  // LP_SHIPMENT_HISTORY belongsTo LP_SHIPMENT via shipmentId
-  shipment!: LP_SHIPMENT;
-  getShipment!: Sequelize.BelongsToGetAssociationMixin<LP_SHIPMENT>;
-  setShipment!: Sequelize.BelongsToSetAssociationMixin<LP_SHIPMENT, LP_SHIPMENTId>;
-  createShipment!: Sequelize.BelongsToCreateAssociationMixin<LP_SHIPMENT>;
+  // LP_SHIPMENT_HISTORY belongsTo LP_ORDER via orderId
+  order!: LP_ORDER;
+  getOrder!: Sequelize.BelongsToGetAssociationMixin<LP_ORDER>;
+  setOrder!: Sequelize.BelongsToSetAssociationMixin<LP_ORDER, LP_ORDERId>;
+  createOrder!: Sequelize.BelongsToCreateAssociationMixin<LP_ORDER>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_SHIPMENT_HISTORY {
     return LP_SHIPMENT_HISTORY.init({
-    id: {
+    orderId: {
       type: DataTypes.STRING(36),
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
-    shipmentId: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
+      primaryKey: true,
       references: {
-        model: 'LP_SHIPMENT',
+        model: 'LP_ORDER',
         key: 'id'
       },
-      unique: "LP_SHIPMENT_HISTORY_ibfk_1",
-      field: 'shipment_id'
+      field: 'order_id'
+    },
+    historyId: {
+      type: DataTypes.STRING(36),
+      allowNull: false,
+      field: 'history_id'
     },
     shipmentHistoryDate: {
       type: DataTypes.DATE,
@@ -92,15 +91,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "id" },
-        ]
-      },
-      {
-        name: "shipment_id",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "shipment_id" },
+          { name: "order_id" },
         ]
       },
     ]
