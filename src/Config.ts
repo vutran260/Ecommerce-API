@@ -65,5 +65,6 @@ export const cloudStorageBucket = process.env.CLOUD_STORAGE_BUCKET
   : '4fan';
 export const publicCloudStorageBucket = process.env.CLOUD_STORAGE_BUCKET_PUBLIC
   ? process.env.CLOUD_STORAGE_BUCKET_PUBLIC
-  : '';
+  : '4fan.public';
+
 export const cloudStorageHostName = process.env.CLOUD_STORAGE_HOST_NAME;
