@@ -179,7 +179,7 @@ export function initModels(sequelize: Sequelize) {
   LP_SHIPMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
   LP_ORDER.hasOne(LP_SHIPMENT, { as: "lpShipment", foreignKey: "orderId"});
   LP_SHIPMENT_HISTORY.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
-  LP_ORDER.hasOne(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistory", foreignKey: "orderId"});
+  LP_ORDER.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
   LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});

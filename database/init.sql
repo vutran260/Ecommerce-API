@@ -361,8 +361,8 @@ CREATE TABLE LP_SHIPMENT (
 );
 
 CREATE TABLE LP_SHIPMENT_HISTORY (
-    order_id VARCHAR(36) NOT NULL PRIMARY KEY,
-    history_id VARCHAR(36)  NOT NULL,
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    order_id VARCHAR(36)  NOT NULL,
     shipment_history_date DATETIME,
     shipment_status VARCHAR(100),
     shipment_description TEXT,

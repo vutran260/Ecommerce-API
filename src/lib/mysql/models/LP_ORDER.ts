@@ -5,7 +5,7 @@ import type { LP_ORDER_ADDRESS_BUYER, LP_ORDER_ADDRESS_BUYERCreationAttributes, 
 import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_ORDER_PAYMENT, LP_ORDER_PAYMENTCreationAttributes, LP_ORDER_PAYMENTId } from './LP_ORDER_PAYMENT';
 import type { LP_SHIPMENT, LP_SHIPMENTCreationAttributes, LP_SHIPMENTId } from './LP_SHIPMENT';
-import type { LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYCreationAttributes, LP_SHIPMENT_HISTORYId } from './LP_SHIPMENT_HISTORY';
+import type { LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId } from './LP_SHIPMENT_HISTORY';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_ORDERAttributes {
@@ -76,11 +76,18 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
   getLpShipment!: Sequelize.HasOneGetAssociationMixin<LP_SHIPMENT>;
   setLpShipment!: Sequelize.HasOneSetAssociationMixin<LP_SHIPMENT, LP_SHIPMENTId>;
   createLpShipment!: Sequelize.HasOneCreateAssociationMixin<LP_SHIPMENT>;
-  // LP_ORDER hasOne LP_SHIPMENT_HISTORY via orderId
-  lpShipmentHistory!: LP_SHIPMENT_HISTORY;
-  getLpShipmentHistory!: Sequelize.HasOneGetAssociationMixin<LP_SHIPMENT_HISTORY>;
-  setLpShipmentHistory!: Sequelize.HasOneSetAssociationMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
-  createLpShipmentHistory!: Sequelize.HasOneCreateAssociationMixin<LP_SHIPMENT_HISTORY>;
+  // LP_ORDER hasMany LP_SHIPMENT_HISTORY via orderId
+  lpShipmentHistories!: LP_SHIPMENT_HISTORY[];
+  getLpShipmentHistories!: Sequelize.HasManyGetAssociationsMixin<LP_SHIPMENT_HISTORY>;
+  setLpShipmentHistories!: Sequelize.HasManySetAssociationsMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  addLpShipmentHistory!: Sequelize.HasManyAddAssociationMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  addLpShipmentHistories!: Sequelize.HasManyAddAssociationsMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  createLpShipmentHistory!: Sequelize.HasManyCreateAssociationMixin<LP_SHIPMENT_HISTORY>;
+  removeLpShipmentHistory!: Sequelize.HasManyRemoveAssociationMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  removeLpShipmentHistories!: Sequelize.HasManyRemoveAssociationsMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  hasLpShipmentHistory!: Sequelize.HasManyHasAssociationMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  hasLpShipmentHistories!: Sequelize.HasManyHasAssociationsMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
+  countLpShipmentHistories!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
