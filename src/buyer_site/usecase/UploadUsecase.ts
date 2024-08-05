@@ -2,8 +2,8 @@ import {
   UploadResourceRequest,
   UploadResourceResponse,
 } from '../../common/model/upload/Resource';
-import { cloudStorageHostName, publicCloudStorageBucket } from '../../Config';
-import { FOLDER_PREFIX, IMAGE_PREFIX } from '../../lib/constant/Constant';
+import { cloudStorageBucket, cloudStorageHostName } from '../../Config';
+import { FOLDER_PREFIX } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
 import { S3Service } from '../../third_party/s3/s3Service';
 
@@ -18,21 +18,20 @@ export class UploadUsecase {
     request: UploadResourceRequest,
   ): Promise<UploadResourceResponse> {
     const folderPrefix = FOLDER_PREFIX;
-    const filePrefix = IMAGE_PREFIX;
 
-    const fileName = `${folderPrefix}/${filePrefix}/${request.file_name}`;
+    const fileName = `${folderPrefix}/${request.file_name}`;
 
     Logger.info(`Upload resource ${fileName} - ${request.content_type}`);
 
     const res = await this.s3Service.UploadResourceRequest(
       fileName,
       request.content_type,
-      publicCloudStorageBucket,
+      cloudStorageBucket,
     );
     return {
       data: {
         upload_url: res,
-        resource_url: `${cloudStorageHostName}/${publicCloudStorageBucket}/${fileName}`,
+        resource_url: `${cloudStorageHostName}/${cloudStorageBucket}/${fileName}`,
       },
     };
   }

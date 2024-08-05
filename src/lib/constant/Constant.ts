@@ -72,4 +72,3 @@ export enum ShipmentPrice {
 export const MAX_FILE_SIZE = 20 * 1024 * 1024;
 export const EXPIRED_SIGNED_URL = 15 * 60;
 export const FOLDER_PREFIX = 'link-palette';
-export const IMAGE_PREFIX = 'link-palette';
