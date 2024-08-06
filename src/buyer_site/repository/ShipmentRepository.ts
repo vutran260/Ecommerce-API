@@ -1,7 +1,6 @@
 import { Transaction } from 'sequelize';
-import { LP_SHIPMENT } from '../../lib/mysql/models/LP_SHIPMENT';
-import { LP_ORDER_PAYMENT } from '../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { CreateShipmentRequest } from '../../common/model/orders/Order';
+import { LP_SHIPMENT } from '../../lib/mysql/models/LP_SHIPMENT';
 
 export class ShipmentRepository {
   public createShipment = async (
@@ -11,12 +10,12 @@ export class ShipmentRepository {
     const shipment = await LP_SHIPMENT.create(createShipmentRequest, {
       transaction: t,
     });
-    return this.getShipmentById(shipment.id, t);
+    return this.getShipmentById(shipment.orderId, t);
   };
 
   public getShipmentById = async (id: string, t?: Transaction) => {
     const result = await LP_SHIPMENT.findOne({
-      where: { id },
+      where: { orderId: id },
       transaction: t,
     });
     return result?.dataValues;

@@ -15,6 +15,8 @@ import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
 import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
 import { LP_ORDER as _LP_ORDER } from "./LP_ORDER";
 import type { LP_ORDERAttributes, LP_ORDERCreationAttributes } from "./LP_ORDER";
+import { LP_ORDER_ADDRESS_BUYER as _LP_ORDER_ADDRESS_BUYER } from "./LP_ORDER_ADDRESS_BUYER";
+import type { LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYERCreationAttributes } from "./LP_ORDER_ADDRESS_BUYER";
 import { LP_ORDER_ITEM as _LP_ORDER_ITEM } from "./LP_ORDER_ITEM";
 import type { LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes } from "./LP_ORDER_ITEM";
 import { LP_ORDER_PAYMENT as _LP_ORDER_PAYMENT } from "./LP_ORDER_PAYMENT";
@@ -55,6 +57,7 @@ export {
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
   _LP_ORDER as LP_ORDER,
+  _LP_ORDER_ADDRESS_BUYER as LP_ORDER_ADDRESS_BUYER,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
   _LP_ORDER_PAYMENT as LP_ORDER_PAYMENT,
   _LP_PREFECTURES as LP_PREFECTURES,
@@ -89,6 +92,8 @@ export type {
   LP_CATEGORYCreationAttributes,
   LP_ORDERAttributes,
   LP_ORDERCreationAttributes,
+  LP_ORDER_ADDRESS_BUYERAttributes,
+  LP_ORDER_ADDRESS_BUYERCreationAttributes,
   LP_ORDER_ITEMAttributes,
   LP_ORDER_ITEMCreationAttributes,
   LP_ORDER_PAYMENTAttributes,
@@ -130,6 +135,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
   const LP_ORDER = _LP_ORDER.initModel(sequelize);
+  const LP_ORDER_ADDRESS_BUYER = _LP_ORDER_ADDRESS_BUYER.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
   const LP_ORDER_PAYMENT = _LP_ORDER_PAYMENT.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
@@ -164,12 +170,16 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "buyerId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_CATEGORY, { as: "category", foreignKey: "categoryId"});
   LP_CATEGORY.hasMany(LP_PRODUCT_CATEGORY, { as: "lpProductCategories", foreignKey: "categoryId"});
+  LP_ORDER_ADDRESS_BUYER.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_ORDER_ADDRESS_BUYER, { as: "lpOrderAddressBuyer", foreignKey: "orderId"});
   LP_ORDER_ITEM.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
   LP_ORDER.hasMany(LP_ORDER_ITEM, { as: "lpOrderItems", foreignKey: "orderId"});
   LP_ORDER_PAYMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
-  LP_ORDER.hasMany(LP_ORDER_PAYMENT, { as: "lpOrderPayments", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_ORDER_PAYMENT, { as: "lpOrderPayment", foreignKey: "orderId"});
   LP_SHIPMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
-  LP_ORDER.hasMany(LP_SHIPMENT, { as: "lpShipments", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_SHIPMENT, { as: "lpShipment", foreignKey: "orderId"});
+  LP_SHIPMENT_HISTORY.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
   LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
@@ -180,8 +190,6 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
   LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
-  LP_SHIPMENT_HISTORY.belongsTo(LP_SHIPMENT, { as: "shipment", foreignKey: "shipmentId"});
-  LP_SHIPMENT.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "shipmentId"});
   LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "storeId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
@@ -208,6 +216,7 @@ export function initModels(sequelize: Sequelize) {
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
     LP_ORDER: LP_ORDER,
+    LP_ORDER_ADDRESS_BUYER: LP_ORDER_ADDRESS_BUYER,
     LP_ORDER_ITEM: LP_ORDER_ITEM,
     LP_ORDER_PAYMENT: LP_ORDER_PAYMENT,
     LP_PREFECTURES: LP_PREFECTURES,
