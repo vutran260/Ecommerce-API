@@ -1,14 +1,14 @@
 import Product, {
   ProductFromLP_PRODUCT,
-} from 'src/common/model/products/Product';
-import Logger from 'src/lib/core/Logger';
-import { NotFoundError } from 'src/lib/http/custom_error/ApiError';
+} from '../../common/model/products/Product';
+import Logger from '../../lib/core/Logger';
+import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from 'src/lib/paging/Request';
+} from '../../lib/paging/Request';
 import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
@@ -16,12 +16,12 @@ import {
 import {
   LP_FAVORITE,
 } from '../../lib/mysql/models/LP_FAVORITE';
-import { BuildOrderQuery, LpOrder } from 'src/lib/paging/Order';
-import { LP_PRODUCT_COMPONENTCreationAttributes } from 'src/lib/mysql/models/LP_PRODUCT_COMPONENT';
-import { ProductCompomentFromLP_PRODUCT_COMPONENT } from 'src/common/model/products/ProductCompoment';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
+import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
+import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
 import {
   LP_PRODUCT_CATEGORYCreationAttributes,
-} from 'src/lib/mysql/models/LP_PRODUCT_CATEGORY';
+} from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
 import { Op, Sequelize } from 'sequelize';
 
