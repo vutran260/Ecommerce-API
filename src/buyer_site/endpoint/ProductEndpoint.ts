@@ -31,7 +31,8 @@ export class ProductEndpoint {
 
   private getFavoriteProduct = async (req: PaginationRequest, res: Response) => {
     const buyerId = req.user.id;
-    const results = await this.productUsecase.getFavoriteProduct(buyerId, req.filterList, req.paging);
+    const storeId = req.storeId;
+    const results = await this.productUsecase.getFavoriteProduct(buyerId, req.filterList, req.paging, storeId);
     return ResponseListData(results, res, req.paging);
   };
 

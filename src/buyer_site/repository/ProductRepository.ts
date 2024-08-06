@@ -161,13 +161,20 @@ export class ProductRepository {
     }
   };
 
-  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging) => {
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
     try {
       const count = await LP_FAVORITE.count({
         where: {
           buyerId,
           ...BuildQuery(filter),
         },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            where: { storeId:  storeId},
+          },
+        ]
       });
       paging.total = count;
 
@@ -180,6 +187,7 @@ export class ProductRepository {
           {
             model: LP_PRODUCT,
             as: 'product',
+            where: { storeId:  storeId},
           },
         ],
         order: [['createdAt', 'DESC']],
