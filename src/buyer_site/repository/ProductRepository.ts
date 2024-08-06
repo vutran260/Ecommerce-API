@@ -1,24 +1,27 @@
 import Product, {
   ProductFromLP_PRODUCT,
-} from 'src/common/model/products/Product';
-import Logger from 'src/lib/core/Logger';
-import { NotFoundError } from 'src/lib/http/custom_error/ApiError';
+} from '../../common/model/products/Product';
+import Logger from '../../lib/core/Logger';
+import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from 'src/lib/paging/Request';
+} from '../../lib/paging/Request';
 import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
-} from 'src/lib/mysql/models/LP_PRODUCT';
-import { BuildOrderQuery, LpOrder } from 'src/lib/paging/Order';
-import { LP_PRODUCT_COMPONENTCreationAttributes } from 'src/lib/mysql/models/LP_PRODUCT_COMPONENT';
-import { ProductCompomentFromLP_PRODUCT_COMPONENT } from 'src/common/model/products/ProductCompoment';
+} from '../../lib/mysql/models/LP_PRODUCT';
+import {
+  LP_FAVORITE,
+} from '../../lib/mysql/models/LP_FAVORITE';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
+import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
+import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
 import {
   LP_PRODUCT_CATEGORYCreationAttributes,
-} from 'src/lib/mysql/models/LP_PRODUCT_CATEGORY';
+} from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
 import { Op, Sequelize } from 'sequelize';
 
@@ -155,6 +158,88 @@ export class ProductRepository {
       Logger.error(error);
       Logger.error(error.message);
       throw error;
+    }
+  };
+
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
+    try {
+      const count = await LP_FAVORITE.count({
+        where: {
+          buyerId,
+          ...BuildQuery(filter),
+        },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            where: { storeId:  storeId },
+          },
+        ]
+      });
+      paging.total = count;
+
+      const favorites = await LP_FAVORITE.findAll({
+        where: {
+          buyerId,
+          ...BuildQuery(filter),
+        },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            where: { storeId:  storeId},
+          },
+        ],
+        order: [['createdAt', 'DESC']],
+        offset: GetOffset(paging),
+        limit: paging.limit,
+      });
+
+      return { favorites, total: count };
+    } catch (error) {
+      Logger.error(error);
+      throw new Error('Failed to retrieve favorite products.');
+    }
+  };
+
+  public addFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const existingFavorite = await LP_FAVORITE.findOne({
+        where: {
+          buyerId,
+          productId,
+        },
+      });
+
+      if (existingFavorite) {
+        throw new Error('Favorite product already exists.');
+      }
+
+      await LP_FAVORITE.create({
+        buyerId,
+        productId,
+        createdAt: new Date(),
+      });
+
+      return { message: 'Product added to favorites successfully.' };
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
+
+  public removeFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+        const result = await LP_FAVORITE.destroy({ where: { buyerId, productId } });
+
+        if (result === 0) {
+            throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
+        }
+
+        return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
+    } catch (error) {
+        Logger.error(error);
+        throw error;
     }
   };
 
