@@ -15,11 +15,13 @@ export interface LP_ADDRESS_BUYERAttributes {
   buildingName: string;
   email: string;
   telephoneNumber: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type LP_ADDRESS_BUYERPk = "id";
 export type LP_ADDRESS_BUYERId = LP_ADDRESS_BUYER[LP_ADDRESS_BUYERPk];
-export type LP_ADDRESS_BUYEROptionalAttributes = "id";
+export type LP_ADDRESS_BUYEROptionalAttributes = "id" | "createdAt" | "updatedAt";
 export type LP_ADDRESS_BUYERCreationAttributes = Optional<LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYEROptionalAttributes>;
 
 export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYERCreationAttributes> implements LP_ADDRESS_BUYERAttributes {
@@ -34,6 +36,8 @@ export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRE
   buildingName!: string;
   email!: string;
   telephoneNumber!: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   // LP_ADDRESS_BUYER belongsTo LP_BUYER via buyerId
   buyer!: LP_BUYER;
@@ -110,6 +114,18 @@ export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRE
       type: DataTypes.STRING(36),
       allowNull: false,
       field: 'telephone_number'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     }
   }, {
     sequelize,

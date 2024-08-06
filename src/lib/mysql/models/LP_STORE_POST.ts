@@ -9,11 +9,15 @@ export interface LP_STORE_POSTAttributes {
   title: string;
   details: string;
   status?: string;
+  createdAt?: Date;
+  createdBy?: string;
+  updatedAt?: Date;
+  updatedBy?: string;
 }
 
 export type LP_STORE_POSTPk = "id";
 export type LP_STORE_POSTId = LP_STORE_POST[LP_STORE_POSTPk];
-export type LP_STORE_POSTOptionalAttributes = "id" | "status";
+export type LP_STORE_POSTOptionalAttributes = "id" | "status" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_STORE_POSTCreationAttributes = Optional<LP_STORE_POSTAttributes, LP_STORE_POSTOptionalAttributes>;
 
 export class LP_STORE_POST extends Model<LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes> implements LP_STORE_POSTAttributes {
@@ -23,6 +27,10 @@ export class LP_STORE_POST extends Model<LP_STORE_POSTAttributes, LP_STORE_POSTC
   title!: string;
   details!: string;
   status?: string;
+  createdAt?: Date;
+  createdBy?: string;
+  updatedAt?: Date;
+  updatedBy?: string;
 
   // LP_STORE_POST belongsTo LP_STORE via storeId
   store!: LP_STORE;
@@ -63,6 +71,28 @@ export class LP_STORE_POST extends Model<LP_STORE_POSTAttributes, LP_STORE_POSTC
     status: {
       type: DataTypes.STRING(255),
       allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
+    },
+    createdBy: {
+      type: DataTypes.STRING(225),
+      allowNull: true,
+      field: 'created_by'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
+    },
+    updatedBy: {
+      type: DataTypes.STRING(225),
+      allowNull: true,
+      field: 'updated_by'
     }
   }, {
     sequelize,

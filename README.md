@@ -42,10 +42,39 @@
     * Execute `npm start` and You will be able to access the API from http://localhost:3000
     * To run the tests execute `npm test`.
 
-  * Postman APIs Here: 
-    [addons/postman](https://github.com/janishar/nodejs-backend-architecture-typescript/tree/master/addons/postman)
+ * Postman APIs Here: 
+   [addons/postman](https://github.com/janishar/nodejs-backend-architecture-typescript/tree/master/addons/postman)
+
+## Project Database Management 
+  This guide provides instructions for managing database migrations and seeders using Sequelize CLI. The following commands are configured in the `package.json` file to simplify the process of generating and running migrations and seeders.
+ 
+### Prerequisites
+  - Node.js installed 
+  - Sequelize and Sequelize CLI installed 
+  - Database configured in `database/configs/config.js`
   
-  ## Learn Backend Development From Our Videos
+### Generate a New Migration
+    npm run make:migration your-migration-name
+
+### Run Migrations
+    npm run db:migrate
+
+### Revert the Last Migration
+    npm run db:revert
+
+### Revert All Migrations
+    npm run db:revert:all
+
+### Generate a New Seeder
+    npm run make:seed your-seeder-name
+
+### Run a Specific Seeder
+    npm run db:seed -- your-seeder-name
+
+### Run All Seeders
+    npm run db:seed:all
+
+## Learn Backend Development From Our Videos
   * [Introduction to Web Backend Development for Beginners](https://youtu.be/SikmqyFocKQ)
   * [Backend System Design for Startups](https://youtube.com/playlist?list=PLuppOTn4pNYeAn-ioA-Meec5I8pQK_gU5)
   * [Practical Javascript for Beginners](https://youtube.com/playlist?list=PLuppOTn4pNYdowBb05yG2I8wAmHiW7vze)

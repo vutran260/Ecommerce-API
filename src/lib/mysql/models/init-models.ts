@@ -43,6 +43,10 @@ import { LP_STORE_BUYER as _LP_STORE_BUYER } from "./LP_STORE_BUYER";
 import type { LP_STORE_BUYERAttributes, LP_STORE_BUYERCreationAttributes } from "./LP_STORE_BUYER";
 import { LP_STORE_POST as _LP_STORE_POST } from "./LP_STORE_POST";
 import type { LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes } from "./LP_STORE_POST";
+import { SeederMeta as _SeederMeta } from "./SeederMeta";
+import type { SeederMetaAttributes, SeederMetaCreationAttributes } from "./SeederMeta";
+import { SequelizeMeta as _SequelizeMeta } from "./SequelizeMeta";
+import type { SequelizeMetaAttributes, SequelizeMetaCreationAttributes } from "./SequelizeMeta";
 
 export {
   _LP_ADDRESS_BUYER as LP_ADDRESS_BUYER,
@@ -67,6 +71,8 @@ export {
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
   _LP_STORE_POST as LP_STORE_POST,
+  _SeederMeta as SeederMeta,
+  _SequelizeMeta as SequelizeMeta,
 };
 
 export type {
@@ -114,6 +120,10 @@ export type {
   LP_STORE_BUYERCreationAttributes,
   LP_STORE_POSTAttributes,
   LP_STORE_POSTCreationAttributes,
+  SeederMetaAttributes,
+  SeederMetaCreationAttributes,
+  SequelizeMetaAttributes,
+  SequelizeMetaCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -139,6 +149,8 @@ export function initModels(sequelize: Sequelize) {
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
   const LP_STORE_POST = _LP_STORE_POST.initModel(sequelize);
+  const SeederMeta = _SeederMeta.initModel(sequelize);
+  const SequelizeMeta = _SequelizeMeta.initModel(sequelize);
 
   LP_BUYER.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_FAVORITE, foreignKey: "buyerId", otherKey: "productId" });
   LP_BUYER.belongsToMany(LP_STORE, { as: 'storeIdLpStores', through: LP_STORE_BUYER, foreignKey: "buyerId", otherKey: "storeId" });
@@ -222,5 +234,7 @@ export function initModels(sequelize: Sequelize) {
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
     LP_STORE_POST: LP_STORE_POST,
+    SeederMeta: SeederMeta,
+    SequelizeMeta: SequelizeMeta,
   };
 }

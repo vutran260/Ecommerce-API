@@ -29,10 +29,21 @@ export class BuyerUsecase {
     }
   };
   public getBuyerInfo = async (buyerId: string) => {
-    const buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId)
-    return buyerInfo
+    let buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId);
+    if (buyerInfo?.lpAddressBuyerSso == null) {
+      await this.buyerRepo.addMockAddressInfo(buyerId);
+    }
 
-  }
+    if (buyerInfo?.lpBuyerPersonalInformation == null) {
+      await this.buyerRepo.addMockPersonalInfo(buyerId);
+    }
+    
+    if (buyerInfo?.lpBuyerPersonalInformation == null || buyerInfo?.lpAddressBuyerSso == null) {
+      buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId);
+    }
+
+    return buyerInfo;
+  };
   public getCategoriesWithHierarchy = async (store_id: string, id = '') => {
     return this.buyerRepo.getCategoriesWithHierarchy(store_id, id);
   };

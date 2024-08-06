@@ -1,14 +1,14 @@
 import Product, {
   ProductFromLP_PRODUCT,
-} from '../../common/model/products/Product';
-import Logger from '../../lib/core/Logger';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+} from 'src/common/model/products/Product';
+import Logger from 'src/lib/core/Logger';
+import { NotFoundError } from 'src/lib/http/custom_error/ApiError';
 import {
   BuildQuery,
   Filter,
   GetOffset,
   Paging,
-} from '../../lib/paging/Request';
+} from 'src/lib/paging/Request';
 import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
@@ -16,15 +16,12 @@ import {
 import {
   LP_FAVORITE,
 } from '../../lib/mysql/models/LP_FAVORITE';
-import {
-  LP_BUYER,
-} from '../../lib/mysql/models/LP_BUYER';
-import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
-import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
+import { BuildOrderQuery, LpOrder } from 'src/lib/paging/Order';
+import { LP_PRODUCT_COMPONENTCreationAttributes } from 'src/lib/mysql/models/LP_PRODUCT_COMPONENT';
+import { ProductCompomentFromLP_PRODUCT_COMPONENT } from 'src/common/model/products/ProductCompoment';
 import {
   LP_PRODUCT_CATEGORYCreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+} from 'src/lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
 import { Op, Sequelize } from 'sequelize';
 
@@ -66,7 +63,7 @@ export class ProductRepository {
     isNoCategory: boolean,
   ) => {
     try {
-      this.filterSortByPrice(order);
+      const orderQuery = this.filterSortByPrice(order);
 
       filter.push({
         operation: 'eq',
@@ -118,8 +115,6 @@ export class ProductRepository {
 
 
       const results = await LP_PRODUCT.findAll({
-        subQuery: false,
-
         attributes: {
           include: [
             [Sequelize.literal(`
@@ -152,7 +147,7 @@ export class ProductRepository {
         include: include,
         where: query,
         offset: GetOffset(paging),
-        order: BuildOrderQuery(order),
+        order: orderQuery,
         limit: paging.limit,
       });
       forEach(results, (result) => {
@@ -240,11 +235,19 @@ export class ProductRepository {
     }
   };
 
-  private filterSortByPrice = (orders: LpOrder[]) => {
+  private filterSortByPrice = (orders: LpOrder[]): any => {
     orders.forEach(item => {
       if (item.attribute === 'price') {
         item.attribute = 'sortPrice';
       }
+    });
+
+    const orderQueries = BuildOrderQuery(orders);
+    return lodash.map(orderQueries, order => {
+      if (lodash.get(order, '[0]') === 'sortPrice') {
+        return [Sequelize.literal('sortPrice'), lodash.get(order, '[1]')];
+      }
+      return order;
     });
   };
 }
