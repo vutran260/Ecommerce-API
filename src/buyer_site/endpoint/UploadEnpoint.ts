@@ -18,8 +18,7 @@ export class UploadEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.post('/upload', this.uploadFile);
-
+    router.post('/pre-signed-url', this.uploadFile);
     return router;
   }
 }
