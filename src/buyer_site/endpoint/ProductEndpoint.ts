@@ -54,9 +54,9 @@ export class ProductEndpoint {
     const router = express.Router();
     router.get('/detail/:id', this.getDetailProduct);
     router.get('/products', PagingMiddelware, StoreFilterMiddelware, this.getProducts);
-    router.get('/favorite', PagingMiddelware, StoreFilterMiddelware, this.getFavoriteProduct);
-    router.post('/favorite/:productId', PagingMiddelware, StoreFilterMiddelware, this.addFavoriteProduct);
-    router.delete('/favorite/:productId', PagingMiddelware, StoreFilterMiddelware, this.removeFavoriteProduct);
+    router.get('/favorite', PagingMiddelware, this.getFavoriteProduct);
+    router.post('/favorite/:productId', this.addFavoriteProduct);
+    router.delete('/favorite/:productId', this.removeFavoriteProduct);
 
     return router;
   }

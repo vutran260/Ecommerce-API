@@ -172,7 +172,7 @@ export class ProductRepository {
           {
             model: LP_PRODUCT,
             as: 'product',
-            where: { storeId:  storeId},
+            where: { storeId:  storeId },
           },
         ]
       });
