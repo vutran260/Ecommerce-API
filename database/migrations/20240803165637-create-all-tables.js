@@ -354,6 +354,39 @@ module.exports = {
         CONSTRAINT FOREIGN KEY (shipment_id) REFERENCES LP_SHIPMENT (id)
       );
     `);
+
+    // LP_ORDER_ADDRESS_BUYER table
+    await queryInterface.sequelize.query(`
+      CREATE TABLE IF NOT EXISTS LP_ORDER_ADDRESS_BUYER(
+        order_id VARCHAR(36) NOT NULL PRIMARY KEY,
+        name_kana VARCHAR(255) NOT NULL,
+        name_kanji VARCHAR(255) NOT NULL,
+        post_code VARCHAR(36) NOT NULL,
+        city_town VARCHAR(255) NOT NULL,
+        street_address VARCHAR(255) NOT NULL,
+        building_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        telephone_number VARCHAR(36) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      
+        CONSTRAINT FOREIGN KEY (order_id) REFERENCES LP_ORDER(id)
+      );
+    `);
+
+    // LP_FAVORITE table
+    await queryInterface.sequelize.query(`
+      CREATE TABLE IF NOT EXISTS LP_FAVORITE (
+        buyer_id VARCHAR(36) NOT NULL,
+        product_id VARCHAR(36) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      
+        CONSTRAINT fk_buyer_id_favorite FOREIGN KEY (buyer_id) REFERENCES LP_BUYER (id),
+        CONSTRAINT fk_product_id_favorite FOREIGN KEY (product_id) REFERENCES LP_PRODUCT (id),
+      
+        PRIMARY KEY (buyer_id, product_id)
+      );
+    `);
   },
 
   async down(queryInterface, Sequelize) {
@@ -378,5 +411,7 @@ module.exports = {
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_SELLER`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_STORE`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ADMIN`);
+    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ORDER_ADDRESS_BUYER`);
+    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_FAVORITE`);
   }
 };
