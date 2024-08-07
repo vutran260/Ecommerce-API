@@ -159,8 +159,14 @@ export class OrderDetailResponse {
 
 export class OrderAddressBuyerCreate {
   orderId: string;
-  nameKana: string;
-  nameKanji: string;
+  firstNameKana: string;
+  lastNameKana: string;
+  firstNameKanji: string;
+  lastNameKanji: string;
+  gender?: number;
+  prefectureCode: string;
+  agreed?: number;
+  keepContact?: number;
   postCode: string;
   cityTown: string;
   streetAddress: string;
@@ -171,8 +177,14 @@ export class OrderAddressBuyerCreate {
   updatedAt?: Date;
 
   constructor(lp_address_buyer: LP_ADDRESS_BUYER) {
-    this.nameKana = lp_address_buyer.nameKana;
-    this.nameKanji = lp_address_buyer.nameKanji;
+    this.firstNameKana = lp_address_buyer.firstNameKana;
+    this.lastNameKana = lp_address_buyer.lastNameKana;
+    this.firstNameKanji = lp_address_buyer.firstNameKanji;
+    this.lastNameKanji = lp_address_buyer.lastNameKanji;
+    this.gender = lp_address_buyer.gender;
+    this.prefectureCode = lp_address_buyer.prefectureCode;
+    this.agreed = lp_address_buyer.agreed;
+    this.keepContact = lp_address_buyer.keepContact;
     this.postCode = lp_address_buyer.postCode;
     this.cityTown = lp_address_buyer.cityTown;
     this.streetAddress = lp_address_buyer.streetAddress;

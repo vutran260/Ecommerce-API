@@ -1,4 +1,9 @@
-import { Order, OrderItem } from '../../common/model/orders/Order';
+import {
+  Order,
+  OrderItem,
+  UpdateOrderStatusRequest,
+} from '../../common/model/orders/Order';
+import { lpSequelize } from '../../lib/mysql/Connection';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { LpOrder } from '../../lib/paging/Order';
@@ -48,5 +53,15 @@ export class OrderUsecase {
     return orders.map((order) => {
       return new OrderItem(order);
     });
+  };
+
+  public updateOrderStatus = async (request: UpdateOrderStatusRequest) => {
+    const t = await lpSequelize.transaction();
+    const updateRequest: UpdateOrderStatusRequest = {
+      orderId: request.orderId,
+      status: request.status,
+    };
+    await this.orderRepo.updateOrderStatus(updateRequest, t);
+    t.commit();
   };
 }

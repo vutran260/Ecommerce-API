@@ -15,14 +15,11 @@ export enum DefaultFormat {
 }
 
 export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  RETURNED = 'RETURNED',
-  FAILED = 'FAILED',
-  SUCESS = 'SUCESS',
+  NOT_CONFIRMED = 'NOT_CONFIRMED', //注文未確定
+  PREPARING = 'PREPARING', // 発送準備中
+  WAITING_PICKUP = 'WAITING_PICKUP', // 集荷依頼待ち
+  WAITING_SHIP = 'WAITING_SHIP', // 出荷待ち
+  SHIPPED = 'SHIPPED', // 出荷完了
 }
 
 export enum PaymentSatus {

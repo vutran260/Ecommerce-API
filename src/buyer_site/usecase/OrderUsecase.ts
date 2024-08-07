@@ -98,7 +98,7 @@ export class OrderUsecase {
     try {
       Logger.info('Start create order');
       const createOrderRequest: CreateOrderRequest = {
-        orderStatus: OrderStatus.PENDING,
+        orderStatus: OrderStatus.NOT_CONFIRMED,
         amount: 0,
         shipmentFee: 0,
         discount: 0,
@@ -184,7 +184,7 @@ export class OrderUsecase {
       Logger.info('Start update order status: CONFIRMED after check point');
       const updateRequest: UpdateOrderStatusRequest = {
         orderId: order.id,
-        status: OrderStatus.CONFIRMED,
+        status: OrderStatus.PREPARING,
       };
       this.orderRepo.updateOrderStatus(updateRequest, t);
 
@@ -236,7 +236,7 @@ export class OrderUsecase {
       const updateCreateRequest: UpdateOrderRequest = {
         buyerId: buyerId,
         storeId: storeId,
-        orderStatus: OrderStatus.SUCESS,
+        orderStatus: OrderStatus.WAITING_PICKUP,
         amount: totalAmount,
         shipmentFee: shipmentFee,
         discount: 0,
