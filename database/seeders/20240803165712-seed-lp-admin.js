@@ -39,16 +39,17 @@ module.exports = {
         `, {
           replacements: admin
         });
+      }
 
-        // Record that the seeder has been run
-        await queryInterface.sequelize.query(`
+      // Record that the seeder has been run
+      await queryInterface.sequelize.query(`
           INSERT INTO SeederMeta (seederName, createdAt)
           VALUES (:seederName, :createdAt)
         `, {
-          replacements: { seederName, createdAt: new Date() }
-        });
-      }
+        replacements: { seederName, createdAt: new Date() }
+      });
     }
+
   },
 
   async down(queryInterface, Sequelize) {
