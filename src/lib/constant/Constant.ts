@@ -68,3 +68,8 @@ export enum ShipmentPrice {
   MIN_FEE = 0,
   MAX_FEE = 500,
 }
+
+export const MAX_FILE_SIZE = 20 * 1024 * 1024;
+export const EXPIRED_SIGNED_URL = 15 * 60;
+export const SELLER_FOLDER_PREFIX = 'link-palette-seller';
+export const BUYER_FOLDER_PREFIX = 'link-palette-buyer';

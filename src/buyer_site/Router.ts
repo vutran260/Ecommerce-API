@@ -25,6 +25,9 @@ import { ShipmentRepository } from './repository/ShipmentRepository';
 import { StoreRepository } from './repository/StoreRepository';
 import { AddressUsecase } from './usecase/AddressUsecase';
 import { BuyerPostUsecase } from './usecase/BuyerPostUsecase';
+import { S3Service } from '../third_party/s3/s3Service';
+import { UploadEndpoint } from './endpoint/UploadEnpoint';
+import { UploadUsecase } from './usecase/UploadUsecase';
 import { BuyerUsecase } from './usecase/BuyerUsecase';
 import { CardUsecase } from './usecase/CardUsecase';
 import { CartUsecase } from './usecase/CartUsecase';
@@ -53,6 +56,7 @@ export class buyerSiteRouter {
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
+    const s3Service = new S3Service();
 
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
@@ -71,6 +75,7 @@ export class buyerSiteRouter {
       gmoGetwaySerivce,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
+    const uploadUsecase = new UploadUsecase(s3Service);
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -83,6 +88,7 @@ export class buyerSiteRouter {
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
     const orderEndpoint = new OrderEndpoint(orderUsecase);
+    const uploadEndpoint = new UploadEndpoint(uploadUsecase);
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
@@ -94,6 +100,7 @@ export class buyerSiteRouter {
     router.use('/store', storeEndpoint.getRouter());
     router.use('/order', orderEndpoint.getRouter());
     router.use('/post', buyerPostEndpoint.getRouter());
+    router.use('/file', uploadEndpoint.getRouter());
 
     return router;
   };

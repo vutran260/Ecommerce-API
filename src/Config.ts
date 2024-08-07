@@ -1,3 +1,4 @@
+import { S3Client } from '@aws-sdk/client-s3';
 // Mapper for environment variables
 export const environment = process.env.NODE_ENV;
 export const port = process.env.PORT;
@@ -42,4 +43,25 @@ export const gmo = {
   shopId: process.env.GMO_SHOP_ID || '',
   shopPassword: process.env.GMO_SHOP_PASSWORD || '',
   url: process.env.GMO_URL || '',
-}
+};
+
+const s3Client = new S3Client({
+  region: process.env.CLOUD_STORAGE_REGION,
+  endpoint: process.env.CLOUD_STORAGE_HOST_NAME,
+  credentials: {
+    accessKeyId: process.env.CLOUD_STORAGE_ACCESS_KEY
+      ? process.env.CLOUD_STORAGE_ACCESS_KEY
+      : '',
+    secretAccessKey: process.env.CLOUD_STORAGE_SECRET_KEY
+      ? process.env.CLOUD_STORAGE_SECRET_KEY
+      : '',
+  },
+});
+
+export default s3Client;
+
+export const cloudStorageBucket = process.env.CLOUD_STORAGE_BUCKET
+  ? process.env.CLOUD_STORAGE_BUCKET
+  : '4fan';
+
+export const cloudStorageHostName = process.env.CLOUD_STORAGE_HOST_NAME;
