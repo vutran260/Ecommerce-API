@@ -35,17 +35,17 @@ export class LP_CATEGORY extends Model<LP_CATEGORYAttributes, LP_CATEGORYCreatio
   deletedAt?: Date;
 
   // LP_CATEGORY belongsToMany LP_PRODUCT via categoryId and productId
-  productIdLpProducts!: LP_PRODUCT[];
-  getProductIdLpProducts!: Sequelize.BelongsToManyGetAssociationsMixin<LP_PRODUCT>;
-  setProductIdLpProducts!: Sequelize.BelongsToManySetAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
-  addProductIdLpProduct!: Sequelize.BelongsToManyAddAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
-  addProductIdLpProducts!: Sequelize.BelongsToManyAddAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
-  createProductIdLpProduct!: Sequelize.BelongsToManyCreateAssociationMixin<LP_PRODUCT>;
-  removeProductIdLpProduct!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
-  removeProductIdLpProducts!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
-  hasProductIdLpProduct!: Sequelize.BelongsToManyHasAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
-  hasProductIdLpProducts!: Sequelize.BelongsToManyHasAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
-  countProductIdLpProducts!: Sequelize.BelongsToManyCountAssociationsMixin;
+  productIdLpProductLpProductCategories!: LP_PRODUCT[];
+  getProductIdLpProductLpProductCategories!: Sequelize.BelongsToManyGetAssociationsMixin<LP_PRODUCT>;
+  setProductIdLpProductLpProductCategories!: Sequelize.BelongsToManySetAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addProductIdLpProductLpProductCategory!: Sequelize.BelongsToManyAddAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addProductIdLpProductLpProductCategories!: Sequelize.BelongsToManyAddAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  createProductIdLpProductLpProductCategory!: Sequelize.BelongsToManyCreateAssociationMixin<LP_PRODUCT>;
+  removeProductIdLpProductLpProductCategory!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  removeProductIdLpProductLpProductCategories!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasProductIdLpProductLpProductCategory!: Sequelize.BelongsToManyHasAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasProductIdLpProductLpProductCategories!: Sequelize.BelongsToManyHasAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  countProductIdLpProductLpProductCategories!: Sequelize.BelongsToManyCountAssociationsMixin;
   // LP_CATEGORY hasMany LP_PRODUCT_CATEGORY via categoryId
   lpProductCategories!: LP_PRODUCT_CATEGORY[];
   getLpProductCategories!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_CATEGORY>;

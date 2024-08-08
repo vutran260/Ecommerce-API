@@ -13,6 +13,8 @@ import { LP_CART as _LP_CART } from "./LP_CART";
 import type { LP_CARTAttributes, LP_CARTCreationAttributes } from "./LP_CART";
 import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
 import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
+import { LP_FAVORITE as _LP_FAVORITE } from "./LP_FAVORITE";
+import type { LP_FAVORITEAttributes, LP_FAVORITECreationAttributes } from "./LP_FAVORITE";
 import { LP_ORDER as _LP_ORDER } from "./LP_ORDER";
 import type { LP_ORDERAttributes, LP_ORDERCreationAttributes } from "./LP_ORDER";
 import { LP_ORDER_ADDRESS_BUYER as _LP_ORDER_ADDRESS_BUYER } from "./LP_ORDER_ADDRESS_BUYER";
@@ -21,8 +23,6 @@ import { LP_ORDER_ITEM as _LP_ORDER_ITEM } from "./LP_ORDER_ITEM";
 import type { LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes } from "./LP_ORDER_ITEM";
 import { LP_ORDER_PAYMENT as _LP_ORDER_PAYMENT } from "./LP_ORDER_PAYMENT";
 import type { LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTCreationAttributes } from "./LP_ORDER_PAYMENT";
-import { LP_FAVORITE as _LP_FAVORITE } from "./LP_FAVORITE";
-import type { LP_FAVORITEAttributes, LP_FAVORITECreationAttributes } from "./LP_FAVORITE";
 import { LP_PREFECTURES as _LP_PREFECTURES } from "./LP_PREFECTURES";
 import type { LP_PREFECTURESAttributes, LP_PREFECTURESCreationAttributes } from "./LP_PREFECTURES";
 import { LP_PRODUCT as _LP_PRODUCT } from "./LP_PRODUCT";
@@ -58,11 +58,11 @@ export {
   _LP_BUYER_PERSONAL_INFORMATION as LP_BUYER_PERSONAL_INFORMATION,
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
+  _LP_FAVORITE as LP_FAVORITE,
   _LP_ORDER as LP_ORDER,
   _LP_ORDER_ADDRESS_BUYER as LP_ORDER_ADDRESS_BUYER,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
   _LP_ORDER_PAYMENT as LP_ORDER_PAYMENT,
-  _LP_FAVORITE as LP_FAVORITE,
   _LP_PREFECTURES as LP_PREFECTURES,
   _LP_PRODUCT as LP_PRODUCT,
   _LP_PRODUCT_CATEGORY as LP_PRODUCT_CATEGORY,
@@ -93,6 +93,8 @@ export type {
   LP_CARTCreationAttributes,
   LP_CATEGORYAttributes,
   LP_CATEGORYCreationAttributes,
+  LP_FAVORITEAttributes,
+  LP_FAVORITECreationAttributes,
   LP_ORDERAttributes,
   LP_ORDERCreationAttributes,
   LP_ORDER_ADDRESS_BUYERAttributes,
@@ -101,8 +103,6 @@ export type {
   LP_ORDER_ITEMCreationAttributes,
   LP_ORDER_PAYMENTAttributes,
   LP_ORDER_PAYMENTCreationAttributes,
-  LP_FAVORITEAttributes,
-  LP_FAVORITECreationAttributes,
   LP_PREFECTURESAttributes,
   LP_PREFECTURESCreationAttributes,
   LP_PRODUCTAttributes,
@@ -139,11 +139,11 @@ export function initModels(sequelize: Sequelize) {
   const LP_BUYER_PERSONAL_INFORMATION = _LP_BUYER_PERSONAL_INFORMATION.initModel(sequelize);
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
+  const LP_FAVORITE = _LP_FAVORITE.initModel(sequelize);
   const LP_ORDER = _LP_ORDER.initModel(sequelize);
   const LP_ORDER_ADDRESS_BUYER = _LP_ORDER_ADDRESS_BUYER.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
   const LP_ORDER_PAYMENT = _LP_ORDER_PAYMENT.initModel(sequelize);
-  const LP_FAVORITE = _LP_FAVORITE.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
   const LP_PRODUCT = _LP_PRODUCT.initModel(sequelize);
   const LP_PRODUCT_CATEGORY = _LP_PRODUCT_CATEGORY.initModel(sequelize);
@@ -172,10 +172,10 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasOne(LP_BUYER_PERSONAL_INFORMATION, { as: "lpBuyerPersonalInformation", foreignKey: "buyerId"});
   LP_CART.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_CART, { as: "lpCarts", foreignKey: "buyerId"});
-  LP_ORDER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
-  LP_BUYER.hasMany(LP_ORDER, { as: "lpOrders", foreignKey: "buyerId"});
   LP_FAVORITE.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_FAVORITE, { as: "lpFavorites", foreignKey: "buyerId"});
+  LP_ORDER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasMany(LP_ORDER, { as: "lpOrders", foreignKey: "buyerId"});
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "buyerId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_CATEGORY, { as: "category", foreignKey: "categoryId"});
@@ -192,10 +192,10 @@ export function initModels(sequelize: Sequelize) {
   LP_ORDER.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
-  LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
-  LP_PRODUCT.hasMany(LP_ORDER_ITEM, { as: "lpOrderItems", foreignKey: "productId"});
   LP_FAVORITE.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_FAVORITE, { as: "lpFavorites", foreignKey: "productId"});
+  LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
+  LP_PRODUCT.hasMany(LP_ORDER_ITEM, { as: "lpOrderItems", foreignKey: "productId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_CATEGORY, { as: "lpProductCategories", foreignKey: "productId"});
   LP_PRODUCT_COMPONENT.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
@@ -227,11 +227,11 @@ export function initModels(sequelize: Sequelize) {
     LP_BUYER_PERSONAL_INFORMATION: LP_BUYER_PERSONAL_INFORMATION,
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
+    LP_FAVORITE: LP_FAVORITE,
     LP_ORDER: LP_ORDER,
     LP_ORDER_ADDRESS_BUYER: LP_ORDER_ADDRESS_BUYER,
     LP_ORDER_ITEM: LP_ORDER_ITEM,
     LP_ORDER_PAYMENT: LP_ORDER_PAYMENT,
-    LP_FAVORITE: LP_FAVORITE,
     LP_PREFECTURES: LP_PREFECTURES,
     LP_PRODUCT: LP_PRODUCT,
     LP_PRODUCT_CATEGORY: LP_PRODUCT_CATEGORY,

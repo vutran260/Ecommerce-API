@@ -4,7 +4,9 @@ import type { LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId } from './LP_ADDRESS_BUYER';
 import type { LP_ADDRESS_BUYER_SSO, LP_ADDRESS_BUYER_SSOCreationAttributes, LP_ADDRESS_BUYER_SSOId } from './LP_ADDRESS_BUYER_SSO';
 import type { LP_BUYER_PERSONAL_INFORMATION, LP_BUYER_PERSONAL_INFORMATIONCreationAttributes, LP_BUYER_PERSONAL_INFORMATIONId } from './LP_BUYER_PERSONAL_INFORMATION';
 import type { LP_CART, LP_CARTId } from './LP_CART';
+import type { LP_FAVORITE, LP_FAVORITEId } from './LP_FAVORITE';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
+import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 
@@ -64,6 +66,18 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   hasLpCart!: Sequelize.HasManyHasAssociationMixin<LP_CART, LP_CARTId>;
   hasLpCarts!: Sequelize.HasManyHasAssociationsMixin<LP_CART, LP_CARTId>;
   countLpCarts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_BUYER hasMany LP_FAVORITE via buyerId
+  lpFavorites!: LP_FAVORITE[];
+  getLpFavorites!: Sequelize.HasManyGetAssociationsMixin<LP_FAVORITE>;
+  setLpFavorites!: Sequelize.HasManySetAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  addLpFavorite!: Sequelize.HasManyAddAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  addLpFavorites!: Sequelize.HasManyAddAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  createLpFavorite!: Sequelize.HasManyCreateAssociationMixin<LP_FAVORITE>;
+  removeLpFavorite!: Sequelize.HasManyRemoveAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  removeLpFavorites!: Sequelize.HasManyRemoveAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  hasLpFavorite!: Sequelize.HasManyHasAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  hasLpFavorites!: Sequelize.HasManyHasAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  countLpFavorites!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER hasMany LP_ORDER via buyerId
   lpOrders!: LP_ORDER[];
   getLpOrders!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER>;
@@ -76,6 +90,18 @@ export class LP_BUYER extends Model<LP_BUYERAttributes, LP_BUYERCreationAttribut
   hasLpOrder!: Sequelize.HasManyHasAssociationMixin<LP_ORDER, LP_ORDERId>;
   hasLpOrders!: Sequelize.HasManyHasAssociationsMixin<LP_ORDER, LP_ORDERId>;
   countLpOrders!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_BUYER belongsToMany LP_PRODUCT via buyerId and productId
+  productIdLpProducts!: LP_PRODUCT[];
+  getProductIdLpProducts!: Sequelize.BelongsToManyGetAssociationsMixin<LP_PRODUCT>;
+  setProductIdLpProducts!: Sequelize.BelongsToManySetAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addProductIdLpProduct!: Sequelize.BelongsToManyAddAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  addProductIdLpProducts!: Sequelize.BelongsToManyAddAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  createProductIdLpProduct!: Sequelize.BelongsToManyCreateAssociationMixin<LP_PRODUCT>;
+  removeProductIdLpProduct!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  removeProductIdLpProducts!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasProductIdLpProduct!: Sequelize.BelongsToManyHasAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
+  hasProductIdLpProducts!: Sequelize.BelongsToManyHasAssociationsMixin<LP_PRODUCT, LP_PRODUCTId>;
+  countProductIdLpProducts!: Sequelize.BelongsToManyCountAssociationsMixin;
   // LP_BUYER belongsToMany LP_STORE via buyerId and storeId
   storeIdLpStores!: LP_STORE[];
   getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;

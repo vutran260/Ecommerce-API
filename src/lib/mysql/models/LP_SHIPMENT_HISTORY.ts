@@ -4,13 +4,13 @@ import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_SHIPMENT_HISTORYAttributes {
   id: string;
-  orderId: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  orderId: string;
 }
 
 export type LP_SHIPMENT_HISTORYPk = "id";
@@ -20,13 +20,13 @@ export type LP_SHIPMENT_HISTORYCreationAttributes = Optional<LP_SHIPMENT_HISTORY
 
 export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYCreationAttributes> implements LP_SHIPMENT_HISTORYAttributes {
   id!: string;
-  orderId!: string;
   shipmentHistoryDate?: Date;
   shipmentStatus?: string;
   shipmentDescription?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  orderId!: string;
 
   // LP_SHIPMENT_HISTORY belongsTo LP_ORDER via orderId
   order!: LP_ORDER;
@@ -41,15 +41,6 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true
-    },
-    orderId: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      references: {
-        model: 'LP_ORDER',
-        key: 'id'
-      },
-      field: 'order_id'
     },
     shipmentHistoryDate: {
       type: DataTypes.DATE,
@@ -80,6 +71,15 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
       type: DataTypes.DATE,
       allowNull: true,
       field: 'deleted_at'
+    },
+    orderId: {
+      type: DataTypes.STRING(36),
+      allowNull: false,
+      references: {
+        model: 'LP_ORDER',
+        key: 'id'
+      },
+      field: 'order_id'
     }
   }, {
     sequelize,
@@ -95,7 +95,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
         ]
       },
       {
-        name: "order_id",
+        name: "LP_SHIPMENT_HISTORY_order_id_fkey",
         using: "BTREE",
         fields: [
           { name: "order_id" },
