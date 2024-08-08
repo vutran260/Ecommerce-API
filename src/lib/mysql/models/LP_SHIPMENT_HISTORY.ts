@@ -15,7 +15,7 @@ export interface LP_SHIPMENT_HISTORYAttributes {
 
 export type LP_SHIPMENT_HISTORYPk = "id";
 export type LP_SHIPMENT_HISTORYId = LP_SHIPMENT_HISTORY[LP_SHIPMENT_HISTORYPk];
-export type LP_SHIPMENT_HISTORYOptionalAttributes = "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
+export type LP_SHIPMENT_HISTORYOptionalAttributes = "id" | "shipmentHistoryDate" | "shipmentStatus" | "shipmentDescription" | "createdAt" | "updatedAt" | "deletedAt";
 export type LP_SHIPMENT_HISTORYCreationAttributes = Optional<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYOptionalAttributes>;
 
 export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP_SHIPMENT_HISTORYCreationAttributes> implements LP_SHIPMENT_HISTORYAttributes {
@@ -39,6 +39,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
     id: {
       type: DataTypes.STRING(36),
       allowNull: false,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     orderId: {

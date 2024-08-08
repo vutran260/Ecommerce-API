@@ -4,6 +4,8 @@ import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { OrderUsecase } from '../usecase/OrderUsecase';
+import Logger from '../../lib/core/Logger';
+import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 
 export class OrderEndpoint {
   private orderUsecase: OrderUsecase;
@@ -43,6 +45,20 @@ export class OrderEndpoint {
     return ResponseListData(result, res, req.paging);
   };
 
+  private updateOrderStatus = async (req: ProtectedRequest, res: Response) => {
+    try {
+      const updateRequest: UpdateOrderStatusRequest = {
+        orderId: req.body.orderId,
+        status: req.body.status,
+      };
+      const results = await this.orderUsecase.updateOrderStatus(updateRequest);
+      return ResponseData(results, res);
+    } catch (error: any) {
+      Logger.error(error.message);
+      throw error;
+    }
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get('/', PagingMiddelware, this.getOrders);
@@ -52,6 +68,7 @@ export class OrderEndpoint {
       PagingMiddelware,
       this.getOrderItemsByOrderId,
     );
+    router.post('/', this.updateOrderStatus);
 
     return router;
   }

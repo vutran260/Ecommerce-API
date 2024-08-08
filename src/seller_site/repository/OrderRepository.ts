@@ -9,6 +9,8 @@ import {
   GetOffset,
   Paging,
 } from '../../lib/paging/Request';
+import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class OrderRepository {
   public getOrderById = async (id: string, t?: Transaction) => {
@@ -69,6 +71,23 @@ export class OrderRepository {
       Logger.error(error);
       Logger.error(error.message);
       throw error;
+    }
+  };
+
+  public updateOrderStatus = async (
+    input: UpdateOrderStatusRequest,
+    t?: Transaction,
+  ) => {
+    const os = await LP_ORDER.update(
+      { orderStatus: input.status },
+      {
+        where: { id: input.orderId },
+        transaction: t,
+      },
+    );
+
+    if (os[0] === 0) {
+      throw new BadRequestError();
     }
   };
 }

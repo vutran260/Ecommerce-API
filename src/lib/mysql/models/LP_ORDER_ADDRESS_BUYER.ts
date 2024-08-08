@@ -4,8 +4,14 @@ import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_ORDER_ADDRESS_BUYERAttributes {
   orderId: string;
-  nameKana: string;
-  nameKanji: string;
+  firstNameKana: string;
+  lastNameKana: string;
+  firstNameKanji: string;
+  lastNameKanji: string;
+  gender?: number;
+  prefectureCode: string;
+  agreed?: number;
+  keepContact?: number;
   postCode: string;
   cityTown: string;
   streetAddress: string;
@@ -18,13 +24,19 @@ export interface LP_ORDER_ADDRESS_BUYERAttributes {
 
 export type LP_ORDER_ADDRESS_BUYERPk = "orderId";
 export type LP_ORDER_ADDRESS_BUYERId = LP_ORDER_ADDRESS_BUYER[LP_ORDER_ADDRESS_BUYERPk];
-export type LP_ORDER_ADDRESS_BUYEROptionalAttributes = "createdAt" | "updatedAt";
+export type LP_ORDER_ADDRESS_BUYEROptionalAttributes = "gender" | "agreed" | "keepContact" | "createdAt" | "updatedAt";
 export type LP_ORDER_ADDRESS_BUYERCreationAttributes = Optional<LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYEROptionalAttributes>;
 
 export class LP_ORDER_ADDRESS_BUYER extends Model<LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYERCreationAttributes> implements LP_ORDER_ADDRESS_BUYERAttributes {
   orderId!: string;
-  nameKana!: string;
-  nameKanji!: string;
+  firstNameKana!: string;
+  lastNameKana!: string;
+  firstNameKanji!: string;
+  lastNameKanji!: string;
+  gender?: number;
+  prefectureCode!: string;
+  agreed?: number;
+  keepContact?: number;
   postCode!: string;
   cityTown!: string;
   streetAddress!: string;
@@ -52,15 +64,43 @@ export class LP_ORDER_ADDRESS_BUYER extends Model<LP_ORDER_ADDRESS_BUYERAttribut
       },
       field: 'order_id'
     },
-    nameKana: {
+    firstNameKana: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'name_kana'
+      field: 'first_name_kana'
     },
-    nameKanji: {
+    lastNameKana: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'name_kanji'
+      field: 'last_name_kana'
+    },
+    firstNameKanji: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'first_name_kanji'
+    },
+    lastNameKanji: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'last_name_kanji'
+    },
+    gender: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true
+    },
+    prefectureCode: {
+      type: DataTypes.CHAR(2),
+      allowNull: false,
+      field: 'prefecture_code'
+    },
+    agreed: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true
+    },
+    keepContact: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true,
+      field: 'keep_contact'
     },
     postCode: {
       type: DataTypes.STRING(36),
