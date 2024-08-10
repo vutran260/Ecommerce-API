@@ -47,7 +47,6 @@ export class BuyerRepository {
       ],
       where: { id },
     });
-
     if (!buyer) {
       throw new NotFoundError('Buyer not found');
     }

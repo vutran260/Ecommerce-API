@@ -1,7 +1,7 @@
-import { BuyerRepository } from '../repository/BuyerRepository';
 import { Filter, Paging } from '../../lib/paging/Request';
 import { LpOrder } from '../../lib/paging/Order';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import { BuyerRepository } from '../repository/BuyerRepository';
 import { BuyerDetailInfo, BuyerInfo } from '../../common/model/buyers/Buyer';
 
 export class BuyerUsecase {

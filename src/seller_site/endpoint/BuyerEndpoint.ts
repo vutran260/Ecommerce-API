@@ -29,8 +29,8 @@ export class BuyerEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.get('/buyers', PagingMiddelware, this.getBuyer);
-    router.get(`/detail/:id`, this.getBuyerDetail);
+    router.get('/', PagingMiddelware, this.getBuyer);
+    router.get(`/:id`, this.getBuyerDetail);
     return router;
   }
 }

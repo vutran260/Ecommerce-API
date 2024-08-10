@@ -23,6 +23,9 @@ import { StoreUsecase } from './usecase/StoreUsecase';
 import { UploadEndpoint } from './endpoint/UploadEnpoint';
 import { UploadUsecase } from './usecase/UploadUsecase';
 import { S3Service } from '../third_party/s3/s3Service';
+import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
+import { BuyerRepository } from './repository/BuyerRepository';
+import { BuyerUsecase } from './usecase/BuyerUsecase';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -35,6 +38,7 @@ export class sellerSiteRouter {
     const storePostRepo = new StorePostRepository();
     const orderRepo = new OrderRepository();
     const orderItemRepo = new OrderItemRepository();
+    const buyerRepo = new BuyerRepository();
 
     // third party
     const s3Service = new S3Service();
@@ -45,6 +49,7 @@ export class sellerSiteRouter {
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storePostUsecase = new StorePostUsecase(storePostRepo);
     const orderUsecase = new OrderUsecase(orderRepo, orderItemRepo);
+    const buyerUsecase = new BuyerUsecase(buyerRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
 
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -54,6 +59,7 @@ export class sellerSiteRouter {
     const storePostEndpoint = new StorePostEndpoint(storePostUsecase);
     const orderEndpoint = new OrderEndpoint(orderUsecase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
+    const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
 
     router.use('/seller', sellerEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware);
@@ -65,6 +71,7 @@ export class sellerSiteRouter {
     router.use('/category', categoryEndpoint.getRouter());
     router.use('/order', orderEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
+    router.use('/buyer', buyerEndpoint.getRouter());
     return router;
   };
 }
