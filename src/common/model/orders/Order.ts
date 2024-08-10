@@ -26,6 +26,7 @@ export class Order {
 
 export class OrderItem {
   id: string;
+  productId?: string;
   productName?: string;
   productImage?: string;
   quantity: number;
@@ -34,6 +35,7 @@ export class OrderItem {
   constructor(order: LP_ORDER_ITEM) {
     const priceOfItem = order.price ? order.price : 1;
     this.id = order.id;
+    this.productId = order.productId;
     this.productName = order.productName;
     this.productImage = order.productImage;
     this.quantity = order.quantity;
