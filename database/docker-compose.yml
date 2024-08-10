@@ -13,9 +13,9 @@ services:
 
     ports:
       - ${LINK_PALETTE_SQL_PORT}:3306
-    volumes:
+    # volumes:
     #  - ./data:/var/lib/mysql
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    #  - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 networks:
   default:

@@ -14,12 +14,12 @@ export class OrderPaymentRepository {
         transaction: t,
       },
     );
-    return this.getOrderPaymentById(orderPayment.id, t);
+    return this.getOrderPaymentById(orderPayment.orderId, t);
   };
 
   public getOrderPaymentById = async (id: string, t?: Transaction) => {
     const result = await LP_ORDER_PAYMENT.findOne({
-      where: { id },
+      where: { orderId: id },
       transaction: t,
     });
     return result?.dataValues;

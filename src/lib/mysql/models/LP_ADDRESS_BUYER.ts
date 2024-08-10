@@ -7,33 +7,49 @@ export interface LP_ADDRESS_BUYERAttributes {
   id: string;
   buyerId: string;
   storeId: string;
-  nameKana: string;
-  nameKanji: string;
+  firstNameKana: string;
+  lastNameKana: string;
+  firstNameKanji: string;
+  lastNameKanji: string;
+  gender?: number;
+  prefectureCode: string;
+  agreed?: number;
+  keepContact?: number;
   postCode: string;
   cityTown: string;
   streetAddress: string;
   buildingName: string;
   email: string;
   telephoneNumber: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type LP_ADDRESS_BUYERPk = "id";
 export type LP_ADDRESS_BUYERId = LP_ADDRESS_BUYER[LP_ADDRESS_BUYERPk];
-export type LP_ADDRESS_BUYEROptionalAttributes = "id";
+export type LP_ADDRESS_BUYEROptionalAttributes = "id" | "gender" | "agreed" | "keepContact" | "createdAt" | "updatedAt";
 export type LP_ADDRESS_BUYERCreationAttributes = Optional<LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYEROptionalAttributes>;
 
 export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRESS_BUYERCreationAttributes> implements LP_ADDRESS_BUYERAttributes {
   id!: string;
   buyerId!: string;
   storeId!: string;
-  nameKana!: string;
-  nameKanji!: string;
+  firstNameKana!: string;
+  lastNameKana!: string;
+  firstNameKanji!: string;
+  lastNameKanji!: string;
+  gender?: number;
+  prefectureCode!: string;
+  agreed?: number;
+  keepContact?: number;
   postCode!: string;
   cityTown!: string;
   streetAddress!: string;
   buildingName!: string;
   email!: string;
   telephoneNumber!: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   // LP_ADDRESS_BUYER belongsTo LP_BUYER via buyerId
   buyer!: LP_BUYER;
@@ -72,15 +88,43 @@ export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRE
       },
       field: 'store_id'
     },
-    nameKana: {
+    firstNameKana: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'name_kana'
+      field: 'first_name_kana'
     },
-    nameKanji: {
+    lastNameKana: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      field: 'name_kanji'
+      field: 'last_name_kana'
+    },
+    firstNameKanji: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'first_name_kanji'
+    },
+    lastNameKanji: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: 'last_name_kanji'
+    },
+    gender: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true
+    },
+    prefectureCode: {
+      type: DataTypes.CHAR(2),
+      allowNull: false,
+      field: 'prefecture_code'
+    },
+    agreed: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true
+    },
+    keepContact: {
+      type: DataTypes.TINYINT.UNSIGNED,
+      allowNull: true,
+      field: 'keep_contact'
     },
     postCode: {
       type: DataTypes.STRING(36),
@@ -110,6 +154,18 @@ export class LP_ADDRESS_BUYER extends Model<LP_ADDRESS_BUYERAttributes, LP_ADDRE
       type: DataTypes.STRING(36),
       allowNull: false,
       field: 'telephone_number'
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'created_at'
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
+      field: 'updated_at'
     }
   }, {
     sequelize,

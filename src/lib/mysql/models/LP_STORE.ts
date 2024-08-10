@@ -65,17 +65,17 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   hasLpAddressBuyers!: Sequelize.HasManyHasAssociationsMixin<LP_ADDRESS_BUYER, LP_ADDRESS_BUYERId>;
   countLpAddressBuyers!: Sequelize.HasManyCountAssociationsMixin;
   // LP_STORE belongsToMany LP_BUYER via storeId and buyerId
-  buyerIdLpBuyers!: LP_BUYER[];
-  getBuyerIdLpBuyers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_BUYER>;
-  setBuyerIdLpBuyers!: Sequelize.BelongsToManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  addBuyerIdLpBuyer!: Sequelize.BelongsToManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
-  addBuyerIdLpBuyers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  createBuyerIdLpBuyer!: Sequelize.BelongsToManyCreateAssociationMixin<LP_BUYER>;
-  removeBuyerIdLpBuyer!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
-  removeBuyerIdLpBuyers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  hasBuyerIdLpBuyer!: Sequelize.BelongsToManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
-  hasBuyerIdLpBuyers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
-  countBuyerIdLpBuyers!: Sequelize.BelongsToManyCountAssociationsMixin;
+  buyerIdLpBuyerLpStoreBuyers!: LP_BUYER[];
+  getBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_BUYER>;
+  setBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyerLpStoreBuyer!: Sequelize.BelongsToManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  createBuyerIdLpBuyerLpStoreBuyer!: Sequelize.BelongsToManyCreateAssociationMixin<LP_BUYER>;
+  removeBuyerIdLpBuyerLpStoreBuyer!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
+  removeBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyerLpStoreBuyer!: Sequelize.BelongsToManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  countBuyerIdLpBuyerLpStoreBuyers!: Sequelize.BelongsToManyCountAssociationsMixin;
   // LP_STORE hasMany LP_CART via storeId
   lpCarts!: LP_CART[];
   getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;

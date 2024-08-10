@@ -17,10 +17,15 @@ export class OrderEndpoint {
 
   private createOrder = async (req: ProtectedRequest, res: Response) => {
     const orderCreateRequest = plainToClass(CreateOrderRequest, req.body);
-    orderCreateRequest.storeId = req.storeId;
+    const storeId: string = req.storeId;
+    const buyerId: string = req.user.id;
 
     await validatorRequest(orderCreateRequest);
-    const results = await this.orderUsecase.createOrder(orderCreateRequest);
+    const results = await this.orderUsecase.createOrder(
+      req.body.cardSeq,
+      buyerId,
+      storeId,
+    );
     return ResponseData(results, res);
   };
 
@@ -32,10 +37,12 @@ export class OrderEndpoint {
   };
 
   private getOrders = async (req: PaginationRequest, res: Response) => {
+    const buyerId: string = req.user.id;
     const result = await this.orderUsecase.getOrders(
       req.filterList,
       req.order,
       req.paging,
+      buyerId,
     );
 
     return ResponseListData(result, res, req.paging);
@@ -79,15 +86,16 @@ export class OrderEndpoint {
 
   // API testing excecute transaction for payment on GMO
   private execTran = async (req: ProtectedRequest, res: Response) => {
-    const execTransactionRequest = {
+    const transactionExecRequest = {
       accessID: req.body.accessID,
       accessPass: req.body.accessPass,
+      memberID: req.body.memberID,
+      cardSeq: req.body.cardSeq,
       orderID: req.body.orderID,
       method: req.body.method,
-      token: req.body.token,
     };
 
-    const results = await this.orderUsecase.execTran(execTransactionRequest);
+    const results = await this.orderUsecase.execTran(transactionExecRequest);
     return ResponseData(results, res);
   };
 

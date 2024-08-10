@@ -15,14 +15,11 @@ export enum DefaultFormat {
 }
 
 export enum OrderStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  SHIPPED = 'SHIPPED',
-  DELIVERED = 'DELIVERED',
-  CANCELLED = 'CANCELLED',
-  RETURNED = 'RETURNED',
-  FAILED = 'FAILED',
-  SUCESS = 'SUCESS',
+  NOT_CONFIRMED = 'NOT_CONFIRMED', //注文未確定
+  PREPARING = 'PREPARING', // 発送準備中
+  WAITING_PICKUP = 'WAITING_PICKUP', // 集荷依頼待ち
+  WAITING_SHIP = 'WAITING_SHIP', // 出荷待ち
+  SHIPPED = 'SHIPPED', // 出荷完了
 }
 
 export enum PaymentSatus {
@@ -62,3 +59,14 @@ export enum PaymentType {
   MOBILE_PAYMENT = 'MOBILE_PAYMENT',
   GIFT_CARD = 'GIFT_CARD',
 }
+
+export enum ShipmentPrice {
+  MAX_PRICE_APPY_FEE = 7000,
+  MIN_FEE = 0,
+  MAX_FEE = 500,
+}
+
+export const MAX_FILE_SIZE = 20 * 1024 * 1024;
+export const EXPIRED_SIGNED_URL = 15 * 60;
+export const SELLER_FOLDER_PREFIX = 'link-palette-seller';
+export const BUYER_FOLDER_PREFIX = 'link-palette-buyer';

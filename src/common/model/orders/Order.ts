@@ -1,10 +1,11 @@
 import moment from 'moment';
+import { CartItem } from '../../../buyer_site/endpoint/CartEndpoint';
 import { DATE_FORMAT } from '../../../lib/constant/Constant';
-import { LP_CART } from '../../../lib/mysql/models/LP_CART';
+import { LP_ADDRESS_BUYER } from '../../../lib/mysql/models/LP_ADDRESS_BUYER';
 import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 import { LP_ORDER_PAYMENT } from '../../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { LP_SHIPMENT } from '../../../lib/mysql/models/LP_SHIPMENT';
-import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 
 export class Order {
   id: string;
@@ -18,13 +19,14 @@ export class Order {
     this.buyerName = order.buyer.username;
     this.totalAmount = order.totalAmount;
     this.orderStatus = order.orderStatus;
-    this.paymentStatus = order.lpOrderPayments[0].paymentStatus;
+    this.paymentStatus = order.lpOrderPayment.paymentStatus;
     this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
   }
 }
 
 export class OrderItem {
   id: string;
+  productId?: string;
   productName?: string;
   productImage?: string;
   quantity: number;
@@ -33,6 +35,7 @@ export class OrderItem {
   constructor(order: LP_ORDER_ITEM) {
     const priceOfItem = order.price ? order.price : 1;
     this.id = order.id;
+    this.productId = order.productId;
     this.productName = order.productName;
     this.productImage = order.productImage;
     this.quantity = order.quantity;
@@ -42,19 +45,18 @@ export class OrderItem {
 }
 
 export class CreateOrderRequest {
-  token: string;
-  buyerId: string;
-  storeId: string;
-  receiverId?: string;
   orderStatus?: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
   totalAmount: number;
   createdAt = new Date();
+  createdBy?: string;
 }
 
 export class UpdateOrderRequest {
+  buyerId: string;
+  storeId: string;
   orderStatus?: string;
   amount?: number;
   shipmentFee?: number;
@@ -78,27 +80,24 @@ export class CreateOrderItemRequest {
   updatedAt = new Date();
   deletedAt?: Date;
 
-  constructor(cart_item: LP_CART) {
-    this.productName =
-      cart_item && cart_item.product ? cart_item.product.productName : '';
-    this.productImage =
-      cart_item && cart_item.product ? cart_item.product.productImage : '';
-    this.productDescription =
-      cart_item && cart_item.product
-        ? cart_item.product.productDescription
-        : '';
-    this.productOverview =
-      cart_item && cart_item.product ? cart_item.product.productOverview : '';
-
-    this.price = cart_item && cart_item.product ? cart_item.product.price : 0;
-    this.quantity = cart_item.quantity;
+  constructor(cartItem: CartItem) {
+    const finalItemPrice = cartItem.isSubscription
+      ? cartItem.product.calculatedSubscriptionPrice
+      : cartItem.product.calculatedNormalPrice;
+    this.productId = cartItem.productId;
+    this.productName = cartItem.product.productName;
+    this.productImage = cartItem.product.productImage.toString();
+    this.productDescription = cartItem.product.productDescription;
+    this.productOverview = cartItem.product.productOverview;
+    this.price = finalItemPrice;
+    this.quantity = cartItem.quantity;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
 }
 
 export class CreateOrderPaymentRequest {
-  orderId?: string;
+  orderId: string;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -114,7 +113,7 @@ export class CreateOrderPaymentRequest {
 }
 
 export class CreateShipmentRequest {
-  orderId?: string;
+  orderId: string;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   arrivedAt?: Date;
@@ -158,4 +157,42 @@ export class OrderDetailResponse {
   phone?: string;
   postCode?: string;
   address?: string;
+}
+
+export class OrderAddressBuyerCreate {
+  orderId: string;
+  firstNameKana: string;
+  lastNameKana: string;
+  firstNameKanji: string;
+  lastNameKanji: string;
+  gender?: number;
+  prefectureCode: string;
+  agreed?: number;
+  keepContact?: number;
+  postCode: string;
+  cityTown: string;
+  streetAddress: string;
+  buildingName: string;
+  email: string;
+  telephoneNumber: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  constructor(lp_address_buyer: LP_ADDRESS_BUYER) {
+    this.firstNameKana = lp_address_buyer.firstNameKana;
+    this.lastNameKana = lp_address_buyer.lastNameKana;
+    this.firstNameKanji = lp_address_buyer.firstNameKanji;
+    this.lastNameKanji = lp_address_buyer.lastNameKanji;
+    this.gender = lp_address_buyer.gender;
+    this.prefectureCode = lp_address_buyer.prefectureCode;
+    this.agreed = lp_address_buyer.agreed;
+    this.keepContact = lp_address_buyer.keepContact;
+    this.postCode = lp_address_buyer.postCode;
+    this.cityTown = lp_address_buyer.cityTown;
+    this.streetAddress = lp_address_buyer.streetAddress;
+    this.buildingName = lp_address_buyer.buildingName;
+    this.email = lp_address_buyer.email;
+    this.telephoneNumber = lp_address_buyer.telephoneNumber;
+    this.createdAt = new Date();
+  }
 }

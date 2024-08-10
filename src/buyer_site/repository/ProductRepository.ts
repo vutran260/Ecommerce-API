@@ -13,6 +13,9 @@ import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
+import {
+  LP_FAVORITE,
+} from '../../lib/mysql/models/LP_FAVORITE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
@@ -60,7 +63,7 @@ export class ProductRepository {
     isNoCategory: boolean,
   ) => {
     try {
-      this.filterSortByPrice(order);
+      const orderQuery = this.filterSortByPrice(order);
 
       filter.push({
         operation: 'eq',
@@ -112,8 +115,6 @@ export class ProductRepository {
 
 
       const results = await LP_PRODUCT.findAll({
-        subQuery: false,
-
         attributes: {
           include: [
             [Sequelize.literal(`
@@ -146,7 +147,7 @@ export class ProductRepository {
         include: include,
         where: query,
         offset: GetOffset(paging),
-        order: BuildOrderQuery(order),
+        order: orderQuery,
         limit: paging.limit,
       });
       forEach(results, (result) => {
@@ -160,16 +161,103 @@ export class ProductRepository {
     }
   };
 
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
+    try {
+      const count = await LP_FAVORITE.count({
+        where: {
+          buyerId,
+          ...BuildQuery(filter),
+        },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            where: { storeId:  storeId },
+          },
+        ]
+      });
+      paging.total = count;
 
+      const favorites = await LP_FAVORITE.findAll({
+        where: {
+          buyerId,
+          ...BuildQuery(filter),
+        },
+        include: [
+          {
+            model: LP_PRODUCT,
+            as: 'product',
+            where: { storeId:  storeId},
+          },
+        ],
+        order: [['createdAt', 'DESC']],
+        offset: GetOffset(paging),
+        limit: paging.limit,
+      });
 
-
-private filterSortByPrice = (orders: LpOrder[]) => {
-  orders.forEach(item => {
-    if (item.attribute === 'price') {
-      item.attribute = 'sortPrice';
+      return { favorites, total: count };
+    } catch (error) {
+      Logger.error(error);
+      throw new Error('Failed to retrieve favorite products.');
     }
-  });
-};
+  };
+
+  public addFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const existingFavorite = await LP_FAVORITE.findOne({
+        where: {
+          buyerId,
+          productId,
+        },
+      });
+
+      if (existingFavorite) {
+        throw new Error('Favorite product already exists.');
+      }
+
+      await LP_FAVORITE.create({
+        buyerId,
+        productId,
+        createdAt: new Date(),
+      });
+
+      return { message: 'Product added to favorites successfully.' };
+    } catch (error) {
+      Logger.error(error);
+      throw error;
+    }
+  }
+
+  public removeFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+        const result = await LP_FAVORITE.destroy({ where: { buyerId, productId } });
+
+        if (result === 0) {
+            throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
+        }
+
+        return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
+    } catch (error) {
+        Logger.error(error);
+        throw error;
+    }
+  };
+
+  private filterSortByPrice = (orders: LpOrder[]): any => {
+    orders.forEach(item => {
+      if (item.attribute === 'price') {
+        item.attribute = 'sortPrice';
+      }
+    });
+
+    const orderQueries = BuildOrderQuery(orders);
+    return lodash.map(orderQueries, order => {
+      if (lodash.get(order, '[0]') === 'sortPrice') {
+        return [Sequelize.literal('sortPrice'), lodash.get(order, '[1]')];
+      }
+      return order;
+    });
+  };
 }
 
 export interface CreateProductInput extends LP_PRODUCTCreationAttributes {

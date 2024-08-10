@@ -13,8 +13,12 @@ import { LP_CART as _LP_CART } from "./LP_CART";
 import type { LP_CARTAttributes, LP_CARTCreationAttributes } from "./LP_CART";
 import { LP_CATEGORY as _LP_CATEGORY } from "./LP_CATEGORY";
 import type { LP_CATEGORYAttributes, LP_CATEGORYCreationAttributes } from "./LP_CATEGORY";
+import { LP_FAVORITE as _LP_FAVORITE } from "./LP_FAVORITE";
+import type { LP_FAVORITEAttributes, LP_FAVORITECreationAttributes } from "./LP_FAVORITE";
 import { LP_ORDER as _LP_ORDER } from "./LP_ORDER";
 import type { LP_ORDERAttributes, LP_ORDERCreationAttributes } from "./LP_ORDER";
+import { LP_ORDER_ADDRESS_BUYER as _LP_ORDER_ADDRESS_BUYER } from "./LP_ORDER_ADDRESS_BUYER";
+import type { LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYERCreationAttributes } from "./LP_ORDER_ADDRESS_BUYER";
 import { LP_ORDER_ITEM as _LP_ORDER_ITEM } from "./LP_ORDER_ITEM";
 import type { LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes } from "./LP_ORDER_ITEM";
 import { LP_ORDER_PAYMENT as _LP_ORDER_PAYMENT } from "./LP_ORDER_PAYMENT";
@@ -41,6 +45,10 @@ import { LP_STORE_BUYER as _LP_STORE_BUYER } from "./LP_STORE_BUYER";
 import type { LP_STORE_BUYERAttributes, LP_STORE_BUYERCreationAttributes } from "./LP_STORE_BUYER";
 import { LP_STORE_POST as _LP_STORE_POST } from "./LP_STORE_POST";
 import type { LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes } from "./LP_STORE_POST";
+import { SeederMeta as _SeederMeta } from "./SeederMeta";
+import type { SeederMetaAttributes, SeederMetaCreationAttributes } from "./SeederMeta";
+import { SequelizeMeta as _SequelizeMeta } from "./SequelizeMeta";
+import type { SequelizeMetaAttributes, SequelizeMetaCreationAttributes } from "./SequelizeMeta";
 
 export {
   _LP_ADDRESS_BUYER as LP_ADDRESS_BUYER,
@@ -50,7 +58,9 @@ export {
   _LP_BUYER_PERSONAL_INFORMATION as LP_BUYER_PERSONAL_INFORMATION,
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
+  _LP_FAVORITE as LP_FAVORITE,
   _LP_ORDER as LP_ORDER,
+  _LP_ORDER_ADDRESS_BUYER as LP_ORDER_ADDRESS_BUYER,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
   _LP_ORDER_PAYMENT as LP_ORDER_PAYMENT,
   _LP_PREFECTURES as LP_PREFECTURES,
@@ -64,6 +74,8 @@ export {
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
   _LP_STORE_POST as LP_STORE_POST,
+  _SeederMeta as SeederMeta,
+  _SequelizeMeta as SequelizeMeta,
 };
 
 export type {
@@ -81,8 +93,12 @@ export type {
   LP_CARTCreationAttributes,
   LP_CATEGORYAttributes,
   LP_CATEGORYCreationAttributes,
+  LP_FAVORITEAttributes,
+  LP_FAVORITECreationAttributes,
   LP_ORDERAttributes,
   LP_ORDERCreationAttributes,
+  LP_ORDER_ADDRESS_BUYERAttributes,
+  LP_ORDER_ADDRESS_BUYERCreationAttributes,
   LP_ORDER_ITEMAttributes,
   LP_ORDER_ITEMCreationAttributes,
   LP_ORDER_PAYMENTAttributes,
@@ -109,6 +125,10 @@ export type {
   LP_STORE_BUYERCreationAttributes,
   LP_STORE_POSTAttributes,
   LP_STORE_POSTCreationAttributes,
+  SeederMetaAttributes,
+  SeederMetaCreationAttributes,
+  SequelizeMetaAttributes,
+  SequelizeMetaCreationAttributes,
 };
 
 export function initModels(sequelize: Sequelize) {
@@ -119,7 +139,9 @@ export function initModels(sequelize: Sequelize) {
   const LP_BUYER_PERSONAL_INFORMATION = _LP_BUYER_PERSONAL_INFORMATION.initModel(sequelize);
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
+  const LP_FAVORITE = _LP_FAVORITE.initModel(sequelize);
   const LP_ORDER = _LP_ORDER.initModel(sequelize);
+  const LP_ORDER_ADDRESS_BUYER = _LP_ORDER_ADDRESS_BUYER.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
   const LP_ORDER_PAYMENT = _LP_ORDER_PAYMENT.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
@@ -133,11 +155,15 @@ export function initModels(sequelize: Sequelize) {
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
   const LP_STORE_POST = _LP_STORE_POST.initModel(sequelize);
+  const SeederMeta = _SeederMeta.initModel(sequelize);
+  const SequelizeMeta = _SequelizeMeta.initModel(sequelize);
 
+  LP_BUYER.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_FAVORITE, foreignKey: "buyerId", otherKey: "productId" });
   LP_BUYER.belongsToMany(LP_STORE, { as: 'storeIdLpStores', through: LP_STORE_BUYER, foreignKey: "buyerId", otherKey: "storeId" });
-  LP_CATEGORY.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_PRODUCT_CATEGORY, foreignKey: "categoryId", otherKey: "productId" });
+  LP_CATEGORY.belongsToMany(LP_PRODUCT, { as: 'productIdLpProductLpProductCategories', through: LP_PRODUCT_CATEGORY, foreignKey: "categoryId", otherKey: "productId" });
+  LP_PRODUCT.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyers', through: LP_FAVORITE, foreignKey: "productId", otherKey: "buyerId" });
   LP_PRODUCT.belongsToMany(LP_CATEGORY, { as: 'categoryIdLpCategories', through: LP_PRODUCT_CATEGORY, foreignKey: "productId", otherKey: "categoryId" });
-  LP_STORE.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyers', through: LP_STORE_BUYER, foreignKey: "storeId", otherKey: "buyerId" });
+  LP_STORE.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyerLpStoreBuyers', through: LP_STORE_BUYER, foreignKey: "storeId", otherKey: "buyerId" });
   LP_ADDRESS_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "buyerId"});
   LP_ADDRESS_BUYER_SSO.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
@@ -146,20 +172,28 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasOne(LP_BUYER_PERSONAL_INFORMATION, { as: "lpBuyerPersonalInformation", foreignKey: "buyerId"});
   LP_CART.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_CART, { as: "lpCarts", foreignKey: "buyerId"});
+  LP_FAVORITE.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasMany(LP_FAVORITE, { as: "lpFavorites", foreignKey: "buyerId"});
   LP_ORDER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_ORDER, { as: "lpOrders", foreignKey: "buyerId"});
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "buyerId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_CATEGORY, { as: "category", foreignKey: "categoryId"});
   LP_CATEGORY.hasMany(LP_PRODUCT_CATEGORY, { as: "lpProductCategories", foreignKey: "categoryId"});
+  LP_ORDER_ADDRESS_BUYER.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_ORDER_ADDRESS_BUYER, { as: "lpOrderAddressBuyer", foreignKey: "orderId"});
   LP_ORDER_ITEM.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
   LP_ORDER.hasMany(LP_ORDER_ITEM, { as: "lpOrderItems", foreignKey: "orderId"});
   LP_ORDER_PAYMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
-  LP_ORDER.hasMany(LP_ORDER_PAYMENT, { as: "lpOrderPayments", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_ORDER_PAYMENT, { as: "lpOrderPayment", foreignKey: "orderId"});
   LP_SHIPMENT.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
-  LP_ORDER.hasMany(LP_SHIPMENT, { as: "lpShipments", foreignKey: "orderId"});
+  LP_ORDER.hasOne(LP_SHIPMENT, { as: "lpShipment", foreignKey: "orderId"});
+  LP_SHIPMENT_HISTORY.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
+  LP_FAVORITE.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
+  LP_PRODUCT.hasMany(LP_FAVORITE, { as: "lpFavorites", foreignKey: "productId"});
   LP_ORDER_ITEM.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_ORDER_ITEM, { as: "lpOrderItems", foreignKey: "productId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
@@ -168,8 +202,6 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
   LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
-  LP_SHIPMENT_HISTORY.belongsTo(LP_SHIPMENT, { as: "shipment", foreignKey: "shipmentId"});
-  LP_SHIPMENT.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "shipmentId"});
   LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "storeId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
@@ -195,7 +227,9 @@ export function initModels(sequelize: Sequelize) {
     LP_BUYER_PERSONAL_INFORMATION: LP_BUYER_PERSONAL_INFORMATION,
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
+    LP_FAVORITE: LP_FAVORITE,
     LP_ORDER: LP_ORDER,
+    LP_ORDER_ADDRESS_BUYER: LP_ORDER_ADDRESS_BUYER,
     LP_ORDER_ITEM: LP_ORDER_ITEM,
     LP_ORDER_PAYMENT: LP_ORDER_PAYMENT,
     LP_PREFECTURES: LP_PREFECTURES,
@@ -209,5 +243,7 @@ export function initModels(sequelize: Sequelize) {
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
     LP_STORE_POST: LP_STORE_POST,
+    SeederMeta: SeederMeta,
+    SequelizeMeta: SequelizeMeta,
   };
 }

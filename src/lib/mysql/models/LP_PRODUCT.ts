@@ -1,7 +1,9 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
+import type { LP_FAVORITE, LP_FAVORITEId } from './LP_FAVORITE';
 import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CATEGORY';
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
@@ -66,6 +68,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   updatedAt?: Date;
   deletedAt?: Date;
 
+  // LP_PRODUCT belongsToMany LP_BUYER via productId and buyerId
+  buyerIdLpBuyers!: LP_BUYER[];
+  getBuyerIdLpBuyers!: Sequelize.BelongsToManyGetAssociationsMixin<LP_BUYER>;
+  setBuyerIdLpBuyers!: Sequelize.BelongsToManySetAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyer!: Sequelize.BelongsToManyAddAssociationMixin<LP_BUYER, LP_BUYERId>;
+  addBuyerIdLpBuyers!: Sequelize.BelongsToManyAddAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  createBuyerIdLpBuyer!: Sequelize.BelongsToManyCreateAssociationMixin<LP_BUYER>;
+  removeBuyerIdLpBuyer!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_BUYER, LP_BUYERId>;
+  removeBuyerIdLpBuyers!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyer!: Sequelize.BelongsToManyHasAssociationMixin<LP_BUYER, LP_BUYERId>;
+  hasBuyerIdLpBuyers!: Sequelize.BelongsToManyHasAssociationsMixin<LP_BUYER, LP_BUYERId>;
+  countBuyerIdLpBuyers!: Sequelize.BelongsToManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_CART via productId
   lpCarts!: LP_CART[];
   getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
@@ -90,6 +104,18 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasCategoryIdLpCategory!: Sequelize.BelongsToManyHasAssociationMixin<LP_CATEGORY, LP_CATEGORYId>;
   hasCategoryIdLpCategories!: Sequelize.BelongsToManyHasAssociationsMixin<LP_CATEGORY, LP_CATEGORYId>;
   countCategoryIdLpCategories!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_FAVORITE via productId
+  lpFavorites!: LP_FAVORITE[];
+  getLpFavorites!: Sequelize.HasManyGetAssociationsMixin<LP_FAVORITE>;
+  setLpFavorites!: Sequelize.HasManySetAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  addLpFavorite!: Sequelize.HasManyAddAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  addLpFavorites!: Sequelize.HasManyAddAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  createLpFavorite!: Sequelize.HasManyCreateAssociationMixin<LP_FAVORITE>;
+  removeLpFavorite!: Sequelize.HasManyRemoveAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  removeLpFavorites!: Sequelize.HasManyRemoveAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  hasLpFavorite!: Sequelize.HasManyHasAssociationMixin<LP_FAVORITE, LP_FAVORITEId>;
+  hasLpFavorites!: Sequelize.HasManyHasAssociationsMixin<LP_FAVORITE, LP_FAVORITEId>;
+  countLpFavorites!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT hasMany LP_ORDER_ITEM via productId
   lpOrderItems!: LP_ORDER_ITEM[];
   getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;

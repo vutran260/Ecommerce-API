@@ -4,6 +4,8 @@ import { ProductRepository } from '../repository/ProductRepository';
 import { CategoryRepository } from '../repository/CategoryRepository';
 import { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
 import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
+import Logger from '../../lib/core/Logger';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class ProductUsecase {
   private productRepo: ProductRepository;
@@ -45,5 +47,37 @@ export class ProductUsecase {
     return products.map((product) => {
       return ProductFromLP_PRODUCT(product);
     });
+  };
+
+  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
+      return await this.productRepo.getFavoriteProduct(buyerId, filter, paging, storeId);
+  };
+
+  public addFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const product = await this.productRepo.getProductId(productId);
+      if (!product) {
+        throw new BadRequestError('Product not found');
+      }
+      return await this.productRepo.addFavoriteProduct(productId, buyerId);
+    } catch (error) {
+      Logger.error('Fail to add favorite product');
+      Logger.error(error);
+      throw error;
+    }
+  };
+
+  public removeFavoriteProduct = async (productId: string, buyerId: string) => {
+    try {
+      const product = await this.productRepo.getProductId(productId);
+      if (!product) {
+        throw new BadRequestError('Product not found');
+      }
+      return await this.productRepo.removeFavoriteProduct(productId, buyerId);
+    } catch (error) {
+      Logger.error('Fail to remove favorite product');
+      Logger.error(error);
+      throw error;
+    }
   };
 }

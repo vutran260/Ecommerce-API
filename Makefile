@@ -6,6 +6,8 @@ start-db:
 
 .PHONY:
 deploy:
+	npm run db:migrate
+	npm run db:seed:all
 	docker build --platform linux/amd64 -t linkpalette-be .
 	docker image save linkpalette-be > app.tar
 	scp ./app.tar root@167.179.91.247:/root/link_palette/app_be/app.tar

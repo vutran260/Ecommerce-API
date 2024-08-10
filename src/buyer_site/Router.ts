@@ -1,36 +1,40 @@
 import express from 'express';
-import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
-import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
-import { BuyerRepository } from './repository/BuyerRepository';
-import { BuyerUsecase } from './usecase/BuyerUsecase';
-import { CategoryRepository } from './repository/CategoryRepository';
-import { ProductRepository } from './repository/ProductRepository';
-import { ProductUsecase } from './usecase/ProductUsecase';
-import { ProductEndpoint } from './endpoint/ProductEndpoint';
-import { StoreRepository } from './repository/StoreRepository';
-import { StoreUsecase } from './usecase/StoreUsecase';
-import { StoreEndpoint } from './endpoint/StoreEndpoint';
-import { CartEndpoint } from './endpoint/CartEndpoint';
-import { CartUsecase } from './usecase/CartUsecase';
-import { CartRepository } from './repository/CartRepository';
-import { AddressRepository } from './repository/AddressRepository';
-import { AddressUsecase } from './usecase/AddressUsecase';
-import { AddressEndpoint } from './endpoint/AddressEndpoint';
-import { PrefectureRepository } from './repository/PrefectureRepository';
-import { PrefectureUsecase } from './usecase/PrefectureUsecase';
-import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
-import { CardUsecase } from './usecase/CardUsecase';
+import { AddressEndpoint } from './endpoint/AddressEndpoint';
+import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
+import { BuyerPostEndpoint } from './endpoint/BuyerPostEndpoint';
 import { CardEndpoint } from './endpoint/CardEndpoint';
-import { OrderRepository } from './repository/OrderRepository';
-import { OrderUsecase } from './usecase/OrderUsecase';
+import { CartEndpoint } from './endpoint/CartEndpoint';
 import { OrderEndpoint } from './endpoint/OrderEndpoint';
+import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
+import { ProductEndpoint } from './endpoint/ProductEndpoint';
+import { StoreEndpoint } from './endpoint/StoreEndpoint';
+import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
+import { AddressRepository } from './repository/AddressRepository';
+import { BuyerPostRepository } from './repository/BuyerPostRepository';
+import { BuyerRepository } from './repository/BuyerRepository';
+import { CartRepository } from './repository/CartRepository';
+import { CategoryRepository } from './repository/CategoryRepository';
+import { OrderAddressBuyerRepository } from './repository/OrderAddressBuyerRepository';
 import { OrderItemRepository } from './repository/OrderItemRepository';
 import { OrderPaymentRepository } from './repository/OrderPaymentRepository';
+import { OrderRepository } from './repository/OrderRepository';
+import { PrefectureRepository } from './repository/PrefectureRepository';
+import { ProductRepository } from './repository/ProductRepository';
 import { ShipmentRepository } from './repository/ShipmentRepository';
+import { StoreRepository } from './repository/StoreRepository';
+import { AddressUsecase } from './usecase/AddressUsecase';
 import { BuyerPostUsecase } from './usecase/BuyerPostUsecase';
-import { BuyerPostRepository } from './repository/BuyerPostRepository';
-import { BuyerPostEndpoint } from './endpoint/BuyerPostEndpoint';
+import { S3Service } from '../third_party/s3/s3Service';
+import { UploadEndpoint } from './endpoint/UploadEnpoint';
+import { UploadUsecase } from './usecase/UploadUsecase';
+import { BuyerUsecase } from './usecase/BuyerUsecase';
+import { CardUsecase } from './usecase/CardUsecase';
+import { CartUsecase } from './usecase/CartUsecase';
+import { OrderUsecase } from './usecase/OrderUsecase';
+import { PrefectureUsecase } from './usecase/PrefectureUsecase';
+import { ProductUsecase } from './usecase/ProductUsecase';
+import { StoreUsecase } from './usecase/StoreUsecase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -47,12 +51,12 @@ export class buyerSiteRouter {
     const cartRepo = new CartRepository();
     const orderPaymentRepo = new OrderPaymentRepository();
     const shipmentRepository = new ShipmentRepository();
-    const buyerRepository = new BuyerRepository();
-    const addressRepository = new AddressRepository();
+    const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
     const buyerPostRepo = new BuyerPostRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
+    const s3Service = new S3Service();
 
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
@@ -66,11 +70,12 @@ export class buyerSiteRouter {
       cartRepo,
       orderPaymentRepo,
       shipmentRepository,
-      buyerRepository,
-      addressRepository,
+      orderAddressBuyerRepository,
+      addressRepo,
       gmoGetwaySerivce,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
+    const uploadUsecase = new UploadUsecase(s3Service);
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -83,6 +88,7 @@ export class buyerSiteRouter {
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
     const orderEndpoint = new OrderEndpoint(orderUsecase);
+    const uploadEndpoint = new UploadEndpoint(uploadUsecase);
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
@@ -94,6 +100,7 @@ export class buyerSiteRouter {
     router.use('/store', storeEndpoint.getRouter());
     router.use('/order', orderEndpoint.getRouter());
     router.use('/post', buyerPostEndpoint.getRouter());
+    router.use('/file', uploadEndpoint.getRouter());
 
     return router;
   };
