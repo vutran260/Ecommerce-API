@@ -79,11 +79,11 @@ export class ProductRepository {
 
       if(isNoCategory){
         query = {
-          [Op.and]:[
+          [Op.and]: [
             query,
-            { '$categoryIdLpCategories.id$': null,}
+            Sequelize.literal(`NOT EXISTS (SELECT 1 FROM LP_PRODUCT_CATEGORY WHERE LP_PRODUCT_CATEGORY.product_id = LP_PRODUCT.id)`)
           ]
-        }
+        };
       }
 
 
