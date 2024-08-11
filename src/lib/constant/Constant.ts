@@ -20,6 +20,7 @@ export enum OrderStatus {
   WAITING_PICKUP = 'WAITING_PICKUP', // 集荷依頼待ち
   WAITING_SHIP = 'WAITING_SHIP', // 出荷待ち
   SHIPPED = 'SHIPPED', // 出荷完了
+  CANCEL = 'CANCEL', // キャンセル
 }
 
 export enum PaymentSatus {
