@@ -47,7 +47,7 @@ export class BuyerInfo {
       this.numOfOrder = buyer.lpOrders.length;
 
       this.numOfReturnedOrder = buyer.lpOrders.filter(
-        (e) => e.orderStatus == OrderStatus.NOT_CONFIRMED,
+        (e) => e.orderStatus == OrderStatus.CANCEL,
       ).length;
 
       const latestDate = buyer.lpOrders
