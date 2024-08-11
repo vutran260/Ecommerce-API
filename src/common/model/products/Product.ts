@@ -1,7 +1,5 @@
 import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import ProductComponent from './ProductCompoment';
-import ProductOption from './ProductOption';
-import ProductOptionPrice from './ProductOptionPrice';
 import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
 import moment from 'moment';
