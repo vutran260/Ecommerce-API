@@ -14,7 +14,10 @@ export abstract class ApiError extends Error {
 }
 
 export class AuthFailureError extends ApiError {
-  constructor(message = 'Invalid Credentials', errorCode = ErrorCode.UNAUTHORIZED) {
+  constructor(
+    message = 'Invalid Credentials',
+    errorCode = ErrorCode.UNAUTHORIZED,
+  ) {
     super(ErrorType.UNAUTHORIZED, message, errorCode);
   }
 }
@@ -27,12 +30,7 @@ export class InternalError extends ApiError {
 
 export class BadRequestError extends ApiError {
   constructor(message = 'Bad Request', errorCode = ErrorCode.BAD_REQUEST) {
-    super(
-      ErrorType.BAD_REQUEST,
-      message,
-      errorCode,
-      StatusCode.BUSINESS_FAIL,
-    );
+    super(ErrorType.BAD_REQUEST, message, errorCode, StatusCode.BUSINESS_FAIL);
   }
 }
 
@@ -61,7 +59,10 @@ export class BadTokenError extends ApiError {
 }
 
 export class TokenExpiredError extends ApiError {
-  constructor(message = 'Token is expired', errorCode = ErrorCode.TOKEN_EXPIRED) {
+  constructor(
+    message = 'Token is expired',
+    errorCode = ErrorCode.TOKEN_EXPIRED,
+  ) {
     super(ErrorType.TOKEN_EXPIRED, message, errorCode);
   }
 }
@@ -79,8 +80,24 @@ export class AccessTokenError extends ApiError {
 }
 
 export class DataExists extends ApiError {
-  constructor(message = 'Data already exists', errorCode = ErrorCode.ALREADY_EXISTS) {
+  constructor(
+    message = 'Data already exists',
+    errorCode = ErrorCode.ALREADY_EXISTS,
+  ) {
     super(ErrorType.DATA_EXISTS, message, errorCode);
   }
 }
 
+export class PaymentError extends ApiError {
+  constructor(
+    message = 'Payment got an error',
+    errorCode = ErrorCode.PAYMENT_ERROR,
+  ) {
+    super(
+      ErrorType.PAYMENT_ERROR,
+      message,
+      errorCode,
+      StatusCode.THIRD_PARTY_ERROR,
+    );
+  }
+}

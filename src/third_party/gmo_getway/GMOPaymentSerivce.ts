@@ -1,8 +1,8 @@
 import { gmo } from '../../Config';
 import Logger from '../../lib/core/Logger';
 import {
-  BadRequestError,
   InternalError,
+  PaymentError,
 } from '../../lib/http/custom_error/ApiError';
 import { CheckPointRequest } from './request/CheckPointRequest';
 import {
@@ -21,7 +21,6 @@ import { EntryTransactionResponse } from './response/EntryTransactionResponse';
 import { ExecTransactionResponse } from './response/ExecTransactionResponse';
 import { GMOError } from './response/GMOError';
 import { MemberResponse } from './response/MemberResponse';
-import { errorCodesConstant } from './utils/ErrorCodesConstant';
 
 export class GMOPaymentService {
   public getMemberById = async (memberId: string) => {
@@ -175,38 +174,6 @@ export class GMOPaymentService {
     return results;
   };
 
-  private isResourceNotfound(data: any) {
-    return data.filter((gmoError: GMOError) => {
-      return gmoError.errCode === GMO_RESOURCE_NOT_FOUND;
-    });
-  }
-
-  private handlerError = (response: Response, errorList: any) => {
-    console.log(errorList);
-    switch (response.status) {
-      case 400:
-        errorList.forEach((error: GMOError) => {
-          const description: string = errorCodesConstant[error.errInfo];
-          throw new BadRequestError(description);
-        });
-
-      case 500:
-        errorList.forEach((error: GMOError) => {
-          const description: string = errorCodesConstant[error.errInfo];
-          throw new InternalError(description);
-        });
-        break;
-      case 502:
-        errorList.forEach((error: GMOError) => {
-          const description: string = errorCodesConstant[error.errInfo];
-          throw new InternalError(description);
-        });
-        break;
-      default:
-        throw new InternalError('GMO server got eror');
-    }
-  };
-
   public checkFraud = async (type: string, userId: string) => {
     Logger.info('checkpoint', userId, type);
 
@@ -303,6 +270,28 @@ export class GMOPaymentService {
     }
 
     return new ExecTransactionResponse(jsonData.acs, jsonData.redirectUrl);
+  };
+
+  private isResourceNotfound(data: any) {
+    return data.filter((gmoError: GMOError) => {
+      return gmoError.errCode === GMO_RESOURCE_NOT_FOUND;
+    });
+  }
+
+  private handlerError = (response: Response, errorList: any) => {
+    console.log(errorList);
+    switch (response.status) {
+      case 400:
+      case 500:
+      case 502:
+        errorList.forEach((error: GMOError) => {
+          const description: string = error.errInfo;
+          throw new PaymentError(description);
+        });
+        break;
+      default:
+        throw new InternalError('GMO server got eror');
+    }
   };
 }
 
