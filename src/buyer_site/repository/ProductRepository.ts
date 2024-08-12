@@ -26,7 +26,7 @@ import lodash, { forEach } from 'lodash';
 import { Op, Sequelize } from 'sequelize';
 
 export class ProductRepository {
-  public getProductId = async (id: string): Promise<Product> => {
+  public getProductId = async (id: string, buyerId?: string): Promise<Product> => {
     const result = await LP_PRODUCT.findByPk(id);
     if (!result) {
       throw new NotFoundError(`Product with id ${id} not found`);
@@ -51,6 +51,12 @@ export class ProductRepository {
     (await result.getLpProductFaqs()).forEach((faq) =>
       out.faqs.push(faq.dataValues),
     );
+
+    if (buyerId) {
+      out.isFavorite = (
+        await result.getLpFavorites()).some((fav) => fav.dataValues.buyerId === buyerId
+      );
+    }
 
     return out;
   };
