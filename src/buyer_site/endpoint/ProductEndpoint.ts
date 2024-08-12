@@ -1,10 +1,10 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import { ProductUsecase } from '../usecase/ProductUsecase';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
-import { EmptyResultError } from 'sequelize';
+import { ProtectedRequest } from '../../lib/http/app-request';
 
 export class ProductEndpoint {
   private productUsecase: ProductUsecase;
@@ -13,9 +13,9 @@ export class ProductEndpoint {
     this.productUsecase = productUsecase;
   }
 
-  private getDetailProduct = async (req: Request, res: Response) => {
+  private getDetailProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const results = await this.productUsecase.detailProduct(id);
+    const results = await this.productUsecase.detailProduct(id, req.user.id);
     return ResponseData(results, res);
   };
 

@@ -3,7 +3,6 @@ import { Filter, Paging } from '../../lib/paging/Request';
 import { ProductRepository } from '../repository/ProductRepository';
 import { CategoryRepository } from '../repository/CategoryRepository';
 import { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
-import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
 import Logger from '../../lib/core/Logger';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
@@ -19,8 +18,8 @@ export class ProductUsecase {
     this.categoryRepo = categoryRepo;
   }
 
-  public detailProduct = async (id: string) => {
-    return this.productRepo.getProductId(id);
+  public detailProduct = async (id: string, buyerId: string) => {
+    return this.productRepo.getProductId(id, buyerId);
   };
 
   public getProducts = async (

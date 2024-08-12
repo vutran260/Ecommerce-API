@@ -87,6 +87,9 @@ export default class Product {
   calculatedNormalPrice: number;
 
   calculatedSubscriptionPrice?: number;
+
+  isFavorite?: boolean;
+
   createdAt?: Date
   updatedAt?: Date
 }
