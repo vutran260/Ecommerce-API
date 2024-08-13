@@ -73,6 +73,7 @@ export class buyerSiteRouter {
       orderAddressBuyerRepository,
       addressRepo,
       gmoGetwaySerivce,
+      productRepo,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);

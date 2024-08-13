@@ -37,6 +37,7 @@ import { OrderAddressBuyerRepository } from '../repository/OrderAddressBuyerRepo
 import { OrderItemRepository } from '../repository/OrderItemRepository';
 import { OrderPaymentRepository } from '../repository/OrderPaymentRepository';
 import { OrderRepository } from '../repository/OrderRepository';
+import { ProductRepository } from '../repository/ProductRepository';
 import { ShipmentRepository } from '../repository/ShipmentRepository';
 
 export class OrderUsecase {
@@ -48,6 +49,7 @@ export class OrderUsecase {
   private orderAddressBuyerRepository: OrderAddressBuyerRepository;
   private gmoPaymentService: GMOPaymentService;
   private addressRepository: AddressRepository;
+  private productRepo: ProductRepository;
 
   constructor(
     orderRepo: OrderRepository,
@@ -58,6 +60,7 @@ export class OrderUsecase {
     orderAddressBuyerRepository: OrderAddressBuyerRepository,
     addressRepository: AddressRepository,
     gmoPaymentService: GMOPaymentService,
+    productRepo: ProductRepository,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
@@ -67,6 +70,7 @@ export class OrderUsecase {
     this.shipmentRepository = shipmentRepository;
     this.orderAddressBuyerRepository = orderAddressBuyerRepository;
     this.addressRepository = addressRepository;
+    this.productRepo = productRepo;
   }
 
   public checkFraud = async (type: string, userId: string) => {
@@ -135,6 +139,26 @@ export class OrderUsecase {
 
         totalAmount += input.price * input.quantity;
 
+        Logger.info('Start decrease stock item');
+        const products = await this.productRepo.getProductById(
+          cartItem.productId,
+        );
+        if (
+          !products.stockItem ||
+          (products.stockItem && products.stockItem <= 0)
+        ) {
+          throw new BadRequestError('This product is no avaiable');
+        }
+        const newQuantity = products.stockItem - cartItem.quantity;
+        if (newQuantity < 0) {
+          throw new BadRequestError('Exceed maximum stock product');
+        }
+        await this.productRepo.updateStockProduct(
+          cartItem.productId,
+          newQuantity,
+          t,
+        );
+
         Logger.info('Start delete items from cart');
         await this.cartRepo.deleteItem(cartItem.id, t);
       }
@@ -143,7 +167,7 @@ export class OrderUsecase {
         totalAmount > ShipmentPrice.MAX_PRICE_APPY_FEE
           ? ShipmentPrice.MIN_FEE
           : ShipmentPrice.MAX_FEE;
-      const finalAmount = totalAmount - shipmentFee;
+      const finalAmount = totalAmount + shipmentFee;
 
       Logger.info('Start add payment info');
       const oreateOrderPaymentRequest: CreateOrderPaymentRequest = {

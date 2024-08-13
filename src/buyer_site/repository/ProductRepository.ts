@@ -13,26 +13,28 @@ import {
   LP_PRODUCT,
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
-import {
-  LP_FAVORITE,
-} from '../../lib/mysql/models/LP_FAVORITE';
+import { LP_FAVORITE } from '../../lib/mysql/models/LP_FAVORITE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
-import {
-  LP_PRODUCT_CATEGORYCreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+import { LP_PRODUCT_CATEGORYCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import lodash, { forEach } from 'lodash';
-import { Op, Sequelize } from 'sequelize';
+import { Op, Sequelize, Transaction } from 'sequelize';
 
 export class ProductRepository {
-  public getProductId = async (id: string, buyerId?: string): Promise<Product> => {
+  public getProductId = async (
+    id: string,
+    buyerId?: string,
+  ): Promise<Product> => {
     const result = await LP_PRODUCT.findByPk(id);
     if (!result) {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
-    if (result.dataValues.isDeleted === 1 || result.dataValues.status === 'INACTIVE') {
+    if (
+      result.dataValues.isDeleted === 1 ||
+      result.dataValues.status === 'INACTIVE'
+    ) {
       throw new NotFoundError(`Product with id ${id} not found`);
     }
 
@@ -53,8 +55,8 @@ export class ProductRepository {
     );
 
     if (buyerId) {
-      out.isFavorite = (
-        await result.getLpFavorites()).some((fav) => fav.dataValues.buyerId === buyerId
+      out.isFavorite = (await result.getLpFavorites()).some(
+        (fav) => fav.dataValues.buyerId === buyerId,
       );
     }
 
@@ -71,59 +73,58 @@ export class ProductRepository {
     try {
       const orderQuery = this.filterSortByPrice(order);
 
-      filter.push({
-        operation: 'eq',
-        value: 0,
-        attribute: 'isDeleted',
-      }, {
-        operation: 'eq',
-        value: 'ACTIVE',
-        attribute: 'status',
-      });
+      filter.push(
+        {
+          operation: 'eq',
+          value: 0,
+          attribute: 'isDeleted',
+        },
+        {
+          operation: 'eq',
+          value: 'ACTIVE',
+          attribute: 'status',
+        },
+      );
 
       let query = BuildQuery(filter);
 
-      if(isNoCategory){
+      if (isNoCategory) {
         query = {
           [Op.and]: [
             query,
-            Sequelize.literal(`NOT EXISTS (SELECT 1 FROM LP_PRODUCT_CATEGORY WHERE LP_PRODUCT_CATEGORY.product_id = LP_PRODUCT.id)`)
-          ]
+            Sequelize.literal(
+              `NOT EXISTS (SELECT 1 FROM LP_PRODUCT_CATEGORY WHERE LP_PRODUCT_CATEGORY.product_id = LP_PRODUCT.id)`,
+            ),
+          ],
         };
       }
 
-
-      const  include: any[] = [
+      const include: any[] = [
         {
           association: LP_PRODUCT.associations.categoryIdLpCategories,
-          
         },
-      ]
+      ];
 
-      if (categoryIds !== null && !isNoCategory) { 
-        include.push (
-        {
+      if (categoryIds !== null && !isNoCategory) {
+        include.push({
           association: LP_PRODUCT.associations.lpProductCategories,
           where: { categoryId: { [Op.in]: categoryIds } },
-        }
-        )
+        });
       }
 
       const count = await LP_PRODUCT.count({
         include: include,
         where: query,
-        distinct:true,
-        col: 'id'
+        distinct: true,
+        col: 'id',
       });
       paging.total = count;
-
-
-
 
       const results = await LP_PRODUCT.findAll({
         attributes: {
           include: [
-            [Sequelize.literal(`
+            [
+              Sequelize.literal(`
         CASE
         WHEN LP_PRODUCT.is_subscription = 0 AND LP_PRODUCT.is_discount = 0  THEN LP_PRODUCT.price
         WHEN LP_PRODUCT.is_subscription = 1 AND LP_PRODUCT.is_discount = 0  THEN LP_PRODUCT.price_subscription
@@ -145,8 +146,9 @@ export class ProductRepository {
           THEN ROUND(LP_PRODUCT.price_subscription * (100 - LP_PRODUCT.discount_percentage) / 100)
         WHEN LP_PRODUCT.is_subscription = 1 THEN LP_PRODUCT.price_subscription
         ELSE LP_PRODUCT.price
-        END`), 
-        'sortPrice']
+        END`),
+              'sortPrice',
+            ],
           ],
         },
 
@@ -167,7 +169,12 @@ export class ProductRepository {
     }
   };
 
-  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
+  public getFavoriteProduct = async (
+    buyerId: string,
+    filter: Filter[],
+    paging: Paging,
+    storeId: string,
+  ) => {
     try {
       const count = await LP_FAVORITE.count({
         where: {
@@ -178,9 +185,9 @@ export class ProductRepository {
           {
             model: LP_PRODUCT,
             as: 'product',
-            where: { storeId:  storeId },
+            where: { storeId: storeId },
           },
-        ]
+        ],
       });
       paging.total = count;
 
@@ -193,7 +200,7 @@ export class ProductRepository {
           {
             model: LP_PRODUCT,
             as: 'product',
-            where: { storeId:  storeId},
+            where: { storeId: storeId },
           },
         ],
         order: [['createdAt', 'DESC']],
@@ -232,37 +239,67 @@ export class ProductRepository {
       Logger.error(error);
       throw error;
     }
-  }
+  };
 
   public removeFavoriteProduct = async (productId: string, buyerId: string) => {
     try {
-        const result = await LP_FAVORITE.destroy({ where: { buyerId, productId } });
+      const result = await LP_FAVORITE.destroy({
+        where: { buyerId, productId },
+      });
 
-        if (result === 0) {
-            throw new NotFoundError(`Favorite product with id ${productId} not found for buyer ${buyerId}`);
-        }
+      if (result === 0) {
+        throw new NotFoundError(
+          `Favorite product with id ${productId} not found for buyer ${buyerId}`,
+        );
+      }
 
-        return { message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}` };
+      return {
+        message: `Favorite product with id ${productId} removed successfully for buyer ${buyerId}`,
+      };
     } catch (error) {
-        Logger.error(error);
-        throw error;
+      Logger.error(error);
+      throw error;
     }
   };
 
   private filterSortByPrice = (orders: LpOrder[]): any => {
-    orders.forEach(item => {
+    orders.forEach((item) => {
       if (item.attribute === 'price') {
         item.attribute = 'sortPrice';
       }
     });
 
     const orderQueries = BuildOrderQuery(orders);
-    return lodash.map(orderQueries, order => {
+    return lodash.map(orderQueries, (order) => {
       if (lodash.get(order, '[0]') === 'sortPrice') {
         return [Sequelize.literal('sortPrice'), lodash.get(order, '[1]')];
       }
       return order;
     });
+  };
+
+  public getProductById = async (id: string) => {
+    const result = await LP_PRODUCT.findByPk(id);
+    if (!result) {
+      throw new NotFoundError(`Product with id ${id} not found`);
+    }
+    return result;
+  };
+
+  public updateStockProduct = async (
+    id: string,
+    newStock: number,
+    t?: Transaction,
+  ) => {
+    await LP_PRODUCT.update(
+      { stockItem: newStock },
+      {
+        where: {
+          id,
+        },
+        transaction: t,
+      },
+    );
   };
 }
 
@@ -270,4 +307,3 @@ export interface CreateProductInput extends LP_PRODUCTCreationAttributes {
   lpProductComponents: LP_PRODUCT_COMPONENTCreationAttributes[];
   lpProductCategories: LP_PRODUCT_CATEGORYCreationAttributes[];
 }
-
