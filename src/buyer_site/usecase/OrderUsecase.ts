@@ -140,16 +140,16 @@ export class OrderUsecase {
         totalAmount += input.price * input.quantity;
 
         Logger.info('Start decrease stock item');
-        const products = await this.productRepo.getProductById(
+        const product = await this.productRepo.getProductById(
           cartItem.productId,
         );
         if (
-          !products.stockItem ||
-          (products.stockItem && products.stockItem <= 0)
+          !product.stockItem ||
+          (product.stockItem && product.stockItem <= 0)
         ) {
           throw new BadRequestError('This product is no avaiable');
         }
-        const newQuantity = products.stockItem - cartItem.quantity;
+        const newQuantity = product.stockItem - cartItem.quantity;
         if (newQuantity < 0) {
           throw new BadRequestError('Exceed maximum stock product');
         }
