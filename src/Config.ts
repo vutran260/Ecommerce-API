@@ -65,3 +65,4 @@ export const cloudStorageBucket = process.env.CLOUD_STORAGE_BUCKET
   : '4fan';
 
 export const cloudStorageHostName = process.env.CLOUD_STORAGE_HOST_NAME;
+export const folderPrefix = process.env.FOLDER_PREFIX;
