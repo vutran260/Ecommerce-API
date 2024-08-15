@@ -20,7 +20,7 @@ export class OrderUsecase {
     this.orderItemRepo = orderItemRepo;
   }
 
-  public getOrderById = async (id: string) => {
+  public getOrderById = async (id: number) => {
     const result = await this.orderRepo.getOrderById(id);
     return result;
   };
@@ -41,7 +41,7 @@ export class OrderUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    orderId: string,
+    orderId: number,
   ) => {
     let orders: LP_ORDER_ITEM[] = [];
     orders = await this.orderItemRepo.getListOrderItemByOrderId(

@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_ORDER_ADDRESS_BUYERAttributes {
-  orderId: string;
+  orderId: number;
   firstNameKana: string;
   lastNameKana: string;
   firstNameKanji: string;
@@ -28,7 +28,7 @@ export type LP_ORDER_ADDRESS_BUYEROptionalAttributes = "gender" | "agreed" | "ke
 export type LP_ORDER_ADDRESS_BUYERCreationAttributes = Optional<LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYEROptionalAttributes>;
 
 export class LP_ORDER_ADDRESS_BUYER extends Model<LP_ORDER_ADDRESS_BUYERAttributes, LP_ORDER_ADDRESS_BUYERCreationAttributes> implements LP_ORDER_ADDRESS_BUYERAttributes {
-  orderId!: string;
+  orderId!: number;
   firstNameKana!: string;
   lastNameKana!: string;
   firstNameKanji!: string;
@@ -55,7 +55,7 @@ export class LP_ORDER_ADDRESS_BUYER extends Model<LP_ORDER_ADDRESS_BUYERAttribut
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_ADDRESS_BUYER {
     return LP_ORDER_ADDRESS_BUYER.init({
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       references: {

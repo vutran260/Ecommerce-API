@@ -10,7 +10,7 @@ export interface LP_SHIPMENT_HISTORYAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
-  orderId: string;
+  orderId: number;
 }
 
 export type LP_SHIPMENT_HISTORYPk = "id";
@@ -26,7 +26,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
-  orderId!: string;
+  orderId!: number;
 
   // LP_SHIPMENT_HISTORY belongsTo LP_ORDER via orderId
   order!: LP_ORDER;
@@ -73,7 +73,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
       field: 'deleted_at'
     },
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
       references: {
         model: 'LP_ORDER',
@@ -95,7 +95,7 @@ export class LP_SHIPMENT_HISTORY extends Model<LP_SHIPMENT_HISTORYAttributes, LP
         ]
       },
       {
-        name: "LP_SHIPMENT_HISTORY_order_id_fkey",
+        name: "LP_SHIPMENT_HISTORY_ibfk_1",
         using: "BTREE",
         fields: [
           { name: "order_id" },

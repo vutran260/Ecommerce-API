@@ -98,20 +98,32 @@ export class OrderUsecase {
     // const theFraud = await this.checkFraud(orderCreateRequest.buyerId, '');
 
     const t = await lpSequelize.transaction();
-
     try {
       Logger.info('Start create order');
-      const createOrderRequest: CreateOrderRequest = {
-        orderStatus: OrderStatus.NOT_CONFIRMED,
-        amount: 0,
-        shipmentFee: 0,
-        discount: 0,
-        totalAmount: 0,
-        createdAt: new Date(),
-        createdBy: buyerId,
-      };
-      const order = await this.orderRepo.createOrder(createOrderRequest, t);
-
+      let attempts = 0;
+      const maxRetries = 10;
+      let order;
+      while (attempts < maxRetries) {
+        const id = Date.now();
+        const existingOrder = await this.orderRepo.getOrderById(id);
+        if (!existingOrder) {
+          const createOrderRequest: CreateOrderRequest = {
+            id: id,
+            orderStatus: OrderStatus.NOT_CONFIRMED,
+            amount: 0,
+            shipmentFee: 0,
+            discount: 0,
+            totalAmount: 0,
+            createdAt: new Date(),
+            createdBy: buyerId,
+          };
+          order = await this.orderRepo.createOrder(createOrderRequest, t);
+          if (order) {
+            attempts = maxRetries;
+          }
+        }
+        attempts++;
+      }
       if (!order) {
         throw new NotFoundError('Order not found');
       }
@@ -213,14 +225,13 @@ export class OrderUsecase {
       this.orderRepo.updateOrderStatus(updateRequest, t);
 
       Logger.info('Start create transaction');
-      // make orderID have length  = 27 match with gmo require
-      const orderIDForTran = order.id.substring(0, 27);
+      const orderIDForTran = order.id;
       if (finalAmount <= 0) {
         Logger.error('Bad total amount');
         throw new BadRequestError('Your total amount must be greater than 0');
       }
       const transactionRequest: TransactionRequest = {
-        orderID: orderIDForTran,
+        orderID: `${orderIDForTran}`,
         jobCd: JobCd.CAPTURE,
         amount: finalAmount,
       };
@@ -236,7 +247,7 @@ export class OrderUsecase {
           accessPass: theTransInfo.accessPass,
           memberID: buyerId,
           cardSeq: cardSeq,
-          orderID: orderIDForTran,
+          orderID: `${orderIDForTran}`,
           method: ChargeMethod.BULK,
         };
         const execTranResponse = await this.gmoPaymentService.execTran(
@@ -282,7 +293,7 @@ export class OrderUsecase {
     }
   };
 
-  public getOrderById = async (id: string) => {
+  public getOrderById = async (id: number) => {
     const result = await this.orderRepo.getOrderById(id);
     return result;
   };
@@ -304,7 +315,7 @@ export class OrderUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    orderId: string,
+    orderId: number,
   ) => {
     let orders: LP_ORDER_ITEM[] = [];
     orders = await this.orderItemRepo.getListOrderItemByOrderId(

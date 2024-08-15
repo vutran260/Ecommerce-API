@@ -7,6 +7,7 @@ import { PaginationRequest } from '../../lib/paging/Request';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { OrderUsecase } from '../usecase/OrderUsecase';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class OrderEndpoint {
   private orderUsecase: OrderUsecase;
@@ -30,8 +31,10 @@ export class OrderEndpoint {
   };
 
   private getOrderDetail = async (req: ProtectedRequest, res: Response) => {
-    const id = req.params.id;
-    const result = await this.orderUsecase.getOrderById(id);
+    if (!req.params.id) {
+      throw new BadRequestError('Invalid order id');
+    }
+    const result = await this.orderUsecase.getOrderById(Number(req.params.id));
 
     return ResponseData(result, res);
   };
@@ -52,11 +55,14 @@ export class OrderEndpoint {
     req: PaginationRequest,
     res: Response,
   ) => {
+    if (!req.params.id) {
+      throw new BadRequestError('Invalid order id');
+    }
     const result = await this.orderUsecase.getOrderItemsByOrderId(
       req.filterList,
       req.order,
       req.paging,
-      req.params.id,
+      Number(req.params.id),
     );
 
     return ResponseListData(result, res, req.paging);

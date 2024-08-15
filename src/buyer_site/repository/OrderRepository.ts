@@ -26,7 +26,7 @@ export class OrderRepository {
   };
 
   public updateOrder = async (
-    id: string,
+    id: number,
     updateOrderRequest: UpdateOrderRequest,
     t?: Transaction,
   ) => {
@@ -52,7 +52,7 @@ export class OrderRepository {
     return this.getOrderById(id, t);
   };
 
-  public getOrderById = async (id: string, t?: Transaction) => {
+  public getOrderById = async (id: number, t?: Transaction) => {
     const result = await LP_ORDER.findOne({
       where: { id },
       include: [

@@ -13,7 +13,7 @@ export class ShipmentRepository {
     return this.getShipmentById(shipment.orderId, t);
   };
 
-  public getShipmentById = async (id: string, t?: Transaction) => {
+  public getShipmentById = async (id: number, t?: Transaction) => {
     const result = await LP_SHIPMENT.findOne({
       where: { orderId: id },
       transaction: t,
@@ -21,7 +21,7 @@ export class ShipmentRepository {
     return result?.dataValues;
   };
 
-  public getShipmentByOrderId = async (orderId: string) => {
+  public getShipmentByOrderId = async (orderId: number) => {
     const result = await LP_SHIPMENT.findOne({
       where: { orderId },
     });

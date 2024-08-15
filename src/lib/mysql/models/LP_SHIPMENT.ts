@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_SHIPMENTAttributes {
-  orderId: string;
+  orderId: number;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   arrivedAt?: Date;
@@ -21,7 +21,7 @@ export type LP_SHIPMENTOptionalAttributes = "shipmentFee" | "shipmentFeeDiscount
 export type LP_SHIPMENTCreationAttributes = Optional<LP_SHIPMENTAttributes, LP_SHIPMENTOptionalAttributes>;
 
 export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreationAttributes> implements LP_SHIPMENTAttributes {
-  orderId!: string;
+  orderId!: number;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   arrivedAt?: Date;
@@ -41,7 +41,7 @@ export class LP_SHIPMENT extends Model<LP_SHIPMENTAttributes, LP_SHIPMENTCreatio
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_SHIPMENT {
     return LP_SHIPMENT.init({
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       references: {

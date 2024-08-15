@@ -13,7 +13,7 @@ import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class OrderRepository {
-  public getOrderById = async (id: string, t?: Transaction) => {
+  public getOrderById = async (id: number, t?: Transaction) => {
     const result = await LP_ORDER.findOne({
       where: { id },
       include: [

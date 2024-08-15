@@ -5,7 +5,7 @@ import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 
 export interface LP_ORDER_ITEMAttributes {
   id: string;
-  orderId?: string;
+  orderId?: number;
   productId?: string;
   productName: string;
   productImage: string;
@@ -25,7 +25,7 @@ export type LP_ORDER_ITEMCreationAttributes = Optional<LP_ORDER_ITEMAttributes, 
 
 export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes> implements LP_ORDER_ITEMAttributes {
   id!: string;
-  orderId?: string;
+  orderId?: number;
   productId?: string;
   productName!: string;
   productImage!: string;
@@ -57,7 +57,7 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
       primaryKey: true
     },
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: true,
       references: {
         model: 'LP_ORDER',
@@ -131,17 +131,17 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
         ]
       },
       {
-        name: "order_id",
-        using: "BTREE",
-        fields: [
-          { name: "order_id" },
-        ]
-      },
-      {
         name: "product_id",
         using: "BTREE",
         fields: [
           { name: "product_id" },
+        ]
+      },
+      {
+        name: "LP_ORDER_ITEM_ibfk_1",
+        using: "BTREE",
+        fields: [
+          { name: "order_id" },
         ]
       },
     ]

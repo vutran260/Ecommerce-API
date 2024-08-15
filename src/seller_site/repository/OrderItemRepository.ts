@@ -15,7 +15,7 @@ export class OrderItemRepository {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    orderId: string,
+    orderId: number,
     t?: Transaction,
   ) => {
     try {
