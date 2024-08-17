@@ -9,6 +9,8 @@ import type { LP_PRODUCT_CATEGORY, LP_PRODUCT_CATEGORYId } from './LP_PRODUCT_CA
 import type { LP_PRODUCT_COMPONENT, LP_PRODUCT_COMPONENTId } from './LP_PRODUCT_COMPONENT';
 import type { LP_PRODUCT_FAQ, LP_PRODUCT_FAQId } from './LP_PRODUCT_FAQ';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
+import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
+import type { LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId } from './LP_SUBSCRIPTION_PRODUCT';
 
 export interface LP_PRODUCTAttributes {
   id: string;
@@ -164,6 +166,30 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
   hasLpProductFaq!: Sequelize.HasManyHasAssociationMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
   hasLpProductFaqs!: Sequelize.HasManyHasAssociationsMixin<LP_PRODUCT_FAQ, LP_PRODUCT_FAQId>;
   countLpProductFaqs!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_PRODUCT belongsToMany LP_SUBSCRIPTION via productId and subscriptionId
+  subscriptionIdLpSubscriptionLpSubscriptionProducts!: LP_SUBSCRIPTION[];
+  getSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyGetAssociationsMixin<LP_SUBSCRIPTION>;
+  setSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManySetAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addSubscriptionIdLpSubscriptionLpSubscriptionProduct!: Sequelize.BelongsToManyAddAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyAddAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  createSubscriptionIdLpSubscriptionLpSubscriptionProduct!: Sequelize.BelongsToManyCreateAssociationMixin<LP_SUBSCRIPTION>;
+  removeSubscriptionIdLpSubscriptionLpSubscriptionProduct!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  removeSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasSubscriptionIdLpSubscriptionLpSubscriptionProduct!: Sequelize.BelongsToManyHasAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyHasAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  countSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_SUBSCRIPTION_PRODUCT via productId
+  lpSubscriptionProducts!: LP_SUBSCRIPTION_PRODUCT[];
+  getLpSubscriptionProducts!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION_PRODUCT>;
+  setLpSubscriptionProducts!: Sequelize.HasManySetAssociationsMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  addLpSubscriptionProduct!: Sequelize.HasManyAddAssociationMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  addLpSubscriptionProducts!: Sequelize.HasManyAddAssociationsMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  createLpSubscriptionProduct!: Sequelize.HasManyCreateAssociationMixin<LP_SUBSCRIPTION_PRODUCT>;
+  removeLpSubscriptionProduct!: Sequelize.HasManyRemoveAssociationMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  removeLpSubscriptionProducts!: Sequelize.HasManyRemoveAssociationsMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  hasLpSubscriptionProduct!: Sequelize.HasManyHasAssociationMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  hasLpSubscriptionProducts!: Sequelize.HasManyHasAssociationsMixin<LP_SUBSCRIPTION_PRODUCT, LP_SUBSCRIPTION_PRODUCTId>;
+  countLpSubscriptionProducts!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
@@ -257,7 +283,7 @@ export class LP_PRODUCT extends Model<LP_PRODUCTAttributes, LP_PRODUCTCreationAt
       field: 'price_subscription'
     },
     cost: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.DECIMAL(10,4),
       allowNull: true
     },
     stockItem: {

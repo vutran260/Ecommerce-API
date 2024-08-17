@@ -45,6 +45,14 @@ import { LP_STORE_BUYER as _LP_STORE_BUYER } from "./LP_STORE_BUYER";
 import type { LP_STORE_BUYERAttributes, LP_STORE_BUYERCreationAttributes } from "./LP_STORE_BUYER";
 import { LP_STORE_POST as _LP_STORE_POST } from "./LP_STORE_POST";
 import type { LP_STORE_POSTAttributes, LP_STORE_POSTCreationAttributes } from "./LP_STORE_POST";
+import { LP_SUBSCRIPTION as _LP_SUBSCRIPTION } from "./LP_SUBSCRIPTION";
+import type { LP_SUBSCRIPTIONAttributes, LP_SUBSCRIPTIONCreationAttributes } from "./LP_SUBSCRIPTION";
+import { LP_SUBSCRIPTION_ADDRESS as _LP_SUBSCRIPTION_ADDRESS } from "./LP_SUBSCRIPTION_ADDRESS";
+import type { LP_SUBSCRIPTION_ADDRESSAttributes, LP_SUBSCRIPTION_ADDRESSCreationAttributes } from "./LP_SUBSCRIPTION_ADDRESS";
+import { LP_SUBSCRIPTION_ORDER as _LP_SUBSCRIPTION_ORDER } from "./LP_SUBSCRIPTION_ORDER";
+import type { LP_SUBSCRIPTION_ORDERAttributes, LP_SUBSCRIPTION_ORDERCreationAttributes } from "./LP_SUBSCRIPTION_ORDER";
+import { LP_SUBSCRIPTION_PRODUCT as _LP_SUBSCRIPTION_PRODUCT } from "./LP_SUBSCRIPTION_PRODUCT";
+import type { LP_SUBSCRIPTION_PRODUCTAttributes, LP_SUBSCRIPTION_PRODUCTCreationAttributes } from "./LP_SUBSCRIPTION_PRODUCT";
 import { SeederMeta as _SeederMeta } from "./SeederMeta";
 import type { SeederMetaAttributes, SeederMetaCreationAttributes } from "./SeederMeta";
 import { SequelizeMeta as _SequelizeMeta } from "./SequelizeMeta";
@@ -74,6 +82,10 @@ export {
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
   _LP_STORE_POST as LP_STORE_POST,
+  _LP_SUBSCRIPTION as LP_SUBSCRIPTION,
+  _LP_SUBSCRIPTION_ADDRESS as LP_SUBSCRIPTION_ADDRESS,
+  _LP_SUBSCRIPTION_ORDER as LP_SUBSCRIPTION_ORDER,
+  _LP_SUBSCRIPTION_PRODUCT as LP_SUBSCRIPTION_PRODUCT,
   _SeederMeta as SeederMeta,
   _SequelizeMeta as SequelizeMeta,
 };
@@ -125,6 +137,14 @@ export type {
   LP_STORE_BUYERCreationAttributes,
   LP_STORE_POSTAttributes,
   LP_STORE_POSTCreationAttributes,
+  LP_SUBSCRIPTIONAttributes,
+  LP_SUBSCRIPTIONCreationAttributes,
+  LP_SUBSCRIPTION_ADDRESSAttributes,
+  LP_SUBSCRIPTION_ADDRESSCreationAttributes,
+  LP_SUBSCRIPTION_ORDERAttributes,
+  LP_SUBSCRIPTION_ORDERCreationAttributes,
+  LP_SUBSCRIPTION_PRODUCTAttributes,
+  LP_SUBSCRIPTION_PRODUCTCreationAttributes,
   SeederMetaAttributes,
   SeederMetaCreationAttributes,
   SequelizeMetaAttributes,
@@ -155,15 +175,23 @@ export function initModels(sequelize: Sequelize) {
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
   const LP_STORE_POST = _LP_STORE_POST.initModel(sequelize);
+  const LP_SUBSCRIPTION = _LP_SUBSCRIPTION.initModel(sequelize);
+  const LP_SUBSCRIPTION_ADDRESS = _LP_SUBSCRIPTION_ADDRESS.initModel(sequelize);
+  const LP_SUBSCRIPTION_ORDER = _LP_SUBSCRIPTION_ORDER.initModel(sequelize);
+  const LP_SUBSCRIPTION_PRODUCT = _LP_SUBSCRIPTION_PRODUCT.initModel(sequelize);
   const SeederMeta = _SeederMeta.initModel(sequelize);
   const SequelizeMeta = _SequelizeMeta.initModel(sequelize);
 
   LP_BUYER.belongsToMany(LP_PRODUCT, { as: 'productIdLpProducts', through: LP_FAVORITE, foreignKey: "buyerId", otherKey: "productId" });
   LP_BUYER.belongsToMany(LP_STORE, { as: 'storeIdLpStores', through: LP_STORE_BUYER, foreignKey: "buyerId", otherKey: "storeId" });
   LP_CATEGORY.belongsToMany(LP_PRODUCT, { as: 'productIdLpProductLpProductCategories', through: LP_PRODUCT_CATEGORY, foreignKey: "categoryId", otherKey: "productId" });
+  LP_ORDER.belongsToMany(LP_SUBSCRIPTION, { as: 'subscriptionIdLpSubscriptions', through: LP_SUBSCRIPTION_ORDER, foreignKey: "orderId", otherKey: "subscriptionId" });
   LP_PRODUCT.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyers', through: LP_FAVORITE, foreignKey: "productId", otherKey: "buyerId" });
   LP_PRODUCT.belongsToMany(LP_CATEGORY, { as: 'categoryIdLpCategories', through: LP_PRODUCT_CATEGORY, foreignKey: "productId", otherKey: "categoryId" });
+  LP_PRODUCT.belongsToMany(LP_SUBSCRIPTION, { as: 'subscriptionIdLpSubscriptionLpSubscriptionProducts', through: LP_SUBSCRIPTION_PRODUCT, foreignKey: "productId", otherKey: "subscriptionId" });
   LP_STORE.belongsToMany(LP_BUYER, { as: 'buyerIdLpBuyerLpStoreBuyers', through: LP_STORE_BUYER, foreignKey: "storeId", otherKey: "buyerId" });
+  LP_SUBSCRIPTION.belongsToMany(LP_ORDER, { as: 'orderIdLpOrders', through: LP_SUBSCRIPTION_ORDER, foreignKey: "subscriptionId", otherKey: "orderId" });
+  LP_SUBSCRIPTION.belongsToMany(LP_PRODUCT, { as: 'productIdLpProductLpSubscriptionProducts', through: LP_SUBSCRIPTION_PRODUCT, foreignKey: "subscriptionId", otherKey: "productId" });
   LP_ADDRESS_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "buyerId"});
   LP_ADDRESS_BUYER_SSO.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
@@ -178,6 +206,8 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasMany(LP_ORDER, { as: "lpOrders", foreignKey: "buyerId"});
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
   LP_BUYER.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "buyerId"});
+  LP_SUBSCRIPTION.belongsTo(LP_BUYER, { as: "buyer", foreignKey: "buyerId"});
+  LP_BUYER.hasMany(LP_SUBSCRIPTION, { as: "lpSubscriptions", foreignKey: "buyerId"});
   LP_PRODUCT_CATEGORY.belongsTo(LP_CATEGORY, { as: "category", foreignKey: "categoryId"});
   LP_CATEGORY.hasMany(LP_PRODUCT_CATEGORY, { as: "lpProductCategories", foreignKey: "categoryId"});
   LP_ORDER_ADDRESS_BUYER.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
@@ -190,6 +220,8 @@ export function initModels(sequelize: Sequelize) {
   LP_ORDER.hasOne(LP_SHIPMENT, { as: "lpShipment", foreignKey: "orderId"});
   LP_SHIPMENT_HISTORY.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
   LP_ORDER.hasMany(LP_SHIPMENT_HISTORY, { as: "lpShipmentHistories", foreignKey: "orderId"});
+  LP_SUBSCRIPTION_ORDER.belongsTo(LP_ORDER, { as: "order", foreignKey: "orderId"});
+  LP_ORDER.hasMany(LP_SUBSCRIPTION_ORDER, { as: "lpSubscriptionOrders", foreignKey: "orderId"});
   LP_CART.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_CART, { as: "lpCarts", foreignKey: "productId"});
   LP_FAVORITE.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
@@ -202,6 +234,8 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.hasMany(LP_PRODUCT_COMPONENT, { as: "lpProductComponents", foreignKey: "productId"});
   LP_PRODUCT_FAQ.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
   LP_PRODUCT.hasMany(LP_PRODUCT_FAQ, { as: "lpProductFaqs", foreignKey: "productId"});
+  LP_SUBSCRIPTION_PRODUCT.belongsTo(LP_PRODUCT, { as: "product", foreignKey: "productId"});
+  LP_PRODUCT.hasMany(LP_SUBSCRIPTION_PRODUCT, { as: "lpSubscriptionProducts", foreignKey: "productId"});
   LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_ADDRESS_BUYER, { as: "lpAddressBuyers", foreignKey: "storeId"});
   LP_CART.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
@@ -218,6 +252,14 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.hasMany(LP_STORE_BUYER, { as: "lpStoreBuyers", foreignKey: "storeId"});
   LP_STORE_POST.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
   LP_STORE.hasMany(LP_STORE_POST, { as: "lpStorePosts", foreignKey: "storeId"});
+  LP_SUBSCRIPTION.belongsTo(LP_STORE, { as: "store", foreignKey: "storeId"});
+  LP_STORE.hasMany(LP_SUBSCRIPTION, { as: "lpSubscriptions", foreignKey: "storeId"});
+  LP_SUBSCRIPTION_ADDRESS.belongsTo(LP_SUBSCRIPTION, { as: "subscription", foreignKey: "subscriptionId"});
+  LP_SUBSCRIPTION.hasOne(LP_SUBSCRIPTION_ADDRESS, { as: "lpSubscriptionAddress", foreignKey: "subscriptionId"});
+  LP_SUBSCRIPTION_ORDER.belongsTo(LP_SUBSCRIPTION, { as: "subscription", foreignKey: "subscriptionId"});
+  LP_SUBSCRIPTION.hasMany(LP_SUBSCRIPTION_ORDER, { as: "lpSubscriptionOrders", foreignKey: "subscriptionId"});
+  LP_SUBSCRIPTION_PRODUCT.belongsTo(LP_SUBSCRIPTION, { as: "subscription", foreignKey: "subscriptionId"});
+  LP_SUBSCRIPTION.hasMany(LP_SUBSCRIPTION_PRODUCT, { as: "lpSubscriptionProducts", foreignKey: "subscriptionId"});
 
   return {
     LP_ADDRESS_BUYER: LP_ADDRESS_BUYER,
@@ -243,6 +285,10 @@ export function initModels(sequelize: Sequelize) {
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
     LP_STORE_POST: LP_STORE_POST,
+    LP_SUBSCRIPTION: LP_SUBSCRIPTION,
+    LP_SUBSCRIPTION_ADDRESS: LP_SUBSCRIPTION_ADDRESS,
+    LP_SUBSCRIPTION_ORDER: LP_SUBSCRIPTION_ORDER,
+    LP_SUBSCRIPTION_PRODUCT: LP_SUBSCRIPTION_PRODUCT,
     SeederMeta: SeederMeta,
     SequelizeMeta: SequelizeMeta,
   };
