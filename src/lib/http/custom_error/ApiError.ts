@@ -101,3 +101,12 @@ export class PaymentError extends ApiError {
     );
   }
 }
+
+export class OutOfStockError extends ApiError {
+  constructor(
+    message = 'Out of stock error',
+    errorCode = ErrorCode.OVER_STOCK,
+  ) {
+    super(ErrorType.BAD_REQUEST, message, errorCode);
+  }
+}

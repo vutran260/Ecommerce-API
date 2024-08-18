@@ -66,3 +66,8 @@ export const cloudStorageBucket = process.env.CLOUD_STORAGE_BUCKET
 
 export const cloudStorageHostName = process.env.CLOUD_STORAGE_HOST_NAME;
 export const folderPrefix = process.env.FOLDER_PREFIX;
+
+export const daysBeforeNextDate = parseInt(
+  process.env.SUB_DAYS_BEFORE_NEXT_DATE || '5',
+);
+export const subCronExpression = process.env.SUB_CRON_EXPRESSION || '0 0 * * *';

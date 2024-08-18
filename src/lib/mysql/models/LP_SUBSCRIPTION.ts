@@ -12,8 +12,10 @@ export interface LP_SUBSCRIPTIONAttributes {
   id: string;
   buyerId: string;
   storeId: string;
+  subscriptionStatus: string;
   startDate: Date;
   nextDate: Date;
+  planDeliveryTime?: string;
   subscriptionPeriod: number;
   createdAt: Date;
   updatedAt: Date;
@@ -21,15 +23,17 @@ export interface LP_SUBSCRIPTIONAttributes {
 
 export type LP_SUBSCRIPTIONPk = "id";
 export type LP_SUBSCRIPTIONId = LP_SUBSCRIPTION[LP_SUBSCRIPTIONPk];
-export type LP_SUBSCRIPTIONOptionalAttributes = "id" | "createdAt" | "updatedAt";
+export type LP_SUBSCRIPTIONOptionalAttributes = "id" | "planDeliveryTime" | "createdAt" | "updatedAt";
 export type LP_SUBSCRIPTIONCreationAttributes = Optional<LP_SUBSCRIPTIONAttributes, LP_SUBSCRIPTIONOptionalAttributes>;
 
 export class LP_SUBSCRIPTION extends Model<LP_SUBSCRIPTIONAttributes, LP_SUBSCRIPTIONCreationAttributes> implements LP_SUBSCRIPTIONAttributes {
   id!: string;
   buyerId!: string;
   storeId!: string;
+  subscriptionStatus!: string;
   startDate!: Date;
   nextDate!: Date;
+  planDeliveryTime?: string;
   subscriptionPeriod!: number;
   createdAt!: Date;
   updatedAt!: Date;
@@ -124,6 +128,11 @@ export class LP_SUBSCRIPTION extends Model<LP_SUBSCRIPTIONAttributes, LP_SUBSCRI
       },
       field: 'store_id'
     },
+    subscriptionStatus: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      field: 'subscription_status'
+    },
     startDate: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -133,6 +142,11 @@ export class LP_SUBSCRIPTION extends Model<LP_SUBSCRIPTIONAttributes, LP_SUBSCRI
       type: DataTypes.DATE,
       allowNull: false,
       field: 'next_date'
+    },
+    planDeliveryTime: {
+      type: DataTypes.TIME,
+      allowNull: true,
+      field: 'plan_delivery_time'
     },
     subscriptionPeriod: {
       type: DataTypes.INTEGER,

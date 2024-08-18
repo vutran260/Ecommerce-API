@@ -6,6 +6,10 @@ import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
 import { LP_ORDER_PAYMENT } from '../../../lib/mysql/models/LP_ORDER_PAYMENT';
 import { LP_SHIPMENT } from '../../../lib/mysql/models/LP_SHIPMENT';
+import {
+  SubscriptionAddress,
+  SubscriptionProduct,
+} from '../../../common/model/orders/Subscription';
 
 export class Order {
   id: string;
@@ -80,13 +84,14 @@ export class CreateOrderItemRequest {
   updatedAt = new Date();
   deletedAt?: Date;
 
-  constructor(cartItem: CartItem) {
-    const finalItemPrice = cartItem.isSubscription
-      ? cartItem.product.calculatedSubscriptionPrice
-      : cartItem.product.calculatedNormalPrice;
+  constructor(cartItem: CartItem | SubscriptionProduct) {
+    const finalItemPrice =
+      cartItem instanceof SubscriptionProduct
+        ? cartItem.product.calculatedSubscriptionPrice
+        : cartItem.product.calculatedNormalPrice;
     this.productId = cartItem.productId;
     this.productName = cartItem.product.productName;
-    this.productImage = cartItem.product.productImage.toString();
+    this.productImage = cartItem.product.productImage?.toString();
     this.productDescription = cartItem.product.productDescription;
     this.productOverview = cartItem.product.productOverview;
     this.price = finalItemPrice;
@@ -178,15 +183,17 @@ export class OrderAddressBuyerCreate {
   createdAt?: Date;
   updatedAt?: Date;
 
-  constructor(lp_address_buyer: LP_ADDRESS_BUYER) {
+  constructor(lp_address_buyer: LP_ADDRESS_BUYER | SubscriptionAddress) {
     this.firstNameKana = lp_address_buyer.firstNameKana;
     this.lastNameKana = lp_address_buyer.lastNameKana;
     this.firstNameKanji = lp_address_buyer.firstNameKanji;
     this.lastNameKanji = lp_address_buyer.lastNameKanji;
     this.gender = lp_address_buyer.gender;
     this.prefectureCode = lp_address_buyer.prefectureCode;
-    this.agreed = lp_address_buyer.agreed;
-    this.keepContact = lp_address_buyer.keepContact;
+    if (lp_address_buyer instanceof LP_ADDRESS_BUYER) {
+      this.agreed = lp_address_buyer.agreed;
+      this.keepContact = lp_address_buyer.keepContact;
+    }
     this.postCode = lp_address_buyer.postCode;
     this.cityTown = lp_address_buyer.cityTown;
     this.streetAddress = lp_address_buyer.streetAddress;
