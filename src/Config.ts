@@ -70,4 +70,4 @@ export const folderPrefix = process.env.FOLDER_PREFIX;
 export const daysBeforeNextDate = parseInt(
   process.env.SUB_DAYS_BEFORE_NEXT_DATE || '5',
 );
-export const subCronExpression = process.env.SUB_CRON_EXPRESSION || '0 0 * * *';
+export const subCronExpression = process.env.SUB_CRON_EXPRESSION || '0 2 * * *';
