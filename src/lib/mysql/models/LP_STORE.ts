@@ -9,6 +9,7 @@ import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_STORE_POST, LP_STORE_POSTId } from './LP_STORE_POST';
+import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
 
 export interface LP_STOREAttributes {
   id: string;
@@ -160,6 +161,18 @@ export class LP_STORE extends Model<LP_STOREAttributes, LP_STORECreationAttribut
   hasLpStorePost!: Sequelize.HasManyHasAssociationMixin<LP_STORE_POST, LP_STORE_POSTId>;
   hasLpStorePosts!: Sequelize.HasManyHasAssociationsMixin<LP_STORE_POST, LP_STORE_POSTId>;
   countLpStorePosts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_SUBSCRIPTION via storeId
+  lpSubscriptions!: LP_SUBSCRIPTION[];
+  getLpSubscriptions!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION>;
+  setLpSubscriptions!: Sequelize.HasManySetAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addLpSubscription!: Sequelize.HasManyAddAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addLpSubscriptions!: Sequelize.HasManyAddAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  createLpSubscription!: Sequelize.HasManyCreateAssociationMixin<LP_SUBSCRIPTION>;
+  removeLpSubscription!: Sequelize.HasManyRemoveAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  removeLpSubscriptions!: Sequelize.HasManyRemoveAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasLpSubscription!: Sequelize.HasManyHasAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasLpSubscriptions!: Sequelize.HasManyHasAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  countLpSubscriptions!: Sequelize.HasManyCountAssociationsMixin;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_STORE {
     return LP_STORE.init({

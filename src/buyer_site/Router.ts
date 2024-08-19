@@ -35,6 +35,7 @@ import { OrderUsecase } from './usecase/OrderUsecase';
 import { PrefectureUsecase } from './usecase/PrefectureUsecase';
 import { ProductUsecase } from './usecase/ProductUsecase';
 import { StoreUsecase } from './usecase/StoreUsecase';
+import { SubscriptionRepository } from './repository/SubscriptionRepository';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -53,6 +54,7 @@ export class buyerSiteRouter {
     const shipmentRepository = new ShipmentRepository();
     const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
     const buyerPostRepo = new BuyerPostRepository();
+    const subscriptionRepo = new SubscriptionRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -74,6 +76,7 @@ export class buyerSiteRouter {
       addressRepo,
       gmoGetwaySerivce,
       productRepo,
+      subscriptionRepo,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);

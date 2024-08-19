@@ -104,7 +104,7 @@ module.exports = {
         product_overview VARCHAR(2000) NOT NULL,
         price INT UNSIGNED NOT NULL,
         price_subscription INT UNSIGNED,
-        cost INT UNSIGNED,
+        cost DECIMAL(10,4),
         stock_item INT UNSIGNED,
         product_tag VARCHAR(255),
         status VARCHAR(255),
