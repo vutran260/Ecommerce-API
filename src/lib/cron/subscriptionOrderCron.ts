@@ -10,7 +10,7 @@ import {
 import Logger from '../../lib/core/Logger';
 import moment from 'moment';
 import {
-  BadRequestError,
+  InternalError,
   OutOfStockError,
 } from '../../lib/http/custom_error/ApiError';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
@@ -74,7 +74,7 @@ export class SubscriptionOrderCron {
         });
 
         if (!order) {
-          throw new BadRequestError('Failed to create order from subscription');
+          throw new InternalError('Failed to create order from subscription');
         }
 
         Logger.info(`Start create subscription, orderId = ${order.id}`);

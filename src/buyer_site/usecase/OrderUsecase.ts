@@ -22,7 +22,7 @@ import {
 import Logger from '../../lib/core/Logger';
 import {
   BadRequestError,
-  NotFoundError,
+  InternalError,
   OutOfStockError,
 } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
@@ -103,7 +103,7 @@ export class OrderUsecase {
     const latestAddress =
       await this.addressRepository.getLatestAddressByBuyerId(buyerId);
     if (!latestAddress) {
-      throw new NotFoundError('Address of buyer is not found');
+      throw new InternalError('Address of buyer is not found');
     }
 
     const t = await lpSequelize.transaction();
@@ -261,7 +261,7 @@ export class OrderUsecase {
     const order = await this.orderRepo.createOrder(createOrderRequest, t);
 
     if (!order) {
-      throw new NotFoundError('Order not found');
+      throw new InternalError('Order not found');
     }
 
     return order;
