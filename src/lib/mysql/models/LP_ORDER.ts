@@ -7,6 +7,8 @@ import type { LP_ORDER_PAYMENT, LP_ORDER_PAYMENTCreationAttributes, LP_ORDER_PAY
 import type { LP_SHIPMENT, LP_SHIPMENTCreationAttributes, LP_SHIPMENTId } from './LP_SHIPMENT';
 import type { LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId } from './LP_SHIPMENT_HISTORY';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
+import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
+import type { LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId } from './LP_SUBSCRIPTION_ORDER';
 
 export interface LP_ORDERAttributes {
   id: number;
@@ -88,6 +90,30 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
   hasLpShipmentHistory!: Sequelize.HasManyHasAssociationMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
   hasLpShipmentHistories!: Sequelize.HasManyHasAssociationsMixin<LP_SHIPMENT_HISTORY, LP_SHIPMENT_HISTORYId>;
   countLpShipmentHistories!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_ORDER belongsToMany LP_SUBSCRIPTION via orderId and subscriptionId
+  subscriptionIdLpSubscriptions!: LP_SUBSCRIPTION[];
+  getSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManyGetAssociationsMixin<LP_SUBSCRIPTION>;
+  setSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManySetAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addSubscriptionIdLpSubscription!: Sequelize.BelongsToManyAddAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  addSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManyAddAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  createSubscriptionIdLpSubscription!: Sequelize.BelongsToManyCreateAssociationMixin<LP_SUBSCRIPTION>;
+  removeSubscriptionIdLpSubscription!: Sequelize.BelongsToManyRemoveAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  removeSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManyRemoveAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasSubscriptionIdLpSubscription!: Sequelize.BelongsToManyHasAssociationMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  hasSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManyHasAssociationsMixin<LP_SUBSCRIPTION, LP_SUBSCRIPTIONId>;
+  countSubscriptionIdLpSubscriptions!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_ORDER hasMany LP_SUBSCRIPTION_ORDER via orderId
+  lpSubscriptionOrders!: LP_SUBSCRIPTION_ORDER[];
+  getLpSubscriptionOrders!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION_ORDER>;
+  setLpSubscriptionOrders!: Sequelize.HasManySetAssociationsMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  addLpSubscriptionOrder!: Sequelize.HasManyAddAssociationMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  addLpSubscriptionOrders!: Sequelize.HasManyAddAssociationsMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  createLpSubscriptionOrder!: Sequelize.HasManyCreateAssociationMixin<LP_SUBSCRIPTION_ORDER>;
+  removeLpSubscriptionOrder!: Sequelize.HasManyRemoveAssociationMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  removeLpSubscriptionOrders!: Sequelize.HasManyRemoveAssociationsMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  hasLpSubscriptionOrder!: Sequelize.HasManyHasAssociationMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  hasLpSubscriptionOrders!: Sequelize.HasManyHasAssociationsMixin<LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId>;
+  countLpSubscriptionOrders!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;

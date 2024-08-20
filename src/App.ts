@@ -9,6 +9,8 @@ import {
 } from './lib/http/custom_error/ApiError';
 import router from './Route';
 import { ResponseError } from './lib/http/Response';
+import { startAllCronJobs } from './lib/cron';
+
 
 process.on('uncaughtException', (e) => {
   Logger.error(e.message);
@@ -33,5 +35,7 @@ app.use((req, res, next) => next(new NotFoundError()));
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     return ResponseError(err, res)
 });
+
+startAllCronJobs();
 
 export default app;

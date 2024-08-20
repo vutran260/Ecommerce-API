@@ -23,6 +23,11 @@ export enum OrderStatus {
   CANCEL = 'CANCEL', // キャンセル
 }
 
+export enum SubscriptionStatus {
+  CONTINUE = 'CONTINUE', // 継続中
+  CANCEL = 'CANCEL', // 解除済
+}
+
 export enum PaymentSatus {
   PENDING = 'PENDING',
   AUTHORIZED = 'AUTHORIZED',
