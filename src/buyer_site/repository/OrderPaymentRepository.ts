@@ -17,7 +17,7 @@ export class OrderPaymentRepository {
     return this.getOrderPaymentById(orderPayment.orderId, t);
   };
 
-  public getOrderPaymentById = async (id: string, t?: Transaction) => {
+  public getOrderPaymentById = async (id: number, t?: Transaction) => {
     const result = await LP_ORDER_PAYMENT.findOne({
       where: { orderId: id },
       transaction: t,
@@ -25,7 +25,7 @@ export class OrderPaymentRepository {
     return result?.dataValues;
   };
 
-  public getOrderPaymentByOrderId = async (orderId: string) => {
+  public getOrderPaymentByOrderId = async (orderId: number) => {
     const result = await LP_ORDER_PAYMENT.findOne({
       where: { orderId },
     });
@@ -33,7 +33,7 @@ export class OrderPaymentRepository {
   };
 
   public updateOrderPaymentStatus = async (
-    orderId: string,
+    orderId: number,
     status: PaymentSatus,
     t?: Transaction,
   ) => {

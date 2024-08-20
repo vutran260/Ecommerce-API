@@ -12,7 +12,7 @@ import {
 } from '../../../common/model/orders/Subscription';
 
 export class Order {
-  id: string;
+  id: number;
   buyerName?: string;
   totalAmount?: number;
   orderStatus?: string;
@@ -49,6 +49,7 @@ export class OrderItem {
 }
 
 export class CreateOrderRequest {
+  id: number;
   orderStatus?: string;
   amount: number;
   shipmentFee?: number;
@@ -72,7 +73,7 @@ export class UpdateOrderRequest {
 
 export class CreateOrderItemRequest {
   id: string;
-  orderId?: string;
+  orderId?: number;
   productId?: string;
   productName: string;
   productImage: string;
@@ -102,7 +103,7 @@ export class CreateOrderItemRequest {
 }
 
 export class CreateOrderPaymentRequest {
-  orderId: string;
+  orderId: number;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -118,7 +119,7 @@ export class CreateOrderPaymentRequest {
 }
 
 export class CreateShipmentRequest {
-  orderId: string;
+  orderId: number;
   shipmentFee?: number;
   shipmentFeeDiscount?: number;
   arrivedAt?: Date;
@@ -142,7 +143,7 @@ export class CreateShipmentRequest {
 }
 
 export class UpdateOrderStatusRequest {
-  orderId: string;
+  orderId: number;
   status: string;
 }
 
@@ -165,7 +166,7 @@ export class OrderDetailResponse {
 }
 
 export class OrderAddressBuyerCreate {
-  orderId: string;
+  orderId: number;
   firstNameKana: string;
   lastNameKana: string;
   firstNameKanji: string;

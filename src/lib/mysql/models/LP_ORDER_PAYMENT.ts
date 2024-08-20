@@ -3,7 +3,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 
 export interface LP_ORDER_PAYMENTAttributes {
-  orderId: string;
+  orderId: number;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -17,7 +17,7 @@ export type LP_ORDER_PAYMENTOptionalAttributes = "paymentType" | "paymentStatus"
 export type LP_ORDER_PAYMENTCreationAttributes = Optional<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTOptionalAttributes>;
 
 export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER_PAYMENTCreationAttributes> implements LP_ORDER_PAYMENTAttributes {
-  orderId!: string;
+  orderId!: number;
   paymentType?: string;
   paymentStatus?: string;
   createdAt?: Date;
@@ -33,7 +33,7 @@ export class LP_ORDER_PAYMENT extends Model<LP_ORDER_PAYMENTAttributes, LP_ORDER
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_PAYMENT {
     return LP_ORDER_PAYMENT.init({
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       references: {

@@ -11,7 +11,7 @@ import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
 import type { LP_SUBSCRIPTION_ORDER, LP_SUBSCRIPTION_ORDERId } from './LP_SUBSCRIPTION_ORDER';
 
 export interface LP_ORDERAttributes {
-  id: string;
+  id: number;
   buyerId?: string;
   storeId?: string;
   orderStatus?: string;
@@ -28,11 +28,11 @@ export interface LP_ORDERAttributes {
 
 export type LP_ORDERPk = "id";
 export type LP_ORDERId = LP_ORDER[LP_ORDERPk];
-export type LP_ORDEROptionalAttributes = "id" | "buyerId" | "storeId" | "orderStatus" | "shipmentFee" | "discount" | "cancelAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
+export type LP_ORDEROptionalAttributes = "buyerId" | "storeId" | "orderStatus" | "shipmentFee" | "discount" | "cancelAt" | "createdAt" | "createdBy" | "updatedAt" | "updatedBy";
 export type LP_ORDERCreationAttributes = Optional<LP_ORDERAttributes, LP_ORDEROptionalAttributes>;
 
 export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttributes> implements LP_ORDERAttributes {
-  id!: string;
+  id!: number;
   buyerId?: string;
   storeId?: string;
   orderStatus?: string;
@@ -123,9 +123,8 @@ export class LP_ORDER extends Model<LP_ORDERAttributes, LP_ORDERCreationAttribut
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER {
     return LP_ORDER.init({
     id: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
       primaryKey: true
     },
     buyerId: {

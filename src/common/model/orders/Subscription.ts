@@ -74,7 +74,7 @@ export class CreateSubscriptionAddressRequest {
 
 export class CreateSubscriptionOrderRequest {
   subscriptionId: string;
-  orderId: string;
+  orderId: number;
 
   constructor(lpSubscriptionOrder: LP_SUBSCRIPTION_ORDER) {
     this.subscriptionId = lpSubscriptionOrder.subscriptionId;

@@ -1,12 +1,12 @@
+import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import { LP_BUYER } from '../../lib/mysql/models/init-models';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import {
+  BuildQuery,
   Filter,
   GetOffset,
   Paging,
-  BuildQuery,
 } from '../../lib/paging/Request';
-import { LP_BUYER } from '../../lib/mysql/models/init-models';
-import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 export class BuyerRepository {
   public async getBuyers(filter: Filter[], paging: Paging, order: LpOrder[]) {
     const count = await LP_BUYER.count({

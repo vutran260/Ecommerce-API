@@ -248,18 +248,31 @@ export class OrderUsecase {
   }
 
   private async initOrder(buyerId: string, t: Transaction): Promise<Order> {
-    Logger.info('Start init order');
-    const createOrderRequest: CreateOrderRequest = {
-      orderStatus: OrderStatus.NOT_CONFIRMED,
-      amount: 0,
-      shipmentFee: 0,
-      discount: 0,
-      totalAmount: 0,
-      createdAt: new Date(),
-      createdBy: buyerId,
-    };
-    const order = await this.orderRepo.createOrder(createOrderRequest, t);
-
+    Logger.info('Start create order');
+    let attempts = 0;
+    const maxRetries = 10;
+    let order;
+    while (attempts < maxRetries) {
+      const id = Date.now();
+      const existingOrder = await this.orderRepo.getOrderById(id);
+      if (!existingOrder) {
+        const createOrderRequest: CreateOrderRequest = {
+          id: id,
+          orderStatus: OrderStatus.NOT_CONFIRMED,
+          amount: 0,
+          shipmentFee: 0,
+          discount: 0,
+          totalAmount: 0,
+          createdAt: new Date(),
+          createdBy: buyerId,
+        };
+        order = await this.orderRepo.createOrder(createOrderRequest, t);
+        if (order) {
+          attempts = maxRetries;
+        }
+      }
+      attempts++;
+    }
     if (!order) {
       throw new InternalError('Order not found');
     }
@@ -269,7 +282,7 @@ export class OrderUsecase {
 
   private async processCartItems(
     cartItems: CartItem[] | SubscriptionProduct[],
-    orderId: string,
+    orderId: number,
     t: Transaction,
   ): Promise<number> {
     Logger.info(
@@ -299,25 +312,24 @@ export class OrderUsecase {
   }
 
   private async processTransaction(
-    orderId: string,
+    orderId: number,
     cardSeq: string,
     buyerId: string,
     finalAmount: number,
   ) {
     Logger.info('Start create transaction');
-    // make orderID have length  = 27 match with gmo require
-    const orderIDForTran = orderId.substring(0, 27);
     if (finalAmount <= 0) {
       Logger.error('Bad total amount');
       throw new BadRequestError('Your total amount must be greater than 0');
     }
     const transactionRequest: TransactionRequest = {
-      orderID: orderIDForTran,
+      orderID: `${orderId}`,
       jobCd: JobCd.CAPTURE,
       amount: finalAmount,
     };
-    const theTransInfo =
-      await this.gmoPaymentService.entryTran(transactionRequest);
+    const theTransInfo = await this.gmoPaymentService.entryTran(
+      transactionRequest,
+    );
     Logger.info(theTransInfo);
 
     Logger.info('Start execute transaction');
@@ -327,7 +339,7 @@ export class OrderUsecase {
         accessPass: theTransInfo.accessPass,
         memberID: buyerId,
         cardSeq: cardSeq,
-        orderID: orderIDForTran,
+        orderID: `${orderId}`,
         method: ChargeMethod.BULK,
       };
 
@@ -366,7 +378,7 @@ export class OrderUsecase {
       : ShipmentPrice.MAX_FEE;
   }
 
-  private async createOrderPayment(orderId: string, t: Transaction) {
+  private async createOrderPayment(orderId: number, t: Transaction) {
     Logger.info('Start add payment info');
     const currentDate = new Date();
     const createOrderPaymentRequest: CreateOrderPaymentRequest = {
@@ -383,7 +395,7 @@ export class OrderUsecase {
   }
 
   private async createShipment(
-    orderId: string,
+    orderId: number,
     shipmentFee: number,
     t: Transaction,
   ) {
@@ -402,7 +414,7 @@ export class OrderUsecase {
   }
 
   private async createOrderAddressBuyer(
-    orderId: string,
+    orderId: number,
     latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress,
     t: Transaction,
   ) {
@@ -413,7 +425,7 @@ export class OrderUsecase {
   }
 
   private async updateOrderStatus(
-    orderId: string,
+    orderId: number,
     status: OrderStatus,
     t: Transaction,
   ) {
@@ -425,7 +437,7 @@ export class OrderUsecase {
   }
 
   private async updateOrderAfterTransaction(params: {
-    orderId: string;
+    orderId: number;
     buyerId: string;
     storeId: string;
     totalAmount: number;
@@ -459,7 +471,7 @@ export class OrderUsecase {
     return await this.orderRepo.updateOrder(orderId, updateCreateRequest, t);
   }
 
-  public getOrderById = async (id: string) => {
+  public getOrderById = async (id: number) => {
     const result = await this.orderRepo.getOrderById(id);
     return result;
   };
@@ -481,7 +493,7 @@ export class OrderUsecase {
     filter: Filter[],
     order: LpOrder[],
     paging: Paging,
-    orderId: string,
+    orderId: number,
   ) => {
     let orders: LP_ORDER_ITEM[] = [];
     orders = await this.orderItemRepo.getListOrderItemByOrderId(

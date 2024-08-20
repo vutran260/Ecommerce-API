@@ -5,7 +5,7 @@ import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
 
 export interface LP_SUBSCRIPTION_ORDERAttributes {
   subscriptionId: string;
-  orderId: string;
+  orderId: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,7 +17,7 @@ export type LP_SUBSCRIPTION_ORDERCreationAttributes = Optional<LP_SUBSCRIPTION_O
 
 export class LP_SUBSCRIPTION_ORDER extends Model<LP_SUBSCRIPTION_ORDERAttributes, LP_SUBSCRIPTION_ORDERCreationAttributes> implements LP_SUBSCRIPTION_ORDERAttributes {
   subscriptionId!: string;
-  orderId!: string;
+  orderId!: number;
   createdAt!: Date;
   updatedAt!: Date;
 
@@ -45,7 +45,7 @@ export class LP_SUBSCRIPTION_ORDER extends Model<LP_SUBSCRIPTION_ORDERAttributes
       field: 'subscription_id'
     },
     orderId: {
-      type: DataTypes.STRING(36),
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       references: {

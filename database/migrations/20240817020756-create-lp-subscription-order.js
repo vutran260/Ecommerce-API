@@ -14,7 +14,7 @@ module.exports = {
         primaryKey: true,
       },
       order_id: {
-        type: Sequelize.STRING(36),
+        type: Sequelize.BIGINT,
         allowNull: false,
         references: {
           model: 'LP_ORDER',
