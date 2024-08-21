@@ -4,13 +4,17 @@ import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { LP_CART, LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
-import { TINYINTToBoolean, booleanToTINYINT } from '../../lib/helpers/utils';
+import { booleanToTINYINT, TINYINTToBoolean } from '../../lib/helpers/utils';
 import moment from 'moment';
 import { DATE_FORMAT } from '../../lib/constant/Constant';
 import { CartUsecase } from '../usecase/CartUsecase';
-import { ResponseData } from '../../lib/http/Response';
-import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
+import { ResponseData, ResponseDataError } from '../../lib/http/Response';
+import Product, {
+  ProductFromLP_PRODUCT,
+} from '../../common/model/products/Product';
 import { IsYYYYMMDD } from '../../common/custom_validator/IsYYYYMMDD';
+import { isEmpty } from 'lodash';
+import { StatusCode } from '../../lib/http/custom_error/StatusCode';
 
 export class CartEndpoint {
   private cartUsecase: CartUsecase;
@@ -27,7 +31,7 @@ export class CartEndpoint {
     await validatorRequest(addItemRequest);
     await this.cartUsecase.addItem(addItemRequest);
 
-    return ResponseData("add product success!!!", res);
+    return ResponseData('add product success!!!', res);
   };
   private updateItem = async (req: ProtectedRequest, res: Response) => {
     const updateItemRequest = plainToInstance(CartItem, req.body);
@@ -36,47 +40,53 @@ export class CartEndpoint {
 
     await validatorRequest(updateItemRequest);
     await this.cartUsecase.updateItem(updateItemRequest);
-    return ResponseData("update product success!!!", res);
-  }
+    return ResponseData('update product success!!!', res);
+  };
 
   private deleteItem = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
     await this.cartUsecase.deleteItem(id);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
-
-  }
+  };
 
   private getCart = async (req: ProtectedRequest, res: Response) => {
-    const storeId: string = req.storeId
-    const buyerId: string = req.user.id
+    const storeId: string = req.storeId;
+    const buyerId: string = req.user.id;
     const results = await this.cartUsecase.getListItemInCart(storeId, buyerId);
-    return ResponseData(results, res)
-  }
+    return ResponseData(results, res);
+  };
 
   private deleteItems = async (req: ProtectedRequest, res: Response) => {
     const ids: string[] = req.body.ids;
     await this.cartUsecase.deleteItems(ids);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
-  }
+  };
 
-
-
-
+  private validateCart = async (req: ProtectedRequest, res: Response) => {
+    const storeId: string = req.storeId;
+    const buyerId: string = req.user.id;
+    const results = await this.cartUsecase.validateCart(storeId, buyerId);
+    if (!isEmpty(results)) {
+      return ResponseDataError(results, StatusCode.SUCCESS, res);
+    }
+    return ResponseData(results, res);
+  };
 
   public getRouter() {
     const router = express.Router();
 
     router.post('/', this.addItem);
-    router.get('/', this.getCart)
+    router.get('/', this.getCart);
     router.delete('/:id', this.deleteItem);
-    router.delete('/', this.deleteItems)
-    router.put('/', this.updateItem)
+    router.delete('/', this.deleteItems);
+    router.put('/', this.updateItem);
+    router.post('/validate', this.validateCart);
     return router;
   }
 }
 
 export class CartItem {
-  id: string
+  id: string;
 
   @IsString()
   @IsNotEmpty()
@@ -106,7 +116,9 @@ export class CartItem {
   product: Product;
 
   public ToLP_CART(): LP_CARTAttributes {
-    const startBuyingDate = !this.startBuyingDate ? undefined : moment(this.startBuyingDate, DATE_FORMAT).toDate();
+    const startBuyingDate = !this.startBuyingDate
+      ? undefined
+      : moment(this.startBuyingDate, DATE_FORMAT).toDate();
     return {
       id: this.id,
       buyerId: this.buyerId,
@@ -128,9 +140,10 @@ export class CartItem {
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
     item.buyingPeriod = lpCart.buyingPeriod;
-    item.startBuyingDate = !lpCart.startBuyingDate ? undefined : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
+    item.startBuyingDate = !lpCart.startBuyingDate
+      ? undefined
+      : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
     item.product = ProductFromLP_PRODUCT(lpCart.product);
     return item;
   }
-
 }
