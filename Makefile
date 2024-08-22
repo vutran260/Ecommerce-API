@@ -17,6 +17,8 @@ deploy:
 
 .PHONY:
 deploy-uat:
+	npm run db:migrate
+	npm run db:seed:all
 	docker build --platform linux/amd64 -t linkpalette-be-uat .
 	docker image save linkpalette-be-uat > linkpalette-be-uat.tar
 	scp ./linkpalette-be-uat.tar root@167.179.91.247:/root/link_palette/uat/app_be/linkpalette-be-uat.tar
