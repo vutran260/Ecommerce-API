@@ -95,6 +95,8 @@ export default class Product {
 
   totalQuantityInCart?: number;
 
+  isDeleted?: boolean;
+
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -174,6 +176,7 @@ export const ProductFromLP_PRODUCT = (
       : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
     calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
+    isDeleted: lpProduct.isDeleted === 1,
     createdAt: lpProduct.createdAt,
     updatedAt: lpProduct.updatedAt,
   };
