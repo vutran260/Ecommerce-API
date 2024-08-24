@@ -1,18 +1,8 @@
-import Product, {
-  ProductFromLP_PRODUCT,
-} from '../../common/model/products/Product';
+import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-import {
-  BuildQuery,
-  Filter,
-  GetOffset,
-  Paging,
-} from '../../lib/paging/Request';
-import {
-  LP_PRODUCT,
-  LP_PRODUCTCreationAttributes,
-} from '../../lib/mysql/models/LP_PRODUCT';
+import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
+import { LP_PRODUCT, LP_PRODUCTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT';
 import { LP_FAVORITE } from '../../lib/mysql/models/LP_FAVORITE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
@@ -25,6 +15,7 @@ export class ProductRepository {
   public getProductId = async (
     id: string,
     buyerId?: string,
+    storeId?: string,
   ): Promise<Product> => {
     const result = await LP_PRODUCT.findByPk(id);
     if (!result) {
@@ -57,6 +48,21 @@ export class ProductRepository {
     if (buyerId) {
       out.isFavorite = (await result.getLpFavorites()).some(
         (fav) => fav.dataValues.buyerId === buyerId,
+      );
+    }
+
+    if (buyerId && storeId) {
+      out.totalQuantityInCart = (await result.getLpCarts()).reduce(
+        (sum, cartItem) => {
+          if (
+            cartItem.dataValues.buyerId === buyerId &&
+            cartItem.dataValues.storeId === storeId
+          ) {
+            return sum + cartItem.dataValues.quantity;
+          }
+          return sum;
+        },
+        0,
       );
     }
 

@@ -15,7 +15,13 @@ export class ProductEndpoint {
 
   private getDetailProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const results = await this.productUsecase.detailProduct(id, req.user.id);
+    const buyerId = req.user.id;
+    const storeId = req.storeId;
+    const results = await this.productUsecase.detailProduct(
+      id,
+      buyerId,
+      storeId,
+    );
     return ResponseData(results, res);
   };
 
@@ -29,31 +35,56 @@ export class ProductEndpoint {
     return ResponseListData(results, res, req.paging);
   };
 
-  private getFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+  private getFavoriteProduct = async (
+    req: PaginationRequest,
+    res: Response,
+  ) => {
     const buyerId = req.user.id;
     const storeId = req.storeId;
-    const results = await this.productUsecase.getFavoriteProduct(buyerId, req.filterList, req.paging, storeId);
+    const results = await this.productUsecase.getFavoriteProduct(
+      buyerId,
+      req.filterList,
+      req.paging,
+      storeId,
+    );
     return ResponseListData(results, res, req.paging);
   };
 
-  private addFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+  private addFavoriteProduct = async (
+    req: PaginationRequest,
+    res: Response,
+  ) => {
     const buyerId = req.user.id;
     const productId: string = req.params.productId;
-    const result = await this.productUsecase.addFavoriteProduct(productId, buyerId);
+    const result = await this.productUsecase.addFavoriteProduct(
+      productId,
+      buyerId,
+    );
     return ResponseListData(result, res, req.paging);
   };
 
-  private removeFavoriteProduct = async (req: PaginationRequest, res: Response) => {
+  private removeFavoriteProduct = async (
+    req: PaginationRequest,
+    res: Response,
+  ) => {
     const buyerId = req.user.id;
     const productId: string = req.params.productId;
-    const result = await this.productUsecase.removeFavoriteProduct(productId, buyerId);
+    const result = await this.productUsecase.removeFavoriteProduct(
+      productId,
+      buyerId,
+    );
     return ResponseListData(result, res, req.paging);
   };
 
   public getRouter() {
     const router = express.Router();
     router.get('/detail/:id', this.getDetailProduct);
-    router.get('/products', PagingMiddelware, StoreFilterMiddelware, this.getProducts);
+    router.get(
+      '/products',
+      PagingMiddelware,
+      StoreFilterMiddelware,
+      this.getProducts,
+    );
     router.get('/favorite', PagingMiddelware, this.getFavoriteProduct);
     router.post('/favorite/:productId', this.addFavoriteProduct);
     router.delete('/favorite/:productId', this.removeFavoriteProduct);
