@@ -18,6 +18,7 @@ export class Order {
   orderStatus?: string;
   paymentStatus?: string;
   orderDate?: string;
+  orderItems?: OrderItem[];
   constructor(order: LP_ORDER) {
     this.id = order.id;
     this.buyerName = order.buyer.username;
@@ -25,6 +26,9 @@ export class Order {
     this.orderStatus = order.orderStatus;
     this.paymentStatus = order.lpOrderPayment.paymentStatus;
     this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
+    this.orderItems = order.lpOrderItems.map((lpOrderItem) => {
+      return new OrderItem(lpOrderItem);
+    });
   }
 }
 

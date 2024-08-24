@@ -327,9 +327,8 @@ export class OrderUsecase {
       jobCd: JobCd.CAPTURE,
       amount: finalAmount,
     };
-    const theTransInfo = await this.gmoPaymentService.entryTran(
-      transactionRequest,
-    );
+    const theTransInfo =
+      await this.gmoPaymentService.entryTran(transactionRequest);
     Logger.info(theTransInfo);
 
     Logger.info('Start execute transaction');
