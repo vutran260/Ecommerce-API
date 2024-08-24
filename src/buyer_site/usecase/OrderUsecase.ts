@@ -16,6 +16,7 @@ import {
   OrderStatus,
   PaymentSatus,
   PaymentType,
+  ProductStatus,
   ShipmentPrice,
   SubscriptionStatus,
 } from '../../lib/constant/Constant';
@@ -53,6 +54,7 @@ import {
 import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
+import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -297,6 +299,17 @@ export class OrderUsecase {
         Logger.error('Bad price');
         throw new BadRequestError(
           'The price of the item must be greater than 0',
+        );
+      }
+
+      if (cartItem.product.isDeleted) {
+        throw new BadRequestError('Product deleted', ErrorCode.PRODUCT_DELETED);
+      }
+
+      if (cartItem.product.status !== ProductStatus.ACTIVE) {
+        throw new BadRequestError(
+          'Product deactivated',
+          ErrorCode.PRODUCT_INACTIVE,
         );
       }
 

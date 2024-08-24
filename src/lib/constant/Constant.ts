@@ -72,6 +72,11 @@ export enum ShipmentPrice {
   MAX_FEE = 500,
 }
 
+export enum ProductStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
 export const MAX_FILE_SIZE = 20 * 1024 * 1024;
 export const EXPIRED_SIGNED_URL = 15 * 60;
 export const SELLER_FOLDER_PREFIX = 'link-palette-seller';
