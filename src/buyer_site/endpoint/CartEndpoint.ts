@@ -67,7 +67,7 @@ export class CartEndpoint {
     const buyerId: string = req.user.id;
     const results = await this.cartUsecase.validateCart(storeId, buyerId);
     if (!isEmpty(results)) {
-      return ResponseDataError(results, StatusCode.BUSINESS_FAIL, res);
+      return ResponseDataError(results, StatusCode.SUCCESS, res);
     }
     return ResponseData(results, res);
   };

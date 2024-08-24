@@ -18,8 +18,12 @@ export class ProductUsecase {
     this.categoryRepo = categoryRepo;
   }
 
-  public detailProduct = async (id: string, buyerId: string) => {
-    return this.productRepo.getProductId(id, buyerId);
+  public detailProduct = async (
+    id: string,
+    buyerId: string,
+    storeId: string,
+  ) => {
+    return this.productRepo.getProductId(id, buyerId, storeId);
   };
 
   public getProducts = async (
@@ -32,7 +36,7 @@ export class ProductUsecase {
 
     let categoryIds = null;
 
-    if (!!categoryId) {
+    if (categoryId) {
       categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
     }
     const products = await this.productRepo.getProducts(
@@ -48,8 +52,18 @@ export class ProductUsecase {
     });
   };
 
-  public getFavoriteProduct = async (buyerId: string, filter: Filter[], paging: Paging, storeId: string) => {
-      return await this.productRepo.getFavoriteProduct(buyerId, filter, paging, storeId);
+  public getFavoriteProduct = async (
+    buyerId: string,
+    filter: Filter[],
+    paging: Paging,
+    storeId: string,
+  ) => {
+    return await this.productRepo.getFavoriteProduct(
+      buyerId,
+      filter,
+      paging,
+      storeId,
+    );
   };
 
   public addFavoriteProduct = async (productId: string, buyerId: string) => {

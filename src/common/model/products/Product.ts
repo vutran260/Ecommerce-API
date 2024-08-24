@@ -1,4 +1,10 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import ProductComponent from './ProductCompoment';
 import { LP_PRODUCTAttributes } from '../../../lib/mysql/models/LP_PRODUCT';
 import { TINYINTToBoolean, booleanToTINYINT } from '../../../lib/helpers/utils';
@@ -41,10 +47,9 @@ export default class Product {
   @IsNotEmpty()
   productDescription: string;
 
-
   @IsString()
   @IsNotEmpty()
-  productOverview: string
+  productOverview: string;
 
   @IsString()
   productTag: string;
@@ -66,13 +71,11 @@ export default class Product {
   @IsArray()
   components: ProductComponent[];
 
-
   @IsArray()
   faqs: ProductFaq[];
 
   @IsArray()
   categories: string[];
-
 
   discountPercentage?: number;
 
@@ -90,12 +93,13 @@ export default class Product {
 
   isFavorite?: boolean;
 
-  createdAt?: Date
-  updatedAt?: Date
+  totalQuantityInCart?: number;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
-
   // const discountTimeFrom = this.discountTimeFrom ? moment(this.discountTimeFrom, DATE_FORMAT).toDate() : undefined;
 
   return {
@@ -119,15 +123,18 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
 
     discountPercentage: product.discountPercentage,
     hasDiscountSchedule: booleanToTINYINT(product.hasDiscountSchedule),
-    discountTimeFrom: product.discountTimeFrom ? moment(product.discountTimeFrom, DATE_FORMAT).toDate() : undefined,
-    discountTimeTo: product.discountTimeTo ? moment(product.discountTimeTo, DATE_FORMAT).toDate() : undefined,
+    discountTimeFrom: product.discountTimeFrom
+      ? moment(product.discountTimeFrom, DATE_FORMAT).toDate()
+      : undefined,
+    discountTimeTo: product.discountTimeTo
+      ? moment(product.discountTimeTo, DATE_FORMAT).toDate()
+      : undefined,
   };
 };
 
 export const ProductFromLP_PRODUCT = (
   lpProduct: LP_PRODUCTAttributes,
 ): Product => {
-
   if (!lpProduct) {
     return new Product();
   }
@@ -143,7 +150,9 @@ export const ProductFromLP_PRODUCT = (
       : [],
     isRecommend: TINYINTToBoolean(lpProduct.isRecommend)!,
     productName: lpProduct.productName,
-    productImage: lpProduct.productImage ? lpProduct.productImage.split(',') : [],
+    productImage: lpProduct.productImage
+      ? lpProduct.productImage.split(',')
+      : [],
     productDescription: lpProduct.productDescription,
     productOverview: lpProduct.productOverview,
     price: lpProduct.price,
@@ -157,17 +166,22 @@ export const ProductFromLP_PRODUCT = (
     faqs: [],
     discountPercentage: lpProduct.discountPercentage,
     hasDiscountSchedule: TINYINTToBoolean(lpProduct.hasDiscountSchedule),
-    discountTimeFrom: !lpProduct.discountTimeFrom ? undefined : moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
-    discountTimeTo: !lpProduct.discountTimeTo ? undefined : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
+    discountTimeFrom: !lpProduct.discountTimeFrom
+      ? undefined
+      : moment(lpProduct.discountTimeFrom).format(DATE_FORMAT),
+    discountTimeTo: !lpProduct.discountTimeTo
+      ? undefined
+      : moment(lpProduct.discountTimeTo).format(DATE_FORMAT),
     calculatedNormalPrice: calculatedProductNormalPrice(lpProduct),
     calculatedSubscriptionPrice: calculatedProductSubscriptionPrice(lpProduct),
     createdAt: lpProduct.createdAt,
-    updatedAt: lpProduct.updatedAt
+    updatedAt: lpProduct.updatedAt,
   };
 };
 
-
-const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number => {
+const calculatedProductNormalPrice = (
+  LpProduct: LP_PRODUCTAttributes,
+): number => {
   let price = LpProduct.price!;
 
   if (!LpProduct.isDiscount) {
@@ -175,43 +189,47 @@ const calculatedProductNormalPrice = (LpProduct: LP_PRODUCTAttributes): number =
   }
 
   const now = moment(new Date()).format(DATE_FORMAT);
-  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
+  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(
+    DATE_FORMAT,
+  );
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
-  if (!LpProduct.hasDiscountSchedule ||
-    (LpProduct.hasDiscountSchedule && (
+  if (
+    !LpProduct.hasDiscountSchedule ||
+    (LpProduct.hasDiscountSchedule &&
       now >= discountTimeFrom &&
-      now <= discountTimeTo
-    ))
+      now <= discountTimeTo)
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
     return price;
   }
-  return price
+  return price;
 };
 
-const calculatedProductSubscriptionPrice = (LpProduct: LP_PRODUCTAttributes): number | undefined => {
+const calculatedProductSubscriptionPrice = (
+  LpProduct: LP_PRODUCTAttributes,
+): number | undefined => {
   if (!LpProduct.isSubscription) {
     return undefined;
   }
   let price = LpProduct.priceSubscription!;
 
-
   if (!LpProduct.isDiscount) {
     return price;
   }
 
-
   const now = moment(new Date()).format(DATE_FORMAT);
-  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(DATE_FORMAT);
+  const discountTimeFrom = moment(LpProduct.discountTimeFrom).format(
+    DATE_FORMAT,
+  );
   const discountTimeTo = moment(LpProduct.discountTimeTo).format(DATE_FORMAT);
-  if (!LpProduct.hasDiscountSchedule ||
-    (LpProduct.hasDiscountSchedule && (
+  if (
+    !LpProduct.hasDiscountSchedule ||
+    (LpProduct.hasDiscountSchedule &&
       now >= discountTimeFrom &&
-      now <= discountTimeTo
-    ))
+      now <= discountTimeTo)
   ) {
     price = Math.round((price * (100 - LpProduct.discountPercentage!)) / 100);
     return price;
   }
-  return price
+  return price;
 };
