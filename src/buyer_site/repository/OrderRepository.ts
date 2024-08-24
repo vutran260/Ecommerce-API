@@ -103,6 +103,10 @@ export class OrderRepository {
           {
             association: LP_ORDER.associations.lpOrderPayment,
           },
+          {
+            association: LP_ORDER.associations.lpOrderItems,
+            limit: 2,
+          },
         ],
         where: BuildQuery(filter),
         offset: GetOffset(paging),
