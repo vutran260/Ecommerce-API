@@ -26,7 +26,7 @@ export class Order {
     this.orderStatus = order.orderStatus;
     this.paymentStatus = order.lpOrderPayment.paymentStatus;
     this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
-    this.orderItems = order.lpOrderItems.map((lpOrderItem) => {
+    this.orderItems = order.lpOrderItems?.map((lpOrderItem) => {
       return new OrderItem(lpOrderItem);
     });
   }
