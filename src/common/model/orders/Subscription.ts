@@ -8,6 +8,9 @@ import {
 import Product, {
   ProductFromLP_PRODUCT,
 } from '../../../common/model/products/Product';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
+import { IsHHMM } from '../../custom_validator/IsHHMM';
 
 export class CreateSubscriptionRequest {
   buyerId: string;
@@ -133,4 +136,25 @@ export class SubscriptionAddress {
     item.telephoneNumber = lpSubscriptionAddress.telephoneNumber;
     return item;
   }
+}
+
+export class Subscription {
+  id: string;
+
+  @IsString()
+  @IsNotEmpty()
+  buyerId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  storeId: string;
+
+  @IsNumber()
+  subscriptionPeriod: number;
+
+  @IsYYYYMMDD()
+  nextDate: string;
+
+  @IsHHMM()
+  planDeliveryTime?: string;
 }

@@ -9,6 +9,7 @@ import { OrderEndpoint } from './endpoint/OrderEndpoint';
 import { PrefectureEndpoint } from './endpoint/PrefectureEndpoint';
 import { ProductEndpoint } from './endpoint/ProductEndpoint';
 import { StoreEndpoint } from './endpoint/StoreEndpoint';
+import { SubscriptionEndpoint } from './endpoint/SubscriptionEndpoint';
 import { BuyerAuthenMiddlleware } from './middleware/BuyerAuthenMiddleware';
 import { AddressRepository } from './repository/AddressRepository';
 import { BuyerPostRepository } from './repository/BuyerPostRepository';
@@ -36,6 +37,7 @@ import { PrefectureUsecase } from './usecase/PrefectureUsecase';
 import { ProductUsecase } from './usecase/ProductUsecase';
 import { StoreUsecase } from './usecase/StoreUsecase';
 import { SubscriptionRepository } from './repository/SubscriptionRepository';
+import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -80,6 +82,7 @@ export class buyerSiteRouter {
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
+    const subscriptionUseCase = new SubscriptionUseCase(subscriptionRepo);
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -93,6 +96,7 @@ export class buyerSiteRouter {
     const cardEndpoint = new CardEndpoint(cardUsecase);
     const orderEndpoint = new OrderEndpoint(orderUsecase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
+    const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
@@ -105,6 +109,7 @@ export class buyerSiteRouter {
     router.use('/order', orderEndpoint.getRouter());
     router.use('/post', buyerPostEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
+    router.use('/subscription', subscriptionEndpoint.getRouter());
 
     return router;
   };

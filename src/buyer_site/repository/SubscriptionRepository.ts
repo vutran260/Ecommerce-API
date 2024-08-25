@@ -10,9 +10,17 @@ import {
   LP_SUBSCRIPTION_ADDRESS,
   LP_SUBSCRIPTION_ORDER,
   LP_SUBSCRIPTION_PRODUCT,
+  LP_SUBSCRIPTIONAttributes,
 } from '../../lib/mysql/models/init-models';
 import { SubscriptionStatus } from '../../lib/constant/Constant';
 import { daysBeforeNextDate } from '../../Config';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+} from '../../lib/paging/Request';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class SubscriptionRepository {
   public createSubscription = async (
@@ -86,9 +94,56 @@ export class SubscriptionRepository {
     });
   }
 
+  public getSubscriptions = async (
+    paging: Paging,
+    order: LpOrder[],
+    filter: Filter[],
+  ) => {
+    const count = await LP_SUBSCRIPTION.count({
+      where: BuildQuery(filter),
+    });
+
+    const subscriptions = await LP_SUBSCRIPTION.findAll({
+      where: BuildQuery(filter),
+      include: [
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionProducts,
+          include: [
+            {
+              association: LP_SUBSCRIPTION_PRODUCT.associations.product,
+            },
+          ],
+        },
+      ],
+      offset: GetOffset(paging),
+      order: BuildOrderQuery(order),
+      limit: paging.limit,
+    });
+
+    paging.total = count;
+
+    return subscriptions;
+  };
+
   public getSubscriptionById = async (id: string, t?: Transaction) => {
     const result = await LP_SUBSCRIPTION.findOne({
       where: { id: id },
+      include: [
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionAddress,
+        },
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionOrders,
+        },
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionProducts,
+          include: [
+            {
+              association: LP_SUBSCRIPTION_PRODUCT.associations.product,
+            },
+          ],
+        },
+      ],
       transaction: t,
     });
     return result?.dataValues;
@@ -104,4 +159,11 @@ export class SubscriptionRepository {
       { where: { id: id }, transaction: t },
     );
   }
+  public updateSubscription = async (request: LP_SUBSCRIPTIONAttributes) => {
+    await LP_SUBSCRIPTION.update(request, {
+      where: {
+        id: request.id,
+      },
+    });
+  };
 }
