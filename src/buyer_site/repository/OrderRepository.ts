@@ -82,32 +82,47 @@ export class OrderRepository {
     buyerId: string,
   ) => {
     try {
+      const isSubscription = filter.some(
+        (f) => f.attribute === 'isSubscription' && f.value === 'true',
+      );
+
+      filter = filter.filter((f) => f.attribute !== 'isSubscription');
+
       filter.push({
         operation: 'eq',
         value: buyerId,
         attribute: 'buyerId',
       });
 
-      const count = await LP_ORDER.count({
+      const include: any[] = [
+        {
+          association: LP_ORDER.associations.buyer,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderPayment,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderItems,
+          limit: 2,
+        },
+      ];
+
+      if (isSubscription) {
+        include.push({
+          association: LP_ORDER.associations.lpSubscriptionOrders,
+          required: true,
+        });
+      }
+
+      paging.total = await LP_ORDER.count({
         where: BuildQuery(filter),
+        include: include,
         distinct: true,
         col: 'id',
       });
-      paging.total = count;
 
       const results = await LP_ORDER.findAll({
-        include: [
-          {
-            association: LP_ORDER.associations.buyer,
-          },
-          {
-            association: LP_ORDER.associations.lpOrderPayment,
-          },
-          {
-            association: LP_ORDER.associations.lpOrderItems,
-            limit: 2,
-          },
-        ],
+        include: include,
         where: BuildQuery(filter),
         offset: GetOffset(paging),
         order: BuildOrderQuery(order),
