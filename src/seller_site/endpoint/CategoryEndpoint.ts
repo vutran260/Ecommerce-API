@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Response } from 'express';
 import Logger from '../../lib/core/Logger';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { ResponseData, ResponseListData } from '../../lib/http/Response';
@@ -58,7 +58,7 @@ export class CategoryEndpoint {
     const results = await this.categoryUsecase.updateCategory(
       categoryUpdateRequest,
       id,
-      req.storeId!
+      req.storeId!,
     );
     return ResponseData(results, res);
   };

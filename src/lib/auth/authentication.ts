@@ -1,6 +1,5 @@
 import express from 'express';
 import {
-  AuthFailureError,
   AccessTokenError,
   TokenExpiredError,
 } from '../http/custom_error/ApiError';

@@ -3,7 +3,6 @@ import * as process from 'process';
 import { Sequelize } from 'sequelize-typescript';
 import { initModels } from './models/init-models';
 
-
 export let lpSequelize: Sequelize;
 
 export const SetupDB = () => {
@@ -24,5 +23,3 @@ export const SetupDB = () => {
     throw error;
   }
 };
-
-

@@ -41,9 +41,7 @@ export class SellerEndpoint {
         throw new BadRequestError('Missing seller id');
       }
 
-      const token = await this.sellerUsecase.GetTokenById(
-        req.body.sellerId,
-      );
+      const token = await this.sellerUsecase.GetTokenById(req.body.sellerId);
       return ResponseData({ token: token }, res);
     } catch (e: any) {
       Logger.error(e);

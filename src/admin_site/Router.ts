@@ -14,43 +14,34 @@ import { StoreEndpoint } from './endpoint/StoreEndpoint';
 import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
 
 export class adminSiteRouter {
-
   public getAdminSiteRouter = () => {
     try {
-    const router = express.Router();
-    const adminRepo = new AdminRepository()
-    const sellerRepo = new SellerRepository()
-    const storeRepo = new StoreRepository();
-    const buyerRepo = new BuyerRepository();
+      const router = express.Router();
+      const adminRepo = new AdminRepository();
+      const sellerRepo = new SellerRepository();
+      const storeRepo = new StoreRepository();
+      const buyerRepo = new BuyerRepository();
 
+      const userUsecase = new SellerUsecase(sellerRepo);
+      const buyerUsecase = new BuyerUsecase(buyerRepo);
+      const adminUsecase = new AdminUsecase(adminRepo);
+      const storeUsecase = new StoreUsecase(storeRepo);
 
-    const userUsecase = new SellerUsecase(sellerRepo)
-    const buyerUsecase = new BuyerUsecase(buyerRepo);
-    const adminUsecase = new AdminUsecase(adminRepo)
-    const storeUsecase = new StoreUsecase(storeRepo);
+      const sellerEndpoint = new SellerEndpoint(userUsecase);
+      const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
+      const adminEndpoint = new AdminEndpoint(adminUsecase);
+      const storeEndpoint = new StoreEndpoint(storeUsecase);
 
+      router.use('/admin', adminEndpoint.getRouter());
+      router.use(adminAuthenMiddlleware);
+      router.use('/seller', sellerEndpoint.getRouter());
+      router.use('/buyer', buyerEndpoint.getRouter());
+      router.use('/store', storeEndpoint.getRouter());
 
-    const sellerEndpoint = new SellerEndpoint(userUsecase);
-    const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
-    const adminEndpoint = new AdminEndpoint(adminUsecase);
-    const storeEndpoint = new StoreEndpoint(storeUsecase);
-
-
-
-    router.use('/admin', adminEndpoint.getRouter())
-    router.use(adminAuthenMiddlleware)
-    router.use('/seller', sellerEndpoint.getRouter())
-    router.use('/buyer', buyerEndpoint.getRouter())
-    router.use('/store', storeEndpoint.getRouter());
-
-    return router
+      return router;
     } catch (error) {
-      console.error(error)
+      console.error(error);
       throw error;
     }
-
-
-  }
-
+  };
 }
-

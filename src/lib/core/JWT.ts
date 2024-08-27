@@ -2,7 +2,11 @@ import path from 'path';
 import { readFile } from 'fs';
 import { promisify } from 'util';
 import { sign, verify } from 'jsonwebtoken';
-import { InternalError, BadTokenError, TokenExpiredError } from '../http/custom_error/ApiError';
+import {
+  InternalError,
+  BadTokenError,
+  TokenExpiredError,
+} from '../http/custom_error/ApiError';
 import Logger from './Logger';
 
 /*
@@ -55,7 +59,10 @@ async function encode(payload: JwtPayload): Promise<string> {
   const cert = await readPrivateKey();
   if (!cert) throw new InternalError('Token generation failure');
   // @ts-ignore
-  return promisify(sign)({ ...payload }, cert, { algorithm: 'RS256', allowInsecureKeySizes: true });
+  return promisify(sign)({ ...payload }, cert, {
+    algorithm: 'RS256',
+    allowInsecureKeySizes: true,
+  });
 }
 
 /**

@@ -1,16 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Logger from './lib/core/Logger';
 import cors from 'cors';
-import { corsUrl, environment } from './Config';
+import { corsUrl } from './Config';
 // import './lib/database'; // initialize database
 // import './lib/cache'; // initialize cache
-import {
-  NotFoundError,
-} from './lib/http/custom_error/ApiError';
+import { NotFoundError } from './lib/http/custom_error/ApiError';
 import router from './Route';
 import { ResponseError } from './lib/http/Response';
 import { startAllCronJobs } from './lib/cron';
-
 
 process.on('uncaughtException', (e) => {
   Logger.error(e.message);
@@ -31,9 +28,8 @@ app.use('/', router);
 app.use((req, res, next) => next(new NotFoundError()));
 
 // Middleware Error Handler
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    return ResponseError(err, res)
+  return ResponseError(err, res);
 });
 
 startAllCronJobs();

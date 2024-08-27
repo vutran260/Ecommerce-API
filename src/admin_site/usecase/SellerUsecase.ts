@@ -9,8 +9,11 @@ export class SellerUsecase {
     this.sellerRepo = sellerRepo;
   }
 
-  public GetSeller = async (filter: Filter[], paging: Paging, order: LpOrder[]) => {
+  public GetSeller = async (
+    filter: Filter[],
+    paging: Paging,
+    order: LpOrder[],
+  ) => {
     return this.sellerRepo.getSeller(filter, paging, order);
   };
-
 }

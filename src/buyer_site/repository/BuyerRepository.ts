@@ -14,7 +14,6 @@ export class BuyerRepository {
     return await this.getBuyerById(buyer.id);
   };
 
-
   public getBuyerInfo = async (buyerId: string) => {
     try {
       const buyerInfo = await LP_BUYER.findOne({
@@ -25,10 +24,9 @@ export class BuyerRepository {
           },
           {
             association: LP_BUYER.associations.lpBuyerPersonalInformation,
-          }
-        ]
+          },
+        ],
       });
-
 
       return buyerInfo;
     } catch (error) {
@@ -37,36 +35,35 @@ export class BuyerRepository {
     }
   };
 
-
   public addMockAddressInfo = async (buyerId: string) => {
-
-        await LP_ADDRESS_BUYER_SSO.create({
-          buyerId: buyerId,
-          email: `user${Math.floor(Math.random() * 10)}@example.com`,
-          telephoneNumber: `+1${Math.floor(Math.random() * 9 + 10)}`,
-          contactTelephoneNumber: `${Math.floor(Math.random() * 9 + 10)}`,
-          postCode: `${Math.floor(Math.random() * 9 + 10)}`,
-          prefectureCode: ['CA', 'TX', 'NY', 'FL'][Math.floor(Math.random() * 4)],
-          cityTown: ['CityA', 'CityB', 'CityC', 'CityD'][Math.floor(Math.random() * 4)],
-          buildingName: `Building ${Math.floor(Math.random() * 10)}`,
-        }
-        )
-  }
+    await LP_ADDRESS_BUYER_SSO.create({
+      buyerId: buyerId,
+      email: `user${Math.floor(Math.random() * 10)}@example.com`,
+      telephoneNumber: `+1${Math.floor(Math.random() * 9 + 10)}`,
+      contactTelephoneNumber: `${Math.floor(Math.random() * 9 + 10)}`,
+      postCode: `${Math.floor(Math.random() * 9 + 10)}`,
+      prefectureCode: ['CA', 'TX', 'NY', 'FL'][Math.floor(Math.random() * 4)],
+      cityTown: ['CityA', 'CityB', 'CityC', 'CityD'][
+        Math.floor(Math.random() * 4)
+      ],
+      buildingName: `Building ${Math.floor(Math.random() * 10)}`,
+    });
+  };
 
   public addMockPersonalInfo = async (buyerId: string) => {
-        await LP_BUYER_PERSONAL_INFORMATION.create({
-          buyerId: buyerId,
-          nickname: `Nickname${Math.floor(Math.random() * 10)}`,
-          firstName: `FirstName${Math.floor(Math.random() * 10)}`,
-          lastName: `LastName${Math.floor(Math.random() * 10)}`,
-          firstNameKana: `ファーストネーム${Math.floor(Math.random() * 10)}`,
-          lastNameKana: `ラストネーム${Math.floor(Math.random() * 10)}`,
-          prefectureCode: ['CA', 'TX', 'NY', 'FL'][Math.floor(Math.random() * 4)],
-          gender: Math.floor(Math.random() * 2),
-          birthday: new Date().toString(),
-          age: Math.floor(Math.random() * 10).toString(),
-        })
-  }
+    await LP_BUYER_PERSONAL_INFORMATION.create({
+      buyerId: buyerId,
+      nickname: `Nickname${Math.floor(Math.random() * 10)}`,
+      firstName: `FirstName${Math.floor(Math.random() * 10)}`,
+      lastName: `LastName${Math.floor(Math.random() * 10)}`,
+      firstNameKana: `ファーストネーム${Math.floor(Math.random() * 10)}`,
+      lastNameKana: `ラストネーム${Math.floor(Math.random() * 10)}`,
+      prefectureCode: ['CA', 'TX', 'NY', 'FL'][Math.floor(Math.random() * 4)],
+      gender: Math.floor(Math.random() * 2),
+      birthday: new Date().toString(),
+      age: Math.floor(Math.random() * 10).toString(),
+    });
+  };
 
   public getBuyerById = async (id: string) => {
     const result = await LP_BUYER.findOne({ where: { id: id } });

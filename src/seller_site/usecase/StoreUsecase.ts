@@ -1,29 +1,29 @@
 import { SellerRepository } from '../repository/SellerRepository';
 import { StoreRepository } from '../repository/StoreRepository';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
-import { StoreStatus } from '../../lib/constant/Store';
 import { LP_STORECreationAttributes } from '../../lib/mysql/models/LP_STORE';
 import { LP_SELLERAttributes } from '../../lib/mysql/models/LP_SELLER';
 
 export class StoreUsecase {
   private storeRepo: StoreRepository;
-  private sellerRepo: SellerRepository
-
+  private sellerRepo: SellerRepository;
 
   constructor(storeRepository: StoreRepository, sellerRepo: SellerRepository) {
     this.storeRepo = storeRepository;
-    this.sellerRepo = sellerRepo
+    this.sellerRepo = sellerRepo;
   }
 
+  public RegisterStore = async (
+    seller: LP_SELLERAttributes,
+    input: LP_STORECreationAttributes,
+  ) => {
+    if (seller.storeId)
+      throw new BadRequestError('Seller already register store!');
 
-  public RegisterStore = async (seller: LP_SELLERAttributes, input: LP_STORECreationAttributes) => {
+    const store = await this.storeRepo.CreateStore(input);
 
-    if (!!seller.storeId) throw new BadRequestError("Seller already register store!")
+    await this.sellerRepo.addStoreId(seller.id, store!.id);
 
-    const store = await this.storeRepo.CreateStore(input)
-
-    await this.sellerRepo.addStoreId(seller.id, store!.id)
-
-    return store
+    return store;
   };
 }

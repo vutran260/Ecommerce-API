@@ -1,6 +1,6 @@
-export class MemberResponse{
-  memberID :string;
-  memberName:string;
+export class MemberResponse {
+  memberID: string;
+  memberName: string;
   deleteFlag: string;
 
   constructor(memberID: string, memberName: string, deleteFlag: string) {
@@ -8,5 +8,4 @@ export class MemberResponse{
     this.memberName = memberName;
     this.deleteFlag = deleteFlag;
   }
-
 }

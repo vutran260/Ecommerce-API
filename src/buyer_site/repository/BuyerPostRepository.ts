@@ -18,8 +18,6 @@ export class BuyerPostRepository {
     order: LpOrder[],
     filter: Filter[],
   ) => {
-
-
     const count = await LP_STORE_POST.count({
       where: BuildQuery(filter),
     });

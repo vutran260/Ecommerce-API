@@ -44,7 +44,12 @@ export class SubscriptionEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.get('/', PagingMiddelware, StoreFilterMiddelware, this.getSubscriptions);
+    router.get(
+      '/',
+      PagingMiddelware,
+      StoreFilterMiddelware,
+      this.getSubscriptions,
+    );
     router.get('/:id', this.getSubscription);
     router.put('/:id', this.updateSubscription);
     return router;

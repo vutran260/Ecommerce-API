@@ -8,7 +8,6 @@ export class CategoryUsecase {
     this.categoryRepo = categoryRepo;
   }
 
-
   public detailCategory = async (id: string, storeId: string) => {
     return this.categoryRepo.getCategoryId(id, storeId);
   };
@@ -16,5 +15,4 @@ export class CategoryUsecase {
   public getCategories = async (filter: Filter[], paging: Paging) => {
     return this.categoryRepo.getCategories(filter, paging);
   };
-
 }

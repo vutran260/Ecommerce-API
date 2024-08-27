@@ -1,31 +1,33 @@
 export class CardResponse {
-      cardSeq: string;
-      cardNo: string;
-      expire: string;
-      defaultFlag: string;
-      cardName: string;
-      holderName: string;
-      deleteFlag: string;
-      brand: string;
-      domesticFlag: string;
-      issuerCode: string;
-      debitPrepaidFlag: string;
-      debitPrepaidIssuerName: string;
-      forwardFinal: string;
+  cardSeq: string;
+  cardNo: string;
+  expire: string;
+  defaultFlag: string;
+  cardName: string;
+  holderName: string;
+  deleteFlag: string;
+  brand: string;
+  domesticFlag: string;
+  issuerCode: string;
+  debitPrepaidFlag: string;
+  debitPrepaidIssuerName: string;
+  forwardFinal: string;
 
-  constructor(cardSeq: string,
-              cardNo: string,
-              expire: string,
-              defaultFlag: string,
-              cardName: string,
-              holderName: string,
-              deleteFlag: string,
-              brand: string,
-              domesticFlag: string,
-              issuerCode: string,
-              debitPrepaidFlag: string,
-              debitPrepaidIssuerName: string,
-              forwardFinal: string) {
+  constructor(
+    cardSeq: string,
+    cardNo: string,
+    expire: string,
+    defaultFlag: string,
+    cardName: string,
+    holderName: string,
+    deleteFlag: string,
+    brand: string,
+    domesticFlag: string,
+    issuerCode: string,
+    debitPrepaidFlag: string,
+    debitPrepaidIssuerName: string,
+    forwardFinal: string,
+  ) {
     this.cardSeq = cardSeq;
     this.cardNo = cardNo;
     this.expire = expire;
@@ -40,8 +42,4 @@ export class CardResponse {
     this.debitPrepaidIssuerName = debitPrepaidIssuerName;
     this.forwardFinal = forwardFinal;
   }
-  
-
- 
-
 }

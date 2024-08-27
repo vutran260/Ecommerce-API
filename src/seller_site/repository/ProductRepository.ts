@@ -72,13 +72,12 @@ export class ProductRepository {
         ),
     );
 
-
     (await result.getLpProductCategories({ transaction: t })).forEach(
       (category) => out.categories.push(category.dataValues.categoryId),
     );
 
-    (await result.getLpProductFaqs({ transaction: t })).forEach(
-      (faq) => out.faqs.push(faq.dataValues),
+    (await result.getLpProductFaqs({ transaction: t })).forEach((faq) =>
+      out.faqs.push(faq.dataValues),
     );
 
     return out;
@@ -166,9 +165,9 @@ export class ProductRepository {
         where: {
           id: { [Op.in]: ids },
         },
-        transaction: t
-      });
-
+        transaction: t,
+      },
+    );
   };
 
   public getProducts = async (
@@ -187,16 +186,16 @@ export class ProductRepository {
       const count = await LP_PRODUCT.count({
         include: categoryIds
           ? [
-            {
-              association: LP_PRODUCT.associations.lpProductCategories,
-              where: { categoryId: { [Op.in]: categoryIds } },
-            },
-          ]
+              {
+                association: LP_PRODUCT.associations.lpProductCategories,
+                where: { categoryId: { [Op.in]: categoryIds } },
+              },
+            ]
           : undefined,
         where: BuildQuery(filter),
         transaction: t,
-        distinct:true,
-        col: 'id'
+        distinct: true,
+        col: 'id',
       });
       paging.total = count;
 

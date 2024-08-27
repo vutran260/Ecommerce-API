@@ -77,7 +77,6 @@ export class ProductUsecase {
       }
     }
 
-
     // if (this.hasDuplicateProductComponentName(input)) {
     //   throw new BadRequestError('product component name must be unique');
     // }
@@ -115,7 +114,7 @@ export class ProductUsecase {
     categoryId: string,
   ) => {
     let categoryIds = null;
-    if (!!categoryId) {
+    if (categoryId) {
       categoryIds = await this.categoryRepo.getAllLeafInSub(categoryId);
     }
 
@@ -125,7 +124,6 @@ export class ProductUsecase {
       paging,
       categoryIds,
     );
-
   };
 
   private mapToCreateProductRepoInput = (input: Product) => {
@@ -178,7 +176,6 @@ export class ProductUsecase {
 
     return createProduct;
   };
-
 
   private validatePrice = (input: Product) => {
     if (!input.price || !input.stockItem) {

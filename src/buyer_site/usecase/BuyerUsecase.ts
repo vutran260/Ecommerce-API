@@ -37,8 +37,11 @@ export class BuyerUsecase {
     if (buyerInfo?.lpBuyerPersonalInformation == null) {
       await this.buyerRepo.addMockPersonalInfo(buyerId);
     }
-    
-    if (buyerInfo?.lpBuyerPersonalInformation == null || buyerInfo?.lpAddressBuyerSso == null) {
+
+    if (
+      buyerInfo?.lpBuyerPersonalInformation == null ||
+      buyerInfo?.lpAddressBuyerSso == null
+    ) {
       buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId);
     }
 

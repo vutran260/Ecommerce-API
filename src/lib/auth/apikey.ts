@@ -15,7 +15,7 @@ export default router.use(
     if (!key) throw new ForbiddenError();
 
     // const apiKey = await ApiKeyRepo.findByKey(key);
-    const apiKey = key === "GCMUDiuY5a7WvyUNt9n3QztToSHzK7Uj"
+    const apiKey = key === 'GCMUDiuY5a7WvyUNt9n3QztToSHzK7Uj';
     if (!apiKey) throw new ForbiddenError();
 
     // req.apiKey = apiKey;
