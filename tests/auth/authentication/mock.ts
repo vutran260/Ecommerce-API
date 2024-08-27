@@ -37,7 +37,7 @@ export const mockJwtValidate = jest.fn(
 
 export const mockKeystoreFindForKey = jest.fn(
   async (client: User, key: string): Promise<Keystore> =>
-    ({ client: client, primaryKey: key } as Keystore),
+    ({ client: client, primaryKey: key }) as Keystore,
 );
 
 jest.mock('../../../src/lib/database/repository/UserRepo', () => ({

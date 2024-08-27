@@ -6,7 +6,7 @@ import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
-import { plainToClass } from "class-transformer";
+import { plainToClass } from 'class-transformer';
 import Product from '../../common/model/products/Product';
 
 export class ProductEndpoint {
@@ -17,23 +17,21 @@ export class ProductEndpoint {
   }
 
   private createProduct = async (req: ProtectedRequest, res: Response) => {
-      const productCreateRequest = plainToClass(Product, req.body);
-      productCreateRequest.storeId = req.storeId;
-      
-      await validatorRequest(productCreateRequest);
-      const results = await this.productUsecase.createProduct(
-        productCreateRequest,
-      );
-      return ResponseData(results, res);
+    const productCreateRequest = plainToClass(Product, req.body);
+    productCreateRequest.storeId = req.storeId;
+
+    await validatorRequest(productCreateRequest);
+    const results =
+      await this.productUsecase.createProduct(productCreateRequest);
+    return ResponseData(results, res);
   };
 
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
-      const productCreateRequest = plainToClass(Product, req.body);
-      await validatorRequest(productCreateRequest);
-      const results = await this.productUsecase.updateProduct(
-        productCreateRequest,
-      );
-      return ResponseData(results, res);
+    const productCreateRequest = plainToClass(Product, req.body);
+    await validatorRequest(productCreateRequest);
+    const results =
+      await this.productUsecase.updateProduct(productCreateRequest);
+    return ResponseData(results, res);
   };
 
   private getDetailProduct = async (req: Request, res: Response) => {
@@ -47,7 +45,7 @@ export class ProductEndpoint {
       req.filterList,
       req.order,
       req.paging,
-      req.query["categoryId"] as string,
+      req.query['categoryId'] as string,
     );
     return ResponseListData(results, res, req.paging);
   };
@@ -56,24 +54,24 @@ export class ProductEndpoint {
     const id: string = req.params.id;
     await this.productUsecase.deleteProduct(id);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
-  }
+  };
 
   private deleteProducts = async (req: Request, res: Response) => {
     const ids: string[] = req.body.ids;
     await this.productUsecase.deleteProducts(ids);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
-  }
+  };
 
   private activeProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
     await this.productUsecase.activeProduct(id);
     return ResponseData({ message: 'Active is successfully!' }, res);
-  }
+  };
   private inactiveProduct = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
     await this.productUsecase.inactiveProduct(id);
     return ResponseData({ message: 'Inactive is successfully!' }, res);
-  }
+  };
   public getRouter() {
     const router = express.Router();
     router.post('/create', this.createProduct);
@@ -89,7 +87,7 @@ export class ProductEndpoint {
     );
     router.put('/active/:id', this.activeProduct);
     router.put('/inactive/:id', this.inactiveProduct);
-    
+
     return router;
   }
 }

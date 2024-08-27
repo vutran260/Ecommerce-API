@@ -31,14 +31,14 @@ const GetPaging = (req: PaginationRequest) => {
   req.paging = { limit: 0, page: 0 };
   if (!limit && !Number(limit)) {
     req.paging.limit = 20;
-  }else{
-  req.paging.limit = Number(limit);
+  } else {
+    req.paging.limit = Number(limit);
   }
 
   const page = req.query.page;
   if (!page && !Number(page)) {
     req.paging.page = 1;
-  }else {
+  } else {
     req.paging.page = Number(page);
   }
 };

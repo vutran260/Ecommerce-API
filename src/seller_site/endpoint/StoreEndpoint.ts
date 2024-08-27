@@ -3,7 +3,9 @@ import { ResponseData } from '../../lib/http/Response';
 import Logger from '../../lib/core/Logger';
 import { StoreUsecase } from '../usecase/StoreUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
-import StoreCreateRequest, { StoreCreateRequestToLP_STORECreationAttributes } from '../../common/model/stores/StoreCreateRequest';
+import StoreCreateRequest, {
+  StoreCreateRequestToLP_STORECreationAttributes,
+} from '../../common/model/stores/StoreCreateRequest';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { plainToClass } from 'class-transformer';
 
@@ -18,7 +20,10 @@ export class StoreEndpoint {
     try {
       const storeCreateRequest = plainToClass(StoreCreateRequest, req.body);
       await validatorRequest(storeCreateRequest);
-      const results = await this.storeUsecase.RegisterStore(req.user, StoreCreateRequestToLP_STORECreationAttributes(storeCreateRequest));
+      const results = await this.storeUsecase.RegisterStore(
+        req.user,
+        StoreCreateRequestToLP_STORECreationAttributes(storeCreateRequest),
+      );
       return ResponseData(results, res);
     } catch (e: any) {
       Logger.error(e.message);
@@ -33,4 +38,3 @@ export class StoreEndpoint {
     return router;
   }
 }
-

@@ -1,5 +1,8 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from './mock';
-import { validateTokenData, createTokens } from '../../../src/lib/auth/authUtils';
+import {
+  validateTokenData,
+  createTokens,
+} from '../../../src/lib/auth/authUtils';
 import { JwtPayload } from '../../../src/lib/core/JWT';
 import { tokenInfo } from '../../../src/Config';
 import { Types } from 'mongoose';

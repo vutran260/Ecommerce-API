@@ -8,7 +8,7 @@ module.exports = {
     // Add the new order_id column and foreign key constraint
     await queryInterface.addColumn('LP_SHIPMENT_HISTORY', 'order_id', {
       type: Sequelize.STRING(36),
-      allowNull: false
+      allowNull: false,
     });
 
     // Add the foreign key constraint
@@ -18,14 +18,14 @@ module.exports = {
       name: 'LP_SHIPMENT_HISTORY_order_id_fkey',
       references: {
         table: 'LP_ORDER',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'cascade',
-      onUpdate: 'cascade'
+      onUpdate: 'cascade',
     });
   },
 
   down: async (queryInterface, Sequelize) => {
     // Leave this empty if you do not need to revert the migration
-  }
+  },
 };

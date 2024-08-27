@@ -1,4 +1,4 @@
-import express, {  Response } from 'express';
+import express, { Response } from 'express';
 import { SellerUsecase } from '../usecase/SellerUsecase';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
@@ -12,7 +12,11 @@ export class SellerEndpoint {
   }
 
   private getSeller = async (req: PaginationRequest, res: Response) => {
-    const results = await this.sellerUsecase.GetSeller(req.filterList, req.paging, req.order);
+    const results = await this.sellerUsecase.GetSeller(
+      req.filterList,
+      req.paging,
+      req.order,
+    );
     return ResponseListData(results, res, req.paging);
   };
 

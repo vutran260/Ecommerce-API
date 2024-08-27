@@ -390,28 +390,44 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_SHIPMENT_HISTORY`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_SHIPMENT_HISTORY`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_SHIPMENT`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ORDER_PAYMENT`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_ORDER_PAYMENT`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ORDER_ITEM`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ORDER`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_PREFECTURES`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_BUYER_PERSONAL_INFORMATION`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ADDRESS_BUYER_SSO`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_BUYER_PERSONAL_INFORMATION`,
+    );
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_ADDRESS_BUYER_SSO`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_STORE_POST`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ADDRESS_BUYER`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_ADDRESS_BUYER`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_CART`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_PRODUCT_CATEGORY`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_PRODUCT_CATEGORY`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_CATEGORY`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_PRODUCT_FAQ`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_PRODUCT_COMPONENT`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_PRODUCT_COMPONENT`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_PRODUCT`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_STORE_BUYER`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_BUYER`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_SELLER`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_STORE`);
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ADMIN`);
-    await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_ORDER_ADDRESS_BUYER`);
+    await queryInterface.sequelize.query(
+      `DROP TABLE IF EXISTS LP_ORDER_ADDRESS_BUYER`,
+    );
     await queryInterface.sequelize.query(`DROP TABLE IF EXISTS LP_FAVORITE`);
-  }
+  },
 };

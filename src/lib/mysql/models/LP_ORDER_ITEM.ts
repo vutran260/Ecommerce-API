@@ -18,12 +18,25 @@ export interface LP_ORDER_ITEMAttributes {
   deletedAt?: Date;
 }
 
-export type LP_ORDER_ITEMPk = "id";
+export type LP_ORDER_ITEMPk = 'id';
 export type LP_ORDER_ITEMId = LP_ORDER_ITEM[LP_ORDER_ITEMPk];
-export type LP_ORDER_ITEMOptionalAttributes = "id" | "orderId" | "productId" | "price" | "createdAt" | "updatedAt" | "deletedAt";
-export type LP_ORDER_ITEMCreationAttributes = Optional<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMOptionalAttributes>;
+export type LP_ORDER_ITEMOptionalAttributes =
+  | 'id'
+  | 'orderId'
+  | 'productId'
+  | 'price'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt';
+export type LP_ORDER_ITEMCreationAttributes = Optional<
+  LP_ORDER_ITEMAttributes,
+  LP_ORDER_ITEMOptionalAttributes
+>;
 
-export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes> implements LP_ORDER_ITEMAttributes {
+export class LP_ORDER_ITEM
+  extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMCreationAttributes>
+  implements LP_ORDER_ITEMAttributes
+{
   id!: string;
   orderId?: number;
   productId?: string;
@@ -49,102 +62,99 @@ export class LP_ORDER_ITEM extends Model<LP_ORDER_ITEMAttributes, LP_ORDER_ITEMC
   createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_ITEM {
-    return LP_ORDER_ITEM.init({
-    id: {
-      type: DataTypes.STRING(36),
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
-    orderId: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-      references: {
-        model: 'LP_ORDER',
-        key: 'id'
-      },
-      field: 'order_id'
-    },
-    productId: {
-      type: DataTypes.STRING(36),
-      allowNull: true,
-      references: {
-        model: 'LP_PRODUCT',
-        key: 'id'
-      },
-      field: 'product_id'
-    },
-    productName: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-      field: 'product_name'
-    },
-    productImage: {
-      type: DataTypes.STRING(2000),
-      allowNull: false,
-      field: 'product_image'
-    },
-    productDescription: {
-      type: DataTypes.STRING(2000),
-      allowNull: false,
-      field: 'product_description'
-    },
-    productOverview: {
-      type: DataTypes.STRING(2000),
-      allowNull: false,
-      field: 'product_overview'
-    },
-    price: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    quantity: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'created_at'
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'updated_at'
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      field: 'deleted_at'
-    }
-  }, {
-    sequelize,
-    tableName: 'LP_ORDER_ITEM',
-    timestamps: false,
-    indexes: [
+    return LP_ORDER_ITEM.init(
       {
-        name: "PRIMARY",
-        unique: true,
-        using: "BTREE",
-        fields: [
-          { name: "id" },
-        ]
+        id: {
+          type: DataTypes.STRING(36),
+          allowNull: false,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
+        },
+        orderId: {
+          type: DataTypes.BIGINT,
+          allowNull: true,
+          references: {
+            model: 'LP_ORDER',
+            key: 'id',
+          },
+          field: 'order_id',
+        },
+        productId: {
+          type: DataTypes.STRING(36),
+          allowNull: true,
+          references: {
+            model: 'LP_PRODUCT',
+            key: 'id',
+          },
+          field: 'product_id',
+        },
+        productName: {
+          type: DataTypes.STRING(255),
+          allowNull: false,
+          field: 'product_name',
+        },
+        productImage: {
+          type: DataTypes.STRING(2000),
+          allowNull: false,
+          field: 'product_image',
+        },
+        productDescription: {
+          type: DataTypes.STRING(2000),
+          allowNull: false,
+          field: 'product_description',
+        },
+        productOverview: {
+          type: DataTypes.STRING(2000),
+          allowNull: false,
+          field: 'product_overview',
+        },
+        price: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+        },
+        quantity: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          field: 'created_at',
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          field: 'updated_at',
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+          allowNull: true,
+          field: 'deleted_at',
+        },
       },
       {
-        name: "product_id",
-        using: "BTREE",
-        fields: [
-          { name: "product_id" },
-        ]
+        sequelize,
+        tableName: 'LP_ORDER_ITEM',
+        timestamps: false,
+        indexes: [
+          {
+            name: 'PRIMARY',
+            unique: true,
+            using: 'BTREE',
+            fields: [{ name: 'id' }],
+          },
+          {
+            name: 'product_id',
+            using: 'BTREE',
+            fields: [{ name: 'product_id' }],
+          },
+          {
+            name: 'LP_ORDER_ITEM_ibfk_1',
+            using: 'BTREE',
+            fields: [{ name: 'order_id' }],
+          },
+        ],
       },
-      {
-        name: "LP_ORDER_ITEM_ibfk_1",
-        using: "BTREE",
-        fields: [
-          { name: "order_id" },
-        ]
-      },
-    ]
-  });
+    );
   }
 }

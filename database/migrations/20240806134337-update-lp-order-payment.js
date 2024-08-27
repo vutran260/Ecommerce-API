@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     // Remove the existing id column
     await queryInterface.removeColumn('LP_ORDER_PAYMENT', 'id');
 
@@ -10,11 +10,11 @@ module.exports = {
     await queryInterface.changeColumn('LP_ORDER_PAYMENT', 'order_id', {
       type: Sequelize.STRING(36),
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     // DO NOTHING
-  }
+  },
 };

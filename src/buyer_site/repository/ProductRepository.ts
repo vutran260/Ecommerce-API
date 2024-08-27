@@ -1,8 +1,18 @@
-import Product, { ProductFromLP_PRODUCT } from '../../common/model/products/Product';
+import Product, {
+  ProductFromLP_PRODUCT,
+} from '../../common/model/products/Product';
 import Logger from '../../lib/core/Logger';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
-import { LP_PRODUCT, LP_PRODUCTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+} from '../../lib/paging/Request';
+import {
+  LP_PRODUCT,
+  LP_PRODUCTCreationAttributes,
+} from '../../lib/mysql/models/LP_PRODUCT';
 import { LP_FAVORITE } from '../../lib/mysql/models/LP_FAVORITE';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';

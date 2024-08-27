@@ -1,5 +1,5 @@
 export enum CategoryValue {
-  VALUE_ONE = 1
+  VALUE_ONE = 1,
 }
 
 export enum CategoryTypeAction {

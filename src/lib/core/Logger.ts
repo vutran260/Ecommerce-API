@@ -25,8 +25,8 @@ const dailyRotateFile = new DailyRotateFile({
   maxSize: '20m',
   maxFiles: '14d',
   format: format.combine(
-    format.errors({stack: true}),
-    format.timestamp({format: "YYYY-MM-DD HH:mm:ss.SSS"}),
+    format.errors({ stack: true }),
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
     format.json(),
   ),
 });
@@ -34,17 +34,14 @@ const dailyRotateFile = new DailyRotateFile({
 export default createLogger({
   level: 'info',
   format: format.combine(
-      format.errors({stack: true}),
-      format.timestamp({format: "YYYY-MM-DD HH:mm:ss.SSS"}),
-      format.printf(({timestamp, level, message, stack}) => {
-          const text = `${timestamp} ${level.toUpperCase()} ${message}`;
-          return stack ? text + '\n' + stack : text;
-      }),
+    format.errors({ stack: true }),
+    format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS' }),
+    format.printf(({ timestamp, level, message, stack }) => {
+      const text = `${timestamp} ${level.toUpperCase()} ${message}`;
+      return stack ? text + '\n' + stack : text;
+    }),
   ),
-  transports: [
-      new transports.Console(),
-      dailyRotateFile
-  ],
+  transports: [new transports.Console(), dailyRotateFile],
   exceptionHandlers: [dailyRotateFile],
-  exitOnError: false, // do not exit 
+  exitOnError: false, // do not exit
 });

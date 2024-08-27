@@ -4,7 +4,6 @@ import { PaginationRequest } from '../../lib/paging/Request';
 
 export const StoreFilterMiddelware = asyncHandler(
   async (req: PaginationRequest, res, next) => {
-  
     try {
       const seller = req.user as LP_SELLERAttributes;
       if (!!seller && !!seller.storeId) {

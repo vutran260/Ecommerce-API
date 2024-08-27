@@ -1,5 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
-import { CategoryTypeAction } from "../../../lib/constant/Category";
+import { CategoryTypeAction } from '../../../lib/constant/Category';
 
 export default class MovePositionRequest {
   parentId?: string;

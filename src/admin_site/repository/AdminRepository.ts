@@ -8,13 +8,16 @@ import { LP_ADMIN } from '../../lib/mysql/models/init-models';
 import { Transaction } from 'sequelize';
 
 export class AdminRepository {
-  public getAdminByUserNamePassword = async (input: LoginRequest, t?: Transaction) => {
+  public getAdminByUserNamePassword = async (
+    input: LoginRequest,
+    t?: Transaction,
+  ) => {
     const admin = await LP_ADMIN.findOne({
       where: {
         username: input.userName,
         password: input.password,
       },
-      transaction: t
+      transaction: t,
     });
 
     if (admin == null) {

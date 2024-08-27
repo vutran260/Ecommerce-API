@@ -9,5 +9,5 @@ export class PrefectureUsecase {
 
   public getPrefectures = async () => {
     return this.prefectureRepo.getPrefectures();
-  }
+  };
 }

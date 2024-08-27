@@ -1,4 +1,3 @@
-import { range } from 'lodash';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
 import {
   LP_CART,
