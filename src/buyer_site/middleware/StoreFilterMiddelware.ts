@@ -1,16 +1,15 @@
 import asyncHandler from '../../lib/helpers/asyncHandler';
-import { LP_SELLERAttributes } from '../../lib/mysql/models/LP_SELLER';
 import { PaginationRequest } from '../../lib/paging/Request';
+import { Header } from '../../lib/core/utils';
 
 export const StoreFilterMiddelware = asyncHandler(
   async (req: PaginationRequest, res, next) => {
-  
     try {
-      const seller = req.user as LP_SELLERAttributes;
-      if (!!seller && !!seller.storeId) {
+      const storeId = req.headers[Header.STORE_ID]?.toString();
+      if (storeId) {
         req.filterList.push({
           attribute: 'store_id',
-          value: seller.storeId,
+          value: storeId,
           operation: 'eq',
         });
       }
