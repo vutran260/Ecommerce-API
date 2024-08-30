@@ -9,8 +9,12 @@ import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class BuyerPostRepository {
   public getPostById = async (id: string) => {
-    const post = await LP_STORE_POST.findByPk(id);
-    return post;
+    return await LP_STORE_POST.findOne({
+      where: {
+        id: id,
+        status: 'ACTIVE',
+      },
+    });
   };
 
   public getPosts = async (
