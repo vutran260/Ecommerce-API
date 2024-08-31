@@ -41,11 +41,13 @@ export class OrderEndpoint {
 
   private getOrders = async (req: PaginationRequest, res: Response) => {
     const buyerId: string = req.user.id;
+    const storeId: string = req.storeId;;
     const result = await this.orderUsecase.getOrders(
       req.filterList,
       req.order,
       req.paging,
       buyerId,
+      storeId,
     );
 
     return ResponseListData(result, res, req.paging);
