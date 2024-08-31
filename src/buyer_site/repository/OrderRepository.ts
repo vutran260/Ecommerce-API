@@ -80,6 +80,7 @@ export class OrderRepository {
     order: LpOrder[],
     paging: Paging,
     buyerId: string,
+    storeId: string,
   ) => {
     try {
       const isSubscription = filter.some(
@@ -92,6 +93,12 @@ export class OrderRepository {
         operation: 'eq',
         value: buyerId,
         attribute: 'buyerId',
+      });
+
+      filter.push({
+        operation: 'eq',
+        value: storeId,
+        attribute: 'storeId',
       });
 
       const include: any[] = [

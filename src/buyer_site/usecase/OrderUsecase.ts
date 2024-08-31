@@ -493,9 +493,16 @@ export class OrderUsecase {
     order: LpOrder[],
     paging: Paging,
     buyerId: string,
+    storeId: string,
   ) => {
     let orders: LP_ORDER[] = [];
-    orders = await this.orderRepo.getOrders(filter, order, paging, buyerId);
+    orders = await this.orderRepo.getOrders(
+      filter,
+      order,
+      paging,
+      buyerId,
+      storeId,
+    );
     return orders.map((order) => {
       return new Order(order);
     });
