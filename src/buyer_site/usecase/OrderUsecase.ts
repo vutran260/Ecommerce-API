@@ -8,7 +8,7 @@ import {
   OrderItem,
   UpdateOrderRequest,
   UpdateOrderStatusRequest,
-} from '../../common/model/orders/Order';
+} from 'src/common/model/orders/Order';
 import {
   ChargeMethod,
   DATE_FORMAT,
@@ -19,30 +19,30 @@ import {
   ProductStatus,
   ShipmentPrice,
   SubscriptionStatus,
-} from '../../lib/constant/Constant';
-import Logger from '../../lib/core/Logger';
+} from 'src/lib/constant/Constant';
+import Logger from 'src/lib/core/Logger';
 import {
   BadRequestError,
   InternalError,
   OutOfStockError,
-} from '../../lib/http/custom_error/ApiError';
-import { lpSequelize } from '../../lib/mysql/Connection';
-import { LP_ORDER, LP_ORDERAttributes } from '../../lib/mysql/models/LP_ORDER';
-import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
-import { LpOrder } from '../../lib/paging/Order';
-import { Filter, Paging } from '../../lib/paging/Request';
-import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
-import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTransactionRequest';
-import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
-import { CartItem } from '../endpoint/CartEndpoint';
-import { AddressRepository } from '../repository/AddressRepository';
-import { CartRepository } from '../repository/CartRepository';
-import { OrderAddressBuyerRepository } from '../repository/OrderAddressBuyerRepository';
-import { OrderItemRepository } from '../repository/OrderItemRepository';
-import { OrderPaymentRepository } from '../repository/OrderPaymentRepository';
-import { OrderRepository } from '../repository/OrderRepository';
-import { ProductRepository } from '../repository/ProductRepository';
-import { ShipmentRepository } from '../repository/ShipmentRepository';
+} from 'src/lib/http/custom_error/ApiError';
+import { lpSequelize } from 'src/lib/mysql/Connection';
+import { LP_ORDER, LP_ORDERAttributes } from 'src/lib/mysql/models/LP_ORDER';
+import { LP_ORDER_ITEM } from 'src/lib/mysql/models/LP_ORDER_ITEM';
+import { LpOrder } from 'src/lib/paging/Order';
+import { Filter, Paging } from 'src/lib/paging/Request';
+import { GMOPaymentService } from 'src/third_party/gmo_getway/GMOPaymentSerivce';
+import { TransactionRequest } from 'src/third_party/gmo_getway/request/EntryTransactionRequest';
+import { ExecTransactionRequest } from 'src/third_party/gmo_getway/request/ExecTransactionRequest';
+import { CartItem } from 'src/buyer_site/endpoint/CartEndpoint';
+import { AddressRepository } from 'src/buyer_site/repository/AddressRepository';
+import { CartRepository } from 'src/buyer_site/repository/CartRepository';
+import { OrderAddressBuyerRepository } from 'src/buyer_site/repository/OrderAddressBuyerRepository';
+import { OrderItemRepository } from 'src/buyer_site/repository/OrderItemRepository';
+import { OrderPaymentRepository } from 'src/buyer_site/repository/OrderPaymentRepository';
+import { OrderRepository } from 'src/buyer_site/repository/OrderRepository';
+import { ProductRepository } from 'src/buyer_site/repository/ProductRepository';
+import { ShipmentRepository } from 'src/buyer_site/repository/ShipmentRepository';
 import { Transaction } from 'sequelize';
 import { isEmpty } from 'lodash';
 
@@ -50,11 +50,18 @@ import {
   CreateSubscriptionAddressRequest,
   SubscriptionAddress,
   SubscriptionProduct,
-} from '../../common/model/orders/Subscription';
+} from 'src/common/model/orders/Subscription';
 import moment from 'moment';
-import { SubscriptionRepository } from '../repository/SubscriptionRepository';
-import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
-import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
+import { SubscriptionRepository } from 'src/buyer_site/repository/SubscriptionRepository';
+import { LP_ADDRESS_BUYER } from 'src/lib/mysql/models/init-models';
+import { ErrorCode } from 'src/lib/http/custom_error/ErrorCode';
+import { MailService } from 'src/third_party/mail/mailService';
+import { OrderSuccessOptions } from 'src/third_party/mail/mailTypes';
+import { formatDateJp } from 'src/lib/helpers/dateTimeUtil';
+import {
+  formatCurrency,
+  formatPhoneNumber,
+} from 'src/lib/helpers/commonFunction';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -67,6 +74,7 @@ export class OrderUsecase {
   private addressRepository: AddressRepository;
   private productRepo: ProductRepository;
   private subscriptionRepo: SubscriptionRepository;
+  private mailService: MailService;
 
   constructor(
     orderRepo: OrderRepository,
@@ -79,6 +87,7 @@ export class OrderUsecase {
     gmoPaymentService: GMOPaymentService,
     productRepo: ProductRepository,
     subscriptionRepo: SubscriptionRepository,
+    mailService: MailService,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
@@ -90,6 +99,7 @@ export class OrderUsecase {
     this.addressRepository = addressRepository;
     this.productRepo = productRepo;
     this.subscriptionRepo = subscriptionRepo;
+    this.mailService = mailService;
   }
 
   public createOrder = async (
@@ -110,9 +120,10 @@ export class OrderUsecase {
 
     const t = await lpSequelize.transaction();
     try {
+      let order;
       const normalItems = cartItems.filter((item) => !item.isSubscription);
       if (!isEmpty(normalItems)) {
-        await this.createNormalOrder({
+        order = await this.createNormalOrder({
           cardSeq,
           buyerId,
           storeId,
@@ -134,10 +145,47 @@ export class OrderUsecase {
       }
 
       await t.commit();
+
+      if (order) {
+        const orderNewest = await this.orderRepo.getOrderFullAttrById(order.id);
+        const products =
+          orderNewest?.lpOrderItems?.map((item) => {
+            return {
+              productName: item.productName,
+              unitPrice: formatCurrency(item.price),
+              quantity: item.quantity,
+              subTotal: formatCurrency((item.price || 0) * item.quantity),
+            };
+          }) || [];
+        const mailOptions: OrderSuccessOptions = {
+          to: latestAddress.email,
+          subject: 'ECパレット｜ご注文ありがとうございます',
+          templateName: 'orderSuccessTemplate',
+          params: {
+            buyerFirstNameKanji: latestAddress.firstNameKanji,
+            buyerLastNameKanji: latestAddress.lastNameKanji,
+            companyName: 'ECパレット',
+            orderId: order.id,
+            orderCreatedAt: formatDateJp(order.createdAt),
+            products: products,
+            subTotal: formatCurrency(orderNewest?.amount),
+            shippingCode: formatCurrency(orderNewest?.shipmentFee),
+            total: formatCurrency(orderNewest?.totalAmount),
+            postCode: latestAddress.postCode,
+            address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
+            phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
+          },
+        };
+        console.log('orderNewest', orderNewest);
+        Logger.info(
+          `Start send mail order success with options: ${JSON.stringify(mailOptions, null, 2)}`,
+        );
+        this.mailService.sendMail(mailOptions);
+      }
     } catch (error) {
-      await t.rollback();
       Logger.error('Fail to create order or subscription');
       Logger.error(error);
+      await t.rollback();
       throw error;
     }
   };

@@ -1,9 +1,10 @@
-import { gmo } from '../../Config';
+import axios, { AxiosResponse, HttpStatusCode } from 'axios';
+import { gmo } from 'src/Config';
 import Logger from '../../lib/core/Logger';
 import {
   InternalError,
   PaymentError,
-} from '../../lib/http/custom_error/ApiError';
+} from 'src/lib/http/custom_error/ApiError';
 import { CheckPointRequest } from './request/CheckPointRequest';
 import {
   EntryTransactionRequest,
@@ -28,58 +29,47 @@ export class GMOPaymentService {
 
     const endpoint = `${gmo.url}/payment/SearchMember.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
-    const requestJson = JSON.stringify(request);
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
-    if (!response.ok) {
-      if (this.isResourceNotfound(jsonData)) {
+    console.log('Received data:', response.data, 'status', response.status);
+    if (response.status !== HttpStatusCode.Ok) {
+      if (this.isResourceNotfound(response.data)) {
         return null;
       }
-      this.handlerError(response, jsonData);
+      this.handlerError(response, response.data);
     }
 
     return new MemberResponse(
-      jsonData.memberID,
-      jsonData.memberName,
-      jsonData.deleteFlag,
+      response.data.memberID,
+      response.data.memberName,
+      response.data.deleteFlag,
     );
   };
 
   public registerMember = async (memberId: string) => {
     Logger.info('registerMember');
-
     const endpoint = `${gmo.url}/payment/SaveMember.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
-    const requestJson = JSON.stringify(request);
-
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
-
-    if (!response.ok) {
-      this.handlerError(response, jsonData);
+    console.log('Received data:', response.data, 'status', response.status);
+    if (response.status !== HttpStatusCode.Ok) {
+      this.handlerError(response, response.data);
     }
 
     return new MemberResponse(
-      jsonData.memberID,
-      jsonData.memberName,
-      jsonData.DeleteFlag,
+      response.data.memberID,
+      response.data.memberName,
+      response.data.DeleteFlag,
     );
   };
 
@@ -93,37 +83,31 @@ export class GMOPaymentService {
       memberId,
       token,
     );
-    const requestJson = JSON.stringify(request);
-
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
-
-    if (!response.ok) {
-      this.handlerError(response, jsonData);
+    console.log('Received data:', response.data, 'status', response.status);
+    if (response.status !== HttpStatusCode.Ok) {
+      this.handlerError(response, response.data);
     }
 
     return new CardResponse(
-      jsonData.cardSeq,
-      jsonData.cardNo,
-      jsonData.expire,
-      jsonData.defaultFlag,
-      jsonData.cardName,
-      jsonData.holderName,
-      jsonData.deleteFlag,
-      jsonData.brand,
-      jsonData.domesticFlag,
-      jsonData.issuerCode,
-      jsonData.debitPrepaidFlag,
-      jsonData.debitPrepaidIssuerName,
-      jsonData.forwardFinal,
+      response.data.cardSeq,
+      response.data.cardNo,
+      response.data.expire,
+      response.data.defaultFlag,
+      response.data.cardName,
+      response.data.holderName,
+      response.data.deleteFlag,
+      response.data.brand,
+      response.data.domesticFlag,
+      response.data.issuerCode,
+      response.data.debitPrepaidFlag,
+      response.data.debitPrepaidIssuerName,
+      response.data.forwardFinal,
     );
   };
 
@@ -131,27 +115,23 @@ export class GMOPaymentService {
     const endpoint = `${gmo.url}/payment/SearchCard.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
 
-    const requestJson = JSON.stringify(request);
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    if (!response.ok) {
-      if (this.isResourceNotfound(jsonData)) {
+    if (response.status !== HttpStatusCode.Ok) {
+      if (this.isResourceNotfound(response.data)) {
         return null;
       }
-      this.handlerError(response, jsonData);
+      this.handlerError(response, response.data);
     }
 
-    console.log('Received data:', jsonData, 'status', response.status);
+    console.log('Received data:', response.data, 'status', response.status);
 
     const results: CardResponse[] = [];
-    jsonData.forEach((card: CardResponse) => {
+    response.data.forEach((card: CardResponse) => {
       results.push(
         new CardResponse(
           card.cardSeq,
@@ -184,26 +164,22 @@ export class GMOPaymentService {
       type,
       userId,
     );
-    const requestJson = JSON.stringify(request);
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
+    console.log('Received data:', response.data, 'status', response.status);
 
-    if (!response.ok) {
-      this.handlerError(response, jsonData);
+    if (response.status !== HttpStatusCode.Ok) {
+      this.handlerError(response, response.data);
     }
 
     return new CheckPointResponse(
-      jsonData.siftOrderID,
-      jsonData.paymentAbuseScore,
+      response.data.siftOrderID,
+      response.data.paymentAbuseScore,
     );
   };
 
@@ -218,24 +194,23 @@ export class GMOPaymentService {
       input.jobCd,
       input.amount,
     );
-    const requestJson = JSON.stringify(request);
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
+    console.log('Received data:', response.data, 'status', response.status);
 
-    if (!response.ok) {
-      this.handlerError(response, jsonData);
+    if (response.status !== HttpStatusCode.Ok) {
+      this.handlerError(response, response.data);
     }
 
-    return new EntryTransactionResponse(jsonData.accessID, jsonData.accessPass);
+    return new EntryTransactionResponse(
+      response.data.accessID,
+      response.data.accessPass,
+    );
   };
 
   public execTran = async (input: ExecTransactionRequest) => {
@@ -252,24 +227,23 @@ export class GMOPaymentService {
       input.orderID,
       input.method,
     );
-    const requestJson = JSON.stringify(request);
 
-    const response = await fetch(endpoint, {
-      method: 'POST',
+    const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: requestJson,
     });
 
-    const jsonData = await response.json();
-    console.log('Received data:', jsonData, 'status', response.status);
+    console.log('Received data:', response.data, 'status', response.status);
 
-    if (!response.ok) {
-      this.handlerError(response, jsonData);
+    if (response.status !== HttpStatusCode.Ok) {
+      this.handlerError(response, response.data);
     }
 
-    return new ExecTransactionResponse(jsonData.acs, jsonData.redirectUrl);
+    return new ExecTransactionResponse(
+      response.data.acs,
+      response.data.redirectUrl,
+    );
   };
 
   private isResourceNotfound(data: any) {
@@ -278,7 +252,7 @@ export class GMOPaymentService {
     });
   }
 
-  private handlerError = (response: Response, errorList: any) => {
+  private handlerError = (response: AxiosResponse, errorList: any) => {
     console.log(errorList);
     switch (response.status) {
       case 400:

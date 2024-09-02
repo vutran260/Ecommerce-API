@@ -2,10 +2,10 @@ import { plainToInstance } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import express, { Response } from 'express';
 
-import { validatorRequest } from '../../lib/helpers/validate';
-import { ProtectedRequest } from '../../lib/http/app-request';
-import { ResponseData } from '../../lib/http/Response';
-import { AddressUsecase } from '../usecase/AddressUsecase';
+import { validatorRequest } from 'src/lib/helpers/validate';
+import { ProtectedRequest } from 'src/lib/http/app-request';
+import { ResponseData } from 'src/lib/http/Response';
+import { AddressUsecase } from 'src/buyer_site/usecase/AddressUsecase';
 
 export class AddressEndpoint {
   private addressUsecase: AddressUsecase;

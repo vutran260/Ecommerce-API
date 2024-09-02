@@ -13,6 +13,7 @@ export interface LP_ADDRESS_BUYERAttributes {
   lastNameKanji: string;
   gender?: number;
   prefectureCode: string;
+  prefectureName?: string;
   agreed?: number;
   keepContact?: number;
   postCode: string;
@@ -30,6 +31,7 @@ export type LP_ADDRESS_BUYERId = LP_ADDRESS_BUYER[LP_ADDRESS_BUYERPk];
 export type LP_ADDRESS_BUYEROptionalAttributes =
   | 'id'
   | 'gender'
+  | 'prefectureName'
   | 'agreed'
   | 'keepContact'
   | 'createdAt'
@@ -52,6 +54,7 @@ export class LP_ADDRESS_BUYER
   lastNameKanji!: string;
   gender?: number;
   prefectureCode!: string;
+  prefectureName?: string;
   agreed?: number;
   keepContact?: number;
   postCode!: string;
@@ -129,6 +132,11 @@ export class LP_ADDRESS_BUYER
           type: DataTypes.CHAR(2),
           allowNull: false,
           field: 'prefecture_code',
+        },
+        prefectureName: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'prefecture_name',
         },
         agreed: {
           type: DataTypes.TINYINT.UNSIGNED,

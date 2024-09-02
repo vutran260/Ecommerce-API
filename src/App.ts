@@ -1,13 +1,14 @@
+import 'module-alias/register.js';
 import express, { Request, Response, NextFunction } from 'express';
-import Logger from './lib/core/Logger';
+import Logger from 'src/lib/core/Logger';
 import cors from 'cors';
-import { corsUrl } from './Config';
+import { corsUrl } from 'src/Config';
 // import './lib/database'; // initialize database
 // import './lib/cache'; // initialize cache
-import { NotFoundError } from './lib/http/custom_error/ApiError';
-import router from './Route';
-import { ResponseError } from './lib/http/Response';
-import { startAllCronJobs } from './lib/cron';
+import { NotFoundError } from 'src/lib/http/custom_error/ApiError';
+import router from 'src/Route';
+import { ResponseError } from 'src/lib/http/Response';
+import { startAllCronJobs } from 'src/lib/cron';
 
 process.on('uncaughtException', (e) => {
   Logger.error(e.message);

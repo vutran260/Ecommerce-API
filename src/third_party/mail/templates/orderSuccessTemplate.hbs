@@ -1,0 +1,44 @@
+{{buyerFirstNameKanji}} {{buyerLastNameKanji}} 様<br>
+この度は「ECパレット {{companyName}}」をご利用いただきまして、誠にありがとうございます。<br>
+お客様のご注文を受け付けました。<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+ご注文情報<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+注文番号<br>
+{{orderId}}<br><br>
+
+注文日時<br>
+{{orderCreatedAt}}<br>
+支払方法<br>
+クレジットカード<br>
+受取方法<br>
+ご指定のお届け先<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+商品明細・ご請求金額<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+{{#each products}}
+【商品】 <br>
+{{productName}}<br>
+価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
+..........................................<br>
+{{/each}}
+【小計】{{subTotal}}円（税込）<br>
+【送料】{{shippingCode}}円（税込）<br>
+【10%対象】(total-total*0.1)円（内消費税等 total*0.1円）<br>
+【8%対象】0円（内消費税等 0円）<br>
+【非課税対象】0円（内消費税等 0円）<br>
+【合計】{{total}}円（税込）<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+お届け先<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+氏名<br>
+{{buyerFirstNameKanji}} {{buyerLastNameKanji}} 様<br>
+住所<br>
+〒{{postCode}}<br>
+{{address}}<br>
+電話番号<br>
+{{phoneNumber}}<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>
+よくあるご質問、お問い合わせはこちらから<br>
+<a href="https://linq-circle.com/faq/">https://linq-circle.com/faq/</a>
