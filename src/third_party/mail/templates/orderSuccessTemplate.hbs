@@ -1,42 +1,42 @@
-{{buyerFirstNameKanji}} {{buyerLastNameKanji}} 様<br>
-この度は「ECパレット {{companyName}}」をご利用いただきまして、誠にありがとうございます。<br>
+<strong>{{buyerFirstNameKanji}} {{buyerLastNameKanji}} 様</strong><br>
+この度は「<strong>ECパレット {{companyName}}</strong>」をご利用いただきまして、誠にありがとうございます。<br>
 お客様のご注文を受け付けました。<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-ご注文情報<br>
+<strong>ご注文情報</strong><br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-注文番号<br>
+<strong>注文番号</strong><br>
 {{orderId}}<br><br>
 
-注文日時<br>
+<strong>注文日時</strong><br>
 {{orderCreatedAt}}<br>
-支払方法<br>
+<strong>支払方法</strong><br>
 クレジットカード<br>
-受取方法<br>
+<strong>受取方法</strong><br>
 ご指定のお届け先<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-商品明細・ご請求金額<br>
+<strong>商品明細・ご請求金額</strong><br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
 {{#each products}}
-【商品】 <br>
-{{productName}}<br>
-価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
-..........................................<br>
+  <strong>【商品】</strong><br>
+  {{productName}}<br>
+  価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
+  ..........................................<br>
 {{/each}}
-【小計】{{subTotal}}円（税込）<br>
-【送料】{{shippingCode}}円（税込）<br>
-【10%対象】(total-total*0.1)円（内消費税等 total*0.1円）<br>
-【8%対象】0円（内消費税等 0円）<br>
-【非課税対象】0円（内消費税等 0円）<br>
-【合計】{{total}}円（税込）<br>
+<strong>【小計】</strong>{{subTotal}}円（税込）<br>
+<strong>【送料】</strong>{{shippingCode}}円（税込）<br>
+<strong>【10%対象】</strong>(total-total*0.1)円（内消費税等 total*0.1円）<br>
+<strong>【8%対象】</strong>0円（内消費税等 0円）<br>
+<strong>【非課税対象】</strong>0円（内消費税等 0円）<br>
+<strong>【合計】</strong>{{total}}円（税込）<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-お届け先<br>
+<strong>お届け先</strong><br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-氏名<br>
+<strong>氏名</strong><br>
 {{buyerFirstNameKanji}} {{buyerLastNameKanji}} 様<br>
-住所<br>
+<strong>住所</strong><br>
 〒{{postCode}}<br>
 {{address}}<br>
-電話番号<br>
+<strong>電話番号</strong><br>
 {{phoneNumber}}<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
 本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>
