@@ -144,14 +144,14 @@ export class LP_ORDER_ITEM
             fields: [{ name: 'id' }],
           },
           {
+            name: 'order_id',
+            using: 'BTREE',
+            fields: [{ name: 'order_id' }],
+          },
+          {
             name: 'product_id',
             using: 'BTREE',
             fields: [{ name: 'product_id' }],
-          },
-          {
-            name: 'LP_ORDER_ITEM_ibfk_1',
-            using: 'BTREE',
-            fields: [{ name: 'order_id' }],
           },
         ],
       },

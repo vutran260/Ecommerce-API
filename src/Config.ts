@@ -1,4 +1,6 @@
 import { S3Client } from '@aws-sdk/client-s3';
+import process from 'node:process';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 // Mapper for environment variables
 export const environment = process.env.NODE_ENV;
 export const port = process.env.PORT;
@@ -71,3 +73,16 @@ export const daysBeforeNextDate = parseInt(
   process.env.SUB_DAYS_BEFORE_NEXT_DATE || '5',
 );
 export const subCronExpression = process.env.SUB_CRON_EXPRESSION || '0 2 * * *';
+
+export const mailConfig: SMTPTransport.Options = {
+  host: process.env.MAIL_HOST || 'smtp.gmail.com',
+  port: process.env.MAIL_PORT ? parseInt(process.env.MAIL_PORT) : 587,
+  secure: false,
+  auth: {
+    user: process.env.MAIL_USER || 'default_user',
+    pass: process.env.MAIL_PASS || 'default_pass',
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+};

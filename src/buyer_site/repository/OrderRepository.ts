@@ -75,6 +75,27 @@ export class OrderRepository {
     return result?.dataValues;
   };
 
+  public getOrderFullAttrById = async (id: number, t?: Transaction) => {
+    return await LP_ORDER.findOne({
+      where: { id },
+      include: [
+        {
+          association: LP_ORDER.associations.buyer,
+        },
+        {
+          association: LP_ORDER.associations.lpShipment,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderAddressBuyer,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderItems,
+        },
+      ],
+      transaction: t,
+    });
+  };
+
   public getOrders = async (
     filter: Filter[],
     order: LpOrder[],

@@ -111,7 +111,7 @@ export class LP_SHIPMENT_HISTORY
             fields: [{ name: 'id' }],
           },
           {
-            name: 'LP_SHIPMENT_HISTORY_ibfk_1',
+            name: 'LP_SHIPMENT_HISTORY_order_id_fkey',
             using: 'BTREE',
             fields: [{ name: 'order_id' }],
           },

@@ -1,5 +1,5 @@
 import * as Sequelize from 'sequelize';
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 
 export interface LP_ADDRESS_BUYER_SSOAttributes {
@@ -9,6 +9,7 @@ export interface LP_ADDRESS_BUYER_SSOAttributes {
   contactTelephoneNumber: string;
   postCode: string;
   prefectureCode: string;
+  prefectureName?: string;
   cityTown: string;
   buildingName: string;
 }
@@ -16,8 +17,11 @@ export interface LP_ADDRESS_BUYER_SSOAttributes {
 export type LP_ADDRESS_BUYER_SSOPk = 'buyerId';
 export type LP_ADDRESS_BUYER_SSOId =
   LP_ADDRESS_BUYER_SSO[LP_ADDRESS_BUYER_SSOPk];
-export type LP_ADDRESS_BUYER_SSOCreationAttributes =
-  LP_ADDRESS_BUYER_SSOAttributes;
+export type LP_ADDRESS_BUYER_SSOOptionalAttributes = 'prefectureName';
+export type LP_ADDRESS_BUYER_SSOCreationAttributes = Optional<
+  LP_ADDRESS_BUYER_SSOAttributes,
+  LP_ADDRESS_BUYER_SSOOptionalAttributes
+>;
 
 export class LP_ADDRESS_BUYER_SSO
   extends Model<
@@ -32,6 +36,7 @@ export class LP_ADDRESS_BUYER_SSO
   contactTelephoneNumber!: string;
   postCode!: string;
   prefectureCode!: string;
+  prefectureName?: string;
   cityTown!: string;
   buildingName!: string;
 
@@ -79,6 +84,11 @@ export class LP_ADDRESS_BUYER_SSO
           type: DataTypes.CHAR(2),
           allowNull: false,
           field: 'prefecture_code',
+        },
+        prefectureName: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'prefecture_name',
         },
         cityTown: {
           type: DataTypes.STRING(255),

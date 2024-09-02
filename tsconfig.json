@@ -27,7 +27,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+
   },
   "include": ["src/**/*"],
   "exclude": [".templates"]
