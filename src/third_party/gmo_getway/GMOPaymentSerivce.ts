@@ -1,10 +1,10 @@
 import axios, { AxiosResponse, HttpStatusCode } from 'axios';
-import { gmo } from 'src/Config';
+import { gmo } from '../../Config';
 import Logger from '../../lib/core/Logger';
 import {
   InternalError,
   PaymentError,
-} from 'src/lib/http/custom_error/ApiError';
+} from '../../lib/http/custom_error/ApiError';
 import { CheckPointRequest } from './request/CheckPointRequest';
 import {
   EntryTransactionRequest,

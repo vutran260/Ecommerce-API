@@ -14,7 +14,8 @@ WORKDIR /home/node/app
 COPY --chown=node:node . .
 
 # installing the dependencies into the container
-RUN npm install --verbose
+RUN npm config set registry https://registry.yarnpkg.com
+RUN npm install --verbose --network-timeout=100000
 
 # container exposed network port number
 EXPOSE 3000

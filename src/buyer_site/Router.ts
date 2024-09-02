@@ -38,7 +38,7 @@ import { ProductUsecase } from './usecase/ProductUsecase';
 import { StoreUsecase } from './usecase/StoreUsecase';
 import { SubscriptionRepository } from './repository/SubscriptionRepository';
 import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
-import { MailService } from 'src/third_party/mail/mailService';
+import { MailService } from '../third_party/mail/mailService';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
