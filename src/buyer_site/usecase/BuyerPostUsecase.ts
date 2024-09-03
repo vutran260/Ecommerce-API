@@ -21,7 +21,7 @@ export class BuyerPostUsecase {
   public getPost = async (id: string) => {
     const post = await this.buyerPostRepo.getPostById(id);
     if (!post) {
-      throw new InternalError('Post not found');
+      throw new NotFoundError('Post not found');
     }
     return post;
   };
