@@ -8,9 +8,16 @@ import {
 import Product, {
   ProductFromLP_PRODUCT,
 } from '../../../common/model/products/Product';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
 import { IsHHMM } from '../../custom_validator/IsHHMM';
+import { SubscriptionStatus } from '../../../lib/constant/Constant';
 
 export class CreateSubscriptionRequest {
   buyerId: string;
@@ -149,12 +156,19 @@ export class Subscription {
   @IsNotEmpty()
   storeId: string;
 
+  @IsOptional()
+  @IsEnum(SubscriptionStatus)
+  subscriptionStatus: string;
+
+  @IsOptional()
   @IsNumber()
   subscriptionPeriod: number;
 
+  @IsOptional()
   @IsYYYYMMDD()
   nextDate: string;
 
+  @IsOptional()
   @IsHHMM()
   planDeliveryTime?: string;
 }
