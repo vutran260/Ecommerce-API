@@ -26,6 +26,10 @@ import { S3Service } from '../third_party/s3/s3Service';
 import { BuyerEndpoint } from './endpoint/BuyerEndpoint';
 import { BuyerRepository } from './repository/BuyerRepository';
 import { BuyerUsecase } from './usecase/BuyerUsecase';
+import { SubscriptionEndpoint } from './endpoint/SubscriptionEndpoint';
+import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
+import { SubscriptionRepository } from './repository/SubscriptionRepository';
+import { SubscriptionOrderRepository } from './repository/SubscriptionOrderRepository';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -39,6 +43,8 @@ export class sellerSiteRouter {
     const orderRepo = new OrderRepository();
     const orderItemRepo = new OrderItemRepository();
     const buyerRepo = new BuyerRepository();
+    const subscriptionRepo = new SubscriptionRepository();
+    const subscriptionOrderRepository = new SubscriptionOrderRepository();
 
     // third party
     const s3Service = new S3Service();
@@ -51,6 +57,10 @@ export class sellerSiteRouter {
     const orderUsecase = new OrderUsecase(orderRepo, orderItemRepo);
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
+    const subscriptionUseCase = new SubscriptionUseCase(
+      subscriptionRepo,
+      subscriptionOrderRepository,
+    );
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
@@ -60,6 +70,7 @@ export class sellerSiteRouter {
     const orderEndpoint = new OrderEndpoint(orderUsecase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
+    const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
 
     router.use('/seller', sellerEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware);
@@ -72,6 +83,7 @@ export class sellerSiteRouter {
     router.use('/order', orderEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
+    router.use('/subscription', subscriptionEndpoint.getRouter());
     return router;
   };
 }
