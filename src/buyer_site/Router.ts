@@ -39,6 +39,8 @@ import { StoreUsecase } from './usecase/StoreUsecase';
 import { SubscriptionRepository } from './repository/SubscriptionRepository';
 import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
 import { MailService } from '../third_party/mail/mailService';
+import { SSOUseCase } from './usecase/SSOUseCase';
+import { SSOEndpoint } from './endpoint/SSOEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -86,6 +88,7 @@ export class buyerSiteRouter {
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
     const subscriptionUseCase = new SubscriptionUseCase(subscriptionRepo);
+    const ssoUseCase = new SSOUseCase();
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -100,9 +103,11 @@ export class buyerSiteRouter {
     const orderEndpoint = new OrderEndpoint(orderUsecase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
+    const ssoEndpoint = new SSOEndpoint(ssoUseCase);
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
+    router.use('/sso', ssoEndpoint.getRouter());
     router.use(BuyerAuthenMiddlleware);
     router.use('/cart', cartEndpoint.getRouter());
     router.use('/card', cardEndpoint.getRouter());

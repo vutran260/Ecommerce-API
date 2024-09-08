@@ -1,0 +1,32 @@
+export interface UserInfo {
+  user_alias: string;
+  email: string;
+  phone_number?: string;
+  contact_phone_number?: string;
+  postal_code?: string;
+  prefecture_code?: string;
+  address_city?: string;
+  address_building?: string;
+  is_push_notification?: boolean;
+  payment_token?: string;
+  credit_card_number_last_4_digits?: string;
+  card_seq?: string;
+  expire_card?: string;
+  credit_card_brand?: string;
+  credit_card_domestic_flag?: boolean;
+  credit_card_issuer_code?: string;
+  credit_card_debit_prepaid_flag?: boolean;
+  credit_card_debit_prepaid_issuer_name?: string;
+  credit_card_forward_final?: string;
+  lifepalette_id: string;
+  nickname: string;
+  first_name: string;
+  last_name: string;
+  first_name_kana: string;
+  last_name_kana: string;
+  gender: number;
+  birthday: string;
+  age?: number;
+  medical_history_manual_updated_at?: string;
+  side_effect_manual_updated_at?: string;
+}

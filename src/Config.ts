@@ -86,3 +86,7 @@ export const mailConfig: SMTPTransport.Options = {
     rejectUnauthorized: false,
   },
 };
+
+export const sso = {
+  url: process.env.SSO_URL || '',
+};
