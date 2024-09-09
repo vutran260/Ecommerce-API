@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize';
 
 import {
+  LP_BUYER,
   LP_SUBSCRIPTION,
   LP_SUBSCRIPTION_PRODUCT,
   LP_SUBSCRIPTIONAttributes,
@@ -12,6 +13,7 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
+import lodash from 'lodash';
 
 export class SubscriptionRepository {
   public getSubscriptions = async (
@@ -37,9 +39,12 @@ export class SubscriptionRepository {
         {
           association: LP_SUBSCRIPTION.associations.buyer,
         },
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionOrders,
+        },
       ],
       offset: GetOffset(paging),
-      order: BuildOrderQuery(order),
+      order: this.customOrderQuery(order),
       limit: paging.limit,
     });
 
@@ -52,6 +57,9 @@ export class SubscriptionRepository {
     const result = await LP_SUBSCRIPTION.findOne({
       where: { id: id },
       include: [
+        {
+          association: LP_SUBSCRIPTION.associations.buyer,
+        },
         {
           association: LP_SUBSCRIPTION.associations.lpSubscriptionAddress,
         },
@@ -74,6 +82,20 @@ export class SubscriptionRepository {
       where: {
         id: request.id,
       },
+    });
+  };
+
+  private customOrderQuery = (orders: LpOrder[]): any => {
+    const orderQueries = BuildOrderQuery(orders);
+    return lodash.map(orderQueries, (order) => {
+      if (lodash.get(order, '[0]') === 'buyerFullName') {
+        return [
+          { model: LP_BUYER, as: 'buyer' },
+          'fullname',
+          lodash.get(order, '[1]'),
+        ];
+      }
+      return order;
     });
   };
 }

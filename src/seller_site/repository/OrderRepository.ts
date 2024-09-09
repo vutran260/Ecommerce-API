@@ -11,6 +11,7 @@ import {
 } from '../../lib/paging/Request';
 import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { LP_BUYER } from '../../lib/mysql/models/init-models';
 
 export class OrderRepository {
   public getOrderById = async (id: number, t?: Transaction) => {
@@ -60,7 +61,7 @@ export class OrderRepository {
         ],
         where: BuildQuery(filter),
         offset: GetOffset(paging),
-        order: BuildOrderQuery(order),
+        order: this.customOrderQuery(order),
         limit: paging.limit,
       });
       forEach(results, (result) => {
@@ -89,5 +90,19 @@ export class OrderRepository {
     if (os[0] === 0) {
       throw new BadRequestError();
     }
+  };
+
+  private customOrderQuery = (orders: LpOrder[]): any => {
+    const orderQueries = BuildOrderQuery(orders);
+    return lodash.map(orderQueries, (order) => {
+      if (lodash.get(order, '[0]') === 'buyerFullName') {
+        return [
+          { model: LP_BUYER, as: 'buyer' },
+          'fullname',
+          lodash.get(order, '[1]'),
+        ];
+      }
+      return order;
+    });
   };
 }
