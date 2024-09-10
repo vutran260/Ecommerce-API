@@ -30,6 +30,8 @@ import { SubscriptionEndpoint } from './endpoint/SubscriptionEndpoint';
 import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
 import { SubscriptionRepository } from './repository/SubscriptionRepository';
 import { SubscriptionOrderRepository } from './repository/SubscriptionOrderRepository';
+import { SSOUseCase } from './usecase/SSOUseCase';
+import { SSOEndpoint } from './endpoint/SSOEndpoint';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -61,6 +63,7 @@ export class sellerSiteRouter {
       subscriptionRepo,
       subscriptionOrderRepository,
     );
+    const ssoUseCase = new SSOUseCase();
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
@@ -71,8 +74,10 @@ export class sellerSiteRouter {
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
+    const ssoEndpoint = new SSOEndpoint(ssoUseCase);
 
     router.use('/seller', sellerEndpoint.getRouter());
+    router.use('/sso', ssoEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware);
     router.use('/store', storeEndpoint.getRouter());
     router.use('/post', storePostEndpoint.getRouter());

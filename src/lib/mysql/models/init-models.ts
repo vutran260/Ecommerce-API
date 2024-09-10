@@ -86,6 +86,11 @@ import type {
   LP_SELLERAttributes,
   LP_SELLERCreationAttributes,
 } from './LP_SELLER';
+import { LP_SELLER_SSO as _LP_SELLER_SSO } from './LP_SELLER_SSO';
+import type {
+  LP_SELLER_SSOAttributes,
+  LP_SELLER_SSOCreationAttributes,
+} from './LP_SELLER_SSO';
 import { LP_SHIPMENT as _LP_SHIPMENT } from './LP_SHIPMENT';
 import type {
   LP_SHIPMENTAttributes,
@@ -111,6 +116,11 @@ import type {
   LP_STORE_POSTAttributes,
   LP_STORE_POSTCreationAttributes,
 } from './LP_STORE_POST';
+import { LP_STORE_SSO as _LP_STORE_SSO } from './LP_STORE_SSO';
+import type {
+  LP_STORE_SSOAttributes,
+  LP_STORE_SSOCreationAttributes,
+} from './LP_STORE_SSO';
 import { LP_SUBSCRIPTION as _LP_SUBSCRIPTION } from './LP_SUBSCRIPTION';
 import type {
   LP_SUBSCRIPTIONAttributes,
@@ -161,11 +171,13 @@ export {
   _LP_PRODUCT_COMPONENT as LP_PRODUCT_COMPONENT,
   _LP_PRODUCT_FAQ as LP_PRODUCT_FAQ,
   _LP_SELLER as LP_SELLER,
+  _LP_SELLER_SSO as LP_SELLER_SSO,
   _LP_SHIPMENT as LP_SHIPMENT,
   _LP_SHIPMENT_HISTORY as LP_SHIPMENT_HISTORY,
   _LP_STORE as LP_STORE,
   _LP_STORE_BUYER as LP_STORE_BUYER,
   _LP_STORE_POST as LP_STORE_POST,
+  _LP_STORE_SSO as LP_STORE_SSO,
   _LP_SUBSCRIPTION as LP_SUBSCRIPTION,
   _LP_SUBSCRIPTION_ADDRESS as LP_SUBSCRIPTION_ADDRESS,
   _LP_SUBSCRIPTION_ORDER as LP_SUBSCRIPTION_ORDER,
@@ -211,6 +223,8 @@ export type {
   LP_PRODUCT_FAQCreationAttributes,
   LP_SELLERAttributes,
   LP_SELLERCreationAttributes,
+  LP_SELLER_SSOAttributes,
+  LP_SELLER_SSOCreationAttributes,
   LP_SHIPMENTAttributes,
   LP_SHIPMENTCreationAttributes,
   LP_SHIPMENT_HISTORYAttributes,
@@ -221,6 +235,8 @@ export type {
   LP_STORE_BUYERCreationAttributes,
   LP_STORE_POSTAttributes,
   LP_STORE_POSTCreationAttributes,
+  LP_STORE_SSOAttributes,
+  LP_STORE_SSOCreationAttributes,
   LP_SUBSCRIPTIONAttributes,
   LP_SUBSCRIPTIONCreationAttributes,
   LP_SUBSCRIPTION_ADDRESSAttributes,
@@ -255,11 +271,13 @@ export function initModels(sequelize: Sequelize) {
   const LP_PRODUCT_COMPONENT = _LP_PRODUCT_COMPONENT.initModel(sequelize);
   const LP_PRODUCT_FAQ = _LP_PRODUCT_FAQ.initModel(sequelize);
   const LP_SELLER = _LP_SELLER.initModel(sequelize);
+  const LP_SELLER_SSO = _LP_SELLER_SSO.initModel(sequelize);
   const LP_SHIPMENT = _LP_SHIPMENT.initModel(sequelize);
   const LP_SHIPMENT_HISTORY = _LP_SHIPMENT_HISTORY.initModel(sequelize);
   const LP_STORE = _LP_STORE.initModel(sequelize);
   const LP_STORE_BUYER = _LP_STORE_BUYER.initModel(sequelize);
   const LP_STORE_POST = _LP_STORE_POST.initModel(sequelize);
+  const LP_STORE_SSO = _LP_STORE_SSO.initModel(sequelize);
   const LP_SUBSCRIPTION = _LP_SUBSCRIPTION.initModel(sequelize);
   const LP_SUBSCRIPTION_ADDRESS = _LP_SUBSCRIPTION_ADDRESS.initModel(sequelize);
   const LP_SUBSCRIPTION_ORDER = _LP_SUBSCRIPTION_ORDER.initModel(sequelize);
@@ -455,6 +473,11 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpSubscriptionProducts',
     foreignKey: 'productId',
   });
+  LP_SELLER_SSO.belongsTo(LP_SELLER, { as: 'seller', foreignKey: 'sellerId' });
+  LP_SELLER.hasOne(LP_SELLER_SSO, {
+    as: 'lpSellerSso',
+    foreignKey: 'sellerId',
+  });
   LP_ADDRESS_BUYER.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_ADDRESS_BUYER, {
     as: 'lpAddressBuyers',
@@ -480,6 +503,8 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpStorePosts',
     foreignKey: 'storeId',
   });
+  LP_STORE_SSO.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
+  LP_STORE.hasOne(LP_STORE_SSO, { as: 'lpStoreSso', foreignKey: 'storeId' });
   LP_SUBSCRIPTION.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_SUBSCRIPTION, {
     as: 'lpSubscriptions',
@@ -529,11 +554,13 @@ export function initModels(sequelize: Sequelize) {
     LP_PRODUCT_COMPONENT: LP_PRODUCT_COMPONENT,
     LP_PRODUCT_FAQ: LP_PRODUCT_FAQ,
     LP_SELLER: LP_SELLER,
+    LP_SELLER_SSO: LP_SELLER_SSO,
     LP_SHIPMENT: LP_SHIPMENT,
     LP_SHIPMENT_HISTORY: LP_SHIPMENT_HISTORY,
     LP_STORE: LP_STORE,
     LP_STORE_BUYER: LP_STORE_BUYER,
     LP_STORE_POST: LP_STORE_POST,
+    LP_STORE_SSO: LP_STORE_SSO,
     LP_SUBSCRIPTION: LP_SUBSCRIPTION,
     LP_SUBSCRIPTION_ADDRESS: LP_SUBSCRIPTION_ADDRESS,
     LP_SUBSCRIPTION_ORDER: LP_SUBSCRIPTION_ORDER,

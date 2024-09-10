@@ -9,6 +9,7 @@ import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_STORE_POST, LP_STORE_POSTId } from './LP_STORE_POST';
+import type { LP_STORE_SSO, LP_STORE_SSOId } from './LP_STORE_SSO';
 import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
 
 export interface LP_STOREAttributes {
@@ -309,6 +310,14 @@ export class LP_STORE
     LP_STORE_POSTId
   >;
   countLpStorePosts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasOne LP_STORE_SSO via storeId
+  lpStoreSso!: LP_STORE_SSO;
+  getLpStoreSso!: Sequelize.HasOneGetAssociationMixin<LP_STORE_SSO>;
+  setLpStoreSso!: Sequelize.HasOneSetAssociationMixin<
+    LP_STORE_SSO,
+    LP_STORE_SSOId
+  >;
+  createLpStoreSso!: Sequelize.HasOneCreateAssociationMixin<LP_STORE_SSO>;
   // LP_STORE hasMany LP_SUBSCRIPTION via storeId
   lpSubscriptions!: LP_SUBSCRIPTION[];
   getLpSubscriptions!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION>;

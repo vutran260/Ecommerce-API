@@ -1,5 +1,6 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
+import type { LP_SELLER_SSO, LP_SELLER_SSOId } from './LP_SELLER_SSO';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_SELLERAttributes {
@@ -57,6 +58,14 @@ export class LP_SELLER
   updatedAt?: Date;
   deletedAt?: Date;
 
+  // LP_SELLER hasOne LP_SELLER_SSO via sellerId
+  lpSellerSso!: LP_SELLER_SSO;
+  getLpSellerSso!: Sequelize.HasOneGetAssociationMixin<LP_SELLER_SSO>;
+  setLpSellerSso!: Sequelize.HasOneSetAssociationMixin<
+    LP_SELLER_SSO,
+    LP_SELLER_SSOId
+  >;
+  createLpSellerSso!: Sequelize.HasOneCreateAssociationMixin<LP_SELLER_SSO>;
   // LP_SELLER belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
