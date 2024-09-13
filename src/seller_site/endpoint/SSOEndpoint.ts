@@ -12,19 +12,22 @@ export class SSOEndpoint {
     this.ssoUseCase = ssoUseCase;
   }
 
-  private registerSSOUser = async (req: ProtectedRequest, res: Response) => {
+  private registerSSOStaffAndStore = async (
+    req: ProtectedRequest,
+    res: Response,
+  ) => {
     if (!req.body.accessToken) {
       throw new BadRequestError('accessToken is require');
     }
-    if (!req.body.userAlias) {
-      throw new BadRequestError('userAlias is require');
+    if (!req.body.staffAlias) {
+      throw new BadRequestError('staffAlias is require');
     }
     if (!req.body.storeAlias) {
       throw new BadRequestError('storeAlias is require');
     }
-    const result = await this.ssoUseCase.registerSSOUser(
+    const result = await this.ssoUseCase.registerSSOStaffAndStore(
       req.body.accessToken,
-      req.body.userAlias,
+      req.body.staffAlias,
       req.body.storeAlias,
     );
     return ResponseData(result, res);
@@ -32,7 +35,7 @@ export class SSOEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.post('/register-user', this.registerSSOUser);
+    router.post('/register-staff-and-store', this.registerSSOStaffAndStore);
     return router;
   }
 }
