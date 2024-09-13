@@ -303,7 +303,7 @@ export class LP_STORE_SSO
           allowNull: true,
         },
         latitude: {
-          type: DataTypes.DECIMAL(20, 20),
+          type: DataTypes.DECIMAL(24, 20),
           allowNull: true,
         },
         transportation: {

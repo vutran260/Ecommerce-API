@@ -54,35 +54,6 @@ export class SSOUseCase {
 
     const t = await lpSequelize.transaction();
     try {
-      if (!lpSeller) {
-        lpSeller = await LP_SELLER.create(
-          {
-            id: staffAlias,
-            storeId: storeAlias,
-            email: staffSSOInfo.email,
-          },
-          {
-            transaction: t,
-          },
-        );
-
-        await LP_SELLER_SSO.create(
-          {
-            sellerId: lpSeller.id,
-            username: staffSSOInfo.username,
-            firstNameKanji: staffSSOInfo.first_name_kanji,
-            lastNameKanji: staffSSOInfo.last_name_kanji,
-            firstNameKana: staffSSOInfo.first_name_kana,
-            lastNameKana: staffSSOInfo.last_name_kana,
-            birthday: moment(staffSSOInfo.birthday).toDate(),
-            email: staffSSOInfo.email,
-          },
-          {
-            transaction: t,
-          },
-        );
-      }
-
       if (!lpStore) {
         lpStore = await LP_STORE.create(
           {
@@ -93,6 +64,7 @@ export class SSOUseCase {
             storeNameKana: storeSSOInfo.store_name,
             companyName: '',
             companyAddress: '',
+            status: 'true',
           },
           {
             transaction: t,
@@ -183,6 +155,37 @@ export class SSOUseCase {
             siteId: storeSSOInfo.site_id,
             sitePass: storeSSOInfo.site_pass,
             logoImage: storeSSOInfo.logo_image,
+          },
+          {
+            transaction: t,
+          },
+        );
+      }
+
+      if (!lpSeller) {
+        lpSeller = await LP_SELLER.create(
+          {
+            id: staffAlias,
+            storeId: storeAlias,
+            email: staffSSOInfo.email,
+          },
+          {
+            transaction: t,
+          },
+        );
+
+        await LP_SELLER_SSO.create(
+          {
+            sellerId: lpSeller.id,
+            username: staffSSOInfo.username,
+            firstNameKanji: staffSSOInfo.first_name_kanji,
+            lastNameKanji: staffSSOInfo.last_name_kanji,
+            firstNameKana: staffSSOInfo.first_name_kana,
+            lastNameKana: staffSSOInfo.last_name_kana,
+            birthday: staffSSOInfo.birthday
+              ? moment(staffSSOInfo.birthday).toDate()
+              : undefined,
+            email: staffSSOInfo.email,
           },
           {
             transaction: t,

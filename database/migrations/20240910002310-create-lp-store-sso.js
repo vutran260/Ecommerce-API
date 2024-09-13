@@ -53,7 +53,7 @@ module.exports = {
         allowNull: true,
       },
       latitude: {
-        type: Sequelize.DECIMAL(20, 20),
+        type: Sequelize.DECIMAL(24, 20),
         allowNull: true,
       },
       transportation: {

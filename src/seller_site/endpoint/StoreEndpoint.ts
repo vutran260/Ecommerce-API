@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express, { Request, Response } from 'express';
 import { ResponseData } from '../../lib/http/Response';
 import Logger from '../../lib/core/Logger';
 import { StoreUsecase } from '../usecase/StoreUsecase';
@@ -31,9 +31,16 @@ export class StoreEndpoint {
     }
   };
 
+  private getStoreDetail = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+    const results = await this.storeUsecase.getStoreDetail(id);
+    return ResponseData(results, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.post('/register', this.registerStore);
+    router.get('/:id', this.getStoreDetail);
 
     return router;
   }

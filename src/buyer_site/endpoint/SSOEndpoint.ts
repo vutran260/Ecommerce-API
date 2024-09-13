@@ -19,13 +19,13 @@ export class SSOEndpoint {
     if (!req.body.userAlias) {
       throw new BadRequestError('userAlias is require');
     }
-    if (!req.body.contractId) {
-      throw new BadRequestError('contractId is require');
+    if (!req.body.storeAlias) {
+      throw new BadRequestError('storeAlias is require');
     }
     const result = await this.ssoUseCase.registerSSOUser(
       req.body.accessToken,
       req.body.userAlias,
-      req.body.contractId,
+      req.body.storeAlias,
     );
     return ResponseData(result, res);
   };

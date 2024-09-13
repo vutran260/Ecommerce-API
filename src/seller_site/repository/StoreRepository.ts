@@ -19,4 +19,18 @@ export class StoreRepository {
     });
     return result?.dataValues;
   };
+
+  public getStoreById = async (id: string, t?: Transaction) => {
+    const result = await LP_STORE.findOne({
+      where: { id },
+      include: [
+        {
+          association: LP_STORE.associations.lpStoreSso,
+        },
+      ],
+      transaction: t,
+    });
+
+    return result?.dataValues;
+  };
 }

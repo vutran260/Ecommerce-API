@@ -13,22 +13,20 @@ export class SSOUseCase {
   public async registerSSOUser(
     accessToken: string,
     userAlias: string,
-    contractId: string,
+    storeAlias: string,
   ) {
     Logger.info(
-      `Register sso user with userAlias: ${userAlias}, contractId: ${contractId}`,
+      `Register sso user with userAlias: ${userAlias}, storeAlias: ${storeAlias}`,
     );
     const lpStore = await LP_STORE.findOne({
       where: {
-        contractId,
+        id: storeAlias,
         status: 'true',
       },
     });
 
     if (!lpStore) {
-      throw new InternalError(
-        `Store with contractId '${contractId}' not found.`,
-      );
+      throw new InternalError(`Store with id '${storeAlias}' not found.`);
     }
 
     const userSSOInfo = await this.getUserInfo(userAlias, accessToken);
@@ -40,9 +38,6 @@ export class SSOUseCase {
 
     const lpBuyer = await LP_BUYER.findByPk(userSSOInfo.user_alias);
     if (lpBuyer) {
-      if (!(await lpBuyer.hasStoreIdLpStore(lpStore.id))) {
-        await lpBuyer.addStoreIdLpStore(lpStore.id);
-      }
       Logger.info(`UserAlias: '${userAlias}' already registered in DB`);
       Logger.info(
         `SSO Successfully response buyerId: '${lpBuyer.id}', storeId: '${lpStore.id}'`,
@@ -98,10 +93,6 @@ export class SSOUseCase {
           transaction: t,
         },
       );
-
-      if (!(await lpBuyer.hasStoreIdLpStore(lpStore.id))) {
-        await lpBuyer.addStoreIdLpStore(lpStore.id);
-      }
 
       await t.commit();
       Logger.info(

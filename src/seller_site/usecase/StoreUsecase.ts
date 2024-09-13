@@ -26,4 +26,8 @@ export class StoreUsecase {
 
     return store;
   };
+
+  public getStoreDetail = async (id: string) => {
+    return this.storeRepo.getStoreById(id);
+  };
 }
