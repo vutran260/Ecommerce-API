@@ -12,8 +12,15 @@ import {
   LP_STORE_SSO,
 } from '../../lib/mysql/models/init-models';
 import moment from 'moment';
+import { PrefectureRepository } from '../repository/PrefectureRepository';
 
 export class SSOUseCase {
+  private prefectureRepo: PrefectureRepository;
+
+  constructor(prefectureRepo: PrefectureRepository) {
+    this.prefectureRepo = prefectureRepo;
+  }
+
   public async registerSSOStaffAndStore(
     accessToken: string,
     staffAlias: string,
@@ -71,6 +78,14 @@ export class SSOUseCase {
           },
         );
 
+        let prefectureName = '';
+        if (storeSSOInfo.prefecture) {
+          const prefecture = await this.prefectureRepo.getPrefectureById(
+            Number(storeSSOInfo.prefecture),
+          );
+          prefectureName = prefecture.prefectureName || '';
+        }
+
         await LP_STORE_SSO.create(
           {
             storeId: storeAlias,
@@ -78,7 +93,7 @@ export class SSOUseCase {
             storeShortName: storeSSOInfo.store_short_name,
             storeCode: storeSSOInfo.store_code,
             postalCode: storeSSOInfo.postal_code,
-            prefecture: storeSSOInfo.prefecture,
+            prefecture: prefectureName,
             address: storeSSOInfo.address,
             searchIndex: storeSSOInfo.search_index,
             phoneNumber: storeSSOInfo.phone_number,
