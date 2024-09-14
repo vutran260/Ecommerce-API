@@ -32,6 +32,7 @@ import { SubscriptionRepository } from './repository/SubscriptionRepository';
 import { SubscriptionOrderRepository } from './repository/SubscriptionOrderRepository';
 import { SSOUseCase } from './usecase/SSOUseCase';
 import { SSOEndpoint } from './endpoint/SSOEndpoint';
+import { PrefectureRepository } from './repository/PrefectureRepository';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -47,6 +48,7 @@ export class sellerSiteRouter {
     const buyerRepo = new BuyerRepository();
     const subscriptionRepo = new SubscriptionRepository();
     const subscriptionOrderRepository = new SubscriptionOrderRepository();
+    const prefectureRepository = new PrefectureRepository();
 
     // third party
     const s3Service = new S3Service();
@@ -63,7 +65,7 @@ export class sellerSiteRouter {
       subscriptionRepo,
       subscriptionOrderRepository,
     );
-    const ssoUseCase = new SSOUseCase();
+    const ssoUseCase = new SSOUseCase(prefectureRepository);
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
