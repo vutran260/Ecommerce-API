@@ -13,6 +13,10 @@ import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_FAVORITE, LP_FAVORITEId } from './LP_FAVORITE';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
+import type {
+  LP_PRODUCT_RECENTLY_VIEWED,
+  LP_PRODUCT_RECENTLY_VIEWEDId,
+} from './LP_PRODUCT_RECENTLY_VIEWED';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
@@ -193,6 +197,72 @@ export class LP_BUYER
     LP_PRODUCTId
   >;
   countProductIdLpProducts!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_BUYER belongsToMany LP_PRODUCT via buyerId and productId
+  productIdLpProductLpProductRecentlyVieweds!: LP_PRODUCT[];
+  getProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManyGetAssociationsMixin<LP_PRODUCT>;
+  setProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManySetAssociationsMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  addProductIdLpProductLpProductRecentlyViewed!: Sequelize.BelongsToManyAddAssociationMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  addProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManyAddAssociationsMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  createProductIdLpProductLpProductRecentlyViewed!: Sequelize.BelongsToManyCreateAssociationMixin<LP_PRODUCT>;
+  removeProductIdLpProductLpProductRecentlyViewed!: Sequelize.BelongsToManyRemoveAssociationMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  removeProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManyRemoveAssociationsMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  hasProductIdLpProductLpProductRecentlyViewed!: Sequelize.BelongsToManyHasAssociationMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  hasProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManyHasAssociationsMixin<
+    LP_PRODUCT,
+    LP_PRODUCTId
+  >;
+  countProductIdLpProductLpProductRecentlyVieweds!: Sequelize.BelongsToManyCountAssociationsMixin;
+  // LP_BUYER hasMany LP_PRODUCT_RECENTLY_VIEWED via buyerId
+  lpProductRecentlyVieweds!: LP_PRODUCT_RECENTLY_VIEWED[];
+  getLpProductRecentlyVieweds!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_RECENTLY_VIEWED>;
+  setLpProductRecentlyVieweds!: Sequelize.HasManySetAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  addLpProductRecentlyViewed!: Sequelize.HasManyAddAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  addLpProductRecentlyVieweds!: Sequelize.HasManyAddAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  createLpProductRecentlyViewed!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_RECENTLY_VIEWED>;
+  removeLpProductRecentlyViewed!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  removeLpProductRecentlyVieweds!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  hasLpProductRecentlyViewed!: Sequelize.HasManyHasAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  hasLpProductRecentlyVieweds!: Sequelize.HasManyHasAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  countLpProductRecentlyVieweds!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER belongsToMany LP_STORE via buyerId and storeId
   storeIdLpStores!: LP_STORE[];
   getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;
