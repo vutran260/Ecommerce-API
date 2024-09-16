@@ -41,6 +41,9 @@ import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
 import { MailService } from '../third_party/mail/mailService';
 import { SSOUseCase } from './usecase/SSOUseCase';
 import { SSOEndpoint } from './endpoint/SSOEndpoint';
+import { ProductRecentlyViewedUseCase } from './usecase/ProductRecentlyViewedUsecase';
+import { ProductRecentlyViewedRepository } from './repository/ProductRecentlyViewedRepository';
+import { ProductRecentlyViewedEndpoint } from './endpoint/ProductRecentlyViewedEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -60,6 +63,7 @@ export class buyerSiteRouter {
     const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
     const buyerPostRepo = new BuyerPostRepository();
     const subscriptionRepo = new SubscriptionRepository();
+    const productRecentlyViewedRepo = new ProductRecentlyViewedRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -89,6 +93,9 @@ export class buyerSiteRouter {
     const uploadUsecase = new UploadUsecase(s3Service);
     const subscriptionUseCase = new SubscriptionUseCase(subscriptionRepo);
     const ssoUseCase = new SSOUseCase();
+    const productRecentlyViewedUseCase = new ProductRecentlyViewedUseCase(
+      productRecentlyViewedRepo,
+    );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -104,6 +111,9 @@ export class buyerSiteRouter {
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);
+    const productRecentlyViewedEndpoint = new ProductRecentlyViewedEndpoint(
+      productRecentlyViewedUseCase,
+    );
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
@@ -118,6 +128,10 @@ export class buyerSiteRouter {
     router.use('/post', buyerPostEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
     router.use('/subscription', subscriptionEndpoint.getRouter());
+    router.use(
+      '/product-recently-viewed',
+      productRecentlyViewedEndpoint.getRouter(),
+    );
 
     return router;
   };

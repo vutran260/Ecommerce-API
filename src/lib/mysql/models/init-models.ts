@@ -81,6 +81,11 @@ import type {
   LP_PRODUCT_FAQAttributes,
   LP_PRODUCT_FAQCreationAttributes,
 } from './LP_PRODUCT_FAQ';
+import { LP_PRODUCT_RECENTLY_VIEWED as _LP_PRODUCT_RECENTLY_VIEWED } from './LP_PRODUCT_RECENTLY_VIEWED';
+import type {
+  LP_PRODUCT_RECENTLY_VIEWEDAttributes,
+  LP_PRODUCT_RECENTLY_VIEWEDCreationAttributes,
+} from './LP_PRODUCT_RECENTLY_VIEWED';
 import { LP_SELLER as _LP_SELLER } from './LP_SELLER';
 import type {
   LP_SELLERAttributes,
@@ -170,6 +175,7 @@ export {
   _LP_PRODUCT_CATEGORY as LP_PRODUCT_CATEGORY,
   _LP_PRODUCT_COMPONENT as LP_PRODUCT_COMPONENT,
   _LP_PRODUCT_FAQ as LP_PRODUCT_FAQ,
+  _LP_PRODUCT_RECENTLY_VIEWED as LP_PRODUCT_RECENTLY_VIEWED,
   _LP_SELLER as LP_SELLER,
   _LP_SELLER_SSO as LP_SELLER_SSO,
   _LP_SHIPMENT as LP_SHIPMENT,
@@ -221,6 +227,8 @@ export type {
   LP_PRODUCT_COMPONENTCreationAttributes,
   LP_PRODUCT_FAQAttributes,
   LP_PRODUCT_FAQCreationAttributes,
+  LP_PRODUCT_RECENTLY_VIEWEDAttributes,
+  LP_PRODUCT_RECENTLY_VIEWEDCreationAttributes,
   LP_SELLERAttributes,
   LP_SELLERCreationAttributes,
   LP_SELLER_SSOAttributes,
@@ -270,6 +278,8 @@ export function initModels(sequelize: Sequelize) {
   const LP_PRODUCT_CATEGORY = _LP_PRODUCT_CATEGORY.initModel(sequelize);
   const LP_PRODUCT_COMPONENT = _LP_PRODUCT_COMPONENT.initModel(sequelize);
   const LP_PRODUCT_FAQ = _LP_PRODUCT_FAQ.initModel(sequelize);
+  const LP_PRODUCT_RECENTLY_VIEWED =
+    _LP_PRODUCT_RECENTLY_VIEWED.initModel(sequelize);
   const LP_SELLER = _LP_SELLER.initModel(sequelize);
   const LP_SELLER_SSO = _LP_SELLER_SSO.initModel(sequelize);
   const LP_SHIPMENT = _LP_SHIPMENT.initModel(sequelize);
@@ -288,6 +298,12 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.belongsToMany(LP_PRODUCT, {
     as: 'productIdLpProducts',
     through: LP_FAVORITE,
+    foreignKey: 'buyerId',
+    otherKey: 'productId',
+  });
+  LP_BUYER.belongsToMany(LP_PRODUCT, {
+    as: 'productIdLpProductLpProductRecentlyVieweds',
+    through: LP_PRODUCT_RECENTLY_VIEWED,
     foreignKey: 'buyerId',
     otherKey: 'productId',
   });
@@ -312,6 +328,12 @@ export function initModels(sequelize: Sequelize) {
   LP_PRODUCT.belongsToMany(LP_BUYER, {
     as: 'buyerIdLpBuyers',
     through: LP_FAVORITE,
+    foreignKey: 'productId',
+    otherKey: 'buyerId',
+  });
+  LP_PRODUCT.belongsToMany(LP_BUYER, {
+    as: 'buyerIdLpBuyerLpProductRecentlyVieweds',
+    through: LP_PRODUCT_RECENTLY_VIEWED,
     foreignKey: 'productId',
     otherKey: 'buyerId',
   });
@@ -372,6 +394,14 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasMany(LP_FAVORITE, { as: 'lpFavorites', foreignKey: 'buyerId' });
   LP_ORDER.belongsTo(LP_BUYER, { as: 'buyer', foreignKey: 'buyerId' });
   LP_BUYER.hasMany(LP_ORDER, { as: 'lpOrders', foreignKey: 'buyerId' });
+  LP_PRODUCT_RECENTLY_VIEWED.belongsTo(LP_BUYER, {
+    as: 'buyer',
+    foreignKey: 'buyerId',
+  });
+  LP_BUYER.hasMany(LP_PRODUCT_RECENTLY_VIEWED, {
+    as: 'lpProductRecentlyVieweds',
+    foreignKey: 'buyerId',
+  });
   LP_STORE_BUYER.belongsTo(LP_BUYER, { as: 'buyer', foreignKey: 'buyerId' });
   LP_BUYER.hasMany(LP_STORE_BUYER, {
     as: 'lpStoreBuyers',
@@ -465,6 +495,14 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpProductFaqs',
     foreignKey: 'productId',
   });
+  LP_PRODUCT_RECENTLY_VIEWED.belongsTo(LP_PRODUCT, {
+    as: 'product',
+    foreignKey: 'productId',
+  });
+  LP_PRODUCT.hasMany(LP_PRODUCT_RECENTLY_VIEWED, {
+    as: 'lpProductRecentlyVieweds',
+    foreignKey: 'productId',
+  });
   LP_SUBSCRIPTION_PRODUCT.belongsTo(LP_PRODUCT, {
     as: 'product',
     foreignKey: 'productId',
@@ -553,6 +591,7 @@ export function initModels(sequelize: Sequelize) {
     LP_PRODUCT_CATEGORY: LP_PRODUCT_CATEGORY,
     LP_PRODUCT_COMPONENT: LP_PRODUCT_COMPONENT,
     LP_PRODUCT_FAQ: LP_PRODUCT_FAQ,
+    LP_PRODUCT_RECENTLY_VIEWED: LP_PRODUCT_RECENTLY_VIEWED,
     LP_SELLER: LP_SELLER,
     LP_SELLER_SSO: LP_SELLER_SSO,
     LP_SHIPMENT: LP_SHIPMENT,

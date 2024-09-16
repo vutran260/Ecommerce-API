@@ -44,7 +44,6 @@ export class AddressUsecase {
     if (!addAddressRequest.telephoneNumber) {
       throw new BadRequestError('Missing telephone number');
     }
-
     await this.AddressRepo.addAddress(addAddressRequest);
   };
 
