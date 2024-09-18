@@ -24,6 +24,7 @@ export interface LP_ORDERAttributes {
   buyerId?: string;
   storeId?: string;
   orderStatus?: string;
+  orderType: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
@@ -41,6 +42,7 @@ export type LP_ORDEROptionalAttributes =
   | 'buyerId'
   | 'storeId'
   | 'orderStatus'
+  | 'orderType'
   | 'shipmentFee'
   | 'discount'
   | 'cancelAt'
@@ -61,6 +63,7 @@ export class LP_ORDER
   buyerId?: string;
   storeId?: string;
   orderStatus?: string;
+  orderType!: string;
   amount!: number;
   shipmentFee?: number;
   discount?: number;
@@ -268,6 +271,12 @@ export class LP_ORDER
           type: DataTypes.STRING(100),
           allowNull: true,
           field: 'order_status',
+        },
+        orderType: {
+          type: DataTypes.STRING(50),
+          allowNull: false,
+          defaultValue: 'NORMAL',
+          field: 'order_type',
         },
         amount: {
           type: DataTypes.INTEGER.UNSIGNED,

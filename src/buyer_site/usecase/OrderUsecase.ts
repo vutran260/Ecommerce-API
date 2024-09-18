@@ -14,6 +14,7 @@ import {
   DATE_FORMAT,
   JobCd,
   OrderStatus,
+  OrderType,
   PaymentSatus,
   PaymentType,
   ProductStatus,
@@ -55,8 +56,10 @@ import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
-import { MailService } from '../../third_party/mail/mailService';
-import { OrderSuccessOptions } from '../../third_party/mail/mailService';
+import {
+  MailService,
+  OrderSuccessOptions,
+} from '../../third_party/mail/mailService';
 import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
 import {
   formatCurrency,
@@ -129,6 +132,7 @@ export class OrderUsecase {
           storeId,
           cartItems: normalItems,
           latestAddress,
+          orderType: OrderType.NORMAL,
           t,
         });
       }
@@ -241,6 +245,7 @@ export class OrderUsecase {
     storeId: string;
     cartItems: CartItem[] | SubscriptionProduct[];
     latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress;
+    orderType: OrderType;
     t: Transaction;
   }) {
     Logger.info('Start create normal order');

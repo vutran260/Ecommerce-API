@@ -1,5 +1,5 @@
 import lodash, { forEach } from 'lodash';
-import { Transaction } from 'sequelize';
+import { Sequelize, Transaction } from 'sequelize';
 import Logger from '../../lib/core/Logger';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';

@@ -16,6 +16,7 @@ export class Order {
   buyerName?: string;
   totalAmount?: number;
   orderStatus?: string;
+  orderType: string;
   paymentStatus?: string;
   orderDate?: string;
   orderItems?: OrderItem[];
@@ -24,6 +25,7 @@ export class Order {
     this.buyerName = order.buyer.username;
     this.totalAmount = order.totalAmount;
     this.orderStatus = order.orderStatus;
+    this.orderType = order.orderType;
     this.paymentStatus = order.lpOrderPayment.paymentStatus;
     this.orderDate = moment(order.createdAt).format(DATE_FORMAT);
     this.orderItems = order.lpOrderItems?.map((lpOrderItem) => {

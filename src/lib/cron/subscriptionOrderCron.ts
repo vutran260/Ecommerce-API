@@ -25,6 +25,7 @@ import {
   OrderSubscriptionSuccessOptions,
 } from '../../third_party/mail/mailService';
 import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
+import { OrderType } from '../../lib/constant/Constant';
 
 export class SubscriptionOrderCron {
   private subscriptionRepository: SubscriptionRepository;
@@ -86,6 +87,7 @@ export class SubscriptionOrderCron {
           cardSeq: cards[0].cardSeq,
           cartItems: subProducts,
           latestAddress: subAddress,
+          orderType: OrderType.SUBSCRIPTION,
           t,
         });
 
