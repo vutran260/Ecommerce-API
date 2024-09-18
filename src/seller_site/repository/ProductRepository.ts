@@ -210,7 +210,7 @@ export class ProductRepository {
                 FROM LP_ORDER_ITEM oi
                 JOIN LP_ORDER o ON oi.order_id = o.id
                 WHERE oi.product_id = LP_PRODUCT.id
-                AND o.order_status = 'SHIPPED' AND o.store_id = ${storeId}
+                AND o.order_status = 'SHIPPED' AND o.store_id = '${storeId}'
               )`),
               'soldQuantity',
             ],
@@ -220,7 +220,7 @@ export class ProductRepository {
                 FROM LP_ORDER_ITEM oi
                 JOIN LP_ORDER o ON oi.order_id = o.id
                 WHERE oi.product_id = LP_PRODUCT.id
-                AND o.order_status != 'CANCEL' AND o.store_id = ${storeId}
+                AND o.order_status != 'CANCEL' AND o.store_id = '${storeId}'
               )`),
               'allocatedStock',
             ],
