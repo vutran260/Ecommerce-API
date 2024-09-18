@@ -39,6 +39,29 @@ export interface OrderSuccessOptions extends MailOptions {
   };
 }
 
+export interface OrderSubscriptionSuccessOptions extends MailOptions {
+  params: {
+    buyerFirstNameKanji: string;
+    buyerLastNameKanji: string;
+    companyName: string;
+    orderId: string | number;
+    orderCreatedAt: string;
+    nextDeliveryDate: string;
+    products: {
+      productName: string;
+      unitPrice: string;
+      quantity: number;
+      subTotal: string;
+    }[];
+    subTotal: number | string;
+    shippingCode: number | string;
+    total: number | string;
+    postCode: string;
+    address: string;
+    phoneNumber: string;
+  };
+}
+
 export class MailService {
   private transporter: Transporter;
 
