@@ -176,7 +176,6 @@ export class OrderUsecase {
             phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
           },
         };
-        console.log('orderNewest', orderNewest);
         Logger.info(
           `Start send mail order success with options: ${JSON.stringify(mailOptions, null, 2)}`,
         );

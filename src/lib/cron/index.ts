@@ -43,8 +43,10 @@ const cardUseCase = new CardUsecase(gmoGetwaySerivce);
 
 const subscriptionOrderCron = new SubscriptionOrderCron(
   subscriptionRepository,
+  orderRepo,
   orderUseCase,
   cardUseCase,
+  mailService,
 );
 
 export function startAllCronJobs() {

@@ -10,6 +10,7 @@ export interface LP_SUBSCRIPTION_ADDRESSAttributes {
   lastNameKanji: string;
   gender?: number;
   prefectureCode: string;
+  prefectureName?: string;
   postCode: string;
   cityTown: string;
   streetAddress: string;
@@ -25,6 +26,7 @@ export type LP_SUBSCRIPTION_ADDRESSId =
   LP_SUBSCRIPTION_ADDRESS[LP_SUBSCRIPTION_ADDRESSPk];
 export type LP_SUBSCRIPTION_ADDRESSOptionalAttributes =
   | 'gender'
+  | 'prefectureName'
   | 'createdAt'
   | 'updatedAt';
 export type LP_SUBSCRIPTION_ADDRESSCreationAttributes = Optional<
@@ -46,6 +48,7 @@ export class LP_SUBSCRIPTION_ADDRESS
   lastNameKanji!: string;
   gender?: number;
   prefectureCode!: string;
+  prefectureName?: string;
   postCode!: string;
   cityTown!: string;
   streetAddress!: string;
@@ -107,6 +110,11 @@ export class LP_SUBSCRIPTION_ADDRESS
           type: DataTypes.CHAR(2),
           allowNull: false,
           field: 'prefecture_code',
+        },
+        prefectureName: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'prefecture_name',
         },
         postCode: {
           type: DataTypes.STRING(36),

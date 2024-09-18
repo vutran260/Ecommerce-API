@@ -118,6 +118,7 @@ export class SubscriptionAddress {
   lastNameKanji: string;
   gender?: number;
   prefectureCode: string;
+  prefectureName: string;
   postCode: string;
   cityTown: string;
   streetAddress: string;
@@ -135,6 +136,7 @@ export class SubscriptionAddress {
     item.lastNameKanji = lpSubscriptionAddress.lastNameKanji;
     item.gender = lpSubscriptionAddress.gender;
     item.prefectureCode = lpSubscriptionAddress.prefectureCode;
+    item.prefectureName = lpSubscriptionAddress.prefectureName || '';
     item.postCode = lpSubscriptionAddress.postCode;
     item.cityTown = lpSubscriptionAddress.cityTown;
     item.streetAddress = lpSubscriptionAddress.streetAddress;
