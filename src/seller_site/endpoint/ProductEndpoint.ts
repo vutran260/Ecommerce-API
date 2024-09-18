@@ -41,11 +41,13 @@ export class ProductEndpoint {
   };
 
   private getProducts = async (req: PaginationRequest, res: Response) => {
+    const storeId = req.storeId;
     const results = await this.productUsecase.getProducts(
       req.filterList,
       req.order,
       req.paging,
       req.query['categoryId'] as string,
+      storeId,
     );
     return ResponseListData(results, res, req.paging);
   };

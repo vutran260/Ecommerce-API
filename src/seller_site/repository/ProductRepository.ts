@@ -25,6 +25,7 @@ import Product, {
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
 import { LP_PRODUCT_FAQCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_FAQ';
 import { ProductFaqToLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductFaq';
+import { Sequelize } from 'sequelize-typescript';
 
 export class ProductRepository {
   public createProduct = async (
@@ -175,6 +176,7 @@ export class ProductRepository {
     order: LpOrder[],
     paging: Paging,
     categoryIds: string[] | null,
+    storeId: string,
     t?: Transaction,
   ) => {
     try {
@@ -200,6 +202,31 @@ export class ProductRepository {
       paging.total = count;
 
       const results = await LP_PRODUCT.findAll({
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(`(
+                SELECT COALESCE(SUM(oi.quantity), 0)
+                FROM LP_ORDER_ITEM oi
+                JOIN LP_ORDER o ON oi.order_id = o.id
+                WHERE oi.product_id = LP_PRODUCT.id
+                AND o.order_status = 'SHIPPED' AND o.store_id = ${storeId}
+              )`),
+              'soldQuantity',
+            ],
+            [
+              Sequelize.literal(`(
+                SELECT COALESCE(SUM(oi.quantity), 0)
+                FROM LP_ORDER_ITEM oi
+                JOIN LP_ORDER o ON oi.order_id = o.id
+                WHERE oi.product_id = LP_PRODUCT.id
+                AND o.order_status != 'CANCEL' AND o.store_id = ${storeId}
+              )`),
+              'allocatedStock',
+            ],
+            [Sequelize.literal(`LP_PRODUCT.stock_item`), 'freeStock'],
+          ],
+        },
         include: [
           {
             association: LP_PRODUCT.associations.lpProductCategories,
@@ -217,9 +244,11 @@ export class ProductRepository {
         limit: paging.limit,
         transaction: t,
       });
+
       forEach(results, (result) => {
         lodash.unset(result.dataValues, 'lpProductCategories');
       });
+
       return results;
     } catch (error: any) {
       Logger.error(error);

@@ -17,6 +17,7 @@ export class BuyerEndpoint {
       req.filterList,
       req.paging,
       req.order,
+      req.storeId,
     );
     return ResponseListData(results, res, req.paging);
   };

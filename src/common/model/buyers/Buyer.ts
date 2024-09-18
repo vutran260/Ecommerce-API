@@ -34,11 +34,7 @@ export class BuyerInfo {
   latestOrderDate?: string;
   constructor(buyer: LP_BUYER) {
     this.id = buyer.id;
-    this.buyerName =
-      buyer.lpBuyerPersonalInformation &&
-      buyer.lpBuyerPersonalInformation.nickname
-        ? buyer.lpBuyerPersonalInformation.nickname
-        : '';
+    this.buyerName = buyer.fullname;
     this.phone =
       buyer.lpAddressBuyerSso && buyer.lpAddressBuyerSso.telephoneNumber
         ? buyer.lpAddressBuyerSso.telephoneNumber

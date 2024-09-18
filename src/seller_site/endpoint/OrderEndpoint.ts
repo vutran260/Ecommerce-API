@@ -7,6 +7,7 @@ import { OrderUsecase } from '../usecase/OrderUsecase';
 import Logger from '../../lib/core/Logger';
 import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 
 export class OrderEndpoint {
   private orderUsecase: OrderUsecase;
@@ -67,7 +68,7 @@ export class OrderEndpoint {
 
   public getRouter() {
     const router = express.Router();
-    router.get('/', PagingMiddelware, this.getOrders);
+    router.get('/', PagingMiddelware, StoreFilterMiddelware, this.getOrders);
     router.get('/:id', this.getOrderDetail);
     router.get(
       '/order-items/:id',

@@ -11,7 +11,12 @@ import {
 } from '../../lib/paging/Request';
 import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
-import { LP_BUYER } from '../../lib/mysql/models/init-models';
+import {
+  LP_BUYER,
+  LP_ORDER_ITEM,
+  LP_PRODUCT,
+} from '../../lib/mysql/models/init-models';
+import { OrderStatus } from '../../lib/constant/Constant';
 
 export class OrderRepository {
   public getOrderById = async (id: number, t?: Transaction) => {
@@ -79,7 +84,19 @@ export class OrderRepository {
     input: UpdateOrderStatusRequest,
     t?: Transaction,
   ) => {
-    const os = await LP_ORDER.update(
+    // 1. Get the current status of the order before updating
+    const currentOrder = await LP_ORDER.findOne({
+      where: { id: input.orderId },
+      attributes: ['orderStatus'],
+      transaction: t,
+    });
+
+    if (!currentOrder) {
+      throw new BadRequestError('Order not found');
+    }
+
+    // 2. Update new order status
+    const orderUpdated = await LP_ORDER.update(
       { orderStatus: input.status },
       {
         where: { id: input.orderId },
@@ -87,8 +104,45 @@ export class OrderRepository {
       },
     );
 
-    if (os[0] === 0) {
+    if (orderUpdated[0] === 0) {
       throw new BadRequestError();
+    }
+
+    // 3. If the current state is 'cancel' and the new state is different 'cancel'
+    if (
+      currentOrder.orderStatus === OrderStatus.CANCEL &&
+      input.status !== OrderStatus.CANCEL
+    ) {
+      const orderItems = await LP_ORDER_ITEM.findAll({
+        where: { orderId: input.orderId },
+        attributes: ['productId', 'quantity'],
+        transaction: t,
+      });
+
+      // Subtract product quantity from stock item when status changes from 'cancel' to another status
+      for (const item of orderItems) {
+        await LP_PRODUCT.decrement(
+          { stockItem: item.quantity },
+          { where: { id: item.productId }, transaction: t },
+        );
+      }
+    }
+
+    // 4. If the new status is 'cancel', add the quantity back to stock_item
+    if (input.status === OrderStatus.CANCEL) {
+      const orderItems = await LP_ORDER_ITEM.findAll({
+        where: { orderId: input.orderId },
+        attributes: ['productId', 'quantity'],
+        transaction: t,
+      });
+
+      // Add the quantity back to stockItem for each product
+      for (const item of orderItems) {
+        await LP_PRODUCT.increment(
+          { stockItem: item.quantity },
+          { where: { id: item.productId }, transaction: t },
+        );
+      }
     }
   };
 
