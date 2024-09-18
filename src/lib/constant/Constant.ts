@@ -14,6 +14,11 @@ export enum DefaultFormat {
   DATETIME_WITHOUT_SECONDS = 'YYYY/MM/DD HH:mm',
 }
 
+export enum OrderType {
+  NORMAL = 'NORMAL',
+  SUBSCRIPTION = 'SUBSCRIPTION',
+}
+
 export enum OrderStatus {
   NOT_CONFIRMED = 'NOT_CONFIRMED', //注文未確定
   PREPARING = 'PREPARING', // 発送準備中
