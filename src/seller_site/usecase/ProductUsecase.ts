@@ -112,6 +112,7 @@ export class ProductUsecase {
     order: LpOrder[],
     paging: Paging,
     categoryId: string,
+    storeId: string,
   ) => {
     let categoryIds = null;
     if (categoryId) {
@@ -123,6 +124,7 @@ export class ProductUsecase {
       order,
       paging,
       categoryIds,
+      storeId,
     );
   };
 

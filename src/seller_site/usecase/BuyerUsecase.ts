@@ -15,8 +15,14 @@ export class BuyerUsecase {
     filter: Filter[],
     paging: Paging,
     order: LpOrder[],
+    storeId: string,
   ) => {
-    const buyers = await this.buyerRepo.getBuyers(filter, paging, order);
+    const buyers = await this.buyerRepo.getBuyers(
+      filter,
+      paging,
+      order,
+      storeId,
+    );
 
     return buyers.data.map((buyer) => {
       return new BuyerInfo(buyer);

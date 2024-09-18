@@ -8,14 +8,35 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 export class BuyerRepository {
-  public async getBuyers(filter: Filter[], paging: Paging, order: LpOrder[]) {
+  public async getBuyers(
+    filter: Filter[],
+    paging: Paging,
+    order: LpOrder[],
+    storeId: string,
+  ) {
     const count = await LP_BUYER.count({
+      include: [
+        {
+          association: LP_BUYER.associations.lpStoreBuyers,
+          where: {
+            store_id: storeId,
+          },
+          required: true,
+        },
+      ],
       where: BuildQuery(filter),
     });
     paging.total = count;
 
     const data = await LP_BUYER.findAll({
       include: [
+        {
+          association: LP_BUYER.associations.lpStoreBuyers,
+          where: {
+            store_id: storeId,
+          },
+          required: true,
+        },
         {
           association: LP_BUYER.associations.lpAddressBuyerSso,
         },
