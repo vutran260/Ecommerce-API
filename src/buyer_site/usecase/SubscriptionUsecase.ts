@@ -42,7 +42,8 @@ export class SubscriptionUseCase {
       updateRequest.nextDate,
       DATE_FORMAT,
     ).toDate();
-    subscription.planDeliveryTime = updateRequest.planDeliveryTime;
+    subscription.planDeliveryTimeFrom = updateRequest.planDeliveryTimeFrom;
+    subscription.planDeliveryTimeTo = updateRequest.planDeliveryTimeTo;
 
     await this.subscriptionRepository.updateSubscription(subscription);
     return this.subscriptionRepository.getSubscriptionById(subscription.id);

@@ -24,7 +24,8 @@ export class CreateSubscriptionRequest {
   storeId: string;
   startDate: Date;
   nextDate: Date;
-  planDeliveryTime?: string;
+  planDeliveryTimeFrom?: string;
+  planDeliveryTimeTo?: string;
   subscriptionPeriod: number;
   subscriptionStatus: string;
 
@@ -33,7 +34,8 @@ export class CreateSubscriptionRequest {
     this.storeId = lpSubscription.storeId;
     this.startDate = lpSubscription.startDate;
     this.nextDate = lpSubscription.nextDate;
-    this.planDeliveryTime = lpSubscription.planDeliveryTime;
+    this.planDeliveryTimeFrom = lpSubscription.planDeliveryTimeFrom;
+    this.planDeliveryTimeTo = lpSubscription.planDeliveryTimeTo;
     this.subscriptionPeriod = lpSubscription.subscriptionPeriod;
     this.subscriptionStatus = lpSubscription.subscriptionStatus;
   }
@@ -172,5 +174,9 @@ export class Subscription {
 
   @IsOptional()
   @IsHHMM()
-  planDeliveryTime?: string;
+  planDeliveryTimeFrom?: string;
+
+  @IsOptional()
+  @IsHHMM()
+  planDeliveryTimeTo?: string;
 }

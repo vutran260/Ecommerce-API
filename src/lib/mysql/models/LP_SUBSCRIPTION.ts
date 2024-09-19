@@ -24,7 +24,8 @@ export interface LP_SUBSCRIPTIONAttributes {
   subscriptionStatus: string;
   startDate: Date;
   nextDate: Date;
-  planDeliveryTime?: string;
+  planDeliveryTimeFrom?: string;
+  planDeliveryTimeTo?: string;
   subscriptionPeriod: number;
   createdAt: Date;
   updatedAt: Date;
@@ -34,7 +35,8 @@ export type LP_SUBSCRIPTIONPk = 'id';
 export type LP_SUBSCRIPTIONId = LP_SUBSCRIPTION[LP_SUBSCRIPTIONPk];
 export type LP_SUBSCRIPTIONOptionalAttributes =
   | 'id'
-  | 'planDeliveryTime'
+  | 'planDeliveryTimeFrom'
+  | 'planDeliveryTimeTo'
   | 'createdAt'
   | 'updatedAt';
 export type LP_SUBSCRIPTIONCreationAttributes = Optional<
@@ -52,7 +54,8 @@ export class LP_SUBSCRIPTION
   subscriptionStatus!: string;
   startDate!: Date;
   nextDate!: Date;
-  planDeliveryTime?: string;
+  planDeliveryTimeFrom?: string;
+  planDeliveryTimeTo?: string;
   subscriptionPeriod!: number;
   createdAt!: Date;
   updatedAt!: Date;
@@ -250,10 +253,15 @@ export class LP_SUBSCRIPTION
           allowNull: false,
           field: 'next_date',
         },
-        planDeliveryTime: {
+        planDeliveryTimeFrom: {
           type: DataTypes.TIME,
           allowNull: true,
-          field: 'plan_delivery_time',
+          field: 'plan_delivery_time_from',
+        },
+        planDeliveryTimeTo: {
+          type: DataTypes.TIME,
+          allowNull: true,
+          field: 'plan_delivery_time_to',
         },
         subscriptionPeriod: {
           type: DataTypes.INTEGER,
