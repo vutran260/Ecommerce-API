@@ -73,8 +73,12 @@ export class SubscriptionUseCase {
       ).toDate();
     }
 
-    if (updateRequest.planDeliveryTime) {
-      subscription.planDeliveryTime = updateRequest.planDeliveryTime;
+    if (updateRequest.planDeliveryTimeFrom) {
+      subscription.planDeliveryTimeFrom = updateRequest.planDeliveryTimeFrom;
+    }
+
+    if (updateRequest.planDeliveryTimeTo) {
+      subscription.planDeliveryTimeTo = updateRequest.planDeliveryTimeTo;
     }
 
     if (updateRequest.subscriptionStatus) {
