@@ -33,6 +33,9 @@ import { SubscriptionOrderRepository } from './repository/SubscriptionOrderRepos
 import { SSOUseCase } from './usecase/SSOUseCase';
 import { SSOEndpoint } from './endpoint/SSOEndpoint';
 import { PrefectureRepository } from './repository/PrefectureRepository';
+import { DashboardRepository } from './repository/DashboardRepository';
+import { DashboardUseCase } from './usecase/DashboardUsecase';
+import { DashboardEndpoint } from './endpoint/DashboardEndpoint';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -49,6 +52,7 @@ export class sellerSiteRouter {
     const subscriptionRepo = new SubscriptionRepository();
     const subscriptionOrderRepository = new SubscriptionOrderRepository();
     const prefectureRepository = new PrefectureRepository();
+    const dashboardRepository = new DashboardRepository();
 
     // third party
     const s3Service = new S3Service();
@@ -66,6 +70,7 @@ export class sellerSiteRouter {
       subscriptionOrderRepository,
     );
     const ssoUseCase = new SSOUseCase(prefectureRepository);
+    const dashboardUseCase = new DashboardUseCase(dashboardRepository);
 
     const productEndpoint = new ProductEndpoint(productUsecase);
     const categoryEndpoint = new CategoryEndpoint(categoryUsecase);
@@ -77,6 +82,7 @@ export class sellerSiteRouter {
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);
+    const dashboardEndpoint = new DashboardEndpoint(dashboardUseCase);
 
     router.use('/seller', sellerEndpoint.getRouter());
     router.use('/sso', ssoEndpoint.getRouter());
@@ -91,6 +97,7 @@ export class sellerSiteRouter {
     router.use('/file', uploadEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use('/subscription', subscriptionEndpoint.getRouter());
+    router.use('/dashboard', dashboardEndpoint.getRouter());
     return router;
   };
 }
