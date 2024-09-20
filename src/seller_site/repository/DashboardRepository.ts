@@ -125,8 +125,10 @@ export class DashboardRepository {
     if (previousYearSales > 0) {
       percentageChange =
         ((currentYearSales - previousYearSales) / previousYearSales) * 100;
-    } else {
+    } else if (currentYearSales > 0) {
       percentageChange = 100;
+    } else {
+      percentageChange = 0;
     }
 
     return {
