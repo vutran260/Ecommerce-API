@@ -35,6 +35,13 @@ export class DashboardEndpoint {
     if (isNaN(yearNumber)) {
       throw new BadRequestError('Year must be a number');
     }
+
+    const currentYear = new Date().getFullYear();
+    if (yearNumber > currentYear) {
+      throw new BadRequestError(
+        `Year cannot be greater than the current year (${currentYear})`,
+      );
+    }
     const storeId = req.storeId;
     const results = await this.dashboardUseCase.getYearlySales(
       storeId,
