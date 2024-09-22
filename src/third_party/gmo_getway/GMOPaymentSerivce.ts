@@ -30,25 +30,30 @@ export class GMOPaymentService {
     const endpoint = `${gmo.url}/payment/SearchMember.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
 
-    const response = await axios.post(endpoint, request, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await axios.post(endpoint, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    console.log('Received data:', response.data, 'status', response.status);
-    if (response.status !== HttpStatusCode.Ok) {
-      if (this.isResourceNotfound(response.data)) {
-        return null;
+      console.log('Received data:', response.data, 'status', response.status);
+      if (response.status !== HttpStatusCode.Ok) {
+        if (this.isResourceNotfound(response.data)) {
+          return null;
+        }
+        this.handlerError(response, response.data);
       }
-      this.handlerError(response, response.data);
-    }
 
-    return new MemberResponse(
-      response.data.memberID,
-      response.data.memberName,
-      response.data.deleteFlag,
-    );
+      return new MemberResponse(
+        response.data.memberID,
+        response.data.memberName,
+        response.data.deleteFlag,
+      );
+    } catch (e) {
+      Logger.error(e);
+      return null;
+    }
   };
 
   public registerMember = async (memberId: string) => {
@@ -115,43 +120,48 @@ export class GMOPaymentService {
     const endpoint = `${gmo.url}/payment/SearchCard.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
 
-    const response = await axios.post(endpoint, request, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await axios.post(endpoint, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (response.status !== HttpStatusCode.Ok) {
-      if (this.isResourceNotfound(response.data)) {
-        return null;
+      if (response.status !== HttpStatusCode.Ok) {
+        if (this.isResourceNotfound(response.data)) {
+          return null;
+        }
+        this.handlerError(response, response.data);
       }
-      this.handlerError(response, response.data);
+
+      console.log('Received data:', response.data, 'status', response.status);
+
+      const results: CardResponse[] = [];
+      response.data.forEach((card: CardResponse) => {
+        results.push(
+          new CardResponse(
+            card.cardSeq,
+            card.cardNo,
+            card.expire,
+            card.defaultFlag,
+            card.cardName,
+            card.holderName,
+            card.deleteFlag,
+            card.brand,
+            card.domesticFlag,
+            card.issuerCode,
+            card.debitPrepaidFlag,
+            card.debitPrepaidIssuerName,
+            card.forwardFinal,
+          ),
+        );
+      });
+
+      return results;
+    } catch (e) {
+      Logger.error(e);
+      return null;
     }
-
-    console.log('Received data:', response.data, 'status', response.status);
-
-    const results: CardResponse[] = [];
-    response.data.forEach((card: CardResponse) => {
-      results.push(
-        new CardResponse(
-          card.cardSeq,
-          card.cardNo,
-          card.expire,
-          card.defaultFlag,
-          card.cardName,
-          card.holderName,
-          card.deleteFlag,
-          card.brand,
-          card.domesticFlag,
-          card.issuerCode,
-          card.debitPrepaidFlag,
-          card.debitPrepaidIssuerName,
-          card.forwardFinal,
-        ),
-      );
-    });
-
-    return results;
   };
 
   public checkFraud = async (type: string, userId: string) => {
