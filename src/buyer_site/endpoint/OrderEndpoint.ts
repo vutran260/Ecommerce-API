@@ -107,8 +107,14 @@ export class OrderEndpoint {
     return ResponseData(results, res);
   };
 
-  private issueReceipt = async (req: ProtectedRequest, res: Response) => {
-    const result = await this.orderUsecase.issueReceipt(
+  private issueInvoice = async (req: ProtectedRequest, res: Response) => {
+    if (!req.body.email) {
+      throw new BadRequestError('email is require');
+    }
+    if (!req.body.orderId) {
+      throw new BadRequestError('orderId is require');
+    }
+    const result = await this.orderUsecase.issueInvoice(
       req.body.email,
       req.body.orderId,
     );
@@ -125,7 +131,7 @@ export class OrderEndpoint {
       PagingMiddelware,
       this.getOrderItemsByOrderId,
     );
-    router.post('/issue-receipt', this.issueReceipt);
+    router.post('/issue-invoice', this.issueInvoice);
     router.post('/test/fraud', this.checkFraud);
     router.post('/test/entry', this.entryTran);
     router.post('/test/exec', this.execTran);

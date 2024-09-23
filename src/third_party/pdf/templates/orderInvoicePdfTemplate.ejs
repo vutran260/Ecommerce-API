@@ -70,12 +70,18 @@
             font-weight: bold;
         }
         .amount-text {
-            text-align: right;
+            text-align: center;
+        }
+        .no {
+            width: 5%;
         }
         .description {
-            width: 40%;
+            width: 35%;
         }
-        .quantity, .unit-price, .discount, .amount {
+        .unit-price, .amount {
+            width: 15%;
+        }
+        .no, .quantity, .unit-price, .discount, .amount {
             text-align: center;
         }
         .footer p {
@@ -127,7 +133,7 @@
         <tbody>
         <% items.forEach(function(item, index) { %>
             <tr>
-                <td class="quantity"><%= index + 1 %></td>
+                <td class="no"><%= index + 1 %></td>
                 <td class="description"><%= item.description %></td>
                 <td class="quantity"><%= item.quantity %></td>
                 <td class="unit-price"><%= item.unitPrice %></td>

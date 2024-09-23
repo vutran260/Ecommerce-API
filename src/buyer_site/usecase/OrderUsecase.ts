@@ -67,11 +67,7 @@ import {
   formatName,
   formatPhoneNumber,
 } from '../../lib/helpers/commonFunction';
-import {
-  PdfOptions,
-  PdfService,
-  TemplateParams,
-} from '../../third_party/pdf/pdfService';
+import { PdfService, TemplateParams } from '../../third_party/pdf/pdfService';
 import { InvoiceRepository } from '../repository/InvoiceRepository';
 
 export class OrderUsecase {
@@ -606,7 +602,7 @@ export class OrderUsecase {
     return await this.gmoPaymentService.execTran(preExecTransactionRequest);
   };
 
-  public issueReceipt = async (email: string, orderId: string) => {
+  public issueInvoice = async (email: string, orderId: string) => {
     const order = await this.orderRepo.getOrderFullAttrById(Number(orderId));
     if (!order) {
       throw new Error(`Order with ID ${orderId} not found`);
@@ -649,7 +645,7 @@ export class OrderUsecase {
     };
 
     const buffer = await this.pdfService.generatePdf(
-      'receiptTemplate',
+      'orderInvoicePdfTemplate',
       templateParams,
     );
 
@@ -657,7 +653,7 @@ export class OrderUsecase {
       to: email,
       subject:
         'ECパレット｜[ご購入いただきありがとうございます] 領収書の発行について\n',
-      templateName: 'orderReceiptTemplate',
+      templateName: 'orderInvoiceTemplate',
       params: {
         buyerFirstNameKanji: order?.lpOrderAddressBuyer?.firstNameKanji || '',
         buyerLastNameKanji: order?.lpOrderAddressBuyer?.lastNameKanji || '',
