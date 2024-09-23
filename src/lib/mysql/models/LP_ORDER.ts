@@ -1,6 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
+import type { LP_INVOICE, LP_INVOICEId } from './LP_INVOICE';
 import type {
   LP_ORDER_ADDRESS_BUYER,
   LP_ORDER_ADDRESS_BUYERId,
@@ -79,6 +80,33 @@ export class LP_ORDER
   getBuyer!: Sequelize.BelongsToGetAssociationMixin<LP_BUYER>;
   setBuyer!: Sequelize.BelongsToSetAssociationMixin<LP_BUYER, LP_BUYERId>;
   createBuyer!: Sequelize.BelongsToCreateAssociationMixin<LP_BUYER>;
+  // LP_ORDER hasMany LP_INVOICE via orderId
+  lpInvoices!: LP_INVOICE[];
+  getLpInvoices!: Sequelize.HasManyGetAssociationsMixin<LP_INVOICE>;
+  setLpInvoices!: Sequelize.HasManySetAssociationsMixin<
+    LP_INVOICE,
+    LP_INVOICEId
+  >;
+  addLpInvoice!: Sequelize.HasManyAddAssociationMixin<LP_INVOICE, LP_INVOICEId>;
+  addLpInvoices!: Sequelize.HasManyAddAssociationsMixin<
+    LP_INVOICE,
+    LP_INVOICEId
+  >;
+  createLpInvoice!: Sequelize.HasManyCreateAssociationMixin<LP_INVOICE>;
+  removeLpInvoice!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_INVOICE,
+    LP_INVOICEId
+  >;
+  removeLpInvoices!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_INVOICE,
+    LP_INVOICEId
+  >;
+  hasLpInvoice!: Sequelize.HasManyHasAssociationMixin<LP_INVOICE, LP_INVOICEId>;
+  hasLpInvoices!: Sequelize.HasManyHasAssociationsMixin<
+    LP_INVOICE,
+    LP_INVOICEId
+  >;
+  countLpInvoices!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER hasOne LP_ORDER_ADDRESS_BUYER via orderId
   lpOrderAddressBuyer!: LP_ORDER_ADDRESS_BUYER;
   getLpOrderAddressBuyer!: Sequelize.HasOneGetAssociationMixin<LP_ORDER_ADDRESS_BUYER>;
