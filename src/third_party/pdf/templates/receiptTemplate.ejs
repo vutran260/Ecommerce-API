@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header-row header {
+            text-align: center;
+        }
+        .header-row h1 {
+            font-size: 32px;
+            margin: 0;
+        }
+        .receipt-info .receipt-info-detail {
+            margin: 0;
+        }
+        .receipt-info-detail {
+            text-align: right;
+        }
+        .receipt-info .label {
+            font-weight: bold;
+        }
+        .customer-info, .store-info-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .customer-info p, .store-info p {
+            margin: 0;
+            padding: 0;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #000;
+            text-align: left;
+        }
+        th {
+            text-align: center;
+        }
+        .font-bold {
+            font-weight: bold;
+        }
+        .store-info {
+            float: right;
+        }
+        .store-info-detail {
+            text-align: right;
+        }
+        .store-info .label {
+            font-weight: bold;
+        }
+        .amount-text {
+            text-align: right;
+        }
+        .description {
+            width: 40%;
+        }
+        .quantity, .unit-price, .discount, .amount {
+            text-align: center;
+        }
+        .footer p {
+            margin: 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="header-row">
+    <div class="header">
+        <h1>領収書</h1>
+    </div>
+    <div class="receipt-info">
+        <div class="receipt-info-detail"><span class="label">領収書 No: </span> <%= receiptNo %></div>
+        <div class="receipt-info-detail"><span class="label">発行日: </span> <%= issueDate %></div>
+    </div>
+</div>
+
+<div class="customer-info">
+    <p><strong><%= customerName %></strong> 様</p>
+</div>
+
+<div class="store-info-row">
+    <div class="total-amount">
+        <p><strong>合計金額:</strong> <%= totalAmount %>(税込)</p>
+    </div>
+    <div class="store-info">
+        <div class="store-info-detail"><span class="label">店舗名:</span> <%= storeName %></div>
+        <div class="store-info-detail"><span class="label">郵便番号:</span> <%= postalCode %></div>
+        <div class="store-info-detail"><span class="label">住所:</span> <%= address %></div>
+        <div class="store-info-detail"><span class="label">TEL:</span> <%= phoneNumber %></div>
+        <div class="store-info-detail"><span class="label">メール:</span> <%= email %></div>
+    </div>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th class="description">品目</th>
+            <th class="quantity">数量</th>
+            <th class="unit-price">単価</th>
+            <th class="discount">値引き額</th>
+            <th class="amount">金額</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% items.forEach(function(item, index) { %>
+            <tr>
+                <td class="quantity"><%= index + 1 %></td>
+                <td class="description"><%= item.description %></td>
+                <td class="quantity"><%= item.quantity %></td>
+                <td class="unit-price"><%= item.unitPrice %></td>
+                <td class="discount"><%= item.discount ? item.discount : '-' %></td>
+                <td class="amount"><%= item.amount %></td>
+            </tr>
+        <% }); %>
+        <tr>
+            <td colspan="5">送料</td>
+            <td class="amount-text"><%= shipmentFee %></td>
+        </tr>
+        <tr class="font-bold">
+            <td colspan="5">合計金額</td>
+            <td class="amount-text"><%= totalAmount %></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

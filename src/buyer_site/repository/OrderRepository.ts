@@ -91,6 +91,21 @@ export class OrderRepository {
         {
           association: LP_ORDER.associations.lpOrderItems,
         },
+        {
+          association: LP_ORDER.associations.store,
+        },
+      ],
+      transaction: t,
+    });
+  };
+
+  public getOrderWithItemsById = async (id: number, t?: Transaction) => {
+    return await LP_ORDER.findOne({
+      where: { id },
+      include: [
+        {
+          association: LP_ORDER.associations.lpOrderItems,
+        },
       ],
       transaction: t,
     });

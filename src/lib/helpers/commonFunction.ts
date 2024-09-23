@@ -20,4 +20,8 @@ function formatPhoneNumber(phoneNumber: string | undefined): string {
   return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
 }
 
-export { formatCurrency, formatPhoneNumber };
+function formatName(firstName: string, lastName: string): string {
+  return `${lastName || ''} ${firstName || ''}`;
+}
+
+export { formatCurrency, formatPhoneNumber, formatName };

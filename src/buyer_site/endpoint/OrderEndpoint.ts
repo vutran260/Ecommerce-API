@@ -41,7 +41,7 @@ export class OrderEndpoint {
 
   private getOrders = async (req: PaginationRequest, res: Response) => {
     const buyerId: string = req.user.id;
-    const storeId: string = req.storeId;;
+    const storeId: string = req.storeId;
     const result = await this.orderUsecase.getOrders(
       req.filterList,
       req.order,
@@ -107,6 +107,14 @@ export class OrderEndpoint {
     return ResponseData(results, res);
   };
 
+  private issueReceipt = async (req: ProtectedRequest, res: Response) => {
+    const result = await this.orderUsecase.issueReceipt(
+      req.body.email,
+      req.body.orderId,
+    );
+    return ResponseData(result, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get('/', PagingMiddelware, this.getOrders);
@@ -117,6 +125,7 @@ export class OrderEndpoint {
       PagingMiddelware,
       this.getOrderItemsByOrderId,
     );
+    router.post('/issue-receipt', this.issueReceipt);
     router.post('/test/fraud', this.checkFraud);
     router.post('/test/entry', this.entryTran);
     router.post('/test/exec', this.execTran);

@@ -36,6 +36,11 @@ import type {
   LP_FAVORITEAttributes,
   LP_FAVORITECreationAttributes,
 } from './LP_FAVORITE';
+import { LP_INVOICE as _LP_INVOICE } from './LP_INVOICE';
+import type {
+  LP_INVOICEAttributes,
+  LP_INVOICECreationAttributes,
+} from './LP_INVOICE';
 import { LP_ORDER as _LP_ORDER } from './LP_ORDER';
 import type {
   LP_ORDERAttributes,
@@ -166,6 +171,7 @@ export {
   _LP_CART as LP_CART,
   _LP_CATEGORY as LP_CATEGORY,
   _LP_FAVORITE as LP_FAVORITE,
+  _LP_INVOICE as LP_INVOICE,
   _LP_ORDER as LP_ORDER,
   _LP_ORDER_ADDRESS_BUYER as LP_ORDER_ADDRESS_BUYER,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
@@ -209,6 +215,8 @@ export type {
   LP_CATEGORYCreationAttributes,
   LP_FAVORITEAttributes,
   LP_FAVORITECreationAttributes,
+  LP_INVOICEAttributes,
+  LP_INVOICECreationAttributes,
   LP_ORDERAttributes,
   LP_ORDERCreationAttributes,
   LP_ORDER_ADDRESS_BUYERAttributes,
@@ -269,6 +277,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_CART = _LP_CART.initModel(sequelize);
   const LP_CATEGORY = _LP_CATEGORY.initModel(sequelize);
   const LP_FAVORITE = _LP_FAVORITE.initModel(sequelize);
+  const LP_INVOICE = _LP_INVOICE.initModel(sequelize);
   const LP_ORDER = _LP_ORDER.initModel(sequelize);
   const LP_ORDER_ADDRESS_BUYER = _LP_ORDER_ADDRESS_BUYER.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
@@ -420,6 +429,8 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpProductCategories',
     foreignKey: 'categoryId',
   });
+  LP_INVOICE.belongsTo(LP_ORDER, { as: 'order', foreignKey: 'orderId' });
+  LP_ORDER.hasMany(LP_INVOICE, { as: 'lpInvoices', foreignKey: 'orderId' });
   LP_ORDER_ADDRESS_BUYER.belongsTo(LP_ORDER, {
     as: 'order',
     foreignKey: 'orderId',
@@ -582,6 +593,7 @@ export function initModels(sequelize: Sequelize) {
     LP_CART: LP_CART,
     LP_CATEGORY: LP_CATEGORY,
     LP_FAVORITE: LP_FAVORITE,
+    LP_INVOICE: LP_INVOICE,
     LP_ORDER: LP_ORDER,
     LP_ORDER_ADDRESS_BUYER: LP_ORDER_ADDRESS_BUYER,
     LP_ORDER_ITEM: LP_ORDER_ITEM,

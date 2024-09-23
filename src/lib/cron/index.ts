@@ -12,6 +12,8 @@ import { OrderAddressBuyerRepository } from '../../buyer_site/repository/OrderAd
 import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
 import { MailService } from '../../third_party/mail/mailService';
+import { PdfService } from '../../third_party/pdf/pdfService';
+import { InvoiceRepository } from '../../buyer_site/repository/InvoiceRepository';
 
 const productRepo = new ProductRepository();
 const addressRepo = new AddressRepository();
@@ -22,8 +24,10 @@ const orderPaymentRepo = new OrderPaymentRepository();
 const shipmentRepository = new ShipmentRepository();
 const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
 const subscriptionRepo = new SubscriptionRepository();
+const invoiceRepository = new InvoiceRepository();
 const gmoGetwaySerivce = new GMOPaymentService();
 const mailService = new MailService();
+const pdfService = new PdfService();
 
 const subscriptionRepository = new SubscriptionRepository();
 const orderUseCase = new OrderUsecase(
@@ -37,7 +41,9 @@ const orderUseCase = new OrderUsecase(
   gmoGetwaySerivce,
   productRepo,
   subscriptionRepo,
+  invoiceRepository,
   mailService,
+  pdfService,
 );
 const cardUseCase = new CardUsecase(gmoGetwaySerivce);
 

@@ -69,13 +69,17 @@ export class MailService {
     this.transporter = nodemailer.createTransport(mailConfig);
   }
 
-  public async sendMail(options: MailOptions): Promise<void> {
+  public async sendMail(
+    options: MailOptions,
+    attachments?: { filename: string; content: Buffer }[],
+  ): Promise<void> {
     const mailOptions = {
       from: `<${mailConfig.auth?.user}>`,
       to: options.to,
       subject: options.subject,
       text: options.text || '',
       html: this.loadTemplate(options.templateName, options.params),
+      attachments: attachments || [],
     };
 
     try {

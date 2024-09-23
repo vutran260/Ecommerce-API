@@ -39,11 +39,13 @@ import { StoreUsecase } from './usecase/StoreUsecase';
 import { SubscriptionRepository } from './repository/SubscriptionRepository';
 import { SubscriptionUseCase } from './usecase/SubscriptionUsecase';
 import { MailService } from '../third_party/mail/mailService';
+import { PdfService } from '../third_party/pdf/pdfService';
 import { SSOUseCase } from './usecase/SSOUseCase';
 import { SSOEndpoint } from './endpoint/SSOEndpoint';
 import { ProductRecentlyViewedUseCase } from './usecase/ProductRecentlyViewedUsecase';
 import { ProductRecentlyViewedRepository } from './repository/ProductRecentlyViewedRepository';
 import { ProductRecentlyViewedEndpoint } from './endpoint/ProductRecentlyViewedEndpoint';
+import { InvoiceRepository } from './repository/InvoiceRepository';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -64,11 +66,13 @@ export class buyerSiteRouter {
     const buyerPostRepo = new BuyerPostRepository();
     const subscriptionRepo = new SubscriptionRepository();
     const productRecentlyViewedRepo = new ProductRecentlyViewedRepository();
+    const invoiceRepository = new InvoiceRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
     const s3Service = new S3Service();
     const mailService = new MailService();
+    const pdfService = new PdfService();
 
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
@@ -87,7 +91,9 @@ export class buyerSiteRouter {
       gmoGetwaySerivce,
       productRepo,
       subscriptionRepo,
+      invoiceRepository,
       mailService,
+      pdfService,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
