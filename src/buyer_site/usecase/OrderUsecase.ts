@@ -66,6 +66,7 @@ import {
   formatCurrency,
   formatName,
   formatPhoneNumber,
+  formatDiscountAmount,
 } from '../../lib/helpers/commonFunction';
 import { PdfService, TemplateParams } from '../../third_party/pdf/pdfService';
 import { InvoiceRepository } from '../repository/InvoiceRepository';
@@ -263,9 +264,22 @@ export class OrderUsecase {
     // Step 1: Shift Events
     // Logger.info('Start calculate point');
     // const theFraud = await this.gmoPaymentService.checkFraud(type, userId);
-    const { cardSeq, buyerId, storeId, cartItems, latestAddress, t } = params;
-    const order = await this.initOrder(buyerId, t);
-    const totalAmount = await this.processCartItems(cartItems, order.id, t);
+    const {
+      cardSeq,
+      buyerId,
+      storeId,
+      cartItems,
+      latestAddress,
+      orderType,
+      t,
+    } = params;
+    const order = await this.initOrder(buyerId, orderType, t);
+    const totalAmount = await this.processCartItems(
+      cartItems,
+      order.id,
+      orderType,
+      t,
+    );
     const shipmentFee = this.calculateShipmentFee(totalAmount);
     const finalAmount = totalAmount + shipmentFee;
 
@@ -311,7 +325,11 @@ export class OrderUsecase {
     });
   }
 
-  private async initOrder(buyerId: string, t: Transaction): Promise<Order> {
+  private async initOrder(
+    buyerId: string,
+    orderType: OrderType,
+    t: Transaction,
+  ): Promise<Order> {
     Logger.info('Start create order');
     let attempts = 0;
     const maxRetries = 10;
@@ -323,6 +341,7 @@ export class OrderUsecase {
         const createOrderRequest: CreateOrderRequest = {
           id: id,
           orderStatus: OrderStatus.NOT_CONFIRMED,
+          orderType: orderType,
           amount: 0,
           shipmentFee: 0,
           discount: 0,
@@ -347,6 +366,7 @@ export class OrderUsecase {
   private async processCartItems(
     cartItems: CartItem[] | SubscriptionProduct[],
     orderId: number,
+    orderType: OrderType,
     t: Transaction,
   ): Promise<number> {
     Logger.info(
@@ -356,6 +376,11 @@ export class OrderUsecase {
     for (const cartItem of cartItems) {
       const input = new CreateOrderItemRequest(cartItem);
       input.orderId = orderId;
+      if (orderType === OrderType.SUBSCRIPTION) {
+        input.originalPrice = cartItem.product.priceSubscription || 0;
+      } else {
+        input.originalPrice = cartItem.product.price;
+      }
 
       if (!input.price || input.price <= 0) {
         Logger.error('Bad price');
@@ -639,7 +664,8 @@ export class OrderUsecase {
       items: order.lpOrderItems.map((item) => ({
         description: item.productName,
         quantity: item.quantity,
-        unitPrice: `${item.price}円`,
+        unitPrice: `${item.originalPrice}円`,
+        discountPrice: `${formatDiscountAmount(item.price, item.originalPrice)}`,
         amount: `${formatCurrency(item.quantity * (item.price || 0))}円`,
       })),
     };

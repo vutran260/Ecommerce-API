@@ -1,6 +1,7 @@
-import puppeteer, { PDFOptions, PaperFormat } from 'puppeteer';
+import puppeteer, { PaperFormat, PDFOptions } from 'puppeteer';
 import ejs from 'ejs';
 import path from 'path';
+import * as os from 'os';
 
 export interface TemplateParams {
   receiptNo: number;
@@ -18,8 +19,10 @@ export interface TemplateParams {
     description: string;
     quantity: number;
     unitPrice: string;
+    discountPrice: string;
     amount: string;
   }[];
+  fontPath?: string | null;
 }
 
 export interface PdfOptions extends Partial<PDFOptions> {
@@ -34,6 +37,21 @@ export class PdfService {
     pdfOptions?: PdfOptions,
   ): Promise<Buffer> {
     try {
+      const isServer = os.platform() !== 'darwin' && os.platform() !== 'win32';
+
+      // Set the font path only for the server environment
+      // No need to specify a path for local development
+      templateParams.fontPath = isServer
+        ? 'file:///usr/share/fonts/noto/NotoSansCJKjp-Regular.otf'
+        : null;
+
+      const pupperteerOptions = isServer
+        ? {
+            executablePath: '/usr/bin/chromium-browser',
+            args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add these flags
+          }
+        : {};
+
       let html: string;
       pdfOptions = pdfOptions || {
         format: 'A4',
@@ -53,7 +71,7 @@ export class PdfService {
       }
 
       // Launch Puppeteer
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch(pupperteerOptions);
       const page = await browser.newPage();
 
       // Set HTML content

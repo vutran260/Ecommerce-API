@@ -24,4 +24,20 @@ function formatName(firstName: string, lastName: string): string {
   return `${lastName || ''} ${firstName || ''}`;
 }
 
-export { formatCurrency, formatPhoneNumber, formatName };
+function formatDiscountAmount(
+  price: number | undefined,
+  originalPrice: number,
+) {
+  if (price === undefined) {
+    return '-';
+  }
+  if (originalPrice - price === 0) {
+    return '-';
+  }
+  if (originalPrice === 0) {
+    return '-';
+  }
+  return `${originalPrice - price}円`;
+}
+
+export { formatCurrency, formatPhoneNumber, formatName, formatDiscountAmount };

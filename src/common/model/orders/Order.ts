@@ -57,6 +57,7 @@ export class OrderItem {
 export class CreateOrderRequest {
   id: number;
   orderStatus?: string;
+  orderType: string;
   amount: number;
   shipmentFee?: number;
   discount?: number;
@@ -86,6 +87,7 @@ export class CreateOrderItemRequest {
   productDescription: string;
   productOverview: string;
   price?: number;
+  originalPrice: number;
   quantity: number;
   createdAt = new Date();
   updatedAt = new Date();
