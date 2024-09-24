@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receipt</title>
     <style>
+        <% if (fontPath) { %>
+        @font-face {
+            font-family: 'Noto Sans CJK';
+            src: url('<%= fontPath %>') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        <% } %>
+        body {
+            font-family: '<%= fontPath ? 'Noto Sans CJK' : 'Arial' %>', sans-serif;
+        }
         body {
             font-family: Arial, sans-serif;
         }
@@ -53,6 +64,8 @@
             padding: 10px;
             border: 1px solid #000;
             text-align: left;
+            word-wrap: break-word;
+            white-space: normal;
         }
         th {
             text-align: center;
@@ -76,10 +89,13 @@
             width: 5%;
         }
         .description {
-            width: 35%;
+            width: 30%;
         }
         .unit-price, .amount {
             width: 15%;
+        }
+        .discount {
+            width: 10%;
         }
         .no, .quantity, .unit-price, .discount, .amount {
             text-align: center;
@@ -137,7 +153,7 @@
                 <td class="description"><%= item.description %></td>
                 <td class="quantity"><%= item.quantity %></td>
                 <td class="unit-price"><%= item.unitPrice %></td>
-                <td class="discount"><%= item.discount ? item.discount : '-' %></td>
+                <td class="discount"><%= item.discountPrice %></td>
                 <td class="amount"><%= item.amount %></td>
             </tr>
         <% }); %>

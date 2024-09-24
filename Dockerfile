@@ -1,6 +1,19 @@
 # Here we are getting our node as Base image
 FROM node:21.7.3-alpine3.19
 
+# Temporarily switch to root to install system packages
+USER root
+
+# Install Chromium and any other dependencies
+RUN apk update && apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont\
+    font-noto-cjk
+
 # create user in the docker image
 USER node
 

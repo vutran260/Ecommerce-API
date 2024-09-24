@@ -12,6 +12,7 @@ export interface LP_ORDER_ITEMAttributes {
   productDescription: string;
   productOverview: string;
   price?: number;
+  originalPrice: number;
   quantity: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -45,6 +46,7 @@ export class LP_ORDER_ITEM
   productDescription!: string;
   productOverview!: string;
   price?: number;
+  originalPrice!: number;
   quantity!: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -111,6 +113,11 @@ export class LP_ORDER_ITEM
         price: {
           type: DataTypes.INTEGER,
           allowNull: true,
+        },
+        originalPrice: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          field: 'original_price',
         },
         quantity: {
           type: DataTypes.INTEGER.UNSIGNED,
