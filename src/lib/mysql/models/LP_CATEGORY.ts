@@ -13,6 +13,7 @@ export interface LP_CATEGORYAttributes {
   parentId?: string;
   categoryName?: string;
   categoryTag?: string;
+  categoryImage?: string;
   status?: string;
   orderLevel: number;
   createdAt?: Date;
@@ -27,6 +28,7 @@ export type LP_CATEGORYOptionalAttributes =
   | 'parentId'
   | 'categoryName'
   | 'categoryTag'
+  | 'categoryImage'
   | 'status'
   | 'createdAt'
   | 'updatedAt'
@@ -45,6 +47,7 @@ export class LP_CATEGORY
   parentId?: string;
   categoryName?: string;
   categoryTag?: string;
+  categoryImage?: string;
   status?: string;
   orderLevel!: number;
   createdAt?: Date;
@@ -155,6 +158,11 @@ export class LP_CATEGORY
           type: DataTypes.STRING(255),
           allowNull: true,
           field: 'category_tag',
+        },
+        categoryImage: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'category_image',
         },
         status: {
           type: DataTypes.STRING(255),

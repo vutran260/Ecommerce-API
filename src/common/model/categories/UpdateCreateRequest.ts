@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
 
-export default class CategoryCreateRequest {
-  id?: string;
+export default class UpdateCategoryRequest {
+  id: string;
   parentId?: string;
 
   @IsString()
@@ -9,21 +9,22 @@ export default class CategoryCreateRequest {
   storeId: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   categoryName: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   categoryTag: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   categoryImage: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   status: string;
 
   @IsNumber()
+  @IsOptional()
   orderLevel: number;
 }

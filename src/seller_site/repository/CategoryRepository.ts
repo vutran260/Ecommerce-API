@@ -118,12 +118,14 @@ export class CategoryRepository {
         await category.destroy({ transaction: t });
 
         if (filterCategories.length > 0) {
-          filterCategories.forEach(async (res: any, index: number) => {
+          for (const res of filterCategories) {
+            const index: number = filterCategories.indexOf(res);
             const updateCategory: CategoryCreateRequest = {
               parentId: filterCategories[index]?.dataValues.parentId,
               storeId: filterCategories[index]?.dataValues.storeId,
               categoryName: filterCategories[index]?.dataValues.categoryName,
               categoryTag: filterCategories[index]?.dataValues.categoryTag,
+              categoryImage: filterCategories[index]?.dataValues.categoryImage,
               status: filterCategories[index]?.dataValues.status,
               orderLevel: index + 1,
             };
@@ -133,7 +135,7 @@ export class CategoryRepository {
               storeId,
               t,
             );
-          });
+          }
         }
       }
     } catch (error: any) {
