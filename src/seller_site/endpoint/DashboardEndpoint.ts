@@ -1,8 +1,10 @@
 import express, { Response } from 'express';
 import { DashboardUseCase } from '../usecase/DashboardUsecase';
-import { ResponseData } from '../../lib/http/Response';
+import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { PaginationRequest } from '../../lib/paging/Request';
+import { PagingMiddelware } from '../../lib/paging/Middelware';
 
 export class DashboardEndpoint {
   private dashboardUseCase: DashboardUseCase;
@@ -20,10 +22,15 @@ export class DashboardEndpoint {
     return ResponseData(results, res);
   };
 
-  private getRecentOrders = async (req: ProtectedRequest, res: Response) => {
+  private getRecentOrders = async (req: PaginationRequest, res: Response) => {
     const storeId = req.storeId;
-    const results = await this.dashboardUseCase.getRecentOrders(storeId);
-    return ResponseData(results, res);
+    const results = await this.dashboardUseCase.getRecentOrders(
+      storeId,
+      req.filterList,
+      req.order,
+      req.paging,
+    );
+    return ResponseListData(results, res, req.paging);
   };
 
   private getYearlySales = async (req: ProtectedRequest, res: Response) => {
@@ -53,7 +60,7 @@ export class DashboardEndpoint {
   public getRouter() {
     const router = express.Router();
     router.get('/today-sales-summary', this.getTodaySaleSummary);
-    router.get('/recent-orders', this.getRecentOrders);
+    router.get('/recent-orders', PagingMiddelware, this.getRecentOrders);
     router.get('/yearly-sales', this.getYearlySales);
     return router;
   }

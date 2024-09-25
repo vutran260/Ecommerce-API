@@ -1,5 +1,12 @@
 import { LP_ORDER, LP_ORDER_ITEM } from '../../lib/mysql/models/init-models';
 import { Op, Sequelize } from 'sequelize';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+} from '../../lib/paging/Request';
+import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class DashboardRepository {
   public async getTodaySaleSummary(storeId: string) {
@@ -50,18 +57,48 @@ export class DashboardRepository {
     };
   }
 
-  public async getRecentOrders(storeId: string) {
+  public async getRecentOrders(
+    storeId: string,
+    filter: Filter[] = [],
+    order: LpOrder[] = [],
+    paging: Paging,
+  ) {
     const currentTime = new Date();
     const past24Hours = new Date(currentTime.getTime() - 24 * 60 * 60 * 1000);
+
+    filter.push({
+      operation: 'eq',
+      value: storeId,
+      attribute: 'storeId',
+    });
+
+    filter.push({
+      operation: 'between',
+      value: [past24Hours, currentTime],
+      attribute: 'createdAt',
+    });
+
+    order.push({
+      attribute: 'createdAt',
+      direction: 'DESC',
+    });
+
+    paging.total = await LP_ORDER.count({
+      where: BuildQuery(filter),
+      distinct: true,
+      col: 'id',
+    });
+
     return await LP_ORDER.findAll({
-      limit: 5,
-      order: [['created_at', 'DESC']],
-      where: {
-        storeId: storeId,
-        createdAt: {
-          [Op.between]: [past24Hours, currentTime],
+      include: [
+        {
+          association: LP_ORDER.associations.lpOrderAddressBuyer,
         },
-      },
+      ],
+      where: BuildQuery(filter),
+      offset: GetOffset(paging),
+      order: BuildOrderQuery(order),
+      limit: paging.limit,
     });
   }
 
