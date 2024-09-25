@@ -9,6 +9,7 @@ import CategoryCreateRequest from '../../common/model/categories/CategoryCreateR
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
+import { plainToClass } from 'class-transformer';
 
 export class CategoryEndpoint {
   private categoryUsecase: CategoryUsecase;
@@ -23,14 +24,11 @@ export class CategoryEndpoint {
         req.body.parentId || null,
         req.storeId!,
       );
-      const categoryCreateRequest: CategoryCreateRequest = {
-        parentId: req.body.parentId,
-        categoryName: req.body.categoryName,
-        categoryTag: req.body.categoryTag,
-        status: req.body.status,
-        storeId: req.storeId!,
-        orderLevel: categories.length + 1,
-      };
+      const categoryCreateRequest = plainToClass(
+        CategoryCreateRequest,
+        req.body,
+      );
+      categoryCreateRequest.orderLevel = categories.length + 1;
 
       await validatorRequest(categoryCreateRequest);
       const results = await this.categoryUsecase.createCategory(
@@ -46,17 +44,10 @@ export class CategoryEndpoint {
 
   private updateCategory = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const categoryUpdateRequest: CategoryCreateRequest = {
-      storeId: req.body.storeId,
-      parentId: req.body.parentId || null,
-      categoryName: req.body.categoryName,
-      categoryTag: req.body.categoryTag,
-      status: req.body.status,
-      orderLevel: req.body.orderLevel,
-    };
-    await validatorRequest(categoryUpdateRequest);
+    const updateCreateRequest = plainToClass(CategoryCreateRequest, req.body);
+    await validatorRequest(updateCreateRequest);
     const results = await this.categoryUsecase.updateCategory(
-      categoryUpdateRequest,
+      updateCreateRequest,
       id,
       req.storeId!,
     );
@@ -65,10 +56,7 @@ export class CategoryEndpoint {
 
   private deleteCategory = async (req: ProtectedRequest, res: Response) => {
     const ids: string[] = req.body.ids;
-    const results = await this.categoryUsecase.deleteCategory(
-      ids,
-      req.storeId!,
-    );
+    await this.categoryUsecase.deleteCategory(ids, req.storeId!);
     return ResponseData({ message: 'Deleted is successfully!' }, res);
   };
 
