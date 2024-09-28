@@ -60,7 +60,7 @@ export class BuyerRepository {
     const buyer = await LP_BUYER.findOne({
       include: [
         {
-          association: LP_BUYER.associations.lpAddressBuyerSso,
+          association: LP_BUYER.associations.lpAddressBuyers,
         },
         {
           association: LP_BUYER.associations.lpBuyerPersonalInformation,

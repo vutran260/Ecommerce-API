@@ -77,23 +77,25 @@ export class BuyerDetailInfo {
     this.id = buyer.id;
     if (buyer.lpBuyerPersonalInformation) {
       const buyerInfo = buyer.lpBuyerPersonalInformation;
-      this.fullname = buyerInfo.firstName + ' ' + buyerInfo.lastName;
+      this.fullname = buyerInfo.lastName + ' ' + buyerInfo.firstName;
       this.gender = buyerInfo.gender;
     } else {
       this.fullname = '';
       this.gender = 0;
     }
 
-    if (buyer.lpAddressBuyerSso) {
-      const buyerSso = buyer.lpAddressBuyerSso;
-      this.address =
-        buyerSso.buildingName +
-        ', ' +
-        buyerSso.cityTown +
-        ', ' +
-        buyerSso.postCode;
-      this.email = buyerSso.email;
-      this.telephone = buyerSso.telephoneNumber;
+    if (buyer.lpAddressBuyers[0]) {
+      const buyerAddress = buyer.lpAddressBuyers[0];
+      this.address = [
+        buyerAddress.prefectureCode,
+        buyerAddress.cityTown,
+        buyerAddress.streetAddress,
+        buyerAddress.buildingName,
+      ]
+        .filter(Boolean)
+        .join(', ');
+      this.email = buyerAddress.email;
+      this.telephone = buyerAddress.telephoneNumber;
     } else {
       this.address = '';
       this.email = '';
