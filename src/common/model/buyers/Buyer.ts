@@ -84,10 +84,11 @@ export class BuyerDetailInfo {
       this.gender = 0;
     }
 
-    if (buyer.lpAddressBuyers[0]) {
-      const buyerAddress = buyer.lpAddressBuyers[0];
+    const buyerAddress =
+      buyer?.lpAddressBuyers?.[0] || buyer?.lpAddressBuyerSso;
+    if (buyerAddress) {
       this.address = [
-        buyerAddress.prefectureCode,
+        buyerAddress.prefectureName || buyerAddress.prefectureCode,
         buyerAddress.cityTown,
         buyerAddress.streetAddress,
         buyerAddress.buildingName,

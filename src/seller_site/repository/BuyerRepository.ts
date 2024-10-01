@@ -63,6 +63,9 @@ export class BuyerRepository {
           association: LP_BUYER.associations.lpAddressBuyers,
         },
         {
+          association: LP_BUYER.associations.lpAddressBuyerSso,
+        },
+        {
           association: LP_BUYER.associations.lpBuyerPersonalInformation,
         },
       ],
