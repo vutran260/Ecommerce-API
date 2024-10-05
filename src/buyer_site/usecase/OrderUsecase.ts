@@ -291,7 +291,7 @@ export class OrderUsecase {
     await this.orderRepo.updateOrderStatus(
       {
         orderId: order.id,
-        status: OrderStatus.PREPARING,
+        status: OrderStatus.WAITING_CONFIRMED,
       },
       t,
     );
@@ -320,7 +320,7 @@ export class OrderUsecase {
       totalAmount,
       shipmentFee,
       finalAmount,
-      orderStatus: OrderStatus.WAITING_PICKUP,
+      orderStatus: OrderStatus.WAITING_CONFIRMED,
       t,
     });
   }
@@ -340,7 +340,7 @@ export class OrderUsecase {
       if (!existingOrder) {
         const createOrderRequest: CreateOrderRequest = {
           id: id,
-          orderStatus: OrderStatus.NOT_CONFIRMED,
+          orderStatus: OrderStatus.WAITING_CONFIRMED,
           orderType: orderType,
           amount: 0,
           shipmentFee: 0,

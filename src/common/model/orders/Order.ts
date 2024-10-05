@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { CartItem } from '../../../buyer_site/endpoint/CartEndpoint';
-import { DATE_FORMAT } from '../../../lib/constant/Constant';
+import { DATE_FORMAT, OrderStatus } from '../../../lib/constant/Constant';
 import { LP_ADDRESS_BUYER } from '../../../lib/mysql/models/LP_ADDRESS_BUYER';
 import { LP_ORDER } from '../../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../../lib/mysql/models/LP_ORDER_ITEM';
@@ -10,6 +10,8 @@ import {
   SubscriptionAddress,
   SubscriptionProduct,
 } from '../../../common/model/orders/Subscription';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsOrderStatusSequential } from '../../../common/custom_validator/IsOrderStatusSequential';
 
 export class Order {
   id: number;
@@ -151,8 +153,15 @@ export class CreateShipmentRequest {
 }
 
 export class UpdateOrderStatusRequest {
+  @IsNotEmpty()
   orderId: number;
+
+  @IsEnum(OrderStatus)
+  @IsOrderStatusSequential()
   status: string;
+
+  @IsEnum(OrderStatus)
+  currentStatus?: string;
 }
 
 export class OrderDetailResponse {

@@ -8,6 +8,8 @@ import Logger from '../../lib/core/Logger';
 import { UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
+import { plainToInstance } from 'class-transformer';
+import { validatorRequest } from '../../lib/helpers/validate';
 
 export class OrderEndpoint {
   private orderUsecase: OrderUsecase;
@@ -54,11 +56,7 @@ export class OrderEndpoint {
 
   private updateOrderStatus = async (req: ProtectedRequest, res: Response) => {
     try {
-      const updateRequest: UpdateOrderStatusRequest = {
-        orderId: req.body.orderId,
-        status: req.body.status,
-      };
-      const results = await this.orderUsecase.updateOrderStatus(updateRequest);
+      const results = await this.orderUsecase.updateOrderStatus(req.body);
       return ResponseData(results, res);
     } catch (error: any) {
       Logger.error(error.message);
