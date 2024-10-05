@@ -20,11 +20,10 @@ export enum OrderType {
 }
 
 export enum OrderStatus {
-  NOT_CONFIRMED = 'NOT_CONFIRMED', //注文未確定
-  PREPARING = 'PREPARING', // 発送準備中
-  WAITING_PICKUP = 'WAITING_PICKUP', // 集荷依頼待ち
-  WAITING_SHIP = 'WAITING_SHIP', // 出荷待ち
-  SHIPPED = 'SHIPPED', // 出荷完了
+  WAITING_CONFIRMED = 'WAITING_CONFIRMED', //受注確認待ち中
+  CONFIRMED_ORDER = 'CONFIRMED_ORDER', // 受注確認済
+  DELIVERING = 'DELIVERING', // 配達中
+  DELIVERED = 'DELIVERED', // 配達完了
   CANCEL = 'CANCEL', // キャンセル
 }
 
