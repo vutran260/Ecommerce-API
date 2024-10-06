@@ -46,6 +46,9 @@ import { ProductRecentlyViewedUseCase } from './usecase/ProductRecentlyViewedUse
 import { ProductRecentlyViewedRepository } from './repository/ProductRecentlyViewedRepository';
 import { ProductRecentlyViewedEndpoint } from './endpoint/ProductRecentlyViewedEndpoint';
 import { InvoiceRepository } from './repository/InvoiceRepository';
+import { PaymentUseCase } from './usecase/PaymentUsecase';
+import { MailUseCase } from './usecase/MailUsecase';
+import { InvoiceUseCase } from './usecase/InvoiceUsecase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -80,6 +83,14 @@ export class buyerSiteRouter {
     const addressUsecase = new AddressUsecase(addressRepo);
     const prefectureUsecase = new PrefectureUsecase(prefectureRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
+    const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
+    const mailUseCase = new MailUseCase(orderRepo, mailService);
+    const invoiceUseCase = new InvoiceUseCase(
+      orderRepo,
+      invoiceRepository,
+      mailService,
+      pdfService,
+    );
     const orderUsecase = new OrderUsecase(
       orderRepo,
       orderItemRepo,
@@ -88,12 +99,10 @@ export class buyerSiteRouter {
       shipmentRepository,
       orderAddressBuyerRepository,
       addressRepo,
-      gmoGetwaySerivce,
       productRepo,
       subscriptionRepo,
-      invoiceRepository,
-      mailService,
-      pdfService,
+      paymentUseCase,
+      mailUseCase,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
@@ -113,7 +122,11 @@ export class buyerSiteRouter {
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
-    const orderEndpoint = new OrderEndpoint(orderUsecase);
+    const orderEndpoint = new OrderEndpoint(
+      orderUsecase,
+      paymentUseCase,
+      invoiceUseCase,
+    );
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);

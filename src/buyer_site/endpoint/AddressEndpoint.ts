@@ -52,7 +52,9 @@ export class AddressEndpoint {
     res: Response,
   ) => {
     const id = req.user.id;
-    const results = await this.addressUsecase.getAddressByBuyerId(id);
+    const storeId: string = req.storeId;
+
+    const results = await this.addressUsecase.getAddressByBuyerId(id, storeId);
 
     return ResponseData(results, res);
   };
@@ -62,8 +64,12 @@ export class AddressEndpoint {
     res: Response,
   ) => {
     const storeId: string = req.storeId;
+    const buyerId: string = req.user.id;
 
-    const results = await this.addressUsecase.getAddressByStoreId(storeId);
+    const results = await this.addressUsecase.getAddressByBuyerId(
+      buyerId,
+      storeId,
+    );
 
     return ResponseData(results, res);
   };

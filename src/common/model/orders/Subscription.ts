@@ -9,15 +9,20 @@ import Product, {
   ProductFromLP_PRODUCT,
 } from '../../../common/model/products/Product';
 import {
+  ArrayNotEmpty,
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { IsYYYYMMDD } from '../../custom_validator/IsYYYYMMDD';
 import { IsHHMM } from '../../custom_validator/IsHHMM';
 import { SubscriptionStatus } from '../../../lib/constant/Constant';
+import { Type } from 'class-transformer';
 
 export class CreateSubscriptionRequest {
   buyerId: string;
@@ -179,4 +184,22 @@ export class Subscription {
   @IsOptional()
   @IsHHMM()
   planDeliveryTimeTo?: string;
+}
+
+export class ProductItem {
+  @IsNotEmpty()
+  productId: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+export class UpdateProductItemsRequest {
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => ProductItem)
+  items: ProductItem[];
 }

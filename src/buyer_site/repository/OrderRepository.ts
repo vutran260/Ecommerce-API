@@ -1,18 +1,9 @@
 import lodash, { forEach } from 'lodash';
 import { Transaction } from 'sequelize';
-import {
-  CreateOrderRequest,
-  UpdateOrderRequest,
-  UpdateOrderStatusRequest,
-} from '../../common/model/orders/Order';
+import { CreateOrderRequest, UpdateOrderRequest, UpdateOrderStatusRequest } from '../../common/model/orders/Order';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import {
-  BuildQuery,
-  Filter,
-  GetOffset,
-  Paging,
-} from '../../lib/paging/Request';
+import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import Logger from '../../lib/core/Logger';
 
@@ -53,7 +44,7 @@ export class OrderRepository {
   };
 
   public getOrderById = async (id: number, t?: Transaction) => {
-    const result = await LP_ORDER.findOne({
+    return await LP_ORDER.findOne({
       where: { id },
       include: [
         {
@@ -71,8 +62,6 @@ export class OrderRepository {
       ],
       transaction: t,
     });
-
-    return result?.dataValues;
   };
 
   public getOrderFullAttrById = async (id: number, t?: Transaction) => {

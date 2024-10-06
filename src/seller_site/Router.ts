@@ -36,6 +36,9 @@ import { PrefectureRepository } from './repository/PrefectureRepository';
 import { DashboardRepository } from './repository/DashboardRepository';
 import { DashboardUseCase } from './usecase/DashboardUsecase';
 import { DashboardEndpoint } from './endpoint/DashboardEndpoint';
+import { PaymentUseCase } from '../buyer_site/usecase/PaymentUsecase';
+import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
+import { CardUsecase } from '../buyer_site/usecase/CardUsecase';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -56,13 +59,20 @@ export class sellerSiteRouter {
 
     // third party
     const s3Service = new S3Service();
+    const gmoGetwaySerivce = new GMOPaymentService();
 
     const sellerUsecase = new SellerUsecase(sellerRepo);
     const storeUsecase = new StoreUsecase(storeRepo, sellerRepo);
     const categoryUsecase = new CategoryUsecase(categorytRepo);
     const productUsecase = new ProductUsecase(productRepo, categorytRepo);
     const storePostUsecase = new StorePostUsecase(storePostRepo);
-    const orderUsecase = new OrderUsecase(orderRepo, orderItemRepo);
+    const cardUsecase = new CardUsecase(gmoGetwaySerivce);
+    const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
+    const orderUsecase = new OrderUsecase(
+      orderRepo,
+      orderItemRepo,
+      paymentUseCase,
+    );
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
     const subscriptionUseCase = new SubscriptionUseCase(

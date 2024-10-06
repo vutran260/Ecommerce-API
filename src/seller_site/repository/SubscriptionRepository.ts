@@ -13,7 +13,7 @@ import {
   Paging,
 } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import lodash from 'lodash';
+import lodash, { isEmpty } from 'lodash';
 
 export class SubscriptionRepository {
   public getSubscriptions = async (
@@ -21,6 +21,12 @@ export class SubscriptionRepository {
     order: LpOrder[],
     filter: Filter[],
   ) => {
+    if (isEmpty(order)) {
+      order.push({
+        attribute: 'createdAt',
+        direction: 'DESC',
+      });
+    }
     const count = await LP_SUBSCRIPTION.count({
       where: BuildQuery(filter),
     });

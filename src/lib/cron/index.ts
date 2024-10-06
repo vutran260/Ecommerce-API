@@ -12,8 +12,8 @@ import { OrderAddressBuyerRepository } from '../../buyer_site/repository/OrderAd
 import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
 import { MailService } from '../../third_party/mail/mailService';
-import { PdfService } from '../../third_party/pdf/pdfService';
-import { InvoiceRepository } from '../../buyer_site/repository/InvoiceRepository';
+import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
+import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 
 const productRepo = new ProductRepository();
 const addressRepo = new AddressRepository();
@@ -24,10 +24,11 @@ const orderPaymentRepo = new OrderPaymentRepository();
 const shipmentRepository = new ShipmentRepository();
 const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
 const subscriptionRepo = new SubscriptionRepository();
-const invoiceRepository = new InvoiceRepository();
 const gmoGetwaySerivce = new GMOPaymentService();
 const mailService = new MailService();
-const pdfService = new PdfService();
+const cardUsecase = new CardUsecase(gmoGetwaySerivce);
+const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
+const mailUseCase = new MailUseCase(orderRepo, mailService);
 
 const subscriptionRepository = new SubscriptionRepository();
 const orderUseCase = new OrderUsecase(
@@ -38,21 +39,18 @@ const orderUseCase = new OrderUsecase(
   shipmentRepository,
   orderAddressBuyerRepository,
   addressRepo,
-  gmoGetwaySerivce,
   productRepo,
   subscriptionRepo,
-  invoiceRepository,
-  mailService,
-  pdfService,
+  paymentUseCase,
+  mailUseCase,
 );
 const cardUseCase = new CardUsecase(gmoGetwaySerivce);
 
 const subscriptionOrderCron = new SubscriptionOrderCron(
   subscriptionRepository,
-  orderRepo,
   orderUseCase,
   cardUseCase,
-  mailService,
+  mailUseCase,
 );
 
 export function startAllCronJobs() {

@@ -68,8 +68,8 @@ export class AddressUsecase {
     return item;
   };
 
-  public getAddressByBuyerId = async (id: string) => {
-    const results = await this.AddressRepo.getAddressByBuyerId(id);
+  public getAddressByBuyerId = async (id: string, storeId: string) => {
+    const results = await this.AddressRepo.getAddressByBuyerId(id, storeId);
     return results;
   };
 

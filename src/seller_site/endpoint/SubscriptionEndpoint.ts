@@ -1,13 +1,15 @@
 import express, { Response } from 'express';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { SubscriptionUseCase } from '../../seller_site/usecase/SubscriptionUsecase';
-import { ResponseData, ResponseListData } from '../../lib/http/Response';
+import { ResponseData, ResponseDataError, ResponseListData } from '../../lib/http/Response';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { Subscription } from '../../common/model/orders/Subscription';
+import { isEmpty } from 'lodash';
+import { StatusCode } from '../../lib/http/custom_error/StatusCode';
 
 export class SubscriptionEndpoint {
   private subscriptionUseCase: SubscriptionUseCase;
@@ -56,6 +58,17 @@ export class SubscriptionEndpoint {
     return ResponseData('update subscription success!!!', res);
   };
 
+  private updateProductItems = async (req: ProtectedRequest, res: Response) => {
+    const result = await this.subscriptionUseCase.updateProductItems(
+      req.params.id,
+      req.body,
+    );
+    if (!isEmpty(result.errors)) {
+      return ResponseDataError(result.errors, StatusCode.BUSINESS_FAIL, res);
+    }
+    return ResponseData('update subscription product success', res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get(
@@ -66,6 +79,7 @@ export class SubscriptionEndpoint {
     );
     router.get('/:id', this.getSubscription);
     router.put('/:id', this.updateSubscription);
+    router.put('/:id/products', this.updateProductItems);
     router.get('/:id/orders', PagingMiddelware, this.getSubscriptionOrders);
     return router;
   }

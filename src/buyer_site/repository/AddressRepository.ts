@@ -52,14 +52,13 @@ export class AddressRepository {
     });
   };
 
-  public getAddressByBuyerId = async (id: string) => {
-    const results = await LP_ADDRESS_BUYER.findAll({
+  public getAddressByBuyerId = async (id: string, storeId: string) => {
+    return await LP_ADDRESS_BUYER.findAll({
       where: {
         buyerId: id,
+        storeId: storeId,
       },
     });
-
-    return results;
   };
 
   public getLatestAddressByBuyerId = async (id: string) => {
