@@ -8,12 +8,22 @@ import { ResponseData, ResponseListData } from '../../lib/http/Response';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { OrderUsecase } from '../usecase/OrderUsecase';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
+import { PaymentUseCase } from '../usecase/PaymentUsecase';
+import { InvoiceUseCase } from '../usecase/InvoiceUsecase';
 
 export class OrderEndpoint {
   private orderUsecase: OrderUsecase;
+  private paymentUseCase: PaymentUseCase;
+  private invoiceUseCase: InvoiceUseCase;
 
-  constructor(orderUsecase: OrderUsecase) {
+  constructor(
+    orderUsecase: OrderUsecase,
+    paymentUseCase: PaymentUseCase,
+    invoiceUseCase: InvoiceUseCase,
+  ) {
     this.orderUsecase = orderUsecase;
+    this.paymentUseCase = paymentUseCase;
+    this.invoiceUseCase = invoiceUseCase;
   }
 
   private createOrder = async (req: ProtectedRequest, res: Response) => {
@@ -72,7 +82,7 @@ export class OrderEndpoint {
 
   // API testing check point on server SIFT
   private checkFraud = async (req: ProtectedRequest, res: Response) => {
-    const results = await this.orderUsecase.checkFraud(
+    const results = await this.paymentUseCase.checkFraud(
       req.body.type,
       req.body.userId,
     );
@@ -88,7 +98,7 @@ export class OrderEndpoint {
       tax: req.body.tax,
     };
 
-    const results = await this.orderUsecase.entryTran(transactionRequest);
+    const results = await this.paymentUseCase.entryTran(transactionRequest);
     return ResponseData(results, res);
   };
 
@@ -103,7 +113,7 @@ export class OrderEndpoint {
       method: req.body.method,
     };
 
-    const results = await this.orderUsecase.execTran(transactionExecRequest);
+    const results = await this.paymentUseCase.execTran(transactionExecRequest);
     return ResponseData(results, res);
   };
 
@@ -114,10 +124,10 @@ export class OrderEndpoint {
     if (!req.body.orderId) {
       throw new BadRequestError('orderId is require');
     }
-    const result = await this.orderUsecase.issueInvoice(
-      req.body.email,
-      req.body.orderId,
-    );
+    const result = await this.invoiceUseCase.issueInvoice({
+      email: req.body.email,
+      orderId: req.body.orderId,
+    });
     return ResponseData(result, res);
   };
 

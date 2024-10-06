@@ -1,5 +1,5 @@
-import lodash, { forEach } from 'lodash';
-import { Sequelize, Transaction } from 'sequelize';
+import lodash, { forEach, isEmpty } from 'lodash';
+import { Transaction } from 'sequelize';
 import Logger from '../../lib/core/Logger';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
@@ -48,12 +48,17 @@ export class OrderRepository {
     paging: Paging,
   ) => {
     try {
-      const count = await LP_ORDER.count({
+      if (isEmpty(order)) {
+        order.push({
+          attribute: 'createdAt',
+          direction: 'DESC',
+        });
+      }
+      paging.total = await LP_ORDER.count({
         where: BuildQuery(filter),
         distinct: true,
         col: 'id',
       });
-      paging.total = count;
 
       const results = await LP_ORDER.findAll({
         include: [

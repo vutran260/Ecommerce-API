@@ -7,12 +7,9 @@ import {
   OrderAddressBuyerCreate,
   OrderItem,
   UpdateOrderRequest,
-  UpdateOrderStatusRequest,
 } from '../../common/model/orders/Order';
 import {
-  ChargeMethod,
   DATE_FORMAT,
-  JobCd,
   OrderStatus,
   OrderType,
   PaymentSatus,
@@ -32,9 +29,6 @@ import { LP_ORDER, LP_ORDERAttributes } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';
-import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
-import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTransactionRequest';
-import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
 import { CartItem } from '../endpoint/CartEndpoint';
 import { AddressRepository } from '../repository/AddressRepository';
 import { CartRepository } from '../repository/CartRepository';
@@ -46,7 +40,6 @@ import { ProductRepository } from '../repository/ProductRepository';
 import { ShipmentRepository } from '../repository/ShipmentRepository';
 import { Transaction } from 'sequelize';
 import { isEmpty } from 'lodash';
-
 import {
   CreateSubscriptionAddressRequest,
   SubscriptionAddress,
@@ -56,20 +49,8 @@ import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
-import {
-  MailOptions,
-  MailService,
-  OrderSuccessOptions,
-} from '../../third_party/mail/mailService';
-import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
-import {
-  formatCurrency,
-  formatName,
-  formatPhoneNumber,
-  formatDiscountAmount,
-} from '../../lib/helpers/commonFunction';
-import { PdfService, TemplateParams } from '../../third_party/pdf/pdfService';
-import { InvoiceRepository } from '../repository/InvoiceRepository';
+import { PaymentUseCase } from 'src/buyer_site/usecase/PaymentUsecase';
+import { MailUseCase } from 'src/buyer_site/usecase/MailUsecase';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -78,13 +59,11 @@ export class OrderUsecase {
   private orderPaymentRepo: OrderPaymentRepository;
   private shipmentRepository: ShipmentRepository;
   private orderAddressBuyerRepository: OrderAddressBuyerRepository;
-  private gmoPaymentService: GMOPaymentService;
   private addressRepository: AddressRepository;
   private productRepo: ProductRepository;
   private subscriptionRepo: SubscriptionRepository;
-  private invoiceRepository: InvoiceRepository;
-  private mailService: MailService;
-  private pdfService: PdfService;
+  private paymentUseCase: PaymentUseCase;
+  private mailUseCase: MailUseCase;
 
   constructor(
     orderRepo: OrderRepository,
@@ -94,26 +73,22 @@ export class OrderUsecase {
     shipmentRepository: ShipmentRepository,
     orderAddressBuyerRepository: OrderAddressBuyerRepository,
     addressRepository: AddressRepository,
-    gmoPaymentService: GMOPaymentService,
     productRepo: ProductRepository,
     subscriptionRepo: SubscriptionRepository,
-    invoiceRepository: InvoiceRepository,
-    mailService: MailService,
-    pdfService: PdfService,
+    paymentUseCase: PaymentUseCase,
+    mailUseCase: MailUseCase,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
     this.cartRepo = cartRepo;
-    this.gmoPaymentService = gmoPaymentService;
     this.orderPaymentRepo = orderPaymentRepo;
     this.shipmentRepository = shipmentRepository;
     this.orderAddressBuyerRepository = orderAddressBuyerRepository;
     this.addressRepository = addressRepository;
     this.productRepo = productRepo;
     this.subscriptionRepo = subscriptionRepo;
-    this.invoiceRepository = invoiceRepository;
-    this.mailService = mailService;
-    this.pdfService = pdfService;
+    this.paymentUseCase = paymentUseCase;
+    this.mailUseCase = mailUseCase;
   }
 
   public createOrder = async (
@@ -162,39 +137,10 @@ export class OrderUsecase {
       await t.commit();
 
       if (order) {
-        const orderNewest = await this.orderRepo.getOrderFullAttrById(order.id);
-        const products =
-          orderNewest?.lpOrderItems?.map((item) => {
-            return {
-              productName: item.productName,
-              unitPrice: formatCurrency(item.price),
-              quantity: item.quantity,
-              subTotal: formatCurrency((item.price || 0) * item.quantity),
-            };
-          }) || [];
-        const mailOptions: OrderSuccessOptions = {
-          to: latestAddress.email,
-          subject: 'ECパレット｜ご注文ありがとうございます',
-          templateName: 'orderSuccessTemplate',
-          params: {
-            buyerFirstNameKanji: latestAddress.firstNameKanji,
-            buyerLastNameKanji: latestAddress.lastNameKanji,
-            companyName: 'ECパレット',
-            orderId: order.id,
-            orderCreatedAt: formatDateJp(order.createdAt),
-            products: products,
-            subTotal: formatCurrency(orderNewest?.amount),
-            shippingCode: formatCurrency(orderNewest?.shipmentFee),
-            total: formatCurrency(orderNewest?.totalAmount),
-            postCode: latestAddress.postCode,
-            address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
-            phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
-          },
-        };
-        Logger.info(
-          `Start send mail order success with options: ${JSON.stringify(mailOptions, null, 2)}`,
-        );
-        this.mailService.sendMail(mailOptions);
+        this.mailUseCase.sendMailOrder({
+          orderId: order.id,
+          latestAddress,
+        });
       }
     } catch (error) {
       Logger.error('Fail to create order or subscription');
@@ -287,33 +233,7 @@ export class OrderUsecase {
     await this.createShipment(order.id, shipmentFee, t);
     await this.createOrderAddressBuyer(order.id, latestAddress, t);
 
-    Logger.info('Start update order status: PREPARING after check point');
-    await this.orderRepo.updateOrderStatus(
-      {
-        orderId: order.id,
-        status: OrderStatus.WAITING_CONFIRMED,
-      },
-      t,
-    );
-
-    Logger.info('Start create gmo transaction');
-    const execTranResponse = await this.processTransaction(
-      order.id,
-      cardSeq,
-      buyerId,
-      finalAmount,
-    );
-
-    if (execTranResponse) {
-      Logger.info('Start update payment status: PAID');
-      await this.orderPaymentRepo.updateOrderPaymentStatus(
-        order.id,
-        PaymentSatus.PAID,
-        t,
-      );
-    }
-
-    return await this.updateOrderAfterTransaction({
+    const orderUpdated = await this.updateOrderInfo({
       orderId: order.id,
       buyerId,
       storeId,
@@ -323,6 +243,17 @@ export class OrderUsecase {
       orderStatus: OrderStatus.WAITING_CONFIRMED,
       t,
     });
+
+    // if order type is normal, create payment transaction
+    // order type is subscription need to be confirmed by seller before transaction
+    if (orderType == OrderType.NORMAL && orderUpdated) {
+      await this.paymentUseCase.processTransaction({
+        order: orderUpdated,
+        cardSeq,
+      });
+    }
+
+    return orderUpdated;
   }
 
   private async initOrder(
@@ -411,42 +342,6 @@ export class OrderUsecase {
     return totalAmount;
   }
 
-  private async processTransaction(
-    orderId: number,
-    cardSeq: string,
-    buyerId: string,
-    finalAmount: number,
-  ) {
-    Logger.info('Start create transaction');
-    if (finalAmount <= 0) {
-      Logger.error('Bad total amount');
-      throw new BadRequestError('Your total amount must be greater than 0');
-    }
-    const transactionRequest: TransactionRequest = {
-      orderID: `${orderId}`,
-      jobCd: JobCd.CAPTURE,
-      amount: finalAmount,
-    };
-    const theTransInfo =
-      await this.gmoPaymentService.entryTran(transactionRequest);
-    Logger.info(theTransInfo);
-
-    Logger.info('Start execute transaction');
-    if (theTransInfo) {
-      const execTransactionRequest: ExecTransactionRequest = {
-        accessID: theTransInfo.accessID,
-        accessPass: theTransInfo.accessPass,
-        memberID: buyerId,
-        cardSeq: cardSeq,
-        orderID: `${orderId}`,
-        method: ChargeMethod.BULK,
-      };
-
-      return await this.gmoPaymentService.execTran(execTransactionRequest);
-    }
-    return null;
-  }
-
   private async getCartItems(storeId: string, buyerId: string) {
     const items = await this.cartRepo.getListItemInCart(storeId, buyerId);
     return items.map((item) => CartItem.FromLP_CART(item));
@@ -523,19 +418,7 @@ export class OrderUsecase {
     await this.orderAddressBuyerRepository.addAddress(orderAddressBuyer, t);
   }
 
-  private async updateOrderStatus(
-    orderId: number,
-    status: OrderStatus,
-    t: Transaction,
-  ) {
-    const updateRequest: UpdateOrderStatusRequest = {
-      orderId: orderId,
-      status: status,
-    };
-    await this.orderRepo.updateOrderStatus(updateRequest, t);
-  }
-
-  private async updateOrderAfterTransaction(params: {
+  private async updateOrderInfo(params: {
     orderId: number;
     buyerId: string;
     storeId: string;
@@ -544,7 +427,7 @@ export class OrderUsecase {
     finalAmount: number;
     orderStatus: OrderStatus;
     t: Transaction;
-  }): Promise<LP_ORDERAttributes | undefined> {
+  }): Promise<LP_ORDER | null> {
     const {
       orderId,
       buyerId,
@@ -571,8 +454,7 @@ export class OrderUsecase {
   }
 
   public getOrderById = async (id: number) => {
-    const result = await this.orderRepo.getOrderById(id);
-    return result;
+    return await this.orderRepo.getOrderById(id);
   };
 
   public getOrders = async (
@@ -611,91 +493,5 @@ export class OrderUsecase {
     return orders.map((order) => {
       return new OrderItem(order);
     });
-  };
-
-  public checkFraud = async (type: string, userId: string) => {
-    return this.gmoPaymentService.checkFraud(type, userId);
-  };
-
-  public entryTran = async (transactionRequest: TransactionRequest) => {
-    return await this.gmoPaymentService.entryTran(transactionRequest);
-  };
-
-  public execTran = async (
-    preExecTransactionRequest: ExecTransactionRequest,
-  ) => {
-    return await this.gmoPaymentService.execTran(preExecTransactionRequest);
-  };
-
-  public issueInvoice = async (email: string, orderId: string) => {
-    const order = await this.orderRepo.getOrderFullAttrById(Number(orderId));
-    if (!order) {
-      throw new Error(`Order with ID ${orderId} not found`);
-    }
-
-    const createdInvoice = await this.invoiceRepository.createInvoice({
-      id: Date.now(),
-      orderId: order.id,
-      invoiceDate: new Date(),
-      totalAmount: order.totalAmount,
-      taxAmount: 0,
-      toEmail: email,
-    });
-
-    const { lpOrderAddressBuyer: orderAddress } = order;
-    const templateParams: TemplateParams = {
-      receiptNo: createdInvoice.id,
-      issueDate: formatDateJp(createdInvoice.createdAt),
-      customerName: formatName(
-        orderAddress.firstNameKanji,
-        orderAddress.lastNameKanji,
-      ),
-      shipmentFee: `${formatCurrency(order.shipmentFee)}円`,
-      totalAmount: `${formatCurrency(order.totalAmount)}円`,
-      storeName:
-        order?.store?.lpStoreSso?.storeShortName ||
-        order?.store?.storeName ||
-        '',
-      postalCode: orderAddress?.postCode,
-      address: `${orderAddress.prefectureName || ''} ${orderAddress.cityTown} ${orderAddress.streetAddress} ${orderAddress.buildingName}`,
-      phoneNumber: formatPhoneNumber(orderAddress?.telephoneNumber),
-      fax: '',
-      email: orderAddress?.email,
-      items: order.lpOrderItems.map((item) => ({
-        description: item.productName,
-        quantity: item.quantity,
-        unitPrice: `${item.originalPrice}円`,
-        discountPrice: `${formatDiscountAmount(item.price, item.originalPrice)}`,
-        amount: `${formatCurrency(item.quantity * (item.price || 0))}円`,
-      })),
-    };
-
-    const buffer = await this.pdfService.generatePdf(
-      'orderInvoicePdfTemplate',
-      templateParams,
-    );
-
-    const mailOptions: MailOptions = {
-      to: email,
-      subject:
-        'ECパレット｜[ご購入いただきありがとうございます] 領収書の発行について\n',
-      templateName: 'orderInvoiceTemplate',
-      params: {
-        buyerFirstNameKanji: order?.lpOrderAddressBuyer?.firstNameKanji || '',
-        buyerLastNameKanji: order?.lpOrderAddressBuyer?.lastNameKanji || '',
-        purchaseDate: formatDateJp(order?.createdAt),
-        orderId: order.id,
-        totalAmount: `${formatCurrency(order.totalAmount)}円`,
-      },
-    };
-
-    this.mailService.sendMail(mailOptions, [
-      {
-        filename: `invoice_${createdInvoice.id}.pdf`,
-        content: buffer,
-      },
-    ]);
-
-    return createdInvoice;
   };
 }

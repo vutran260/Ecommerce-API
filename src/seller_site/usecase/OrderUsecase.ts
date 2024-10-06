@@ -12,19 +12,26 @@ import { OrderRepository } from '../repository/OrderRepository';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
+import { OrderStatus, OrderType } from '../../lib/constant/Constant';
+import { PaymentUseCase } from 'src/buyer_site/usecase/PaymentUsecase';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
   private orderItemRepo: OrderItemRepository;
+  private paymentUseCase: PaymentUseCase;
 
-  constructor(orderRepo: OrderRepository, orderItemRepo: OrderItemRepository) {
+  constructor(
+    orderRepo: OrderRepository,
+    orderItemRepo: OrderItemRepository,
+    paymentUseCase: PaymentUseCase,
+  ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
+    this.paymentUseCase = paymentUseCase;
   }
 
   public getOrderById = async (id: number) => {
-    const result = await this.orderRepo.getOrderById(id);
-    return result;
+    return await this.orderRepo.getOrderById(id);
   };
 
   public getOrders = async (
@@ -59,15 +66,23 @@ export class OrderUsecase {
 
   public updateOrderStatus = async (request: UpdateOrderStatusRequest) => {
     const order = await this.orderRepo.getOrderById(request.orderId);
-
     if (!order) {
       throw new NotFoundError(`Order with ID ${request.orderId} not found.`);
     }
 
     request.currentStatus = order.orderStatus || '';
-
     const updateRequest = plainToInstance(UpdateOrderStatusRequest, request);
     await validatorRequest(updateRequest);
+
+    if (
+      order.orderType === OrderType.SUBSCRIPTION &&
+      request.status === OrderStatus.CONFIRMED_ORDER
+    ) {
+      if (order.buyerId) {
+        await this.paymentUseCase.processTransaction({ order });
+      }
+    }
+
     await this.orderRepo.updateOrderStatus(request);
   };
 }

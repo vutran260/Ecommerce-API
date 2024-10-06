@@ -27,6 +27,15 @@ export enum OrderStatus {
   CANCEL = 'CANCEL', // キャンセル
 }
 
+export enum OrderRegularStatus {
+  WAITING_CONFIRMED = 'WAITING_CONFIRMED', //受注確認待ち中
+  CONFIRMED_ORDER = 'CONFIRMED_ORDER', // 受注確認済
+  DELIVERING = 'DELIVERING', // 配達中
+  DELIVERED = 'DELIVERED', // 配達完了
+  CANCEL = 'CANCEL', // キャンセル
+  SKIPPED = 'SKIPPED', // SKIPPED
+}
+
 export enum SubscriptionStatus {
   CONTINUE = 'CONTINUE', // 継続中
   CANCEL = 'CANCEL', // 解除済
