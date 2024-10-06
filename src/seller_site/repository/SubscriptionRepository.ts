@@ -5,6 +5,8 @@ import {
   LP_SUBSCRIPTION,
   LP_SUBSCRIPTION_PRODUCT,
   LP_SUBSCRIPTIONAttributes,
+  LP_SUBSCRIPTION_ORDER,
+  LP_ORDER,
 } from '../../lib/mysql/models/init-models';
 import {
   BuildQuery,
@@ -60,7 +62,7 @@ export class SubscriptionRepository {
   };
 
   public getSubscriptionById = async (id: string, t?: Transaction) => {
-    const result = await LP_SUBSCRIPTION.findOne({
+    return await LP_SUBSCRIPTION.findOne({
       where: { id: id },
       include: [
         {
@@ -77,10 +79,25 @@ export class SubscriptionRepository {
             },
           ],
         },
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionOrders,
+          include: [
+            {
+              association: LP_SUBSCRIPTION_ORDER.associations.order,
+            },
+          ],
+        },
+      ],
+      order: [
+        [
+          { model: LP_SUBSCRIPTION_ORDER, as: 'lpSubscriptionOrders' },
+          { model: LP_ORDER, as: 'order' },
+          'created_at',
+          'DESC',
+        ],
       ],
       transaction: t,
     });
-    return result?.dataValues;
   };
 
   public updateSubscription = async (request: LP_SUBSCRIPTIONAttributes) => {

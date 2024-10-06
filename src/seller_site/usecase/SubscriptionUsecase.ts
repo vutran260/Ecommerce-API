@@ -10,7 +10,11 @@ import {
   UpdateProductItemsRequest,
 } from '../../common/model/orders/Subscription';
 import moment from 'moment';
-import { DATE_FORMAT, ProductStatus } from '../../lib/constant/Constant';
+import {
+  DATE_FORMAT,
+  OrderStatus,
+  ProductStatus,
+} from '../../lib/constant/Constant';
 import { SubscriptionOrderRepository } from '../repository/SubscriptionOrderRepository';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
@@ -119,6 +123,23 @@ export class SubscriptionUseCase {
         throw new InternalError('Subscription not found');
       }
 
+      const latestOrder = subscription.lpSubscriptionOrders[0].order;
+
+      if (!latestOrder) {
+        throw new InternalError(
+          `No order found for subscription with ID ${subscriptionId}`,
+        );
+      }
+
+      if (
+        latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
+        latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
+      ) {
+        throw new InternalError(
+          `The subscription product cannot be edited because the latest order status does not allow editing.`,
+        );
+      }
+
       const existingProducts = await LP_SUBSCRIPTION_PRODUCT.findAll({
         where: { subscriptionId: subscriptionId },
         transaction: t,
@@ -161,11 +182,19 @@ export class SubscriptionUseCase {
           : item.quantity;
 
         if (quantityDifference > 0 && product.stockItem < quantityDifference) {
-          errors.push({
-            productId: item.productId,
-            errorCode: ErrorCode.OVER_STOCK,
-            message: `Product with ID ${item.productId} does not have enough stock. Available stock: ${product.stockItem}, requested quantity: ${quantityDifference}`,
-          });
+          if (product.stockItem === 0) {
+            errors.push({
+              productId: item.productId,
+              errorCode: ErrorCode.OVER_STOCK,
+              message: `選択された商品は在庫切れのため、交換・追加することができません。他の商品を選択してください。`,
+            });
+          } else {
+            errors.push({
+              productId: item.productId,
+              errorCode: ErrorCode.OVER_STOCK,
+              message: `交換・追加したい商品の在庫が不足している場合、エラーメッセージが表示されます`,
+            });
+          }
           continue;
         }
 
