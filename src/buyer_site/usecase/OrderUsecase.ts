@@ -25,7 +25,7 @@ import {
   OutOfStockError,
 } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
-import { LP_ORDER, LP_ORDERAttributes } from '../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
 import { LpOrder } from '../../lib/paging/Order';
 import { Filter, Paging } from '../../lib/paging/Request';

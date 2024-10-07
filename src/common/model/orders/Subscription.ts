@@ -203,3 +203,4 @@ export class UpdateProductItemsRequest {
   @Type(() => ProductItem)
   items: ProductItem[];
 }
+

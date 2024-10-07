@@ -40,11 +40,25 @@ export class SubscriptionUseCase {
     order: LpOrder[],
     paging: Paging,
   ) => {
-    return await this.subscriptionRepository.getSubscriptions(
+    const subscriptions = await this.subscriptionRepository.getSubscriptions(
       paging,
       order,
       filter,
     );
+
+    return subscriptions.map((subscription) => {
+      return {
+        ...subscription.toJSON(),
+        totalQuantity: subscription.lpSubscriptionProducts.reduce(
+          (sum, item) => sum + item.quantity,
+          0,
+        ),
+        totalFreeStock: subscription.lpSubscriptionProducts.reduce(
+          (sum, item) => sum + (item.product.stockItem || 0),
+          0,
+        ),
+      };
+    });
   };
 
   public getSubscription = async (id: string) => {
