@@ -22,6 +22,7 @@ import Logger from '../../lib/core/Logger';
 import {
   BadRequestError,
   InternalError,
+  NotFoundError,
   OutOfStockError,
 } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
@@ -49,8 +50,8 @@ import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
-import { PaymentUseCase } from 'src/buyer_site/usecase/PaymentUsecase';
-import { MailUseCase } from 'src/buyer_site/usecase/MailUsecase';
+import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
+import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -454,6 +455,28 @@ export class OrderUsecase {
   }
 
   public getOrderById = async (id: number) => {
+    return await this.orderRepo.getOrderById(id);
+  };
+
+  public cancelOrder = async (id: number) => {
+    const order = await this.orderRepo.getOrderById(id);
+    if (!order) {
+      throw new NotFoundError(`Order with ID ${id} not found.`);
+    }
+
+    if (
+      order.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
+      order.orderStatus !== OrderStatus.CONFIRMED_ORDER
+    ) {
+      throw new InternalError('Can not cancel order');
+    }
+
+    await this.orderRepo.updateOrderStatus({
+      orderId: id,
+      status: OrderStatus.CANCEL,
+      currentStatus: order.orderStatus,
+    });
+
     return await this.orderRepo.getOrderById(id);
   };
 

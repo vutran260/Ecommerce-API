@@ -49,6 +49,7 @@ import { InvoiceRepository } from './repository/InvoiceRepository';
 import { PaymentUseCase } from './usecase/PaymentUsecase';
 import { MailUseCase } from './usecase/MailUsecase';
 import { InvoiceUseCase } from './usecase/InvoiceUsecase';
+import { PaymentEndpoint } from './endpoint/PaymentEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -122,17 +123,14 @@ export class buyerSiteRouter {
     const cartUseCase = new CartUsecase(productRepo, cartRepo);
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
-    const orderEndpoint = new OrderEndpoint(
-      orderUsecase,
-      paymentUseCase,
-      invoiceUseCase,
-    );
+    const orderEndpoint = new OrderEndpoint(orderUsecase, invoiceUseCase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);
     const productRecentlyViewedEndpoint = new ProductRecentlyViewedEndpoint(
       productRecentlyViewedUseCase,
     );
+    const paymentEndpoint = new PaymentEndpoint(paymentUseCase);
 
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
@@ -151,6 +149,7 @@ export class buyerSiteRouter {
       '/product-recently-viewed',
       productRecentlyViewedEndpoint.getRouter(),
     );
+    router.use('/payment', paymentEndpoint.getRouter());
 
     return router;
   };
