@@ -24,7 +24,7 @@ export class IsOrderStatusSequentialConstraint
         OrderStatus.DELIVERING,
         OrderStatus.CANCEL,
       ],
-      [OrderStatus.DELIVERING]: [OrderStatus.DELIVERED],
+      [OrderStatus.DELIVERING]: [OrderStatus.DELIVERED, OrderStatus.CANCEL],
       [OrderStatus.DELIVERED]: [],
       [OrderStatus.CANCEL]: [],
     };

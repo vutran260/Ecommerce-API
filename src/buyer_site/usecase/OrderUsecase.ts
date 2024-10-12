@@ -529,7 +529,7 @@ export class OrderUsecase {
         );
       }
 
-      this.mailUseCase.sendMailCancelOrder({
+      this.mailUseCase.sendMailBuyerCancelOrder({
         order,
         reasons,
         canceledAt: new Date(),
