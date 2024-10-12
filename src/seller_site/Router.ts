@@ -39,6 +39,7 @@ import { DashboardEndpoint } from './endpoint/DashboardEndpoint';
 import { PaymentUseCase } from '../buyer_site/usecase/PaymentUsecase';
 import { GMOPaymentService } from '../third_party/gmo_getway/GMOPaymentSerivce';
 import { CardUsecase } from '../buyer_site/usecase/CardUsecase';
+import { OrderPaymentRepository } from '../buyer_site/repository/OrderPaymentRepository';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -56,6 +57,7 @@ export class sellerSiteRouter {
     const subscriptionOrderRepository = new SubscriptionOrderRepository();
     const prefectureRepository = new PrefectureRepository();
     const dashboardRepository = new DashboardRepository();
+    const orderPaymentRepository = new OrderPaymentRepository();
 
     // third party
     const s3Service = new S3Service();
@@ -72,6 +74,7 @@ export class sellerSiteRouter {
       orderRepo,
       orderItemRepo,
       paymentUseCase,
+      orderPaymentRepository,
     );
     const buyerUsecase = new BuyerUsecase(buyerRepo);
     const uploadUsecase = new UploadUsecase(s3Service);

@@ -10,12 +10,12 @@ import {
   OrderSubscriptionSuccessOptions,
   OrderSuccessOptions,
 } from '../../third_party/mail/mailService';
-import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
+import { formatDateJp, formatDateTimeJp } from '../../lib/helpers/dateTimeUtil';
 import {
   formatCurrency,
   formatPhoneNumber,
 } from '../../lib/helpers/commonFunction';
-import { SubscriptionAddress } from 'src/common/model/orders/Subscription';
+import { SubscriptionAddress } from '../../common/model/orders/Subscription';
 
 export class MailUseCase {
   private orderRepo: OrderRepository;
@@ -28,15 +28,10 @@ export class MailUseCase {
 
   public sendMailOrder = async (params: {
     orderId: number;
-    latestAddress?: LP_ADDRESS_BUYER;
+    latestAddress: LP_ADDRESS_BUYER;
   }) => {
     const { orderId, latestAddress } = params;
-    if (!orderId || !latestAddress) {
-      return;
-    }
-
     const order = await this.orderRepo.getOrderFullAttrById(orderId);
-
     if (!order) {
       return;
     }
@@ -82,13 +77,6 @@ export class MailUseCase {
     subAddress: LP_SUBSCRIPTION_ADDRESS | SubscriptionAddress;
   }) => {
     const { order, subAddress, nextDate } = params;
-    if (!nextDate || !subAddress || !order) {
-      return;
-    }
-
-    if (!order) {
-      return;
-    }
 
     const products =
       order?.lpOrderItems?.map((item) => {
@@ -124,6 +112,30 @@ export class MailUseCase {
     Logger.info(
       `Start send mail order success with options: ${JSON.stringify(mailOptions, null, 2)}`,
     );
+
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailCancelOrder = async (params: {
+    order: LP_ORDER;
+    canceledAt: Date;
+    reasons: string[];
+  }) => {
+    const { order, reasons, canceledAt } = params;
+    const { lpOrderAddressBuyer } = order;
+
+    const mailOptions = {
+      to: lpOrderAddressBuyer?.email,
+      subject: 'ECパレット｜ご注文のキャンセルが完了しました',
+      templateName: 'orderCancelBuyer',
+      params: {
+        buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
+        orderCreatedAt: formatDateTimeJp(order.createdAt),
+        orderCanceledAt: formatDateTimeJp(canceledAt),
+        cancelReasons: reasons,
+      },
+    };
 
     this.mailService.sendMail(mailOptions);
   };

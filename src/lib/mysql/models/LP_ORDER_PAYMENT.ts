@@ -6,6 +6,8 @@ export interface LP_ORDER_PAYMENTAttributes {
   orderId: number;
   paymentType?: string;
   paymentStatus?: string;
+  gmoAccessId?: string;
+  gmoAccessPass?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -16,6 +18,8 @@ export type LP_ORDER_PAYMENTId = LP_ORDER_PAYMENT[LP_ORDER_PAYMENTPk];
 export type LP_ORDER_PAYMENTOptionalAttributes =
   | 'paymentType'
   | 'paymentStatus'
+  | 'gmoAccessId'
+  | 'gmoAccessPass'
   | 'createdAt'
   | 'updatedAt'
   | 'deletedAt';
@@ -31,6 +35,8 @@ export class LP_ORDER_PAYMENT
   orderId!: number;
   paymentType?: string;
   paymentStatus?: string;
+  gmoAccessId?: string;
+  gmoAccessPass?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -63,6 +69,16 @@ export class LP_ORDER_PAYMENT
           type: DataTypes.STRING(100),
           allowNull: true,
           field: 'payment_status',
+        },
+        gmoAccessId: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'gmo_access_id',
+        },
+        gmoAccessPass: {
+          type: DataTypes.STRING(255),
+          allowNull: true,
+          field: 'gmo_access_pass',
         },
         createdAt: {
           type: DataTypes.DATE,

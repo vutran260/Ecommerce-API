@@ -12,22 +12,30 @@ import { OrderRepository } from '../repository/OrderRepository';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { NotFoundError } from '../../lib/http/custom_error/ApiError';
-import { OrderStatus, OrderType } from '../../lib/constant/Constant';
+import {
+  OrderStatus,
+  OrderType,
+  PaymentSatus,
+} from '../../lib/constant/Constant';
 import { PaymentUseCase } from 'src/buyer_site/usecase/PaymentUsecase';
+import { OrderPaymentRepository } from 'src/buyer_site/repository/OrderPaymentRepository';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
   private orderItemRepo: OrderItemRepository;
   private paymentUseCase: PaymentUseCase;
+  private orderPaymentRepo: OrderPaymentRepository;
 
   constructor(
     orderRepo: OrderRepository,
     orderItemRepo: OrderItemRepository,
     paymentUseCase: PaymentUseCase,
+    orderPaymentRepo: OrderPaymentRepository,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
     this.paymentUseCase = paymentUseCase;
+    this.orderPaymentRepo = orderPaymentRepo;
   }
 
   public getOrderById = async (id: number) => {
@@ -79,7 +87,13 @@ export class OrderUsecase {
       request.status === OrderStatus.CONFIRMED_ORDER
     ) {
       if (order.buyerId) {
-        await this.paymentUseCase.processTransaction({ order });
+        const res = await this.paymentUseCase.processTransaction({ order });
+        await this.orderPaymentRepo.updateOrderPaymentStatus({
+          orderId: order.id,
+          status: PaymentSatus.PAID,
+          gmoAccessId: res?.accessId || '',
+          gmoAccessPass: res?.accessPass || '',
+        });
       }
     }
 

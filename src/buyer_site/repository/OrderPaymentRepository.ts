@@ -32,13 +32,21 @@ export class OrderPaymentRepository {
     return result?.dataValues;
   };
 
-  public updateOrderPaymentStatus = async (
-    orderId: number,
-    status: PaymentSatus,
-    t?: Transaction,
-  ) => {
+  public updateOrderPaymentStatus = async (params: {
+    orderId: number;
+    status: PaymentSatus;
+    gmoAccessId?: string;
+    gmoAccessPass?: string;
+    t?: Transaction;
+  }) => {
+    const { orderId, status, gmoAccessId, gmoAccessPass, t } = params;
     await LP_ORDER_PAYMENT.update(
-      { paymentStatus: status, updatedAt: new Date() },
+      {
+        paymentStatus: status,
+        ...(gmoAccessId && { gmoAccessId }),
+        ...(gmoAccessPass && { gmoAccessPass }),
+        updatedAt: new Date(),
+      },
       {
         where: { orderId: orderId },
         transaction: t,
