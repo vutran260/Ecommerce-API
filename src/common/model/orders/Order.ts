@@ -10,7 +10,7 @@ import {
   SubscriptionAddress,
   SubscriptionProduct,
 } from '../../../common/model/orders/Subscription';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { IsOrderStatusSequential } from '../../../common/custom_validator/IsOrderStatusSequential';
 
 export class Order {
@@ -162,6 +162,9 @@ export class UpdateOrderStatusRequest {
 
   @IsEnum(OrderStatus)
   currentStatus?: string;
+
+  @IsOptional()
+  reasons?: string[];
 }
 
 export class OrderDetailResponse {

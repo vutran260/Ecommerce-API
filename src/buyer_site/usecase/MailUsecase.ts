@@ -116,7 +116,7 @@ export class MailUseCase {
     this.mailService.sendMail(mailOptions);
   };
 
-  public sendMailCancelOrder = async (params: {
+  public sendMailBuyerCancelOrder = async (params: {
     order: LP_ORDER;
     canceledAt: Date;
     reasons: string[];
@@ -131,6 +131,32 @@ export class MailUseCase {
       params: {
         buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
         buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt),
+        orderCanceledAt: formatDateTimeJp(canceledAt),
+        cancelReasons: reasons,
+      },
+    };
+
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailSellerCancelOrder = async (params: {
+    order: LP_ORDER;
+    canceledAt: Date;
+    reasons: string[];
+  }) => {
+    const { order, reasons, canceledAt } = params;
+    const { lpOrderAddressBuyer } = order;
+
+    const mailOptions = {
+      to: lpOrderAddressBuyer?.email,
+      subject: 'ECパレット｜ご注文のキャンセルについて',
+      templateName: 'orderCancelSeller',
+      params: {
+        buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
+        orderId: order.id,
         orderCreatedAt: formatDateTimeJp(order.createdAt),
         orderCanceledAt: formatDateTimeJp(canceledAt),
         cancelReasons: reasons,
