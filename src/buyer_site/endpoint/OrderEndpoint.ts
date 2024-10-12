@@ -46,7 +46,13 @@ export class OrderEndpoint {
     if (!req.params.id) {
       throw new BadRequestError('Invalid order id');
     }
-    await this.orderUsecase.cancelOrder(Number(req.params.id));
+    if (!req.body.reasons) {
+      throw new BadRequestError('Reasons is require');
+    }
+    await this.orderUsecase.cancelOrder(
+      Number(req.params.id),
+      req.body.reasons,
+    );
     return ResponseData('cancel order success', res);
   };
 
@@ -99,7 +105,7 @@ export class OrderEndpoint {
     const router = express.Router();
     router.get('/', PagingMiddelware, this.getOrders);
     router.get('/:id', this.getOrderDetail);
-    router.delete('/:id/cancel', this.cancelOrder);
+    router.post('/:id/cancel', this.cancelOrder);
     router.post('/', this.createOrder);
     router.get(
       '/order-items/:id',

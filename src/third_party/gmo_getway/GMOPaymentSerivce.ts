@@ -22,6 +22,8 @@ import { EntryTransactionResponse } from './response/EntryTransactionResponse';
 import { ExecTransactionResponse } from './response/ExecTransactionResponse';
 import { GMOError } from './response/GMOError';
 import { MemberResponse } from './response/MemberResponse';
+import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
+import { CancelTransactionResponse } from './response/CancelTransactionResponse';
 
 export class GMOPaymentService {
   public getMemberById = async (memberId: string) => {
@@ -205,6 +207,8 @@ export class GMOPaymentService {
       input.amount,
     );
 
+    console.log('entryTran', request);
+
     const response = await axios.post(endpoint, request, {
       headers: {
         'Content-Type': 'application/json',
@@ -253,7 +257,40 @@ export class GMOPaymentService {
     return new ExecTransactionResponse(
       response.data.acs,
       response.data.redirectUrl,
+      input.accessID,
+      input.accessPass,
     );
+  };
+
+  cancelTran = async (order: LP_ORDER) => {
+    try {
+      const cancelEndpoint = `${gmo.url}/payment/AlterTran.json`;
+      const cancelRequest = {
+        shopID: gmo.shopId,
+        shopPass: gmo.shopPassword,
+        accessID: order.lpOrderPayment.gmoAccessId,
+        accessPass: order.lpOrderPayment.gmoAccessPass,
+        jobCd: 'CANCEL',
+      };
+      console.log('cancelTran', cancelRequest);
+
+      const response = await axios.post(cancelEndpoint, cancelRequest, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Received data:', response.data, 'status', response.status);
+
+      if (response.status !== HttpStatusCode.Ok) {
+        this.handlerError(response, response.data);
+      }
+
+      return new CancelTransactionResponse(true);
+    } catch (error) {
+      console.error('Error cancelling GMO transaction:', error);
+      throw error;
+    }
   };
 
   private isResourceNotfound(data: any) {

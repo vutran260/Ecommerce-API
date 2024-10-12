@@ -6,6 +6,10 @@ import type {
   LP_ORDER_ADDRESS_BUYER,
   LP_ORDER_ADDRESS_BUYERId,
 } from './LP_ORDER_ADDRESS_BUYER';
+import type {
+  LP_ORDER_CANCEL_REASON,
+  LP_ORDER_CANCEL_REASONId,
+} from './LP_ORDER_CANCEL_REASON';
 import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_ORDER_PAYMENT, LP_ORDER_PAYMENTId } from './LP_ORDER_PAYMENT';
 import type { LP_SHIPMENT, LP_SHIPMENTId } from './LP_SHIPMENT';
@@ -115,6 +119,39 @@ export class LP_ORDER
     LP_ORDER_ADDRESS_BUYERId
   >;
   createLpOrderAddressBuyer!: Sequelize.HasOneCreateAssociationMixin<LP_ORDER_ADDRESS_BUYER>;
+  // LP_ORDER hasMany LP_ORDER_CANCEL_REASON via orderId
+  lpOrderCancelReasons!: LP_ORDER_CANCEL_REASON[];
+  getLpOrderCancelReasons!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_CANCEL_REASON>;
+  setLpOrderCancelReasons!: Sequelize.HasManySetAssociationsMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  addLpOrderCancelReason!: Sequelize.HasManyAddAssociationMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  addLpOrderCancelReasons!: Sequelize.HasManyAddAssociationsMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  createLpOrderCancelReason!: Sequelize.HasManyCreateAssociationMixin<LP_ORDER_CANCEL_REASON>;
+  removeLpOrderCancelReason!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  removeLpOrderCancelReasons!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  hasLpOrderCancelReason!: Sequelize.HasManyHasAssociationMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  hasLpOrderCancelReasons!: Sequelize.HasManyHasAssociationsMixin<
+    LP_ORDER_CANCEL_REASON,
+    LP_ORDER_CANCEL_REASONId
+  >;
+  countLpOrderCancelReasons!: Sequelize.HasManyCountAssociationsMixin;
   // LP_ORDER hasMany LP_ORDER_ITEM via orderId
   lpOrderItems!: LP_ORDER_ITEM[];
   getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;

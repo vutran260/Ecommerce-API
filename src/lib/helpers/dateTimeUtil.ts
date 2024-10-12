@@ -1,7 +1,10 @@
 import moment from 'moment';
 
-const formatDateTimeJp = (dateStr: string) => {
-  return moment(dateStr).format('YYYY年M月D日 HH:mm');
+const formatDateTimeJp = (date: string | Date | undefined) => {
+  if (date) {
+    return moment(date).format('YYYY年M月D日 HH:mm');
+  }
+  return '-';
 };
 
 const formatDate = (date: string) => {

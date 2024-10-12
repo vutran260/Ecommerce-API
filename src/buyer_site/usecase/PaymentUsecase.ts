@@ -4,7 +4,7 @@ import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { GMOPaymentService } from '../../third_party/gmo_getway/GMOPaymentSerivce';
 import { TransactionRequest } from '../../third_party/gmo_getway/request/EntryTransactionRequest';
 import { ExecTransactionRequest } from '../../third_party/gmo_getway/request/ExecTransactionRequest';
-import { LP_ORDERAttributes } from '../../lib/mysql/models/LP_ORDER';
+import { LP_ORDER, LP_ORDERAttributes } from '../../lib/mysql/models/LP_ORDER';
 import { isEmpty } from 'lodash';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
 
@@ -66,6 +66,10 @@ export class PaymentUseCase {
     }
     return null;
   }
+
+  public cancelTran = async (order: LP_ORDER) => {
+    return this.gmoPaymentService.cancelTran(order);
+  };
 
   public checkFraud = async (type: string, userId: string) => {
     return this.gmoPaymentService.checkFraud(type, userId);

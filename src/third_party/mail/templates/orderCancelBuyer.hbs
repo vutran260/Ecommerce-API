@@ -1,0 +1,26 @@
+{{buyerLastNameKanji}} {{buyerFirstNameKanji}} 様<br><br>
+
+この度は、当店をご利用いただき誠にありがとうございます。<br>
+
+お客さまからのキャンセルのご依頼について承知いたしました。<br>
+
+先ほどご注文をキャンセルさせていただきましたのでご連絡いたします。<br>
+
+今回のご注文内容は、下記のとおりです。<br>
+
+<strong>注文番号:</strong> {{orderId}}<br>
+<strong>注文日時:</strong> {{orderCreatedAt}}<br>
+<strong>キャンセル日付:</strong> {{orderCanceledAt}}<br>
+<strong>キャンセル理由:</strong> <br>
+
+<ul>
+  {{#each cancelReasons}}
+    <li>{{this}}</li>
+  {{/each}}
+</ul>
+
+またの機会がございましたら、どうぞよろしくお願いいたします。<br>
+本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>
+
+よくあるご質問、お問い合わせはこちらから<br>
+<a href="https://linq-circle.com/faq/">https://linq-circle.com/faq/</a>

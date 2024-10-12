@@ -48,7 +48,10 @@ import {
 } from '../../common/model/orders/Subscription';
 import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
-import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
+import {
+  LP_ADDRESS_BUYER,
+  LP_ORDER_CANCEL_REASON,
+} from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
@@ -248,9 +251,16 @@ export class OrderUsecase {
     // if order type is normal, create payment transaction
     // order type is subscription need to be confirmed by seller before transaction
     if (orderType == OrderType.NORMAL && orderUpdated) {
-      await this.paymentUseCase.processTransaction({
+      const res = await this.paymentUseCase.processTransaction({
         order: orderUpdated,
         cardSeq,
+      });
+      await this.orderPaymentRepo.updateOrderPaymentStatus({
+        orderId: order.id,
+        status: PaymentSatus.PAID,
+        gmoAccessId: res?.accessId || '',
+        gmoAccessPass: res?.accessPass || '',
+        t,
       });
     }
 
@@ -458,7 +468,7 @@ export class OrderUsecase {
     return await this.orderRepo.getOrderById(id);
   };
 
-  public cancelOrder = async (id: number) => {
+  public cancelOrder = async (id: number, reasons: string[]) => {
     const order = await this.orderRepo.getOrderById(id);
     if (!order) {
       throw new NotFoundError(`Order with ID ${id} not found.`);
@@ -468,16 +478,59 @@ export class OrderUsecase {
       order.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
       order.orderStatus !== OrderStatus.CONFIRMED_ORDER
     ) {
-      throw new InternalError('Can not cancel order');
+      throw new InternalError(
+        'ご注文はキャンセルできません。以下の注文状況の場合、キャンセルは承れません：配達中, 配達完了, キャンセル済み, スキップ済み',
+      );
     }
 
-    await this.orderRepo.updateOrderStatus({
-      orderId: id,
-      status: OrderStatus.CANCEL,
-      currentStatus: order.orderStatus,
-    });
+    const t = await lpSequelize.transaction();
+    try {
+      await this.orderRepo.updateOrderStatus(
+        {
+          orderId: id,
+          status: OrderStatus.CANCEL,
+          currentStatus: order.orderStatus,
+        },
+        t,
+      );
 
-    return await this.orderRepo.getOrderById(id);
+      await Promise.all(
+        reasons.map(async (reason: string) => {
+          await LP_ORDER_CANCEL_REASON.create(
+            {
+              orderId: id,
+              cancelReason: reason,
+            },
+            {
+              transaction: t,
+            },
+          );
+        }),
+      );
+
+      await this.paymentUseCase.cancelTran(order);
+
+      await this.orderPaymentRepo.updateOrderPaymentStatus({
+        orderId: id,
+        status: PaymentSatus.CANCELLED,
+        t,
+      });
+
+      this.mailUseCase.sendMailCancelOrder({
+        order,
+        reasons,
+        canceledAt: new Date(),
+      });
+
+      await t.commit();
+
+      return await this.orderRepo.getOrderById(id);
+    } catch (error) {
+      Logger.error('Fail to cancel order');
+      Logger.error(error);
+      await t.rollback();
+      throw error;
+    }
   };
 
   public getOrders = async (

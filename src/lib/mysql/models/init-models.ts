@@ -51,6 +51,11 @@ import type {
   LP_ORDER_ADDRESS_BUYERAttributes,
   LP_ORDER_ADDRESS_BUYERCreationAttributes,
 } from './LP_ORDER_ADDRESS_BUYER';
+import { LP_ORDER_CANCEL_REASON as _LP_ORDER_CANCEL_REASON } from './LP_ORDER_CANCEL_REASON';
+import type {
+  LP_ORDER_CANCEL_REASONAttributes,
+  LP_ORDER_CANCEL_REASONCreationAttributes,
+} from './LP_ORDER_CANCEL_REASON';
 import { LP_ORDER_ITEM as _LP_ORDER_ITEM } from './LP_ORDER_ITEM';
 import type {
   LP_ORDER_ITEMAttributes,
@@ -174,6 +179,7 @@ export {
   _LP_INVOICE as LP_INVOICE,
   _LP_ORDER as LP_ORDER,
   _LP_ORDER_ADDRESS_BUYER as LP_ORDER_ADDRESS_BUYER,
+  _LP_ORDER_CANCEL_REASON as LP_ORDER_CANCEL_REASON,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
   _LP_ORDER_PAYMENT as LP_ORDER_PAYMENT,
   _LP_PREFECTURES as LP_PREFECTURES,
@@ -221,6 +227,8 @@ export type {
   LP_ORDERCreationAttributes,
   LP_ORDER_ADDRESS_BUYERAttributes,
   LP_ORDER_ADDRESS_BUYERCreationAttributes,
+  LP_ORDER_CANCEL_REASONAttributes,
+  LP_ORDER_CANCEL_REASONCreationAttributes,
   LP_ORDER_ITEMAttributes,
   LP_ORDER_ITEMCreationAttributes,
   LP_ORDER_PAYMENTAttributes,
@@ -280,6 +288,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_INVOICE = _LP_INVOICE.initModel(sequelize);
   const LP_ORDER = _LP_ORDER.initModel(sequelize);
   const LP_ORDER_ADDRESS_BUYER = _LP_ORDER_ADDRESS_BUYER.initModel(sequelize);
+  const LP_ORDER_CANCEL_REASON = _LP_ORDER_CANCEL_REASON.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
   const LP_ORDER_PAYMENT = _LP_ORDER_PAYMENT.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
@@ -439,6 +448,14 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpOrderAddressBuyer',
     foreignKey: 'orderId',
   });
+  LP_ORDER_CANCEL_REASON.belongsTo(LP_ORDER, {
+    as: 'order',
+    foreignKey: 'orderId',
+  });
+  LP_ORDER.hasMany(LP_ORDER_CANCEL_REASON, {
+    as: 'lpOrderCancelReasons',
+    foreignKey: 'orderId',
+  });
   LP_ORDER_ITEM.belongsTo(LP_ORDER, { as: 'order', foreignKey: 'orderId' });
   LP_ORDER.hasMany(LP_ORDER_ITEM, {
     as: 'lpOrderItems',
@@ -596,6 +613,7 @@ export function initModels(sequelize: Sequelize) {
     LP_INVOICE: LP_INVOICE,
     LP_ORDER: LP_ORDER,
     LP_ORDER_ADDRESS_BUYER: LP_ORDER_ADDRESS_BUYER,
+    LP_ORDER_CANCEL_REASON: LP_ORDER_CANCEL_REASON,
     LP_ORDER_ITEM: LP_ORDER_ITEM,
     LP_ORDER_PAYMENT: LP_ORDER_PAYMENT,
     LP_PREFECTURES: LP_PREFECTURES,
