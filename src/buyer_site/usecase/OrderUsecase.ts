@@ -50,7 +50,7 @@ import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import {
   LP_ADDRESS_BUYER,
-  LP_ORDER_CANCEL_REASON,
+  LP_ORDER_CANCEL_REASON, LP_PRODUCT,
 } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
@@ -515,6 +515,19 @@ export class OrderUsecase {
         status: PaymentSatus.CANCELLED,
         t,
       });
+
+      const orderItems = await LP_ORDER_ITEM.findAll({
+        where: { orderId: id },
+        attributes: ['productId', 'quantity'],
+        transaction: t,
+      });
+
+      for (const item of orderItems) {
+        await LP_PRODUCT.increment(
+          { stockItem: item.quantity },
+          { where: { id: item.productId }, transaction: t },
+        );
+      }
 
       this.mailUseCase.sendMailCancelOrder({
         order,
