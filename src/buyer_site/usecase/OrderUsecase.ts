@@ -172,7 +172,7 @@ export class OrderUsecase {
           startDate: moment(cartItem.startBuyingDate, DATE_FORMAT).toDate(),
           nextDate: moment(cartItem.startBuyingDate, DATE_FORMAT).toDate(),
           subscriptionPeriod: cartItem.buyingPeriod || 0,
-          subscriptionStatus: SubscriptionStatus.CONTINUE,
+          subscriptionStatus: SubscriptionStatus.NEW,
         },
         t,
       );

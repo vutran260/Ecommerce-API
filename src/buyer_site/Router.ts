@@ -107,7 +107,10 @@ export class buyerSiteRouter {
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
-    const subscriptionUseCase = new SubscriptionUseCase(subscriptionRepo);
+    const subscriptionUseCase = new SubscriptionUseCase(
+      subscriptionRepo,
+      mailUseCase,
+    );
     const ssoUseCase = new SSOUseCase();
     const productRecentlyViewedUseCase = new ProductRecentlyViewedUseCase(
       productRecentlyViewedRepo,

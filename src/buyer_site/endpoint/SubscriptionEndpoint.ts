@@ -8,6 +8,7 @@ import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { Subscription } from '../../common/model/orders/Subscription';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class SubscriptionEndpoint {
   private subscriptionUseCase: SubscriptionUseCase;
@@ -42,6 +43,20 @@ export class SubscriptionEndpoint {
     return ResponseData('update subscription success!!!', res);
   };
 
+  private cancelSubscription = async (req: ProtectedRequest, res: Response) => {
+    if (!req.params.id) {
+      throw new BadRequestError('Invalid subscription id');
+    }
+    if (!req.body.reasons) {
+      throw new BadRequestError('Reasons is require');
+    }
+    await this.subscriptionUseCase.cancelSubscription(
+      req.params.id,
+      req.body.reasons,
+    );
+    return ResponseData('cancel subscription success', res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.get(
@@ -52,6 +67,7 @@ export class SubscriptionEndpoint {
     );
     router.get('/:id', this.getSubscription);
     router.put('/:id', this.updateSubscription);
+    router.post('/:id/cancel', this.cancelSubscription);
     return router;
   }
 }

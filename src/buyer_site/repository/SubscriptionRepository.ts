@@ -14,12 +14,7 @@ import {
 } from '../../lib/mysql/models/init-models';
 import { SubscriptionStatus } from '../../lib/constant/Constant';
 import { daysBeforeNextDate } from '../../Config';
-import {
-  BuildQuery,
-  Filter,
-  GetOffset,
-  Paging,
-} from '../../lib/paging/Request';
+import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class SubscriptionRepository {
@@ -76,7 +71,9 @@ export class SubscriptionRepository {
         nextDate: {
           [Op.lte]: endOfTargetDay,
         },
-        subscriptionStatus: SubscriptionStatus.CONTINUE,
+        subscriptionStatus: {
+          [Op.in]: [SubscriptionStatus.NEW, SubscriptionStatus.CONTINUE],
+        },
       },
       include: [
         {
@@ -126,7 +123,7 @@ export class SubscriptionRepository {
   };
 
   public getSubscriptionById = async (id: string, t?: Transaction) => {
-    const result = await LP_SUBSCRIPTION.findOne({
+    return await LP_SUBSCRIPTION.findOne({
       where: { id: id },
       include: [
         {
@@ -146,7 +143,6 @@ export class SubscriptionRepository {
       ],
       transaction: t,
     });
-    return result?.dataValues;
   };
 
   public async updateNextDate(
@@ -159,11 +155,31 @@ export class SubscriptionRepository {
       { where: { id: id }, transaction: t },
     );
   }
+
   public updateSubscription = async (request: LP_SUBSCRIPTIONAttributes) => {
     await LP_SUBSCRIPTION.update(request, {
       where: {
         id: request.id,
       },
     });
+  };
+
+  public updateSubscriptionStatus = async (params: {
+    id: string;
+    status: SubscriptionStatus;
+    t?: Transaction;
+  }) => {
+    const { id, status, t } = params;
+    await LP_SUBSCRIPTION.update(
+      {
+        subscriptionStatus: status,
+      },
+      {
+        where: {
+          id: id,
+        },
+        transaction: t,
+      },
+    );
   };
 }

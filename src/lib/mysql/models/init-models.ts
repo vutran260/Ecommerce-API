@@ -146,6 +146,11 @@ import type {
   LP_SUBSCRIPTION_ADDRESSAttributes,
   LP_SUBSCRIPTION_ADDRESSCreationAttributes,
 } from './LP_SUBSCRIPTION_ADDRESS';
+import { LP_SUBSCRIPTION_CANCEL_REASON as _LP_SUBSCRIPTION_CANCEL_REASON } from './LP_SUBSCRIPTION_CANCEL_REASON';
+import type {
+  LP_SUBSCRIPTION_CANCEL_REASONAttributes,
+  LP_SUBSCRIPTION_CANCEL_REASONCreationAttributes,
+} from './LP_SUBSCRIPTION_CANCEL_REASON';
 import { LP_SUBSCRIPTION_ORDER as _LP_SUBSCRIPTION_ORDER } from './LP_SUBSCRIPTION_ORDER';
 import type {
   LP_SUBSCRIPTION_ORDERAttributes,
@@ -198,6 +203,7 @@ export {
   _LP_STORE_SSO as LP_STORE_SSO,
   _LP_SUBSCRIPTION as LP_SUBSCRIPTION,
   _LP_SUBSCRIPTION_ADDRESS as LP_SUBSCRIPTION_ADDRESS,
+  _LP_SUBSCRIPTION_CANCEL_REASON as LP_SUBSCRIPTION_CANCEL_REASON,
   _LP_SUBSCRIPTION_ORDER as LP_SUBSCRIPTION_ORDER,
   _LP_SUBSCRIPTION_PRODUCT as LP_SUBSCRIPTION_PRODUCT,
   _SeederMeta as SeederMeta,
@@ -265,6 +271,8 @@ export type {
   LP_SUBSCRIPTIONCreationAttributes,
   LP_SUBSCRIPTION_ADDRESSAttributes,
   LP_SUBSCRIPTION_ADDRESSCreationAttributes,
+  LP_SUBSCRIPTION_CANCEL_REASONAttributes,
+  LP_SUBSCRIPTION_CANCEL_REASONCreationAttributes,
   LP_SUBSCRIPTION_ORDERAttributes,
   LP_SUBSCRIPTION_ORDERCreationAttributes,
   LP_SUBSCRIPTION_PRODUCTAttributes,
@@ -308,6 +316,8 @@ export function initModels(sequelize: Sequelize) {
   const LP_STORE_SSO = _LP_STORE_SSO.initModel(sequelize);
   const LP_SUBSCRIPTION = _LP_SUBSCRIPTION.initModel(sequelize);
   const LP_SUBSCRIPTION_ADDRESS = _LP_SUBSCRIPTION_ADDRESS.initModel(sequelize);
+  const LP_SUBSCRIPTION_CANCEL_REASON =
+    _LP_SUBSCRIPTION_CANCEL_REASON.initModel(sequelize);
   const LP_SUBSCRIPTION_ORDER = _LP_SUBSCRIPTION_ORDER.initModel(sequelize);
   const LP_SUBSCRIPTION_PRODUCT = _LP_SUBSCRIPTION_PRODUCT.initModel(sequelize);
   const SeederMeta = _SeederMeta.initModel(sequelize);
@@ -584,6 +594,14 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpSubscriptionAddress',
     foreignKey: 'subscriptionId',
   });
+  LP_SUBSCRIPTION_CANCEL_REASON.belongsTo(LP_SUBSCRIPTION, {
+    as: 'subscription',
+    foreignKey: 'subscriptionId',
+  });
+  LP_SUBSCRIPTION.hasMany(LP_SUBSCRIPTION_CANCEL_REASON, {
+    as: 'lpSubscriptionCancelReasons',
+    foreignKey: 'subscriptionId',
+  });
   LP_SUBSCRIPTION_ORDER.belongsTo(LP_SUBSCRIPTION, {
     as: 'subscription',
     foreignKey: 'subscriptionId',
@@ -632,6 +650,7 @@ export function initModels(sequelize: Sequelize) {
     LP_STORE_SSO: LP_STORE_SSO,
     LP_SUBSCRIPTION: LP_SUBSCRIPTION,
     LP_SUBSCRIPTION_ADDRESS: LP_SUBSCRIPTION_ADDRESS,
+    LP_SUBSCRIPTION_CANCEL_REASON: LP_SUBSCRIPTION_CANCEL_REASON,
     LP_SUBSCRIPTION_ORDER: LP_SUBSCRIPTION_ORDER,
     LP_SUBSCRIPTION_PRODUCT: LP_SUBSCRIPTION_PRODUCT,
     SeederMeta: SeederMeta,

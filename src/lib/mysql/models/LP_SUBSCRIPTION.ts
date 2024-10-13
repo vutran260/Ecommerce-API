@@ -9,6 +9,10 @@ import type {
   LP_SUBSCRIPTION_ADDRESSId,
 } from './LP_SUBSCRIPTION_ADDRESS';
 import type {
+  LP_SUBSCRIPTION_CANCEL_REASON,
+  LP_SUBSCRIPTION_CANCEL_REASONId,
+} from './LP_SUBSCRIPTION_CANCEL_REASON';
+import type {
   LP_SUBSCRIPTION_ORDER,
   LP_SUBSCRIPTION_ORDERId,
 } from './LP_SUBSCRIPTION_ORDER';
@@ -144,6 +148,39 @@ export class LP_SUBSCRIPTION
     LP_SUBSCRIPTION_ADDRESSId
   >;
   createLpSubscriptionAddress!: Sequelize.HasOneCreateAssociationMixin<LP_SUBSCRIPTION_ADDRESS>;
+  // LP_SUBSCRIPTION hasMany LP_SUBSCRIPTION_CANCEL_REASON via subscriptionId
+  lpSubscriptionCancelReasons!: LP_SUBSCRIPTION_CANCEL_REASON[];
+  getLpSubscriptionCancelReasons!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION_CANCEL_REASON>;
+  setLpSubscriptionCancelReasons!: Sequelize.HasManySetAssociationsMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  addLpSubscriptionCancelReason!: Sequelize.HasManyAddAssociationMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  addLpSubscriptionCancelReasons!: Sequelize.HasManyAddAssociationsMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  createLpSubscriptionCancelReason!: Sequelize.HasManyCreateAssociationMixin<LP_SUBSCRIPTION_CANCEL_REASON>;
+  removeLpSubscriptionCancelReason!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  removeLpSubscriptionCancelReasons!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  hasLpSubscriptionCancelReason!: Sequelize.HasManyHasAssociationMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  hasLpSubscriptionCancelReasons!: Sequelize.HasManyHasAssociationsMixin<
+    LP_SUBSCRIPTION_CANCEL_REASON,
+    LP_SUBSCRIPTION_CANCEL_REASONId
+  >;
+  countLpSubscriptionCancelReasons!: Sequelize.HasManyCountAssociationsMixin;
   // LP_SUBSCRIPTION hasMany LP_SUBSCRIPTION_ORDER via subscriptionId
   lpSubscriptionOrders!: LP_SUBSCRIPTION_ORDER[];
   getLpSubscriptionOrders!: Sequelize.HasManyGetAssociationsMixin<LP_SUBSCRIPTION_ORDER>;

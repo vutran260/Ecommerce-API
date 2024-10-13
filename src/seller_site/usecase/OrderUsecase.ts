@@ -119,6 +119,7 @@ export class OrderUsecase {
           gmoAccessId: res?.accessId || '',
           gmoAccessPass: res?.accessPass || '',
         });
+
         Logger.info('Order payment status updated to PAID');
       }
 
