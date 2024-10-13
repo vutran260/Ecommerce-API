@@ -50,7 +50,8 @@ import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
 import {
   LP_ADDRESS_BUYER,
-  LP_ORDER_CANCEL_REASON, LP_PRODUCT,
+  LP_ORDER_CANCEL_REASON,
+  LP_PRODUCT,
 } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
@@ -469,15 +470,23 @@ export class OrderUsecase {
   };
 
   public cancelOrder = async (id: number, reasons: string[]) => {
+    Logger.info(`Attempting to cancel order with ID: ${id}`);
+
     const order = await this.orderRepo.getOrderById(id);
     if (!order) {
+      Logger.warn(`Order with ID ${id} not found.`);
       throw new NotFoundError(`Order with ID ${id} not found.`);
     }
+
+    Logger.info(`Order found with ID: ${id}, Status: ${order.orderStatus}`);
 
     if (
       order.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
       order.orderStatus !== OrderStatus.CONFIRMED_ORDER
     ) {
+      Logger.error(
+        `Order ID ${id} cannot be canceled. Current status: ${order.orderStatus}`,
+      );
       throw new InternalError(
         'ご注文はキャンセルできません。以下の注文状況の場合、キャンセルは承れません：配達中, 配達完了, キャンセル済み, スキップ済み',
       );
@@ -485,6 +494,8 @@ export class OrderUsecase {
 
     const t = await lpSequelize.transaction();
     try {
+      Logger.info(`Starting transaction for canceling order ID: ${id}`);
+
       await this.orderRepo.updateOrderStatus(
         {
           orderId: id,
@@ -493,9 +504,11 @@ export class OrderUsecase {
         },
         t,
       );
+      Logger.info(`Order status updated to CANCEL for order ID: ${id}`);
 
       await Promise.all(
         reasons.map(async (reason: string) => {
+          Logger.info(`Saving cancel reason: ${reason} for order ID: ${id}`);
           await LP_ORDER_CANCEL_REASON.create(
             {
               orderId: id,
@@ -507,22 +520,31 @@ export class OrderUsecase {
           );
         }),
       );
+      Logger.info(`Cancel reasons saved for order ID: ${id}`);
 
       await this.paymentUseCase.cancelTran(order);
+      Logger.info(`Payment transaction canceled for order ID: ${id}`);
 
       await this.orderPaymentRepo.updateOrderPaymentStatus({
         orderId: id,
         status: PaymentSatus.CANCELLED,
         t,
       });
+      Logger.info(
+        `Order payment status updated to CANCELLED for order ID: ${id}`,
+      );
 
       const orderItems = await LP_ORDER_ITEM.findAll({
         where: { orderId: id },
         attributes: ['productId', 'quantity'],
         transaction: t,
       });
+      Logger.info(`Fetched ${orderItems.length} items for order ID: ${id}`);
 
       for (const item of orderItems) {
+        Logger.info(
+          `Incrementing stock for product ID: ${item.productId}, quantity: ${item.quantity}`,
+        );
         await LP_PRODUCT.increment(
           { stockItem: item.quantity },
           { where: { id: item.productId }, transaction: t },
@@ -534,14 +556,17 @@ export class OrderUsecase {
         reasons,
         canceledAt: new Date(),
       });
+      Logger.info(`Cancellation email sent for order ID: ${id}`);
 
       await t.commit();
+      Logger.info(`Transaction committed for order ID: ${id}`);
 
       return await this.orderRepo.getOrderById(id);
     } catch (error) {
-      Logger.error('Fail to cancel order');
+      Logger.error(`Failed to cancel order ID: ${id}`);
       Logger.error(error);
       await t.rollback();
+      Logger.info(`Transaction rolled back for order ID: ${id}`);
       throw error;
     }
   };
