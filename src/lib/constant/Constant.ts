@@ -35,10 +35,10 @@ export enum OrderRegularStatus {
   CANCEL = 'CANCEL', // キャンセル
   SKIPPED = 'SKIPPED', // SKIPPED
 }
-
 export enum SubscriptionStatus {
+  NEW = 'NEW', // 新規作成
   CONTINUE = 'CONTINUE', // 継続中
-  CANCEL = 'CANCEL', // 解除済
+  CANCELLED = 'CANCELLED', // 解約済み
 }
 
 export enum PaymentSatus {

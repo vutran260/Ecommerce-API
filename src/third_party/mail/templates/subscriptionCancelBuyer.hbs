@@ -1,0 +1,21 @@
+{{buyerLastNameKanji}} {{buyerFirstNameKanji}} 様<br><br>
+
+定期便の解約手続きを進めましたが、ご注意いただきたい点がございます。<br><br>
+
+現在、次回のサブスクリプション注文は配送中または配送済みの状態にあるため、今回の注文はキャンセルされません。<br>
+次回以降のサブスクリプションは解約手続きにより作成されませんので、ご安心ください。<br><br>
+
+ご注文情報<br>
+━━━━━━━━━━━━━━━━━━━━━<br><br>
+<strong>注文番号:</strong> {{subscriptionId}}<br>
+<strong>注文日時:</strong> {{subscriptionCreatedAt}}<br>
+<strong>キャンセル日付:</strong> {{orderCanceledAt}}<br>
+<strong>キャンセル理由:</strong> <br>
+<ul>
+  {{#each cancelReasons}}
+    <li>{{this}}</li>
+  {{/each}}
+</ul>
+
+よくあるご質問、お問い合わせはこちらから<br>
+<a href="https://linq-circle.com/faq/">https://linq-circle.com/faq/</a>
