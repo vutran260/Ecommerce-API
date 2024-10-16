@@ -29,6 +29,7 @@ export class CategoryEndpoint {
         req.body,
       );
       categoryCreateRequest.orderLevel = categories.length + 1;
+      categoryCreateRequest.storeId = req.storeId;
 
       await validatorRequest(categoryCreateRequest);
       const results = await this.categoryUsecase.createCategory(

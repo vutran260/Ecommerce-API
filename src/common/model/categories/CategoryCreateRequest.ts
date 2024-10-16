@@ -4,8 +4,6 @@ export default class CategoryCreateRequest {
   id?: string;
   parentId?: string;
 
-  @IsString()
-  @IsNotEmpty()
   storeId: string;
 
   @IsString()
