@@ -62,4 +62,40 @@ export class CardUsecase {
       throw error;
     }
   };
+
+  public updateCard = async (
+    userId: string,
+    cardSeq: string,
+    token: string,
+    cardName?: string,
+    expire?: string,
+    defaultFlag?: string,
+  ) => {
+    if (isEmpty(userId)) {
+      throw new BadRequestError('user id must be not empty');
+    }
+
+    if (isEmpty(token)) {
+      throw new BadRequestError('card token must be not empty');
+    }
+
+    if (isEmpty(cardSeq)) {
+      throw new BadRequestError('card seq must be not empty');
+    }
+
+    try {
+      return await this.gmoPaymentService.editCard(
+        userId,
+        cardSeq,
+        token,
+        cardName,
+        expire,
+        defaultFlag,
+      );
+    } catch (error) {
+      Logger.error('Fail to save cards');
+      Logger.error(error);
+      throw error;
+    }
+  };
 }

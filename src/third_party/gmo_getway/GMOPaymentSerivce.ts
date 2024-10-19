@@ -166,6 +166,64 @@ export class GMOPaymentService {
     }
   };
 
+  public editCard = async (
+    memberId: string,
+    cardSeq: string,
+    token: string,
+    cardName?: string,
+    expire?: string,
+    defaultFlag?: string,
+  ) => {
+    Logger.info('editCard', memberId, cardSeq);
+
+    const endpoint = `${gmo.url}/payment/SaveCard.json`;
+    const request = {
+      siteID: gmo.siteId,
+      sitePass: gmo.sitePassword,
+      memberID: memberId,
+      cardSeq: cardSeq, // Sequence number of the card to be updated
+      token: token, // New card token for update
+      // cardName: cardName || undefined, // Optional card name
+      // expire: expire || undefined, // Optional expiry date (MMYY format)
+      // defaultFlag: defaultFlag || undefined, // Optional default flag (1 for default card)
+    };
+
+    console.log('request', request);
+
+    try {
+      const response = await axios.post(endpoint, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Received data:', response.data, 'status', response.status);
+
+      if (response.status !== HttpStatusCode.Ok) {
+        this.handlerError(response, response.data);
+      }
+
+      return new CardResponse(
+        response.data.cardSeq,
+        response.data.cardNo,
+        response.data.expire,
+        response.data.defaultFlag,
+        response.data.cardName,
+        response.data.holderName,
+        response.data.deleteFlag,
+        response.data.brand,
+        response.data.domesticFlag,
+        response.data.issuerCode,
+        response.data.debitPrepaidFlag,
+        response.data.debitPrepaidIssuerName,
+        response.data.forwardFinal,
+      );
+    } catch (error) {
+      Logger.error('Error editing card:', error);
+      throw error;
+    }
+  };
+
   public checkFraud = async (type: string, userId: string) => {
     Logger.info('checkpoint', userId, type);
 

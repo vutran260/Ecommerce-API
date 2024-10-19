@@ -24,10 +24,23 @@ export class CardEndpoint {
     return ResponseData(results, res);
   };
 
+  private editCard = async (req: Request, res: Response) => {
+    const results = await this.cardUsecase.updateCard(
+      req.body.userId,
+      req.body.cardSeq,
+      req.body.token,
+      // req.body.cardName,
+      // req.body.expire,
+      // req.body.defaultFlag,
+    );
+    return ResponseData(results, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.use(BuyerAuthenMiddlleware);
     router.post('/', this.addCard);
+    router.put('/', this.editCard);
     router.get('/:id', this.getCardByUserId);
     return router;
   }
