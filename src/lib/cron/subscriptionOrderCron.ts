@@ -15,7 +15,7 @@ import {
 } from '../../lib/http/custom_error/ApiError';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
 import { subCronExpression } from '../../Config';
-import { OrderType } from '../../lib/constant/Constant';
+import { OrderType, SubscriptionStatus } from '../../lib/constant/Constant';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 
 export class SubscriptionOrderCron {
@@ -96,7 +96,15 @@ export class SubscriptionOrderCron {
         const nextDate = moment(sub.nextDate)
           .add(sub.subscriptionPeriod, 'days')
           .toDate();
-        await this.subscriptionRepository.updateNextDate(sub.id, nextDate, t);
+
+        await this.subscriptionRepository.updateSubscription(
+          {
+            id: sub.id,
+            nextDate,
+            subscriptionStatus: SubscriptionStatus.CONTINUE,
+          },
+          t,
+        );
 
         await t.commit();
 
@@ -116,7 +124,14 @@ export class SubscriptionOrderCron {
           const nextDate = moment(sub.nextDate)
             .add(sub.subscriptionPeriod, 'days')
             .toDate();
-          await this.subscriptionRepository.updateNextDate(sub.id, nextDate);
+
+          await this.subscriptionRepository.updateSubscription(
+            {
+              id: sub.id,
+              nextDate,
+            },
+            t,
+          );
         }
       }
     }
