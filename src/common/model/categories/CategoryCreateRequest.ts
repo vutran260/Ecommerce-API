@@ -10,8 +10,6 @@ export default class CategoryCreateRequest {
   @IsNotEmpty()
   categoryName: string;
 
-  @IsString()
-  @IsNotEmpty()
   categoryTag: string;
 
   @IsString()
