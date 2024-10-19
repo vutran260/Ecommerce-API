@@ -6,22 +6,16 @@ import {
   InternalError,
 } from '../../lib/http/custom_error/ApiError';
 import {
+  CreateProductSingleItemsRequest,
   Subscription,
-  UpdateProductItemsRequest,
+  UpdateProductSingleItemsRequest,
 } from '../../common/model/orders/Subscription';
 import moment from 'moment';
-import {
-  DATE_FORMAT,
-  OrderStatus,
-  ProductStatus,
-} from '../../lib/constant/Constant';
+import { DATE_FORMAT } from '../../lib/constant/Constant';
 import { SubscriptionOrderRepository } from '../repository/SubscriptionOrderRepository';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
-import { LP_SUBSCRIPTION_PRODUCT } from '../../lib/mysql/models/LP_SUBSCRIPTION_PRODUCT';
 import { lpSequelize } from '../../lib/mysql/Connection';
-import { LP_PRODUCT } from '../../lib/mysql/models/LP_PRODUCT';
-import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 
 export class SubscriptionUseCase {
   private subscriptionRepository: SubscriptionRepository;
@@ -119,160 +113,105 @@ export class SubscriptionUseCase {
     return this.subscriptionRepository.getSubscriptionById(subscription.id);
   };
 
-  public updateProductItems = async (
+  public updateProduct = async (
     subscriptionId: string,
-    request: UpdateProductItemsRequest,
+    request: UpdateProductSingleItemsRequest,
   ) => {
-    const updateRequest = plainToInstance(UpdateProductItemsRequest, request);
-    await validatorRequest(updateRequest);
-
+    const updateSingleRequest = plainToInstance(
+      UpdateProductSingleItemsRequest,
+      request,
+    );
+    await validatorRequest(updateSingleRequest);
     const t = await lpSequelize.transaction();
-    const errors = [];
-
     try {
-      const subscription =
-        await this.subscriptionRepository.getSubscriptionById(subscriptionId);
-
-      if (!subscription) {
-        throw new InternalError('Subscription not found');
-      }
-
-      const latestOrder = subscription.lpSubscriptionOrders[0].order;
-
-      if (!latestOrder) {
-        throw new InternalError(
-          `No order found for subscription with ID ${subscriptionId}`,
-        );
-      }
-
-      if (
-        latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
-        latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
-      ) {
-        throw new InternalError(
-          `The subscription product cannot be edited because the latest order status does not allow editing.`,
-        );
-      }
-
-      const existingProducts = await LP_SUBSCRIPTION_PRODUCT.findAll({
-        where: { subscriptionId: subscriptionId },
-        transaction: t,
-      });
-
-      const existingProductMap = Object.fromEntries(
-        existingProducts.map((p) => [p.productId, p]),
+      const result = await this.subscriptionRepository.updateProduct(
+        subscriptionId,
+        updateSingleRequest,
+        t,
       );
-
-      for (const item of updateRequest.items) {
-        const product = await LP_PRODUCT.findByPk(item.productId, {
-          transaction: t,
-        });
-
-        if (!product) {
-          errors.push({
-            productId: item.productId,
-            errorCode: ErrorCode.NOT_FOUND,
-            message: `Product with ID ${item.productId} not found`,
-          });
-          continue;
-        }
-
-        if (product.status !== ProductStatus.ACTIVE) {
-          errors.push({
-            productId: item.productId,
-            errorCode: ErrorCode.PRODUCT_INACTIVE,
-            message: `Product with ID ${item.productId} is not active`,
-          });
-          continue;
-        }
-
-        if (product.stockItem === undefined) {
-          continue;
-        }
-
-        const existingProduct = existingProductMap[item.productId];
-        const quantityDifference = existingProduct
-          ? item.quantity - existingProduct.quantity
-          : item.quantity;
-
-        if (quantityDifference > 0 && product.stockItem < quantityDifference) {
-          if (product.stockItem === 0) {
-            errors.push({
-              productId: item.productId,
-              errorCode: ErrorCode.OVER_STOCK,
-              message: `選択された商品は在庫切れのため、交換・追加することができません。他の商品を選択してください。`,
-            });
-          } else {
-            errors.push({
-              productId: item.productId,
-              errorCode: ErrorCode.OVER_STOCK,
-              message: `交換・追加したい商品の在庫が不足している場合、エラーメッセージが表示されます`,
-            });
-          }
-          continue;
-        }
-
-        if (existingProduct) {
-          await existingProduct.update(
-            { quantity: item.quantity },
-            { transaction: t },
-          );
-          await product.update(
-            { stockItem: product.stockItem - quantityDifference },
-            { transaction: t },
-          );
-          delete existingProductMap[item.productId];
-        } else {
-          await LP_SUBSCRIPTION_PRODUCT.create(
-            {
-              subscriptionId: subscriptionId,
-              productId: item.productId,
-              quantity: item.quantity,
-            },
-            { transaction: t },
-          );
-          await product.update(
-            { stockItem: product.stockItem - item.quantity },
-            { transaction: t },
-          );
-        }
-      }
-
-      for (const productId in existingProductMap) {
-        const product = await LP_PRODUCT.findByPk(productId, {
-          transaction: t,
-        });
-        if (product && product.stockItem !== undefined) {
-          await product.update(
-            {
-              stockItem:
-                product.stockItem + existingProductMap[productId].quantity,
-            },
-            { transaction: t },
-          );
-          await existingProductMap[productId].destroy({ transaction: t });
-        }
-      }
-
-      if (errors.length > 0) {
+      if (result.success) {
+        await t.commit();
+      } else {
         await t.rollback();
-        return { success: false, errors };
       }
 
-      await t.commit();
-      return {
-        success: true,
-        message: 'Subscription products updated successfully',
-      };
+      return result;
     } catch (error) {
       await t.rollback();
       if (error instanceof Error) {
         throw new InternalError(
-          `Error updating subscription products: ${error.message}`,
+          `Error updating subscription product: ${error.message}`,
         );
       } else {
         throw new InternalError(
-          `An unknown error occurred while updating subscription products.`,
+          `An unknown error occurred while updating subscription product.`,
+        );
+      }
+    }
+  };
+
+  public createProduct = async (
+    subscriptionId: string,
+    request: CreateProductSingleItemsRequest,
+  ) => {
+    const createRequest = plainToInstance(
+      CreateProductSingleItemsRequest,
+      request,
+    );
+    await validatorRequest(createRequest);
+    const t = await lpSequelize.transaction();
+    try {
+      const result = await this.subscriptionRepository.createProduct(
+        subscriptionId,
+        createRequest,
+        t,
+      );
+      if (result.success) {
+        await t.commit();
+      } else {
+        await t.rollback();
+      }
+
+      return result;
+    } catch (error) {
+      await t.rollback();
+      if (error instanceof Error) {
+        console.error(error);
+        throw new InternalError(
+          `Error adding subscription product: ${error.message}`,
+        );
+      } else {
+        throw new InternalError(
+          `An unknown error occurred while adding subscription product.`,
+        );
+      }
+    }
+  };
+
+  public deleteProduct = async (subscriptionId: string, productId: string) => {
+    const t = await lpSequelize.transaction();
+    try {
+      const result = await this.subscriptionRepository.deleteProduct(
+        subscriptionId,
+        productId,
+        t,
+      );
+      if (result.success) {
+        await t.commit();
+      } else {
+        await t.rollback();
+      }
+
+      return result;
+    } catch (error) {
+      await t.rollback();
+      if (error instanceof Error) {
+        throw new InternalError(
+          `Error delete subscription product: ${error.message}`,
+        );
+      } else {
+        throw new InternalError(
+          `An unknown error occurred while delete subscription product.`,
         );
       }
     }

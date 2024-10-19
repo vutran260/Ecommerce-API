@@ -1,7 +1,11 @@
 import express, { Response } from 'express';
 import { ProtectedRequest } from '../../lib/http/app-request';
 import { SubscriptionUseCase } from '../../seller_site/usecase/SubscriptionUsecase';
-import { ResponseData, ResponseDataError, ResponseListData } from '../../lib/http/Response';
+import {
+  ResponseData,
+  ResponseDataError,
+  ResponseListData,
+} from '../../lib/http/Response';
 import { PaginationRequest } from '../../lib/paging/Request';
 import { PagingMiddelware } from '../../lib/paging/Middelware';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
@@ -58,15 +62,37 @@ export class SubscriptionEndpoint {
     return ResponseData('update subscription success!!!', res);
   };
 
-  private updateProductItems = async (req: ProtectedRequest, res: Response) => {
-    const result = await this.subscriptionUseCase.updateProductItems(
+  private updateProduct = async (req: ProtectedRequest, res: Response) => {
+    const result = await this.subscriptionUseCase.updateProduct(
       req.params.id,
       req.body,
     );
-    if (!isEmpty(result.errors)) {
-      return ResponseDataError(result.errors, StatusCode.BUSINESS_FAIL, res);
+    if (!isEmpty(result?.error)) {
+      return ResponseDataError(result?.error, StatusCode.SUCCESS, res);
     }
     return ResponseData('update subscription product success', res);
+  };
+
+  private createProduct = async (req: ProtectedRequest, res: Response) => {
+    const result = await this.subscriptionUseCase.createProduct(
+      req.params.id,
+      req.body,
+    );
+    if (!isEmpty(result?.error)) {
+      return ResponseDataError(result?.error, StatusCode.SUCCESS, res);
+    }
+    return ResponseData('create subscription product success', res);
+  };
+
+  private deleteProduct = async (req: ProtectedRequest, res: Response) => {
+    const result = await this.subscriptionUseCase.deleteProduct(
+      req.params.id,
+      req.params.productId,
+    );
+    if (!isEmpty(result?.error)) {
+      return ResponseDataError(result?.error, StatusCode.SUCCESS, res);
+    }
+    return ResponseData('delete subscription product success', res);
   };
 
   public getRouter() {
@@ -79,7 +105,9 @@ export class SubscriptionEndpoint {
     );
     router.get('/:id', this.getSubscription);
     router.put('/:id', this.updateSubscription);
-    router.put('/:id/products', this.updateProductItems);
+    router.put('/:id/update-product', this.updateProduct);
+    router.post('/:id/create-product', this.createProduct);
+    router.delete('/:id/delete/:productId', this.deleteProduct);
     router.get('/:id/orders', PagingMiddelware, this.getSubscriptionOrders);
     return router;
   }

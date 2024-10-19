@@ -14,7 +14,12 @@ import {
 } from '../../lib/mysql/models/init-models';
 import { SubscriptionStatus } from '../../lib/constant/Constant';
 import { daysBeforeNextDate } from '../../Config';
-import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+} from '../../lib/paging/Request';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
 
 export class SubscriptionRepository {
@@ -145,22 +150,15 @@ export class SubscriptionRepository {
     });
   };
 
-  public async updateNextDate(
-    id: string,
-    newNextDate: Date,
+  public updateSubscription = async (
+    request: Partial<LP_SUBSCRIPTIONAttributes>,
     t?: Transaction,
-  ): Promise<void> {
-    await LP_SUBSCRIPTION.update(
-      { nextDate: newNextDate },
-      { where: { id: id }, transaction: t },
-    );
-  }
-
-  public updateSubscription = async (request: LP_SUBSCRIPTIONAttributes) => {
+  ) => {
     await LP_SUBSCRIPTION.update(request, {
       where: {
         id: request.id,
       },
+      transaction: t,
     });
   };
 

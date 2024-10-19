@@ -204,3 +204,25 @@ export class UpdateProductItemsRequest {
   items: ProductItem[];
 }
 
+export class UpdateProductSingleItemsRequest {
+  @IsNotEmpty()
+  productId: string;
+
+  @IsNotEmpty()
+  newProductId: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+export class CreateProductSingleItemsRequest {
+  @IsNotEmpty()
+  productId: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
