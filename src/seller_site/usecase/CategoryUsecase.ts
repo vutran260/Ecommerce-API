@@ -2,7 +2,7 @@ import CategoryCreateRequest from '../../common/model/categories/CategoryCreateR
 import { Filter, Paging } from '../../lib/paging/Request';
 import { CategoryRepository } from '../repository/CategoryRepository';
 import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
-import UpdateCategoryRequest from '../../common/model/categories/UpdateCreateRequest';
+import UpdateCategoryRequest from '../../common/model/categories/UpdateCategoryRequest';
 
 export class CategoryUsecase {
   private categoryRepo: CategoryRepository;
@@ -19,7 +19,7 @@ export class CategoryUsecase {
   };
 
   public updateCategory = async (
-    updateCategoryRequest: CategoryCreateRequest,
+    updateCategoryRequest: UpdateCategoryRequest,
     id: string,
     storeId: string,
   ) => {

@@ -1,11 +1,7 @@
-import { IsNotEmpty, IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsOptional } from 'class-validator';
 
 export default class UpdateCategoryRequest {
-  id: string;
   parentId?: string;
-
-  @IsString()
-  @IsNotEmpty()
   storeId: string;
 
   @IsString()
