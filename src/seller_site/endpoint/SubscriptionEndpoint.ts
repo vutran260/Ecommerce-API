@@ -14,6 +14,7 @@ import { validatorRequest } from '../../lib/helpers/validate';
 import { Subscription } from '../../common/model/orders/Subscription';
 import { isEmpty } from 'lodash';
 import { StatusCode } from '../../lib/http/custom_error/StatusCode';
+import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 
 export class SubscriptionEndpoint {
   private subscriptionUseCase: SubscriptionUseCase;
@@ -62,6 +63,20 @@ export class SubscriptionEndpoint {
     return ResponseData('update subscription success!!!', res);
   };
 
+  private cancelSubscription = async (req: ProtectedRequest, res: Response) => {
+    if (!req.params.id) {
+      throw new BadRequestError('Invalid subscription id');
+    }
+    if (!req.body.reasons) {
+      throw new BadRequestError('Reasons is require');
+    }
+    await this.subscriptionUseCase.cancelSubscription(
+      req.params.id,
+      req.body.reasons,
+    );
+    return ResponseData('cancel subscription success', res);
+  };
+
   private updateProduct = async (req: ProtectedRequest, res: Response) => {
     const result = await this.subscriptionUseCase.updateProduct(
       req.params.id,
@@ -105,6 +120,7 @@ export class SubscriptionEndpoint {
     );
     router.get('/:id', this.getSubscription);
     router.put('/:id', this.updateSubscription);
+    router.post('/:id/cancel', this.cancelSubscription);
     router.put('/:id/update-product', this.updateProduct);
     router.post('/:id/create-product', this.createProduct);
     router.delete('/:id/delete/:productId', this.deleteProduct);

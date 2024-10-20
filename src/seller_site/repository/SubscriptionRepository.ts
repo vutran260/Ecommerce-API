@@ -8,6 +8,7 @@ import {
   LP_SUBSCRIPTION_ORDER,
   LP_ORDER,
   LP_PRODUCT,
+  LP_SUBSCRIPTION_CANCEL_REASON,
 } from '../../lib/mysql/models/init-models';
 import {
   BuildQuery,
@@ -23,8 +24,13 @@ import {
 } from '../../common/model/orders/Subscription';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { InternalError } from '../../lib/http/custom_error/ApiError';
-import { OrderStatus, ProductStatus } from '../../lib/constant/Constant';
+import {
+  OrderStatus,
+  ProductStatus,
+  SubscriptionStatus,
+} from '../../lib/constant/Constant';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
+import Logger from '../../lib/core/Logger';
 
 export class SubscriptionRepository {
   public getSubscriptions = async (
@@ -109,12 +115,48 @@ export class SubscriptionRepository {
     });
   };
 
-  public updateSubscription = async (request: LP_SUBSCRIPTIONAttributes) => {
+  public updateSubscription = async (
+    request: Partial<LP_SUBSCRIPTIONAttributes>,
+    t?: Transaction,
+  ) => {
     await LP_SUBSCRIPTION.update(request, {
       where: {
         id: request.id,
       },
+      ...(t && { transaction: t }),
     });
+  };
+
+  public cancelSubscription = async (
+    id: string,
+    reasons: string[],
+    t?: Transaction,
+  ) => {
+    await this.updateSubscription(
+      {
+        id: id,
+        subscriptionStatus: SubscriptionStatus.CANCELLED,
+      },
+      t,
+    );
+
+    await Promise.all(
+      reasons.map(async (reason: string) => {
+        Logger.info(
+          `Saving cancel reason: ${reason} for subscription ID: ${id}`,
+        );
+        await LP_SUBSCRIPTION_CANCEL_REASON.create(
+          {
+            subscriptionId: id,
+            cancelReason: reason,
+          },
+          {
+            transaction: t,
+          },
+        );
+      }),
+    );
+    Logger.info(`Cancel reasons saved for subscription ID: ${id}`);
   };
 
   private customOrderQuery = (orders: LpOrder[]): any => {
@@ -142,26 +184,26 @@ export class SubscriptionRepository {
       throw new InternalError('Subscription not found');
     }
 
-    const latestOrder = get(
-      subscription,
-      'lpSubscriptionOrders[0].order',
-      null,
-    );
-
-    if (!latestOrder) {
-      throw new InternalError(
-        `No order found for subscription with ID ${subscriptionId}`,
-      );
-    }
-
-    if (
-      latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
-      latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
-    ) {
-      throw new InternalError(
-        `The subscription product cannot be edited because the latest order status does not allow editing.`,
-      );
-    }
+    // const latestOrder = get(
+    //   subscription,
+    //   'lpSubscriptionOrders[0].order',
+    //   null,
+    // );
+    //
+    // if (!latestOrder) {
+    //   throw new InternalError(
+    //     `No order found for subscription with ID ${subscriptionId}`,
+    //   );
+    // }
+    //
+    // if (
+    //   latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
+    //   latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
+    // ) {
+    //   throw new InternalError(
+    //     `The subscription product cannot be edited because the latest order status does not allow editing.`,
+    //   );
+    // }
 
     const product = await LP_PRODUCT.findByPk(request.newProductId, {
       transaction: t,
@@ -227,20 +269,20 @@ export class SubscriptionRepository {
       };
     }
 
-    const existingSubProduct = await LP_SUBSCRIPTION_PRODUCT.findOne({
-      where: { subscriptionId: subscriptionId, productId: request.productId },
-      transaction: t,
-    });
+    // const existingSubProduct = await LP_SUBSCRIPTION_PRODUCT.findOne({
+    //   where: { subscriptionId: subscriptionId, productId: request.productId },
+    //   transaction: t,
+    // });
 
-    await LP_PRODUCT.increment(
-      { stockItem: existingSubProduct?.quantity },
-      { where: { id: existingSubProduct?.productId }, transaction: t },
-    );
-
-    await LP_PRODUCT.decrement(
-      { stockItem: request.quantity },
-      { where: { id: request.newProductId }, transaction: t },
-    );
+    // await LP_PRODUCT.increment(
+    //   { stockItem: existingSubProduct?.quantity },
+    //   { where: { id: existingSubProduct?.productId }, transaction: t },
+    // );
+    //
+    // await LP_PRODUCT.decrement(
+    //   { stockItem: request.quantity },
+    //   { where: { id: request.newProductId }, transaction: t },
+    // );
 
     // Run raw SQL to update the productId and quantity
     await lpSequelize.query(
@@ -275,26 +317,26 @@ export class SubscriptionRepository {
       throw new InternalError('Subscription not found');
     }
 
-    const latestOrder = get(
-      subscription,
-      'lpSubscriptionOrders[0].order',
-      null,
-    );
+    // const latestOrder = get(
+    //   subscription,
+    //   'lpSubscriptionOrders[0].order',
+    //   null,
+    // );
+    //
+    // if (!latestOrder) {
+    //   throw new InternalError(
+    //     `No order found for subscription with ID ${subscriptionId}`,
+    //   );
+    // }
 
-    if (!latestOrder) {
-      throw new InternalError(
-        `No order found for subscription with ID ${subscriptionId}`,
-      );
-    }
-
-    if (
-      latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
-      latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
-    ) {
-      throw new InternalError(
-        `The subscription product cannot be edited because the latest order status does not allow editing.`,
-      );
-    }
+    // if (
+    //   latestOrder.orderStatus !== OrderStatus.WAITING_CONFIRMED &&
+    //   latestOrder.orderStatus !== OrderStatus.CONFIRMED_ORDER
+    // ) {
+    //   throw new InternalError(
+    //     `The subscription product cannot be edited because the latest order status does not allow editing.`,
+    //   );
+    // }
 
     const product = await LP_PRODUCT.findByPk(request.productId, {
       transaction: t,
@@ -360,10 +402,10 @@ export class SubscriptionRepository {
       };
     }
 
-    await LP_PRODUCT.decrement(
-      { stockItem: request.quantity },
-      { where: { id: request.productId }, transaction: t },
-    );
+    // await LP_PRODUCT.decrement(
+    //   { stockItem: request.quantity },
+    //   { where: { id: request.productId }, transaction: t },
+    // );
 
     await LP_SUBSCRIPTION_PRODUCT.create(
       {
@@ -431,10 +473,10 @@ export class SubscriptionRepository {
       transaction: t,
     });
 
-    await LP_PRODUCT.increment(
-      { stockItem: existingSubProduct?.quantity },
-      { where: { id: existingSubProduct?.productId }, transaction: t },
-    );
+    // await LP_PRODUCT.increment(
+    //   { stockItem: existingSubProduct?.quantity },
+    //   { where: { id: existingSubProduct?.productId }, transaction: t },
+    // );
 
     existingSubProduct?.destroy();
 

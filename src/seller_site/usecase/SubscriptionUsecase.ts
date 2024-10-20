@@ -4,6 +4,7 @@ import { LpOrder } from '../../lib/paging/Order';
 import {
   BadRequestError,
   InternalError,
+  NotFoundError,
 } from '../../lib/http/custom_error/ApiError';
 import {
   CreateProductSingleItemsRequest,
@@ -11,22 +12,27 @@ import {
   UpdateProductSingleItemsRequest,
 } from '../../common/model/orders/Subscription';
 import moment from 'moment';
-import { DATE_FORMAT } from '../../lib/constant/Constant';
+import { DATE_FORMAT, SubscriptionStatus } from '../../lib/constant/Constant';
 import { SubscriptionOrderRepository } from '../repository/SubscriptionOrderRepository';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { lpSequelize } from '../../lib/mysql/Connection';
+import Logger from '../../lib/core/Logger';
+import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 
 export class SubscriptionUseCase {
   private subscriptionRepository: SubscriptionRepository;
   private subscriptionOrderRepository: SubscriptionOrderRepository;
+  private mailUseCase: MailUseCase;
 
   constructor(
     subscriptionRepository: SubscriptionRepository,
     subscriptionOrderRepository: SubscriptionOrderRepository,
+    mailUseCase: MailUseCase,
   ) {
     this.subscriptionRepository = subscriptionRepository;
     this.subscriptionOrderRepository = subscriptionOrderRepository;
+    this.mailUseCase = mailUseCase;
   }
 
   public getSubscriptions = async (
@@ -85,32 +91,59 @@ export class SubscriptionUseCase {
     if (!subscription) {
       throw new BadRequestError('subscription not exist');
     }
+    return await this.subscriptionRepository.updateSubscription({
+      id: updateRequest.id,
+      ...(updateRequest.nextDate && {
+        nextDate: moment(updateRequest.nextDate, DATE_FORMAT).toDate(),
+      }),
+      ...(updateRequest.subscriptionStatus && {
+        subscriptionStatus: updateRequest.subscriptionStatus,
+      }),
+      ...(updateRequest.subscriptionPeriod && {
+        subscriptionPeriod: updateRequest.subscriptionPeriod,
+      }),
+      ...(updateRequest.planDeliveryTimeFrom && {
+        planDeliveryTimeFrom: updateRequest.planDeliveryTimeFrom,
+      }),
+      ...(updateRequest.planDeliveryTimeTo && {
+        planDeliveryTimeTo: updateRequest.planDeliveryTimeTo,
+      }),
+    });
+  };
 
-    if (updateRequest.subscriptionPeriod) {
-      subscription.subscriptionPeriod = updateRequest.subscriptionPeriod;
+  public cancelSubscription = async (id: string, reasons: string[]) => {
+    const subscription =
+      await this.subscriptionRepository.getSubscriptionById(id);
+    if (!subscription) {
+      Logger.warn(`Subscription with ID ${id} not found.`);
+      throw new NotFoundError(`Subscription with ID ${id} not found.`);
     }
 
-    if (updateRequest.nextDate) {
-      subscription.nextDate = moment(
-        updateRequest.nextDate,
-        DATE_FORMAT,
-      ).toDate();
+    if (subscription.subscriptionStatus !== SubscriptionStatus.CONTINUE) {
+      Logger.error(
+        `Subscription ID ${id} cannot be canceled. Current status: ${subscription.subscriptionStatus}`,
+      );
+      throw new InternalError(`その定期便が解約されました。`);
     }
 
-    if (updateRequest.planDeliveryTimeFrom) {
-      subscription.planDeliveryTimeFrom = updateRequest.planDeliveryTimeFrom;
+    const t = await lpSequelize.transaction();
+    try {
+      await this.subscriptionRepository.cancelSubscription(id, reasons, t);
+      await this.mailUseCase.sendMailSellerCancelSubscription({
+        subscription,
+        reasons,
+        canceledAt: new Date(),
+      });
+      Logger.info(`Cancellation email sent for order ID: ${id}`);
+      await t.commit();
+      return true;
+    } catch (error) {
+      Logger.error(`Failed to cancel subscription ID: ${id}`);
+      Logger.error(error);
+      await t.rollback();
+      Logger.info(`Transaction rolled back for subscription ID: ${id}`);
+      throw error;
     }
-
-    if (updateRequest.planDeliveryTimeTo) {
-      subscription.planDeliveryTimeTo = updateRequest.planDeliveryTimeTo;
-    }
-
-    if (updateRequest.subscriptionStatus) {
-      subscription.subscriptionStatus = updateRequest.subscriptionStatus;
-    }
-
-    await this.subscriptionRepository.updateSubscription(subscription);
-    return this.subscriptionRepository.getSubscriptionById(subscription.id);
   };
 
   public updateProduct = async (

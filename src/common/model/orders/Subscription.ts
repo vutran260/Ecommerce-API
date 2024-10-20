@@ -158,11 +158,9 @@ export class Subscription {
   id: string;
 
   @IsString()
-  @IsNotEmpty()
   buyerId: string;
 
   @IsString()
-  @IsNotEmpty()
   storeId: string;
 
   @IsOptional()

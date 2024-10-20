@@ -191,4 +191,29 @@ export class MailUseCase {
 
     this.mailService.sendMail(mailOptions);
   };
+
+  public sendMailSellerCancelSubscription = async (params: {
+    subscription: LP_SUBSCRIPTION;
+    canceledAt: Date;
+    reasons: string[];
+  }) => {
+    const { subscription, reasons, canceledAt } = params;
+    const { lpSubscriptionAddress } = subscription;
+
+    const mailOptions = {
+      to: lpSubscriptionAddress?.email,
+      subject: 'ECパレット｜定期便の解約について',
+      templateName: 'subscriptionCancelSeller',
+      params: {
+        buyerFirstNameKanji: lpSubscriptionAddress.firstNameKanji,
+        buyerLastNameKanji: lpSubscriptionAddress.lastNameKanji,
+        subscriptionId: subscription.id,
+        subscriptionCreatedAt: formatDateTimeJp(subscription.createdAt),
+        orderCanceledAt: formatDateTimeJp(canceledAt),
+        cancelReasons: reasons,
+      },
+    };
+
+    this.mailService.sendMail(mailOptions);
+  };
 }

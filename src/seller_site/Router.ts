@@ -88,6 +88,7 @@ export class sellerSiteRouter {
     const subscriptionUseCase = new SubscriptionUseCase(
       subscriptionRepo,
       subscriptionOrderRepository,
+      mailUseCase,
     );
     const ssoUseCase = new SSOUseCase(prefectureRepository);
     const dashboardUseCase = new DashboardUseCase(dashboardRepository);
