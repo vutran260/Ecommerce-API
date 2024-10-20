@@ -10,6 +10,7 @@ import { ProtectedRequest } from '../../lib/http/app-request';
 import { StoreFilterMiddelware } from '../middleware/StoreFilterMiddelware';
 import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 import { plainToClass } from 'class-transformer';
+import UpdateCategoryRequest from '../../common/model/categories/UpdateCategoryRequest';
 
 export class CategoryEndpoint {
   private categoryUsecase: CategoryUsecase;
@@ -45,7 +46,7 @@ export class CategoryEndpoint {
 
   private updateCategory = async (req: ProtectedRequest, res: Response) => {
     const id: string = req.params.id;
-    const updateCreateRequest = plainToClass(CategoryCreateRequest, req.body);
+    const updateCreateRequest = plainToClass(UpdateCategoryRequest, req.body);
     await validatorRequest(updateCreateRequest);
     const results = await this.categoryUsecase.updateCategory(
       updateCreateRequest,

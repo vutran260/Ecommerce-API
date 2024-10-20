@@ -21,6 +21,8 @@ import {
 import MovePositionRequest from '../../common/model/categories/MovePositionRequest';
 import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
+import UpdateCategoryRequest from '../../common/model/categories/UpdateCategoryRequest';
+import { isEmpty } from 'lodash';
 
 export class CategoryRepository {
   public createCategory = async (
@@ -40,6 +42,7 @@ export class CategoryRepository {
         },
         transaction: t,
       });
+
       if (existingCategoryName) {
         throw new DataExists();
       }
@@ -61,29 +64,43 @@ export class CategoryRepository {
   };
 
   public updateCategory = async (
-    categoryCreateRequest: CategoryCreateRequest,
+    request: UpdateCategoryRequest,
     id: string,
     storeId: string,
     t?: Transaction,
   ) => {
     try {
       const category = await this.getCategoryId(id, storeId, t);
-      if (categoryCreateRequest.parentId != null) {
-        await this.getCategoryId(categoryCreateRequest.parentId, storeId, t);
+      if (request.parentId != null) {
+        await this.getCategoryId(request.parentId, storeId, t);
       }
-      const existingCategoryName = await LP_CATEGORY.findOne({
-        where: {
-          categoryName: categoryCreateRequest.categoryName,
-          storeId: storeId,
-        },
-        transaction: t,
-      });
-      if (existingCategoryName) {
-        throw new DataExists();
+
+      if (!isEmpty(request.categoryName)) {
+        const existingCategoryName = await LP_CATEGORY.findOne({
+          where: {
+            categoryName: request.categoryName,
+            storeId: storeId,
+          },
+          transaction: t,
+        });
+        if (existingCategoryName) {
+          throw new DataExists();
+        }
       }
 
       if (category) {
-        return await category.update(categoryCreateRequest, { transaction: t });
+        return await category.update(
+          {
+            ...(request.categoryName && { categoryName: request.categoryName }),
+            ...(request.categoryImage && {
+              categoryImage: request.categoryImage,
+            }),
+            ...(request.categoryTag && { categoryTag: request.categoryTag }),
+            ...(request.status && { status: request.status }),
+            ...(request.orderLevel && { orderLevel: request.orderLevel }),
+          },
+          { transaction: t },
+        );
       }
     } catch (error: any) {
       Logger.error(error.message);
@@ -120,7 +137,7 @@ export class CategoryRepository {
         if (filterCategories.length > 0) {
           for (const res of filterCategories) {
             const index: number = filterCategories.indexOf(res);
-            const updateCategory: CategoryCreateRequest = {
+            const updateCategory: UpdateCategoryRequest = {
               parentId: filterCategories[index]?.dataValues.parentId,
               storeId: filterCategories[index]?.dataValues.storeId,
               categoryName: filterCategories[index]?.dataValues.categoryName,
