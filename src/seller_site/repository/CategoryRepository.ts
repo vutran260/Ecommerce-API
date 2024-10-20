@@ -75,7 +75,10 @@ export class CategoryRepository {
         await this.getCategoryId(request.parentId, storeId, t);
       }
 
-      if (!isEmpty(request.categoryName)) {
+      if (
+        !isEmpty(request.categoryName) &&
+        request.categoryName != category.categoryName
+      ) {
         const existingCategoryName = await LP_CATEGORY.findOne({
           where: {
             categoryName: request.categoryName,
