@@ -158,7 +158,7 @@ export class SubscriptionRepository {
       where: {
         id: request.id,
       },
-      transaction: t,
+      ...(t && { transaction: t }),
     });
   };
 

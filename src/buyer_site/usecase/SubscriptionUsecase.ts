@@ -13,6 +13,8 @@ import Logger from '../../lib/core/Logger';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { LP_SUBSCRIPTION_CANCEL_REASON } from '../../lib/mysql/models/LP_SUBSCRIPTION_CANCEL_REASON';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
+import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
+import { daysBeforeNextDate } from '../../Config';
 
 export class SubscriptionUseCase {
   private subscriptionRepository: SubscriptionRepository;
@@ -49,17 +51,47 @@ export class SubscriptionUseCase {
     if (!subscription) {
       throw new BadRequestError('subscription not exist');
     }
-
-    subscription.subscriptionPeriod = updateRequest.subscriptionPeriod;
-    subscription.nextDate = moment(
-      updateRequest.nextDate,
-      DATE_FORMAT,
-    ).toDate();
-    subscription.planDeliveryTimeFrom = updateRequest.planDeliveryTimeFrom;
-    subscription.planDeliveryTimeTo = updateRequest.planDeliveryTimeTo;
-
-    await this.subscriptionRepository.updateSubscription(subscription);
-    return this.subscriptionRepository.getSubscriptionById(subscription.id);
+    if (updateRequest.nextDate) {
+      const nextDate = moment(updateRequest.nextDate, DATE_FORMAT);
+      // - Ví dụ ngày giao hàng ban đầu: 2024/10/06
+      // - Nếu đổi trước ngày 2024/10/06 thì hiển thị lỗi
+      if (nextDate.isBefore(subscription.startDate)) {
+        throw new BadRequestError(
+          `変更したい次回の配送予定日は無効です。${formatDateJp(subscription.startDate)}より前の日付は選択できません。`,
+        );
+      }
+      // - Nếu đổi sau ngày tạo order subsription của kì tới thì không đổi được.
+      // - Ví dụ: Ngày giao hàng tiếp theo sẽ giao là 2024/09/06. Ngày giao hàng kì tới là: 2024/10/06
+      // - Nếu đổi ngày sau ngày 2024/10/1 thì sẽ hiển thị lỗi:
+      if (
+        nextDate.isAfter(
+          moment(subscription.nextDate).subtract(daysBeforeNextDate, 'days'),
+        )
+      ) {
+        throw new BadRequestError(
+          `次回の定期便注文作成日を過ぎたため、日付の変更はできません。`,
+        );
+      }
+    }
+    await this.subscriptionRepository.updateSubscription({
+      id: updateRequest.id,
+      ...(updateRequest.subscriptionPeriod && {
+        subscriptionPeriod: updateRequest.subscriptionPeriod,
+      }),
+      ...(updateRequest.nextDate && {
+        nextDate: moment(updateRequest.nextDate, DATE_FORMAT).toDate(),
+      }),
+      ...(updateRequest.planDeliveryTimeFrom && {
+        planDeliveryTimeFrom: updateRequest.planDeliveryTimeFrom,
+      }),
+      ...(updateRequest.planDeliveryTimeTo && {
+        planDeliveryTimeTo: updateRequest.planDeliveryTimeTo,
+      }),
+      ...(updateRequest.subscriptionStatus && {
+        subscriptionStatus: updateRequest.subscriptionStatus,
+      }),
+    });
+    return true;
   };
 
   public cancelSubscription = async (id: string, reasons: string[]) => {
