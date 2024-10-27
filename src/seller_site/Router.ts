@@ -43,6 +43,7 @@ import { OrderPaymentRepository } from '../buyer_site/repository/OrderPaymentRep
 import { MailUseCase } from '../buyer_site/usecase/MailUsecase';
 import { MailService } from '../third_party/mail/mailService';
 import { OrderRepository as BuyerOrderRepository } from '../buyer_site/repository/OrderRepository';
+import { ShipmentUseCase } from '../buyer_site/usecase/ShipmentUseCase';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -75,7 +76,12 @@ export class sellerSiteRouter {
     const storePostUsecase = new StorePostUsecase(storePostRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
     const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
-    const mailUseCase = new MailUseCase(buyerOrderRepository, mailService);
+    const shipmentUseCase = new ShipmentUseCase();
+    const mailUseCase = new MailUseCase(
+      buyerOrderRepository,
+      mailService,
+      shipmentUseCase,
+    );
     const orderUsecase = new OrderUsecase(
       orderRepo,
       orderItemRepo,

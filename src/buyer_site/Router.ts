@@ -50,6 +50,7 @@ import { PaymentUseCase } from './usecase/PaymentUsecase';
 import { MailUseCase } from './usecase/MailUsecase';
 import { InvoiceUseCase } from './usecase/InvoiceUsecase';
 import { PaymentEndpoint } from './endpoint/PaymentEndpoint';
+import { ShipmentUseCase } from './usecase/ShipmentUseCase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -85,7 +86,12 @@ export class buyerSiteRouter {
     const prefectureUsecase = new PrefectureUsecase(prefectureRepo);
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
     const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
-    const mailUseCase = new MailUseCase(orderRepo, mailService);
+    const shipmentUseCase = new ShipmentUseCase();
+    const mailUseCase = new MailUseCase(
+      orderRepo,
+      mailService,
+      shipmentUseCase,
+    );
     const invoiceUseCase = new InvoiceUseCase(
       orderRepo,
       invoiceRepository,
@@ -104,6 +110,7 @@ export class buyerSiteRouter {
       subscriptionRepo,
       paymentUseCase,
       mailUseCase,
+      shipmentUseCase,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);

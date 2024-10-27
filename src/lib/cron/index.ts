@@ -14,6 +14,7 @@ import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
 import { MailService } from '../../third_party/mail/mailService';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
+import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
 
 const productRepo = new ProductRepository();
 const addressRepo = new AddressRepository();
@@ -28,7 +29,8 @@ const gmoGetwaySerivce = new GMOPaymentService();
 const mailService = new MailService();
 const cardUsecase = new CardUsecase(gmoGetwaySerivce);
 const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
-const mailUseCase = new MailUseCase(orderRepo, mailService);
+const shipmentUseCase = new ShipmentUseCase();
+const mailUseCase = new MailUseCase(orderRepo, mailService, shipmentUseCase);
 
 const subscriptionRepository = new SubscriptionRepository();
 const orderUseCase = new OrderUsecase(
@@ -43,6 +45,7 @@ const orderUseCase = new OrderUsecase(
   subscriptionRepo,
   paymentUseCase,
   mailUseCase,
+  shipmentUseCase,
 );
 const cardUseCase = new CardUsecase(gmoGetwaySerivce);
 

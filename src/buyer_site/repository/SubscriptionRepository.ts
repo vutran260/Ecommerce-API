@@ -6,6 +6,7 @@ import {
   CreateSubscriptionRequest,
 } from '../../common/model/orders/Subscription';
 import {
+  LP_STORE,
   LP_SUBSCRIPTION,
   LP_SUBSCRIPTION_ADDRESS,
   LP_SUBSCRIPTION_ORDER,
@@ -83,6 +84,14 @@ export class SubscriptionRepository {
       include: [
         {
           association: LP_SUBSCRIPTION.associations.lpSubscriptionAddress,
+        },
+        {
+          association: LP_SUBSCRIPTION.associations.store,
+          include: [
+            {
+              association: LP_STORE.associations.lpSellers,
+            },
+          ],
         },
         {
           association: LP_SUBSCRIPTION.associations.lpSubscriptionProducts,

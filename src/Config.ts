@@ -70,7 +70,10 @@ export const cloudStorageHostName = process.env.CLOUD_STORAGE_HOST_NAME;
 export const folderPrefix = process.env.FOLDER_PREFIX;
 
 export const daysBeforeNextDate = parseInt(
-  process.env.SUB_DAYS_BEFORE_NEXT_DATE || '5',
+  process.env.SUB_DAYS_BEFORE_NEXT_DATE || '10',
+);
+export const maxDaysRetryAttempts = parseInt(
+  process.env.SUB_MAX_DAYS_RETRY_ATTEMPTS || '5',
 );
 export const subCronExpression = process.env.SUB_CRON_EXPRESSION || '0 2 * * *';
 

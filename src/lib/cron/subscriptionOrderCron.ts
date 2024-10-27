@@ -10,13 +10,21 @@ import {
 import Logger from '../../lib/core/Logger';
 import moment from 'moment';
 import {
+  BadRequestError,
   InternalError,
   OutOfStockError,
+  PaymentError,
 } from '../../lib/http/custom_error/ApiError';
 import { CardUsecase } from '../../buyer_site/usecase/CardUsecase';
-import { subCronExpression } from '../../Config';
+import { maxDaysRetryAttempts, subCronExpression } from '../../Config';
 import { OrderType, SubscriptionStatus } from '../../lib/constant/Constant';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
+import {
+  LP_ADDRESS_BUYER,
+  LP_SUBSCRIPTION,
+} from '../../lib/mysql/models/init-models';
+import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
+import { CartItem } from '../../buyer_site/endpoint/CartEndpoint';
 
 export class SubscriptionOrderCron {
   private subscriptionRepository: SubscriptionRepository;
@@ -102,6 +110,8 @@ export class SubscriptionOrderCron {
             id: sub.id,
             nextDate,
             subscriptionStatus: SubscriptionStatus.CONTINUE,
+            retryAttempts: 0, // Reset retry attempts after successful order
+            retryStatus: '', // Clear retry status
           },
           t,
         );
@@ -119,20 +129,133 @@ export class SubscriptionOrderCron {
         Logger.error('Fail to create order from subscription');
         Logger.error(error);
         await t.rollback();
-        if (error instanceof OutOfStockError) {
-          Logger.info(`Out of stock error, start update next date`);
-          const nextDate = moment(sub.nextDate)
-            .add(sub.subscriptionPeriod, 'days')
-            .toDate();
 
-          await this.subscriptionRepository.updateSubscription(
+        const retryAttempts = sub.retryAttempts || 0;
+        if (
+          error instanceof BadRequestError ||
+          error instanceof OutOfStockError ||
+          error instanceof PaymentError
+        ) {
+          return await this.handleRetryOrSkip({
+            subscription: sub,
+            errorCode: error.errorCode,
+            retryAttempts,
+            cartItems: subProducts,
+            latestAddress: subAddress,
+          });
+        } else {
+          throw error;
+        }
+      }
+    }
+  }
+
+  private async handleRetryOrSkip(params: {
+    subscription: LP_SUBSCRIPTION;
+    errorCode: ErrorCode;
+    retryAttempts: number;
+    cartItems: CartItem[] | SubscriptionProduct[];
+    latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress;
+  }) {
+    const { subscription, errorCode, retryAttempts, cartItems, latestAddress } =
+      params;
+
+    if (retryAttempts < maxDaysRetryAttempts) {
+      await this.subscriptionRepository.updateSubscription({
+        id: subscription.id,
+        retryAttempts: retryAttempts + 1,
+        retryStatus: `Retry attempt ${retryAttempts + 1} failed due to ${errorCode}`,
+      });
+
+      switch (errorCode) {
+        case ErrorCode.OVER_STOCK:
+        case ErrorCode.EMPTY_STOCK:
+        case ErrorCode.PRODUCT_DELETED:
+        case ErrorCode.PRODUCT_INACTIVE:
+          await this.mailUseCase.handleSendMailRetry({
+            subscription,
+            typeError: 'inventory',
+            target: 'seller',
+          });
+          break;
+        case ErrorCode.PAYMENT_ERROR:
+          await this.mailUseCase.handleSendMailRetry({
+            subscription,
+            typeError: 'payment',
+            target: 'buyer',
+          });
+          await this.mailUseCase.handleSendMailRetry({
+            subscription,
+            typeError: 'payment',
+            target: 'seller',
+          });
+          break;
+        default:
+          break;
+      }
+    } else {
+      const t = await lpSequelize.transaction();
+      try {
+        const nextDate = moment(subscription.nextDate)
+          .add(subscription.subscriptionPeriod, 'days')
+          .toDate();
+        await this.subscriptionRepository.updateSubscription(
+          {
+            id: subscription.id,
+            nextDate,
+            retryAttempts: 0,
+            retryStatus: 'Retry attempts exceeded, skipped order',
+          },
+          t,
+        );
+        const order = await this.orderUseCase.createSkippedOrder({
+          buyerId: subscription.buyerId,
+          storeId: subscription.storeId,
+          cartItems: cartItems,
+          latestAddress: latestAddress,
+          orderType: OrderType.SUBSCRIPTION,
+          t,
+        });
+
+        if (order) {
+          await this.subscriptionRepository.createSubscriptionOrder(
             {
-              id: sub.id,
-              nextDate,
+              subscriptionId: subscription.id,
+              orderId: order.id,
             },
             t,
           );
         }
+        await t.commit();
+
+        let isInventoryError = false;
+        let isPaymentError = false;
+        switch (errorCode) {
+          case ErrorCode.OVER_STOCK:
+          case ErrorCode.EMPTY_STOCK:
+          case ErrorCode.PRODUCT_DELETED:
+          case ErrorCode.PRODUCT_INACTIVE:
+            isInventoryError = true;
+            break;
+          case ErrorCode.PAYMENT_ERROR:
+            isPaymentError = true;
+            break;
+          default:
+            break;
+        }
+        await this.mailUseCase.handleSendMailRetry({
+          subscription,
+          typeError: 'skipped',
+          target: 'seller',
+          isInventoryError,
+          isPaymentError,
+        });
+        Logger.info(
+          `Order skipped for subscription ${subscription.id} after ${maxDaysRetryAttempts} retry attempts`,
+        );
+      } catch (error) {
+        await t.rollback();
+        Logger.error(error);
       }
     }
   }
