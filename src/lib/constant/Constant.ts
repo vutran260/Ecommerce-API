@@ -25,6 +25,7 @@ export enum OrderStatus {
   DELIVERING = 'DELIVERING', // 配達中
   DELIVERED = 'DELIVERED', // 配達完了
   CANCEL = 'CANCEL', // キャンセル
+  SKIPPED = 'SKIPPED', // SKIPPED
 }
 
 export enum OrderRegularStatus {
@@ -35,6 +36,7 @@ export enum OrderRegularStatus {
   CANCEL = 'CANCEL', // キャンセル
   SKIPPED = 'SKIPPED', // SKIPPED
 }
+
 export enum SubscriptionStatus {
   NEW = 'NEW', // 新規作成
   CONTINUE = 'CONTINUE', // 継続中

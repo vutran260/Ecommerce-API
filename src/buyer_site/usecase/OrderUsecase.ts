@@ -15,7 +15,6 @@ import {
   PaymentSatus,
   PaymentType,
   ProductStatus,
-  ShipmentPrice,
   SubscriptionStatus,
 } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
@@ -23,7 +22,6 @@ import {
   BadRequestError,
   InternalError,
   NotFoundError,
-  OutOfStockError,
 } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
@@ -56,6 +54,7 @@ import {
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
+import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -69,6 +68,7 @@ export class OrderUsecase {
   private subscriptionRepo: SubscriptionRepository;
   private paymentUseCase: PaymentUseCase;
   private mailUseCase: MailUseCase;
+  private shipmentUseCase: ShipmentUseCase;
 
   constructor(
     orderRepo: OrderRepository,
@@ -82,6 +82,7 @@ export class OrderUsecase {
     subscriptionRepo: SubscriptionRepository,
     paymentUseCase: PaymentUseCase,
     mailUseCase: MailUseCase,
+    shipmentUseCase: ShipmentUseCase,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
@@ -94,6 +95,7 @@ export class OrderUsecase {
     this.subscriptionRepo = subscriptionRepo;
     this.paymentUseCase = paymentUseCase;
     this.mailUseCase = mailUseCase;
+    this.shipmentUseCase = shipmentUseCase;
   }
 
   public createOrder = async (
@@ -224,14 +226,22 @@ export class OrderUsecase {
       orderType,
       t,
     } = params;
-    const order = await this.initOrder(buyerId, orderType, t);
-    const totalAmount = await this.processCartItems(
-      cartItems,
-      order.id,
-      orderType,
+    const order = await this.initOrder({
+      buyerId: buyerId,
+      orderType: orderType,
+      orderStatus: OrderStatus.WAITING_CONFIRMED,
       t,
-    );
-    const shipmentFee = this.calculateShipmentFee(totalAmount);
+    });
+    const totalAmount = await this.processCartItems({
+      cartItems: cartItems,
+      orderId: order.id,
+      orderType: orderType,
+      isSkippedOrder: false,
+      t,
+    });
+    const shipmentFee = this.shipmentUseCase.calculateShipmentFee({
+      totalAmount,
+    });
     const finalAmount = totalAmount + shipmentFee;
 
     await this.createOrderPayment(order.id, t);
@@ -268,11 +278,65 @@ export class OrderUsecase {
     return orderUpdated;
   }
 
-  private async initOrder(
-    buyerId: string,
-    orderType: OrderType,
-    t: Transaction,
-  ): Promise<Order> {
+  public async createSkippedOrder(params: {
+    buyerId: string;
+    storeId: string;
+    cartItems: CartItem[] | SubscriptionProduct[];
+    latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress;
+    orderType: OrderType;
+    t: Transaction;
+  }) {
+    Logger.info('Start create skipped order');
+    const { buyerId, storeId, cartItems, latestAddress, orderType, t } = params;
+    const order = await this.initOrder({
+      buyerId: buyerId,
+      orderType: orderType,
+      orderStatus: OrderStatus.SKIPPED,
+      t,
+    });
+    const totalAmount = await this.processCartItems({
+      cartItems: cartItems,
+      orderId: order.id,
+      orderType: orderType,
+      isSkippedOrder: true,
+      t,
+    });
+    const shipmentFee = this.shipmentUseCase.calculateShipmentFee({
+      totalAmount,
+    });
+    const finalAmount = totalAmount + shipmentFee;
+
+    await this.createOrderPayment(order.id, t);
+    await this.createShipment(order.id, shipmentFee, t);
+    await this.createOrderAddressBuyer(order.id, latestAddress, t);
+
+    const orderUpdated = await this.updateOrderInfo({
+      orderId: order.id,
+      buyerId,
+      storeId,
+      totalAmount,
+      shipmentFee,
+      finalAmount,
+      orderStatus: OrderStatus.SKIPPED,
+      t,
+    });
+
+    await this.orderPaymentRepo.updateOrderPaymentStatus({
+      orderId: order.id,
+      status: PaymentSatus.CANCELLED,
+      t,
+    });
+
+    return orderUpdated;
+  }
+
+  private async initOrder(params: {
+    buyerId: string;
+    orderType: OrderType;
+    orderStatus: OrderStatus;
+    t: Transaction;
+  }): Promise<Order> {
+    const { buyerId, orderType, orderStatus, t } = params;
     Logger.info('Start create order');
     let attempts = 0;
     const maxRetries = 10;
@@ -283,7 +347,7 @@ export class OrderUsecase {
       if (!existingOrder) {
         const createOrderRequest: CreateOrderRequest = {
           id: id,
-          orderStatus: OrderStatus.WAITING_CONFIRMED,
+          orderStatus: orderStatus,
           orderType: orderType,
           amount: 0,
           shipmentFee: 0,
@@ -306,12 +370,14 @@ export class OrderUsecase {
     return order;
   }
 
-  private async processCartItems(
-    cartItems: CartItem[] | SubscriptionProduct[],
-    orderId: number,
-    orderType: OrderType,
-    t: Transaction,
-  ): Promise<number> {
+  private async processCartItems(params: {
+    cartItems: CartItem[] | SubscriptionProduct[];
+    orderId: number;
+    orderType: OrderType;
+    t: Transaction;
+    isSkippedOrder: boolean;
+  }): Promise<number> {
+    const { cartItems, orderId, orderType, t, isSkippedOrder } = params;
     Logger.info(
       'Start create order item, update stock then delete item in cart',
     );
@@ -323,6 +389,12 @@ export class OrderUsecase {
         input.originalPrice = cartItem.product.priceSubscription || 0;
       } else {
         input.originalPrice = cartItem.product.price;
+      }
+
+      if (isSkippedOrder) {
+        totalAmount += (input.price || 0) * input.quantity;
+        await this.orderItemRepo.createOrderItem(input, t);
+        return totalAmount;
       }
 
       if (!input.price || input.price <= 0) {
@@ -367,21 +439,21 @@ export class OrderUsecase {
     Logger.info('Start decrease stock item');
     const product = await this.productRepo.getProductById(productId);
     if (!product.stockItem || product.stockItem <= 0) {
-      throw new OutOfStockError('This product is not available');
+      throw new BadRequestError(
+        'This product is not empty in stock',
+        ErrorCode.EMPTY_STOCK,
+      );
     }
 
     const newQuantity = product.stockItem - quantity;
     if (newQuantity < 0) {
-      throw new OutOfStockError('Exceed maximum stock product');
+      throw new BadRequestError(
+        'Exceed maximum stock product',
+        ErrorCode.OVER_STOCK,
+      );
     }
 
     await this.productRepo.updateStockProduct(productId, newQuantity, t);
-  }
-
-  private calculateShipmentFee(totalAmount: number): number {
-    return totalAmount > ShipmentPrice.MAX_PRICE_APPY_FEE
-      ? ShipmentPrice.MIN_FEE
-      : ShipmentPrice.MAX_FEE;
   }
 
   private async createOrderPayment(orderId: number, t: Transaction) {

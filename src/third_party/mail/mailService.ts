@@ -14,7 +14,7 @@ export interface MailOptions {
 }
 
 export interface TemplateParams {
-  [key: string]: string | number | boolean | object;
+  [key: string]: string | number | boolean | object | undefined;
 }
 
 export interface OrderSuccessOptions extends MailOptions {

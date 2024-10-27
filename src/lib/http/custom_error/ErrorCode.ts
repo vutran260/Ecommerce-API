@@ -12,6 +12,7 @@ export enum ErrorCode {
   OVER_STOCK = '40001',
   PRODUCT_DELETED = '40002',
   PRODUCT_INACTIVE = '40003',
+  EMPTY_STOCK = '40004',
 
   PAYMENT_ERROR = '50000',
 }

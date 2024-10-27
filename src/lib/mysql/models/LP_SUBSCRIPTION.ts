@@ -31,6 +31,8 @@ export interface LP_SUBSCRIPTIONAttributes {
   planDeliveryTimeFrom?: string;
   planDeliveryTimeTo?: string;
   subscriptionPeriod: number;
+  retryAttempts: number;
+  retryStatus?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -41,6 +43,8 @@ export type LP_SUBSCRIPTIONOptionalAttributes =
   | 'id'
   | 'planDeliveryTimeFrom'
   | 'planDeliveryTimeTo'
+  | 'retryAttempts'
+  | 'retryStatus'
   | 'createdAt'
   | 'updatedAt';
 export type LP_SUBSCRIPTIONCreationAttributes = Optional<
@@ -61,6 +65,8 @@ export class LP_SUBSCRIPTION
   planDeliveryTimeFrom?: string;
   planDeliveryTimeTo?: string;
   subscriptionPeriod!: number;
+  retryAttempts!: number;
+  retryStatus?: string;
   createdAt!: Date;
   updatedAt!: Date;
 
@@ -304,6 +310,19 @@ export class LP_SUBSCRIPTION
           type: DataTypes.INTEGER,
           allowNull: false,
           field: 'subscription_period',
+        },
+        retryAttempts: {
+          type: DataTypes.TINYINT,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Track retry attempts',
+          field: 'retry_attempts',
+        },
+        retryStatus: {
+          type: DataTypes.STRING(50),
+          allowNull: true,
+          comment: 'Status of the retry process',
+          field: 'retry_status',
         },
         createdAt: {
           type: DataTypes.DATE,

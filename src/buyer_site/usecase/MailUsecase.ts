@@ -16,15 +16,26 @@ import {
   formatCurrency,
   formatPhoneNumber,
 } from '../../lib/helpers/commonFunction';
-import { SubscriptionAddress } from '../../common/model/orders/Subscription';
+import {
+  SubscriptionAddress,
+  SubscriptionProduct,
+} from '../../common/model/orders/Subscription';
+import { CreateOrderItemRequest } from '../../common/model/orders/Order';
+import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
 
 export class MailUseCase {
   private orderRepo: OrderRepository;
   private mailService: MailService;
+  private shipmentUseCase: ShipmentUseCase;
 
-  constructor(orderRepo: OrderRepository, mailService: MailService) {
+  constructor(
+    orderRepo: OrderRepository,
+    mailService: MailService,
+    shipmentUseCase: ShipmentUseCase,
+  ) {
     this.orderRepo = orderRepo;
     this.mailService = mailService;
+    this.shipmentUseCase = shipmentUseCase;
   }
 
   public sendMailOrder = async (params: {
@@ -216,4 +227,115 @@ export class MailUseCase {
 
     this.mailService.sendMail(mailOptions);
   };
+
+  public handleSendMailRetry = async (params: {
+    subscription: LP_SUBSCRIPTION;
+    typeError: 'inventory' | 'payment' | 'skipped';
+    target: 'seller' | 'buyer';
+    isInventoryError?: boolean;
+    isPaymentError?: boolean;
+  }) => {
+    const {
+      subscription,
+      typeError,
+      target,
+      isInventoryError,
+      isPaymentError,
+    } = params;
+    const { lpSubscriptionAddress: subAddress, lpSubscriptionProducts } =
+      subscription;
+
+    const products =
+      lpSubscriptionProducts?.map((item) => {
+        return {
+          productName: item.product.productName,
+          unitPrice: formatCurrency(item.product?.priceSubscription),
+          quantity: item.quantity,
+          subTotal: formatCurrency(
+            (item.product?.priceSubscription || 0) * item.quantity,
+          ),
+        };
+      }) || [];
+
+    const subProducts = subscription.lpSubscriptionProducts.map((item) => {
+      return SubscriptionProduct.FromLP_SUBSCRIPTION_PRODUCT(item);
+    });
+
+    const subTotal = this.calculateTotalAmount(subProducts);
+    const shipmentFee = this.shipmentUseCase.calculateShipmentFee({
+      totalAmount: subTotal,
+    });
+    const totalAmount = subTotal + shipmentFee;
+
+    let templateName = '';
+    let subject = '';
+    switch (typeError) {
+      case 'inventory':
+        templateName = 'subscriptionInventoryErrorForSeller';
+        subject = 'ECパレット｜件名: 在庫による注文生成エラーのご連絡';
+        break;
+      case 'payment':
+        if (target === 'seller') {
+          templateName = 'subscriptionPaymentErrorForSeller';
+        } else {
+          templateName = 'subscriptionPaymentErrorForBuyer';
+        }
+        subject = 'ECパレット｜件名: 在庫による注文生成エラーのご連絡';
+        break;
+      case 'skipped':
+        if (target === 'seller') {
+          templateName = 'subscriptionSkippedOrderForSeller';
+        } else {
+          templateName = 'subscriptionSkippedErrorForBuyer';
+        }
+        subject = 'ECパレット｜件名: 注文生成スキップエラーのご連絡';
+        break;
+    }
+
+    let toMail = '';
+    if (target === 'seller') {
+      toMail = subscription.store.lpSellers[0].email || '';
+    } else {
+      toMail = subAddress.email;
+    }
+
+    const mailParams = {
+      buyerFirstNameKanji: subAddress.firstNameKanji,
+      buyerLastNameKanji: subAddress.lastNameKanji,
+      subscriptionId: subscription.id,
+      subscriptionCreatedAt: formatDateTimeJp(subscription.createdAt),
+      nextDeliveryDate: formatDateJp(subscription.nextDate),
+      products: products,
+      subTotal: formatCurrency(subTotal),
+      shippingCost: formatCurrency(shipmentFee),
+      total: formatCurrency(totalAmount),
+      postCode: subAddress.postCode,
+      address: `${subAddress.prefectureName || ''} ${subAddress.cityTown} ${subAddress.streetAddress} ${subAddress.buildingName}`,
+      phoneNumber: formatPhoneNumber(subAddress.telephoneNumber),
+      isInventoryError,
+      isPaymentError,
+    };
+
+    const mailOptions = {
+      to: toMail,
+      subject: subject,
+      templateName: templateName,
+      params: mailParams,
+    };
+
+    this.mailService.sendMail(mailOptions);
+  };
+
+  private calculateTotalAmount(products: SubscriptionProduct[]): number {
+    let totalAmount = 0;
+    for (const product of products) {
+      const input = new CreateOrderItemRequest(product);
+      input.originalPrice = product.product.priceSubscription || 0;
+      if (!input.price || input.price <= 0) {
+        return 0;
+      }
+      totalAmount += input.price * input.quantity;
+    }
+    return totalAmount;
+  }
 }
