@@ -2,6 +2,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import moment from 'moment';
 import { DATE_FORMAT, OrderStatus } from '../../../lib/constant/Constant';
 import { LP_BUYER } from '../../../lib/mysql/models/LP_BUYER';
+import { formatName } from '../../../lib/helpers/commonFunction';
 
 export default class Buyer {
   @IsString()
@@ -33,12 +34,19 @@ export class BuyerInfo {
   numOfReturnedOrder?: number;
   latestOrderDate?: string;
   constructor(buyer: LP_BUYER) {
+    const buyerAddress =
+      buyer?.lpAddressBuyers?.[0] || buyer?.lpAddressBuyerSso;
+    if (buyerAddress) {
+      this.buyerName = formatName(
+        buyerAddress.firstNameKanji,
+        buyerAddress.lastNameKanji,
+      );
+      this.phone = buyerAddress.telephoneNumber;
+    } else {
+      this.buyerName = '-';
+      this.phone = '-';
+    }
     this.id = buyer.id;
-    this.buyerName = buyer.fullname;
-    this.phone =
-      buyer.lpAddressBuyerSso && buyer.lpAddressBuyerSso.telephoneNumber
-        ? buyer.lpAddressBuyerSso.telephoneNumber
-        : '';
     if (buyer.lpOrders && buyer.lpOrders.length > 0) {
       this.numOfOrder = buyer.lpOrders.length;
 
@@ -75,18 +83,14 @@ export class BuyerDetailInfo {
   telephone?: string;
   constructor(buyer: LP_BUYER) {
     this.id = buyer.id;
-    if (buyer.lpBuyerPersonalInformation) {
-      const buyerInfo = buyer.lpBuyerPersonalInformation;
-      this.fullname = buyerInfo.lastName + ' ' + buyerInfo.firstName;
-      this.gender = buyerInfo.gender;
-    } else {
-      this.fullname = '';
-      this.gender = 0;
-    }
-
     const buyerAddress =
       buyer?.lpAddressBuyers?.[0] || buyer?.lpAddressBuyerSso;
     if (buyerAddress) {
+      this.fullname = formatName(
+        buyerAddress.firstNameKanji,
+        buyerAddress.lastNameKanji,
+      );
+      this.gender = buyerAddress.gender;
       this.address = [
         buyerAddress.prefectureName || buyerAddress.prefectureCode,
         buyerAddress.cityTown,
@@ -101,6 +105,8 @@ export class BuyerDetailInfo {
       this.address = '';
       this.email = '';
       this.telephone = '';
+      this.fullname = '';
+      this.gender = 0;
     }
   }
 }
