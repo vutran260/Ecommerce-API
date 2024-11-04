@@ -38,6 +38,9 @@ export class BuyerRepository {
           required: true,
         },
         {
+          association: LP_BUYER.associations.lpAddressBuyers,
+        },
+        {
           association: LP_BUYER.associations.lpAddressBuyerSso,
         },
         {
