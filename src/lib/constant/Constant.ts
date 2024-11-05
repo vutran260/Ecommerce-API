@@ -45,9 +45,7 @@ export enum SubscriptionStatus {
 
 export enum PaymentSatus {
   PENDING = 'PENDING',
-  AUTHORIZED = 'AUTHORIZED',
   PAID = 'PAID',
-  PARTIALLY_PAID = 'PARTIALLY_PAID',
   FAILED = 'FAILED',
   REFUNDED = 'REFUNDED',
   CANCELLED = 'CANCELLED',
