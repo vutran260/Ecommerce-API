@@ -51,11 +51,11 @@ export class LP_PRODUCT_FAQ
           field: 'product_id',
         },
         question: {
-          type: DataTypes.STRING(100),
+          type: DataTypes.STRING(150),
           allowNull: false,
         },
         answer: {
-          type: DataTypes.STRING(100),
+          type: DataTypes.STRING(150),
           allowNull: false,
         },
       },
