@@ -64,7 +64,7 @@ export class SubscriptionUseCase {
       // - Ví dụ: Ngày giao hàng tiếp theo sẽ giao là 2024/09/06. Ngày giao hàng kì tới là: 2024/10/06
       // - Nếu đổi ngày sau ngày 2024/10/1 thì sẽ hiển thị lỗi:
       if (
-        nextDate.isAfter(
+        nextDate.isBefore(
           moment(subscription.nextDate).subtract(daysBeforeNextDate, 'days'),
         )
       ) {
