@@ -3,6 +3,7 @@ import { OrderRepository } from '../repository/OrderRepository';
 import { MailOptions, MailService } from '../../third_party/mail/mailService';
 import { formatDateJp } from '../../lib/helpers/dateTimeUtil';
 import {
+  formatBusinessRegistrationNumber,
   formatCurrency,
   formatDiscountAmount,
   formatName,
@@ -29,8 +30,12 @@ export class InvoiceUseCase {
     this.pdfService = pdfService;
   }
 
-  public issueInvoice = async (params: { email: string; orderId: string }) => {
-    const { email, orderId } = params;
+  public issueInvoice = async (params: {
+    email: string;
+    businessRegistrationNumber: string;
+    orderId: string;
+  }) => {
+    const { email, businessRegistrationNumber, orderId } = params;
     const order = await this.orderRepo.getOrderFullAttrById(Number(orderId));
     if (!order) {
       throw new Error(`Order with ID ${orderId} not found`);
@@ -49,6 +54,9 @@ export class InvoiceUseCase {
     const templateParams: TemplateParams = {
       receiptNo: createdInvoice.id,
       issueDate: formatDateJp(createdInvoice.createdAt),
+      businessRegistrationNumber: formatBusinessRegistrationNumber(
+        businessRegistrationNumber,
+      ),
       customerName: formatName(
         orderAddress.firstNameKanji,
         orderAddress.lastNameKanji,

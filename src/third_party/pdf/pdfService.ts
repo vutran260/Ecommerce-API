@@ -6,6 +6,7 @@ import * as os from 'os';
 export interface TemplateParams {
   receiptNo: number;
   issueDate: string;
+  businessRegistrationNumber: string;
   customerName: string;
   totalAmount: string;
   shipmentFee: string;
