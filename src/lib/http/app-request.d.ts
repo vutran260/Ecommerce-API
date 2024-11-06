@@ -18,6 +18,7 @@ declare interface ProtectedRequest extends RoleRequest {
   storeId: string;
   accessToken: string;
   keystore: Keystore;
+  timezone: string;
 }
 
 declare interface Tokens {

@@ -51,6 +51,7 @@ import { MailUseCase } from './usecase/MailUsecase';
 import { InvoiceUseCase } from './usecase/InvoiceUsecase';
 import { PaymentEndpoint } from './endpoint/PaymentEndpoint';
 import { ShipmentUseCase } from './usecase/ShipmentUseCase';
+import { TimezoneMiddleware } from './middleware/TimezoneMiddelware';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -142,6 +143,7 @@ export class buyerSiteRouter {
     );
     const paymentEndpoint = new PaymentEndpoint(paymentUseCase);
 
+    router.use(TimezoneMiddleware);
     router.use('/prefectures', prefectureEndpoint.getRouter());
     router.use('/buyer', buyerEndpoint.getRouter());
     router.use('/sso', ssoEndpoint.getRouter());

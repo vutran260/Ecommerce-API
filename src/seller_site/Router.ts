@@ -44,6 +44,7 @@ import { MailUseCase } from '../buyer_site/usecase/MailUsecase';
 import { MailService } from '../third_party/mail/mailService';
 import { OrderRepository as BuyerOrderRepository } from '../buyer_site/repository/OrderRepository';
 import { ShipmentUseCase } from '../buyer_site/usecase/ShipmentUseCase';
+import { TimezoneMiddleware } from './middleware/TimezoneMiddelware';
 
 export class sellerSiteRouter {
   public getSellerSiteRouter = () => {
@@ -111,6 +112,7 @@ export class sellerSiteRouter {
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);
     const dashboardEndpoint = new DashboardEndpoint(dashboardUseCase);
 
+    router.use(TimezoneMiddleware);
     router.use('/seller', sellerEndpoint.getRouter());
     router.use('/sso', ssoEndpoint.getRouter());
     router.use(SellerAuthenMiddlleware);
