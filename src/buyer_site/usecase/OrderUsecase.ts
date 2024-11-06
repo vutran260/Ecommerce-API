@@ -541,7 +541,11 @@ export class OrderUsecase {
     return await this.orderRepo.getOrderById(id);
   };
 
-  public cancelOrder = async (id: number, reasons: string[]) => {
+  public cancelOrder = async (
+    id: number,
+    reasons: string[],
+    timezone: string,
+  ) => {
     Logger.info(`Attempting to cancel order with ID: ${id}`);
 
     const order = await this.orderRepo.getOrderById(id);
@@ -627,6 +631,7 @@ export class OrderUsecase {
         order,
         reasons,
         canceledAt: new Date(),
+        timezone,
       });
       Logger.info(`Cancellation email sent for order ID: ${id}`);
 

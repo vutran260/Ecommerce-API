@@ -52,6 +52,7 @@ export class OrderEndpoint {
     await this.orderUsecase.cancelOrder(
       Number(req.params.id),
       req.body.reasons,
+      req.timezone,
     );
     return ResponseData('cancel order success', res);
   };

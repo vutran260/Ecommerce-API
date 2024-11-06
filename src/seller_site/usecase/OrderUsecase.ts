@@ -83,7 +83,10 @@ export class OrderUsecase {
     });
   };
 
-  public updateOrderStatus = async (request: UpdateOrderStatusRequest) => {
+  public updateOrderStatus = async (
+    request: UpdateOrderStatusRequest,
+    timezone: string,
+  ) => {
     Logger.info(`Updating order status for order ID: ${request.orderId}`);
 
     const order = await this.orderRepo.getOrderById(request.orderId);
@@ -216,6 +219,7 @@ export class OrderUsecase {
           order,
           reasons: request.reasons || [],
           canceledAt: new Date(),
+          timezone,
         });
       }
 

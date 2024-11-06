@@ -132,8 +132,9 @@ export class MailUseCase {
     order: LP_ORDER;
     canceledAt: Date;
     reasons: string[];
+    timezone: string;
   }) => {
-    const { order, reasons, canceledAt } = params;
+    const { order, reasons, canceledAt, timezone } = params;
     const { lpOrderAddressBuyer } = order;
 
     const mailOptions = {
@@ -144,8 +145,8 @@ export class MailUseCase {
         buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
         buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
         orderId: order.id,
-        orderCreatedAt: formatDateTimeJp(order.createdAt),
-        orderCanceledAt: formatDateTimeJp(canceledAt),
+        orderCreatedAt: formatDateTimeJp(order.createdAt, timezone),
+        orderCanceledAt: formatDateTimeJp(canceledAt, timezone),
         cancelReasons: reasons,
       },
     };
@@ -157,8 +158,9 @@ export class MailUseCase {
     order: LP_ORDER;
     canceledAt: Date;
     reasons: string[];
+    timezone: string;
   }) => {
-    const { order, reasons, canceledAt } = params;
+    const { order, reasons, canceledAt, timezone } = params;
     const { lpOrderAddressBuyer } = order;
 
     const mailOptions = {
@@ -169,8 +171,8 @@ export class MailUseCase {
         buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
         buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
         orderId: order.id,
-        orderCreatedAt: formatDateTimeJp(order.createdAt),
-        orderCanceledAt: formatDateTimeJp(canceledAt),
+        orderCreatedAt: formatDateTimeJp(order.createdAt, timezone),
+        orderCanceledAt: formatDateTimeJp(canceledAt, timezone),
         cancelReasons: reasons,
       },
     };
