@@ -40,4 +40,19 @@ function formatDiscountAmount(
   return `${originalPrice - price}円`;
 }
 
-export { formatCurrency, formatPhoneNumber, formatName, formatDiscountAmount };
+const formatBusinessRegistrationNumber = (
+  businessRegistrationNumber: string,
+) => {
+  if (businessRegistrationNumber) {
+    return 'T' + businessRegistrationNumber;
+  }
+  return '-';
+};
+
+export {
+  formatCurrency,
+  formatPhoneNumber,
+  formatName,
+  formatDiscountAmount,
+  formatBusinessRegistrationNumber,
+};

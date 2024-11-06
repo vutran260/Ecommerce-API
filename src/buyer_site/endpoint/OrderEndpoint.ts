@@ -94,8 +94,12 @@ export class OrderEndpoint {
     if (!req.body.orderId) {
       throw new BadRequestError('orderId is require');
     }
+    if (!req.body.businessRegistrationNumber) {
+      throw new BadRequestError('businessRegistrationNumber is require');
+    }
     const result = await this.invoiceUseCase.issueInvoice({
       email: req.body.email,
+      businessRegistrationNumber: req.body.businessRegistrationNumber,
       orderId: req.body.orderId,
     });
     return ResponseData(result, res);
