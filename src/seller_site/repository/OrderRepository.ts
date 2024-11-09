@@ -54,6 +54,9 @@ export class OrderRepository {
           {
             association: LP_ORDER.associations.lpOrderPayment,
           },
+          {
+            association: LP_ORDER.associations.lpOrderAddressBuyer,
+          },
         ],
         where: BuildQuery(filter),
         offset: GetOffset(paging),

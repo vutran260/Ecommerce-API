@@ -12,6 +12,7 @@ import {
 } from '../../../common/model/orders/Subscription';
 import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { IsOrderStatusSequential } from '../../../common/custom_validator/IsOrderStatusSequential';
+import { formatName } from '../../../lib/helpers/commonFunction';
 
 export class Order {
   id: number;
@@ -24,7 +25,10 @@ export class Order {
   orderItems?: OrderItem[];
   constructor(order: LP_ORDER) {
     this.id = order.id;
-    this.buyerName = order.buyer.username;
+    this.buyerName = formatName(
+      order.lpOrderAddressBuyer.firstNameKanji,
+      order.lpOrderAddressBuyer.lastNameKanji,
+    );
     this.totalAmount = order.totalAmount;
     this.orderStatus = order.orderStatus;
     this.orderType = order.orderType;
