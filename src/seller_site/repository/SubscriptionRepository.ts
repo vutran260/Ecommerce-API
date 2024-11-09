@@ -64,6 +64,14 @@ export class SubscriptionRepository {
         },
         {
           association: LP_SUBSCRIPTION.associations.lpSubscriptionOrders,
+          include: [
+            {
+              association: LP_SUBSCRIPTION_ORDER.associations.order,
+            },
+          ],
+        },
+        {
+          association: LP_SUBSCRIPTION.associations.lpSubscriptionAddress,
         },
       ],
       offset: GetOffset(paging),
