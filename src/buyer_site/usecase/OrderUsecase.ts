@@ -38,7 +38,7 @@ import { OrderRepository } from '../repository/OrderRepository';
 import { ProductRepository } from '../repository/ProductRepository';
 import { ShipmentRepository } from '../repository/ShipmentRepository';
 import { Transaction } from 'sequelize';
-import { isEmpty } from 'lodash';
+import { isEmpty, groupBy } from 'lodash';
 import {
   CreateSubscriptionAddressRequest,
   SubscriptionAddress,
@@ -165,29 +165,50 @@ export class OrderUsecase {
     t: Transaction;
   }) {
     const { buyerId, storeId, cartItems, latestAddress, t } = params;
-    for (const cartItem of cartItems) {
+
+    // Group cart items by buying period and start buying date
+    const groupedItems = groupBy(cartItems, (item) => {
+      const buyingPeriodKey = item.buyingPeriod ?? 'noPeriod';
+      const startBuyingDateKey = item.startBuyingDate ?? 'noStartDate';
+      return `${buyingPeriodKey}-${startBuyingDateKey}`;
+    });
+
+    // Convert grouped items to an array of objects with groupKey and items
+    const groupedArray = Object.entries(groupedItems).map(([key, items]) => ({
+      groupKey: key,
+      items,
+    }));
+
+    for (const { groupKey, items } of groupedArray) {
       Logger.info('Start create subscription');
+      const [buyingPeriod, startBuyingDate] = groupKey.split('-');
+
+      // Create a new subscription entry
       const subscription = await this.subscriptionRepo.createSubscription(
         {
           buyerId,
           storeId,
-          startDate: moment(cartItem.startBuyingDate, DATE_FORMAT).toDate(),
-          nextDate: moment(cartItem.startBuyingDate, DATE_FORMAT).toDate(),
-          subscriptionPeriod: cartItem.buyingPeriod || 0,
+          startDate: moment(startBuyingDate, DATE_FORMAT).toDate(),
+          nextDate: moment(startBuyingDate, DATE_FORMAT).toDate(),
+          subscriptionPeriod: Number(buyingPeriod) || 0,
           subscriptionStatus: SubscriptionStatus.NEW,
         },
         t,
       );
 
       Logger.info('Start create subscription product');
-      await this.subscriptionRepo.createSubscriptionProduct(
-        {
-          subscriptionId: subscription.id,
-          productId: cartItem.productId,
-          quantity: cartItem.quantity,
-        },
-        t,
-      );
+      for (const cartItem of items) {
+        // Create a subscription product entry for each cart item
+        await this.subscriptionRepo.createSubscriptionProduct(
+          {
+            subscriptionId: subscription.id,
+            productId: cartItem.productId,
+            quantity: cartItem.quantity,
+          },
+          t,
+        );
+        await this.cartRepo.deleteItem(cartItem.id, t);
+      }
 
       Logger.info('Start create subscription address');
       const createSubscriptionAddressRequest =
@@ -197,9 +218,6 @@ export class OrderUsecase {
         createSubscriptionAddressRequest,
         t,
       );
-
-      Logger.info('Start delete card item');
-      await this.cartRepo.deleteItem(cartItem.id, t);
     }
   }
 
