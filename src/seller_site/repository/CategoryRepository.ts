@@ -1,5 +1,6 @@
 import Logger from '../../lib/core/Logger';
 import {
+  BadRequestError,
   DataExists,
   NotFoundError,
 } from '../../lib/http/custom_error/ApiError';
@@ -23,6 +24,7 @@ import { CategoryTypeAction, CategoryValue } from '../../lib/constant/Category';
 import { LP_PRODUCT_CATEGORY } from '../../lib/mysql/models/LP_PRODUCT_CATEGORY';
 import UpdateCategoryRequest from '../../common/model/categories/UpdateCategoryRequest';
 import { isEmpty } from 'lodash';
+import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 
 export class CategoryRepository {
   public createCategory = async (
@@ -121,6 +123,13 @@ export class CategoryRepository {
         const id = ids[index];
         const category = await this.getCategoryId(id, storeId, t);
 
+        if (!isEmpty(category.lpProductCategories)) {
+          throw new BadRequestError(
+            'このカテゴリは製品に追加中であるため、削除できません。',
+            ErrorCode.CATEGORY_BELONG_PRODUCT,
+          );
+        }
+
         // Get all the same category parent.
         const categoriesTheSameLevel: any[any] =
           await this.getCategoriesTheSameLevel(category?.parentId, storeId, t);
@@ -170,6 +179,11 @@ export class CategoryRepository {
     t?: Transaction,
   ) => {
     const result = await LP_CATEGORY.findOne({
+      include: [
+        {
+          association: LP_CATEGORY.associations.lpProductCategories,
+        },
+      ],
       where: {
         id: id,
         storeId: storeId,
