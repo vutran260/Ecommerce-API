@@ -16,6 +16,10 @@ export const SetupDB = () => {
       database: process.env.MYSQL_DATABASE,
       dialect: 'mysql',
       storage: ':memory:',
+      logging: (msg, executionTime) => {
+        console.log(`SQL: ${msg} - Execution time: ${executionTime}ms`);
+      },
+      benchmark: true,
     });
     initModels(lpSequelize);
   } catch (error) {

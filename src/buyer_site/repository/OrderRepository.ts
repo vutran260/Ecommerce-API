@@ -155,13 +155,6 @@ export class OrderRepository {
         });
       }
 
-      paging.total = await LP_ORDER.count({
-        where: BuildQuery(filter),
-        include: include,
-        distinct: true,
-        col: 'id',
-      });
-
       const results = await LP_ORDER.findAll({
         include: include,
         where: BuildQuery(filter),
