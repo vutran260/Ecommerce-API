@@ -26,8 +26,8 @@ export class Order {
   constructor(order: LP_ORDER) {
     this.id = order.id;
     this.buyerName = formatName(
-      order.lpOrderAddressBuyer.firstNameKanji,
-      order.lpOrderAddressBuyer.lastNameKanji,
+      order.lpOrderAddressBuyer?.firstNameKanji,
+      order.lpOrderAddressBuyer?.lastNameKanji,
     );
     this.totalAmount = order.totalAmount;
     this.orderStatus = order.orderStatus;
