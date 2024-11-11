@@ -616,17 +616,18 @@ export class OrderUsecase {
       );
       Logger.info(`Cancel reasons saved for order ID: ${id}`);
 
-      await this.paymentUseCase.cancelTran(order);
-      Logger.info(`Payment transaction canceled for order ID: ${id}`);
-
-      await this.orderPaymentRepo.updateOrderPaymentStatus({
-        orderId: id,
-        status: PaymentSatus.CANCELLED,
-        t,
-      });
-      Logger.info(
-        `Order payment status updated to CANCELLED for order ID: ${id}`,
-      );
+      if (order.lpOrderPayment.paymentStatus === PaymentSatus.PAID) {
+        await this.paymentUseCase.cancelTran(order);
+        Logger.info(`Payment transaction canceled for order ID: ${id}`);
+        await this.orderPaymentRepo.updateOrderPaymentStatus({
+          orderId: id,
+          status: PaymentSatus.CANCELLED,
+          t,
+        });
+        Logger.info(
+          `Order payment status updated to CANCELLED for order ID: ${id}`,
+        );
+      }
 
       const orderItems = await LP_ORDER_ITEM.findAll({
         where: { orderId: id },
