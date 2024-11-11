@@ -1,4 +1,3 @@
-import axios, { AxiosResponse, HttpStatusCode } from 'axios';
 import { gmo } from '../../Config';
 import Logger from '../../lib/core/Logger';
 import {
@@ -31,52 +30,57 @@ export class GMOPaymentService {
 
     const endpoint = `${gmo.url}/payment/SearchMember.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
+    const requestJson = JSON.stringify(request);
 
-    try {
-      const response = await axios.post(endpoint, request, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: requestJson,
+    });
 
-      console.log('Received data:', response.data, 'status', response.status);
-      if (response.status !== HttpStatusCode.Ok) {
-        if (this.isResourceNotfound(response.data)) {
-          return null;
-        }
-        this.handlerError(response, response.data);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
+    if (!response.ok) {
+      if (this.isResourceNotfound(jsonData)) {
+        return null;
       }
-
-      return new MemberResponse(
-        response.data.memberID,
-        response.data.memberName,
-        response.data.deleteFlag,
-      );
-    } catch (e) {
-      Logger.error(e);
-      return null;
+      this.handlerError(response, jsonData);
     }
+
+    return new MemberResponse(
+      jsonData.memberID,
+      jsonData.memberName,
+      jsonData.deleteFlag,
+    );
   };
 
   public registerMember = async (memberId: string) => {
     Logger.info('registerMember');
     const endpoint = `${gmo.url}/payment/SaveMember.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
-    const response = await axios.post(endpoint, request, {
+    const requestJson = JSON.stringify(request);
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: requestJson,
     });
 
-    console.log('Received data:', response.data, 'status', response.status);
-    if (response.status !== HttpStatusCode.Ok) {
-      this.handlerError(response, response.data);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
+
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
 
     return new MemberResponse(
-      response.data.memberID,
-      response.data.memberName,
-      response.data.DeleteFlag,
+      jsonData.memberID,
+      jsonData.memberName,
+      jsonData.DeleteFlag,
     );
   };
 
@@ -90,80 +94,85 @@ export class GMOPaymentService {
       memberId,
       token,
     );
-    const response = await axios.post(endpoint, request, {
+    const requestJson = JSON.stringify(request);
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: requestJson,
     });
 
-    console.log('Received data:', response.data, 'status', response.status);
-    if (response.status !== HttpStatusCode.Ok) {
-      this.handlerError(response, response.data);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
+
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
 
     return new CardResponse(
-      response.data.cardSeq,
-      response.data.cardNo,
-      response.data.expire,
-      response.data.defaultFlag,
-      response.data.cardName,
-      response.data.holderName,
-      response.data.deleteFlag,
-      response.data.brand,
-      response.data.domesticFlag,
-      response.data.issuerCode,
-      response.data.debitPrepaidFlag,
-      response.data.debitPrepaidIssuerName,
-      response.data.forwardFinal,
+      jsonData.cardSeq,
+      jsonData.cardNo,
+      jsonData.expire,
+      jsonData.defaultFlag,
+      jsonData.cardName,
+      jsonData.holderName,
+      jsonData.deleteFlag,
+      jsonData.brand,
+      jsonData.domesticFlag,
+      jsonData.issuerCode,
+      jsonData.debitPrepaidFlag,
+      jsonData.debitPrepaidIssuerName,
+      jsonData.forwardFinal,
     );
   };
 
   public searchCard = async (memberId: string) => {
     const endpoint = `${gmo.url}/payment/SearchCard.json`;
     const request = new SiteRequest(gmo.siteId, gmo.sitePassword, memberId);
+    const requestJson = JSON.stringify(request);
 
-    try {
-      const response = await axios.post(endpoint, request, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: requestJson,
+    });
 
-      if (response.status !== HttpStatusCode.Ok) {
-        if (this.isResourceNotfound(response.data)) {
-          return null;
-        }
-        this.handlerError(response, response.data);
+    const jsonData = await response.json();
+    if (!response.ok) {
+      if (this.isResourceNotfound(jsonData)) {
+        return null;
       }
-
-      console.log('Received data:', response.data, 'status', response.status);
-
-      const results: CardResponse[] = [];
-      response.data.forEach((card: CardResponse) => {
-        results.push(
-          new CardResponse(
-            card.cardSeq,
-            card.cardNo,
-            card.expire,
-            card.defaultFlag,
-            card.cardName,
-            card.holderName,
-            card.deleteFlag,
-            card.brand,
-            card.domesticFlag,
-            card.issuerCode,
-            card.debitPrepaidFlag,
-            card.debitPrepaidIssuerName,
-            card.forwardFinal,
-          ),
-        );
-      });
-
-      return results;
-    } catch (e) {
-      Logger.error(e);
-      return null;
+      this.handlerError(response, jsonData);
     }
+
+    console.log('Received data:', jsonData, 'status', response.status);
+
+    const results: CardResponse[] = [];
+    jsonData.forEach((card: CardResponse) => {
+      results.push(
+        new CardResponse(
+          card.cardSeq,
+          card.cardNo,
+          card.expire,
+          card.defaultFlag,
+          card.cardName,
+          card.holderName,
+          card.deleteFlag,
+          card.brand,
+          card.domesticFlag,
+          card.issuerCode,
+          card.debitPrepaidFlag,
+          card.debitPrepaidIssuerName,
+          card.forwardFinal,
+        ),
+      );
+    });
+
+    return results;
   };
 
   public editCard = async (
@@ -188,40 +197,39 @@ export class GMOPaymentService {
       // defaultFlag: defaultFlag || undefined, // Optional default flag (1 for default card)
     };
 
+    const requestJson = JSON.stringify(request);
     console.log('request', request);
 
-    try {
-      const response = await axios.post(endpoint, request, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: requestJson,
+    });
 
-      console.log('Received data:', response.data, 'status', response.status);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
 
-      if (response.status !== HttpStatusCode.Ok) {
-        this.handlerError(response, response.data);
-      }
-
-      return new CardResponse(
-        response.data.cardSeq,
-        response.data.cardNo,
-        response.data.expire,
-        response.data.defaultFlag,
-        response.data.cardName,
-        response.data.holderName,
-        response.data.deleteFlag,
-        response.data.brand,
-        response.data.domesticFlag,
-        response.data.issuerCode,
-        response.data.debitPrepaidFlag,
-        response.data.debitPrepaidIssuerName,
-        response.data.forwardFinal,
-      );
-    } catch (error) {
-      Logger.error('Error editing card:', error);
-      throw error;
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
+
+    return new CardResponse(
+      jsonData.cardSeq,
+      jsonData.cardNo,
+      jsonData.expire,
+      jsonData.defaultFlag,
+      jsonData.cardName,
+      jsonData.holderName,
+      jsonData.deleteFlag,
+      jsonData.brand,
+      jsonData.domesticFlag,
+      jsonData.issuerCode,
+      jsonData.debitPrepaidFlag,
+      jsonData.debitPrepaidIssuerName,
+      jsonData.forwardFinal,
+    );
   };
 
   public checkFraud = async (type: string, userId: string) => {
@@ -234,22 +242,26 @@ export class GMOPaymentService {
       type,
       userId,
     );
+    const requestJson = JSON.stringify(request);
 
-    const response = await axios.post(endpoint, request, {
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: requestJson,
     });
 
-    console.log('Received data:', response.data, 'status', response.status);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
 
-    if (response.status !== HttpStatusCode.Ok) {
-      this.handlerError(response, response.data);
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
 
     return new CheckPointResponse(
-      response.data.siftOrderID,
-      response.data.paymentAbuseScore,
+      jsonData.siftOrderID,
+      jsonData.paymentAbuseScore,
     );
   };
 
@@ -264,25 +276,25 @@ export class GMOPaymentService {
       input.jobCd,
       input.amount,
     );
-
+    const requestJson = JSON.stringify(request);
     console.log('entryTran', request);
 
-    const response = await axios.post(endpoint, request, {
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: requestJson,
     });
 
-    console.log('Received data:', response.data, 'status', response.status);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
 
-    if (response.status !== HttpStatusCode.Ok) {
-      this.handlerError(response, response.data);
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
 
-    return new EntryTransactionResponse(
-      response.data.accessID,
-      response.data.accessPass,
-    );
+    return new EntryTransactionResponse(jsonData.accessID, jsonData.accessPass);
   };
 
   public execTran = async (input: ExecTransactionRequest) => {
@@ -299,22 +311,26 @@ export class GMOPaymentService {
       input.orderID,
       input.method,
     );
+    const requestJson = JSON.stringify(request);
 
-    const response = await axios.post(endpoint, request, {
+    const response = await fetch(endpoint, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: requestJson,
     });
 
-    console.log('Received data:', response.data, 'status', response.status);
+    const jsonData = await response.json();
+    console.log('Received data:', jsonData, 'status', response.status);
 
-    if (response.status !== HttpStatusCode.Ok) {
-      this.handlerError(response, response.data);
+    if (!response.ok) {
+      this.handlerError(response, jsonData);
     }
 
     return new ExecTransactionResponse(
-      response.data.acs,
-      response.data.redirectUrl,
+      jsonData.acs,
+      jsonData.redirectUrl,
       input.accessID,
       input.accessPass,
     );
@@ -322,26 +338,30 @@ export class GMOPaymentService {
 
   cancelTran = async (order: LP_ORDER) => {
     try {
-      const cancelEndpoint = `${gmo.url}/payment/AlterTran.json`;
-      const cancelRequest = {
+      const endpoint = `${gmo.url}/payment/AlterTran.json`;
+      const request = {
         shopID: gmo.shopId,
         shopPass: gmo.shopPassword,
         accessID: order.lpOrderPayment.gmoAccessId,
         accessPass: order.lpOrderPayment.gmoAccessPass,
         jobCd: 'CANCEL',
       };
-      console.log('cancelTran', cancelRequest);
+      const requestJson = JSON.stringify(request);
+      console.log('cancelTran', request);
 
-      const response = await axios.post(cancelEndpoint, cancelRequest, {
+      const response = await fetch(endpoint, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: requestJson,
       });
 
-      console.log('Received data:', response.data, 'status', response.status);
+      const jsonData = await response.json();
+      console.log('Received data:', jsonData, 'status', response.status);
 
-      if (response.status !== HttpStatusCode.Ok) {
-        this.handlerError(response, response.data);
+      if (!response.ok) {
+        this.handlerError(response, jsonData);
       }
 
       return new CancelTransactionResponse(true);
@@ -357,7 +377,7 @@ export class GMOPaymentService {
     });
   }
 
-  private handlerError = (response: AxiosResponse, errorList: any) => {
+  private handlerError = (response: Response, errorList: any) => {
     console.log(errorList);
     switch (response.status) {
       case 400:
