@@ -37,9 +37,16 @@ export class StoreEndpoint {
     return ResponseData(results, res);
   };
 
+  private getStoreProfile = async (req: ProtectedRequest, res: Response) => {
+    const storeId: string = req.storeId;
+    const results = await this.storeUsecase.getStoreDetail(storeId);
+    return ResponseData(results, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.post('/register', this.registerStore);
+    router.get('/profile', this.getStoreProfile);
     router.get('/:id', this.getStoreDetail);
 
     return router;
