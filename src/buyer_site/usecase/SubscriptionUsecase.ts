@@ -48,9 +48,15 @@ export class SubscriptionUseCase {
     const subscription = await this.subscriptionRepository.getSubscriptionById(
       updateRequest.id,
     );
+
     if (!subscription) {
       throw new BadRequestError('subscription not exist');
     }
+
+    if (subscription.subscriptionStatus === SubscriptionStatus.CANCELLED) {
+      throw new BadRequestError('subscription is cancelled');
+    }
+
     if (updateRequest.nextDate) {
       const nextDate = moment(updateRequest.nextDate, DATE_FORMAT);
       // - Ví dụ ngày giao hàng ban đầu: 2024/10/06
