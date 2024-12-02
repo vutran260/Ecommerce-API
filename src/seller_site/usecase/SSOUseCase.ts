@@ -65,7 +65,7 @@ export class SSOUseCase {
         lpStore = await LP_STORE.create(
           {
             id: storeAlias,
-            contractId: '',
+            contractId: storeSSOInfo.store_code,
             storeKey: storeSSOInfo.store_code,
             storeName: storeSSOInfo.store_name,
             storeNameKana: storeSSOInfo.store_name,
