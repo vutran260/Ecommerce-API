@@ -52,6 +52,9 @@ import { InvoiceUseCase } from './usecase/InvoiceUsecase';
 import { PaymentEndpoint } from './endpoint/PaymentEndpoint';
 import { ShipmentUseCase } from './usecase/ShipmentUseCase';
 import { TimezoneMiddleware } from './middleware/TimezoneMiddelware';
+import { SubscriptionAddressRepository } from './repository/SubscriptionAddressRepository';
+import { SubscriptionAddressUseCase } from './usecase/SubscriptionAddressUsecase';
+import { SubscriptionAddressEndpoint } from './endpoint/SubscriptionAddressEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -99,6 +102,7 @@ export class buyerSiteRouter {
       mailService,
       pdfService,
     );
+    const subscriptionAddressRepo = new SubscriptionAddressRepository();
     const orderUsecase = new OrderUsecase(
       orderRepo,
       orderItemRepo,
@@ -123,6 +127,9 @@ export class buyerSiteRouter {
     const productRecentlyViewedUseCase = new ProductRecentlyViewedUseCase(
       productRecentlyViewedRepo,
     );
+    const subscriptionAddressUsecase = new SubscriptionAddressUseCase(
+      subscriptionAddressRepo,
+    );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -142,6 +149,9 @@ export class buyerSiteRouter {
       productRecentlyViewedUseCase,
     );
     const paymentEndpoint = new PaymentEndpoint(paymentUseCase);
+    const subscriptionAddressEndpoint = new SubscriptionAddressEndpoint(
+      subscriptionAddressUsecase,
+    );
 
     router.use(TimezoneMiddleware);
     router.use('/prefectures', prefectureEndpoint.getRouter());
@@ -157,6 +167,10 @@ export class buyerSiteRouter {
     router.use('/post', buyerPostEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
     router.use('/subscription', subscriptionEndpoint.getRouter());
+    router.use(
+      '/subscription-address',
+      subscriptionAddressEndpoint.getRouter(),
+    );
     router.use(
       '/product-recently-viewed',
       productRecentlyViewedEndpoint.getRouter(),
