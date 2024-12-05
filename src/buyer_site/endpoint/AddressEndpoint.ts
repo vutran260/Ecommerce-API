@@ -139,7 +139,6 @@ export class Address {
   streetAddress: string;
 
   @IsString()
-  @IsNotEmpty()
   buildingName: string;
 
   @IsString()
