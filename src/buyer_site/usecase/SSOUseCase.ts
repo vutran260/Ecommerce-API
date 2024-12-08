@@ -55,7 +55,7 @@ export class SSOUseCase {
           id: userSSOInfo.user_alias,
           username: userSSOInfo.nickname,
           fullname:
-            (userSSOInfo.first_name || '') + (userSSOInfo.last_name || ''),
+            (userSSOInfo.last_name || '') + (userSSOInfo.first_name || ''),
         },
         {
           transaction: t,

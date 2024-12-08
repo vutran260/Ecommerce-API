@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import moment from 'moment';
 import { DATE_FORMAT, OrderStatus } from '../../../lib/constant/Constant';
 import { LP_BUYER } from '../../../lib/mysql/models/LP_BUYER';
-import { formatName } from '../../../lib/helpers/commonFunction';
+import { formatNameKanjiAndKana } from '../../../lib/helpers/commonFunction';
 
 export default class Buyer {
   @IsString()
@@ -37,9 +37,11 @@ export class BuyerInfo {
     const buyerAddress =
       buyer?.lpAddressBuyers?.[0] || buyer?.lpAddressBuyerSso;
     if (buyerAddress) {
-      this.buyerName = formatName(
+      this.buyerName = formatNameKanjiAndKana(
         buyerAddress.firstNameKanji,
         buyerAddress.lastNameKanji,
+        buyerAddress.firstNameKana,
+        buyerAddress.lastNameKana,
       );
       this.phone = buyerAddress.telephoneNumber;
     } else {
@@ -86,9 +88,11 @@ export class BuyerDetailInfo {
     const buyerAddress =
       buyer?.lpAddressBuyers?.[0] || buyer?.lpAddressBuyerSso;
     if (buyerAddress) {
-      this.fullname = formatName(
+      this.fullname = formatNameKanjiAndKana(
         buyerAddress.firstNameKanji,
         buyerAddress.lastNameKanji,
+        buyerAddress.firstNameKana,
+        buyerAddress.lastNameKana,
       );
       this.gender = buyerAddress.gender;
       this.address = [

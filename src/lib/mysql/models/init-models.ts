@@ -567,6 +567,14 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.hasMany(LP_ORDER, { as: 'lpOrders', foreignKey: 'storeId' });
   LP_PRODUCT.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_PRODUCT, { as: 'lpProducts', foreignKey: 'storeId' });
+  LP_PRODUCT_RECENTLY_VIEWED.belongsTo(LP_STORE, {
+    as: 'store',
+    foreignKey: 'storeId',
+  });
+  LP_STORE.hasMany(LP_PRODUCT_RECENTLY_VIEWED, {
+    as: 'lpProductRecentlyVieweds',
+    foreignKey: 'storeId',
+  });
   LP_SELLER.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_SELLER, { as: 'lpSellers', foreignKey: 'storeId' });
   LP_STORE_BUYER.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });

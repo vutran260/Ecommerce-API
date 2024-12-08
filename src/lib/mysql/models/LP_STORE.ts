@@ -6,6 +6,10 @@ import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_CATEGORY, LP_CATEGORYId } from './LP_CATEGORY';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
+import type {
+  LP_PRODUCT_RECENTLY_VIEWED,
+  LP_PRODUCT_RECENTLY_VIEWEDId,
+} from './LP_PRODUCT_RECENTLY_VIEWED';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_STORE_POST, LP_STORE_POSTId } from './LP_STORE_POST';
@@ -226,6 +230,39 @@ export class LP_STORE
     LP_PRODUCTId
   >;
   countLpProducts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_PRODUCT_RECENTLY_VIEWED via storeId
+  lpProductRecentlyVieweds!: LP_PRODUCT_RECENTLY_VIEWED[];
+  getLpProductRecentlyVieweds!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_RECENTLY_VIEWED>;
+  setLpProductRecentlyVieweds!: Sequelize.HasManySetAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  addLpProductRecentlyViewed!: Sequelize.HasManyAddAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  addLpProductRecentlyVieweds!: Sequelize.HasManyAddAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  createLpProductRecentlyViewed!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_RECENTLY_VIEWED>;
+  removeLpProductRecentlyViewed!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  removeLpProductRecentlyVieweds!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  hasLpProductRecentlyViewed!: Sequelize.HasManyHasAssociationMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  hasLpProductRecentlyVieweds!: Sequelize.HasManyHasAssociationsMixin<
+    LP_PRODUCT_RECENTLY_VIEWED,
+    LP_PRODUCT_RECENTLY_VIEWEDId
+  >;
+  countLpProductRecentlyVieweds!: Sequelize.HasManyCountAssociationsMixin;
   // LP_STORE hasMany LP_SELLER via storeId
   lpSellers!: LP_SELLER[];
   getLpSellers!: Sequelize.HasManyGetAssociationsMixin<LP_SELLER>;

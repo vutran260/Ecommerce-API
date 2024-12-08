@@ -2,11 +2,13 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
+import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_PRODUCT_RECENTLY_VIEWEDAttributes {
   buyerId: string;
   productId: string;
   viewedAt: Date;
+  storeId: string;
 }
 
 export type LP_PRODUCT_RECENTLY_VIEWEDPk = 'buyerId' | 'productId';
@@ -28,6 +30,7 @@ export class LP_PRODUCT_RECENTLY_VIEWED
   buyerId!: string;
   productId!: string;
   viewedAt!: Date;
+  storeId!: string;
 
   // LP_PRODUCT_RECENTLY_VIEWED belongsTo LP_BUYER via buyerId
   buyer!: LP_BUYER;
@@ -39,6 +42,11 @@ export class LP_PRODUCT_RECENTLY_VIEWED
   getProduct!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT>;
   setProduct!: Sequelize.BelongsToSetAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
   createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
+  // LP_PRODUCT_RECENTLY_VIEWED belongsTo LP_STORE via storeId
+  store!: LP_STORE;
+  getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
+  setStore!: Sequelize.BelongsToSetAssociationMixin<LP_STORE, LP_STOREId>;
+  createStore!: Sequelize.BelongsToCreateAssociationMixin<LP_STORE>;
 
   static initModel(
     sequelize: Sequelize.Sequelize,
@@ -71,6 +79,15 @@ export class LP_PRODUCT_RECENTLY_VIEWED
           defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP'),
           field: 'viewed_at',
         },
+        storeId: {
+          type: DataTypes.STRING(36),
+          allowNull: false,
+          references: {
+            model: 'LP_STORE',
+            key: 'id',
+          },
+          field: 'store_id',
+        },
       },
       {
         sequelize,
@@ -87,6 +104,11 @@ export class LP_PRODUCT_RECENTLY_VIEWED
             name: 'product_id',
             using: 'BTREE',
             fields: [{ name: 'product_id' }],
+          },
+          {
+            name: 'LP_PRODUCT_RECENTLY_VIEWED_store_id_foreign_idx',
+            using: 'BTREE',
+            fields: [{ name: 'store_id' }],
           },
         ],
       },

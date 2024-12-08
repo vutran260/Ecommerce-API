@@ -18,10 +18,12 @@ export class ProductRecentlyViewedEndpoint {
   ) => {
     const { productId } = req.body;
     const buyerId = req.user.id;
+    const storeId = req.storeId;
 
     await this.productRecentlyViewedUseCase.addProductRecentlyViewed(
       buyerId,
       productId,
+      storeId,
     );
     return ResponseData('Product added to recently viewed!', res);
   };
