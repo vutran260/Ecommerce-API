@@ -94,10 +94,12 @@ export class ProductRecentlyViewedRepository {
   public addOrUpdateRecentlyViewed = async (
     buyerId: string,
     productId: string,
+    storeId: string,
   ) => {
     await LP_PRODUCT_RECENTLY_VIEWED.upsert({
       buyerId,
       productId,
+      storeId,
       viewedAt: new Date(),
     });
   };

@@ -24,6 +24,15 @@ function formatName(firstName: string, lastName: string): string {
   return `${lastName || ''} ${firstName || ''}`;
 }
 
+function formatNameKanjiAndKana(
+  firstNameKanji: string,
+  lastNameKanji: string,
+  firstNameKana: string,
+  lastNameKana: string,
+) {
+  return `${lastNameKanji || ''} ${firstNameKanji || ''} (${lastNameKana || ''} ${firstNameKana || ''})`;
+}
+
 function formatDiscountAmount(
   price: number | undefined,
   originalPrice: number,
@@ -55,4 +64,5 @@ export {
   formatName,
   formatDiscountAmount,
   formatBusinessRegistrationNumber,
+  formatNameKanjiAndKana,
 };

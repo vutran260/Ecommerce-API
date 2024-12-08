@@ -34,6 +34,7 @@ export interface LP_ORDERAttributes {
   shipmentFee?: number;
   discount?: number;
   totalAmount: number;
+  totalCost: number;
   cancelAt?: Date;
   createdAt?: Date;
   createdBy?: string;
@@ -50,6 +51,7 @@ export type LP_ORDEROptionalAttributes =
   | 'orderType'
   | 'shipmentFee'
   | 'discount'
+  | 'totalCost'
   | 'cancelAt'
   | 'createdAt'
   | 'createdBy'
@@ -73,6 +75,7 @@ export class LP_ORDER
   shipmentFee?: number;
   discount?: number;
   totalAmount!: number;
+  totalCost!: number;
   cancelAt?: Date;
   createdAt?: Date;
   createdBy?: string;
@@ -360,6 +363,13 @@ export class LP_ORDER
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false,
           field: 'total_amount',
+        },
+        totalCost: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Total cost',
+          field: 'total_cost',
         },
         cancelAt: {
           type: DataTypes.DATE,
