@@ -90,7 +90,8 @@ export class SSOUseCase {
           {
             storeId: storeAlias,
             storeName: storeSSOInfo.store_name,
-            storeShortName: storeSSOInfo.store_short_name,
+            storeShortName:
+              storeSSOInfo.store_short_name || storeSSOInfo.store_name,
             storeCode: storeSSOInfo.store_code,
             postalCode: storeSSOInfo.postal_code,
             prefecture: prefectureName,

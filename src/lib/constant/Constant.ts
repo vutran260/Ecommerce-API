@@ -25,7 +25,7 @@ export enum OrderStatus {
   DELIVERING = 'DELIVERING', // 配達中
   DELIVERED = 'DELIVERED', // 配達完了
   CANCEL = 'CANCEL', // キャンセル
-  SKIPPED = 'SKIPPED', // SKIPPED
+  SKIPPED = 'SKIPPED', // スキップ
 }
 
 export enum OrderRegularStatus {
