@@ -66,6 +66,11 @@ import type {
   LP_ORDER_PAYMENTAttributes,
   LP_ORDER_PAYMENTCreationAttributes,
 } from './LP_ORDER_PAYMENT';
+import { LP_POINT_HISTORY_LOGS as _LP_POINT_HISTORY_LOGS } from './LP_POINT_HISTORY_LOGS';
+import type {
+  LP_POINT_HISTORY_LOGSAttributes,
+  LP_POINT_HISTORY_LOGSCreationAttributes,
+} from './LP_POINT_HISTORY_LOGS';
 import { LP_PREFECTURES as _LP_PREFECTURES } from './LP_PREFECTURES';
 import type {
   LP_PREFECTURESAttributes,
@@ -187,6 +192,7 @@ export {
   _LP_ORDER_CANCEL_REASON as LP_ORDER_CANCEL_REASON,
   _LP_ORDER_ITEM as LP_ORDER_ITEM,
   _LP_ORDER_PAYMENT as LP_ORDER_PAYMENT,
+  _LP_POINT_HISTORY_LOGS as LP_POINT_HISTORY_LOGS,
   _LP_PREFECTURES as LP_PREFECTURES,
   _LP_PRODUCT as LP_PRODUCT,
   _LP_PRODUCT_CATEGORY as LP_PRODUCT_CATEGORY,
@@ -239,6 +245,8 @@ export type {
   LP_ORDER_ITEMCreationAttributes,
   LP_ORDER_PAYMENTAttributes,
   LP_ORDER_PAYMENTCreationAttributes,
+  LP_POINT_HISTORY_LOGSAttributes,
+  LP_POINT_HISTORY_LOGSCreationAttributes,
   LP_PREFECTURESAttributes,
   LP_PREFECTURESCreationAttributes,
   LP_PRODUCTAttributes,
@@ -299,6 +307,7 @@ export function initModels(sequelize: Sequelize) {
   const LP_ORDER_CANCEL_REASON = _LP_ORDER_CANCEL_REASON.initModel(sequelize);
   const LP_ORDER_ITEM = _LP_ORDER_ITEM.initModel(sequelize);
   const LP_ORDER_PAYMENT = _LP_ORDER_PAYMENT.initModel(sequelize);
+  const LP_POINT_HISTORY_LOGS = _LP_POINT_HISTORY_LOGS.initModel(sequelize);
   const LP_PREFECTURES = _LP_PREFECTURES.initModel(sequelize);
   const LP_PRODUCT = _LP_PRODUCT.initModel(sequelize);
   const LP_PRODUCT_CATEGORY = _LP_PRODUCT_CATEGORY.initModel(sequelize);
@@ -422,6 +431,14 @@ export function initModels(sequelize: Sequelize) {
   LP_BUYER.hasMany(LP_FAVORITE, { as: 'lpFavorites', foreignKey: 'buyerId' });
   LP_ORDER.belongsTo(LP_BUYER, { as: 'buyer', foreignKey: 'buyerId' });
   LP_BUYER.hasMany(LP_ORDER, { as: 'lpOrders', foreignKey: 'buyerId' });
+  LP_POINT_HISTORY_LOGS.belongsTo(LP_BUYER, {
+    as: 'buyer',
+    foreignKey: 'buyerId',
+  });
+  LP_BUYER.hasMany(LP_POINT_HISTORY_LOGS, {
+    as: 'lpPointHistoryLogs',
+    foreignKey: 'buyerId',
+  });
   LP_PRODUCT_RECENTLY_VIEWED.belongsTo(LP_BUYER, {
     as: 'buyer',
     foreignKey: 'buyerId',
@@ -474,6 +491,14 @@ export function initModels(sequelize: Sequelize) {
   LP_ORDER_PAYMENT.belongsTo(LP_ORDER, { as: 'order', foreignKey: 'orderId' });
   LP_ORDER.hasOne(LP_ORDER_PAYMENT, {
     as: 'lpOrderPayment',
+    foreignKey: 'orderId',
+  });
+  LP_POINT_HISTORY_LOGS.belongsTo(LP_ORDER, {
+    as: 'order',
+    foreignKey: 'orderId',
+  });
+  LP_ORDER.hasMany(LP_POINT_HISTORY_LOGS, {
+    as: 'lpPointHistoryLogs',
     foreignKey: 'orderId',
   });
   LP_SHIPMENT.belongsTo(LP_ORDER, { as: 'order', foreignKey: 'orderId' });
@@ -565,6 +590,14 @@ export function initModels(sequelize: Sequelize) {
   LP_STORE.hasMany(LP_CATEGORY, { as: 'lpCategories', foreignKey: 'storeId' });
   LP_ORDER.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_ORDER, { as: 'lpOrders', foreignKey: 'storeId' });
+  LP_POINT_HISTORY_LOGS.belongsTo(LP_STORE, {
+    as: 'store',
+    foreignKey: 'storeId',
+  });
+  LP_STORE.hasMany(LP_POINT_HISTORY_LOGS, {
+    as: 'lpPointHistoryLogs',
+    foreignKey: 'storeId',
+  });
   LP_PRODUCT.belongsTo(LP_STORE, { as: 'store', foreignKey: 'storeId' });
   LP_STORE.hasMany(LP_PRODUCT, { as: 'lpProducts', foreignKey: 'storeId' });
   LP_PRODUCT_RECENTLY_VIEWED.belongsTo(LP_STORE, {
@@ -642,6 +675,7 @@ export function initModels(sequelize: Sequelize) {
     LP_ORDER_CANCEL_REASON: LP_ORDER_CANCEL_REASON,
     LP_ORDER_ITEM: LP_ORDER_ITEM,
     LP_ORDER_PAYMENT: LP_ORDER_PAYMENT,
+    LP_POINT_HISTORY_LOGS: LP_POINT_HISTORY_LOGS,
     LP_PREFECTURES: LP_PREFECTURES,
     LP_PRODUCT: LP_PRODUCT,
     LP_PRODUCT_CATEGORY: LP_PRODUCT_CATEGORY,

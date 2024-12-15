@@ -15,6 +15,10 @@ import { MailService } from '../../third_party/mail/mailService';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
+import { PointHistoryRepository } from '../../buyer_site/repository/PointHistoryRepository';
+import { PointHistoryUseCase } from '../../buyer_site/usecase/PointHistoryUsecase';
+import { BuyerUsecase } from '../../buyer_site/usecase/BuyerUsecase';
+import { BuyerRepository } from '../../buyer_site/repository/BuyerRepository';
 
 const productRepo = new ProductRepository();
 const addressRepo = new AddressRepository();
@@ -25,12 +29,19 @@ const orderPaymentRepo = new OrderPaymentRepository();
 const shipmentRepository = new ShipmentRepository();
 const orderAddressBuyerRepository = new OrderAddressBuyerRepository();
 const subscriptionRepo = new SubscriptionRepository();
+const pointHistoryRepository = new PointHistoryRepository();
+const buyerRepository = new BuyerRepository();
 const gmoGetwaySerivce = new GMOPaymentService();
 const mailService = new MailService();
 const cardUsecase = new CardUsecase(gmoGetwaySerivce);
 const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
 const shipmentUseCase = new ShipmentUseCase();
 const mailUseCase = new MailUseCase(orderRepo, mailService, shipmentUseCase);
+const buyerUsecase = new BuyerUsecase(buyerRepository);
+const pointHistoryUseCase = new PointHistoryUseCase(
+  pointHistoryRepository,
+  buyerUsecase,
+);
 
 const subscriptionRepository = new SubscriptionRepository();
 const orderUseCase = new OrderUsecase(
@@ -46,6 +57,7 @@ const orderUseCase = new OrderUsecase(
   paymentUseCase,
   mailUseCase,
   shipmentUseCase,
+  pointHistoryUseCase,
 );
 const cardUseCase = new CardUsecase(gmoGetwaySerivce);
 
