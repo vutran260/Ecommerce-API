@@ -79,6 +79,8 @@ export class UpdateOrderRequest {
   amount?: number;
   shipmentFee?: number;
   discount?: number;
+  pointUse?: number;
+  pointReceive?: number;
   totalAmount?: number;
   updatedAt = new Date();
   updatedBy?: string;

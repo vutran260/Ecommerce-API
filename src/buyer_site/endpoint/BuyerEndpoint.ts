@@ -14,7 +14,8 @@ export class BuyerEndpoint {
     this.buyerUsecase = buyerUsecase;
   }
   private getMe = async (req: ProtectedRequest, res: Response) => {
-    const buyer = await this.buyerUsecase.getBuyerInfo(req.user.id);
+    const storeId = req.storeId;
+    const buyer = await this.buyerUsecase.getBuyerInfo(req.user.id, storeId);
     return ResponseData(buyer, res);
   };
 

@@ -28,24 +28,8 @@ export class BuyerUsecase {
       throw error;
     }
   };
-  public getBuyerInfo = async (buyerId: string) => {
-    let buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId);
-    if (buyerInfo?.lpAddressBuyerSso == null) {
-      await this.buyerRepo.addMockAddressInfo(buyerId);
-    }
-
-    if (buyerInfo?.lpBuyerPersonalInformation == null) {
-      await this.buyerRepo.addMockPersonalInfo(buyerId);
-    }
-
-    if (
-      buyerInfo?.lpBuyerPersonalInformation == null ||
-      buyerInfo?.lpAddressBuyerSso == null
-    ) {
-      buyerInfo = await this.buyerRepo.getBuyerInfo(buyerId);
-    }
-
-    return buyerInfo;
+  public getBuyerInfo = async (buyerId: string, storeId?: string) => {
+    return await this.buyerRepo.getBuyerInfo(buyerId, storeId);
   };
   public getCategoriesWithHierarchy = async (store_id: string, id = '') => {
     return this.buyerRepo.getCategoriesWithHierarchy(store_id, id);

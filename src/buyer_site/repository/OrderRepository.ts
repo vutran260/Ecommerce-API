@@ -30,25 +30,12 @@ export class OrderRepository {
     updateOrderRequest: UpdateOrderRequest,
     t?: Transaction,
   ) => {
-    await LP_ORDER.update(
-      {
-        buyerId: updateOrderRequest.buyerId,
-        storeId: updateOrderRequest.storeId,
-        orderStatus: updateOrderRequest.orderStatus,
-        amount: updateOrderRequest.amount,
-        shipmentFee: updateOrderRequest.shipmentFee,
-        discount: updateOrderRequest.discount,
-        totalAmount: updateOrderRequest.totalAmount,
-        updatedAt: new Date(),
-        updatedBy: updateOrderRequest.updatedBy,
+    await LP_ORDER.update(updateOrderRequest, {
+      where: {
+        id,
       },
-      {
-        where: {
-          id,
-        },
-        transaction: t,
-      },
-    );
+      transaction: t,
+    });
     return this.getOrderById(id, t);
   };
 

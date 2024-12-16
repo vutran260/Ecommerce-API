@@ -1,4 +1,4 @@
-import { QueryTypes } from 'sequelize';
+import { QueryTypes, Sequelize } from 'sequelize';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import {
   LP_BUYER,
@@ -14,7 +14,7 @@ export class BuyerRepository {
     return await this.getBuyerById(buyer.id);
   };
 
-  public getBuyerInfo = async (buyerId: string) => {
+  public getBuyerInfo = async (buyerId: string, storeId?: string) => {
     try {
       const buyerInfo = await LP_BUYER.findOne({
         where: { id: buyerId },
@@ -25,7 +25,25 @@ export class BuyerRepository {
           {
             association: LP_BUYER.associations.lpBuyerPersonalInformation,
           },
+          {
+            association: LP_BUYER.associations.lpPointHistoryLogs,
+            where: storeId ? { storeId, requestStatus: 'APPROVED' } : undefined,
+            required: false,
+            attributes: [],
+          },
         ],
+        attributes: {
+          include: [
+            [
+              Sequelize.fn(
+                'SUM',
+                Sequelize.col('lpPointHistoryLogs.point_count'),
+              ),
+              'totalPoints',
+            ],
+          ],
+        },
+        group: ['LP_BUYER.id'],
       });
 
       return buyerInfo;

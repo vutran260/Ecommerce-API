@@ -38,7 +38,7 @@ import { OrderRepository } from '../repository/OrderRepository';
 import { ProductRepository } from '../repository/ProductRepository';
 import { ShipmentRepository } from '../repository/ShipmentRepository';
 import { Transaction } from 'sequelize';
-import { isEmpty, groupBy } from 'lodash';
+import { groupBy, isEmpty } from 'lodash';
 import {
   CreateSubscriptionAddressRequest,
   SubscriptionAddress,
@@ -55,6 +55,10 @@ import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
 import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
+import { PointHistoryUseCase } from '../../buyer_site/usecase/PointHistoryUsecase';
+import { PointAction } from '../../lib/constant/point/PointAction';
+import { RequestPointStatus } from '../../lib/constant/point/RequestPointStatus';
+import { RequestPointType } from '../../lib/constant/point/RequestPointType';
 
 export class OrderUsecase {
   private orderRepo: OrderRepository;
@@ -69,6 +73,7 @@ export class OrderUsecase {
   private paymentUseCase: PaymentUseCase;
   private mailUseCase: MailUseCase;
   private shipmentUseCase: ShipmentUseCase;
+  private pointHistoryUseCase: PointHistoryUseCase;
 
   constructor(
     orderRepo: OrderRepository,
@@ -83,6 +88,7 @@ export class OrderUsecase {
     paymentUseCase: PaymentUseCase,
     mailUseCase: MailUseCase,
     shipmentUseCase: ShipmentUseCase,
+    pointHistoryUseCase: PointHistoryUseCase,
   ) {
     this.orderRepo = orderRepo;
     this.orderItemRepo = orderItemRepo;
@@ -96,6 +102,7 @@ export class OrderUsecase {
     this.paymentUseCase = paymentUseCase;
     this.mailUseCase = mailUseCase;
     this.shipmentUseCase = shipmentUseCase;
+    this.pointHistoryUseCase = pointHistoryUseCase;
   }
 
   public createOrder = async (
@@ -260,7 +267,16 @@ export class OrderUsecase {
     const shipmentFee = this.shipmentUseCase.calculateShipmentFee({
       totalAmount,
     });
-    const finalAmount = totalAmount + shipmentFee;
+    const pointHistory = await this.pointHistoryUseCase.updatePointHistory({
+      buyerId: buyerId,
+      storeId: storeId,
+      orderId: order.id,
+      requestStatus: RequestPointStatus.APPROVED,
+      t,
+    });
+    const pointUse = pointHistory?.requestPoint || 0;
+    const finalAmount = totalAmount + shipmentFee - pointUse;
+    const pointReceive = this.pointHistoryUseCase.calculatePoint(finalAmount);
 
     await this.createOrderPayment(order.id, t);
     await this.createShipment(order.id, shipmentFee, t);
@@ -272,6 +288,8 @@ export class OrderUsecase {
       storeId,
       totalAmount,
       shipmentFee,
+      pointUse,
+      pointReceive,
       finalAmount,
       orderStatus: OrderStatus.WAITING_CONFIRMED,
       t,
@@ -289,6 +307,17 @@ export class OrderUsecase {
         status: PaymentSatus.PAID,
         gmoAccessId: res?.accessId || '',
         gmoAccessPass: res?.accessPass || '',
+        t,
+      });
+      await this.pointHistoryUseCase.savePointHistory({
+        orderId: order.id,
+        buyerId: buyerId,
+        storeId: storeId,
+        pointAction: PointAction.ADD_POINT,
+        requestPoint: pointReceive,
+        pointCount: pointReceive,
+        requestStatus: RequestPointStatus.APPROVED,
+        requestPointType: RequestPointType.POINT,
         t,
       });
     }
@@ -334,6 +363,8 @@ export class OrderUsecase {
       storeId,
       totalAmount,
       shipmentFee,
+      pointUse: 0,
+      pointReceive: 0,
       finalAmount,
       orderStatus: OrderStatus.SKIPPED,
       t,
@@ -526,6 +557,8 @@ export class OrderUsecase {
     storeId: string;
     totalAmount: number;
     shipmentFee: number;
+    pointUse: number;
+    pointReceive: number;
     finalAmount: number;
     orderStatus: OrderStatus;
     t: Transaction;
@@ -536,6 +569,8 @@ export class OrderUsecase {
       storeId,
       totalAmount,
       shipmentFee,
+      pointReceive,
+      pointUse,
       finalAmount,
       orderStatus,
       t,
@@ -547,6 +582,8 @@ export class OrderUsecase {
       amount: totalAmount,
       shipmentFee: shipmentFee,
       discount: 0,
+      pointUse: pointUse,
+      pointReceive: pointReceive,
       totalAmount: finalAmount,
       updatedAt: new Date(),
       updatedBy: buyerId,
@@ -627,6 +664,34 @@ export class OrderUsecase {
         Logger.info(
           `Order payment status updated to CANCELLED for order ID: ${id}`,
         );
+
+        if (order.pointUse > 0) {
+          await this.pointHistoryUseCase.savePointHistory({
+            orderId: order.id,
+            buyerId: order.buyerId || '',
+            storeId: order.storeId || '',
+            pointAction: PointAction.REFUND_POINT,
+            requestPoint: order.pointUse,
+            pointCount: order.pointUse,
+            requestStatus: RequestPointStatus.APPROVED,
+            requestPointType: RequestPointType.POINT,
+            t,
+          });
+        }
+
+        if (order.pointReceive > 0) {
+          await this.pointHistoryUseCase.savePointHistory({
+            orderId: order.id,
+            buyerId: order.buyerId || '',
+            storeId: order.storeId || '',
+            pointAction: PointAction.RETRIEVE_POINT,
+            requestPoint: order.pointReceive,
+            pointCount: -1 * order.pointReceive,
+            requestStatus: RequestPointStatus.APPROVED,
+            requestPointType: RequestPointType.POINT,
+            t,
+          });
+        }
       }
 
       const orderItems = await LP_ORDER_ITEM.findAll({

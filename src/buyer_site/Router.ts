@@ -55,6 +55,9 @@ import { TimezoneMiddleware } from './middleware/TimezoneMiddelware';
 import { SubscriptionAddressRepository } from './repository/SubscriptionAddressRepository';
 import { SubscriptionAddressUseCase } from './usecase/SubscriptionAddressUsecase';
 import { SubscriptionAddressEndpoint } from './endpoint/SubscriptionAddressEndpoint';
+import { PointHistoryRepository } from './repository/PointHistoryRepository';
+import { PointHistoryUseCase } from './usecase/PointHistoryUsecase';
+import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -76,6 +79,8 @@ export class buyerSiteRouter {
     const subscriptionRepo = new SubscriptionRepository();
     const productRecentlyViewedRepo = new ProductRecentlyViewedRepository();
     const invoiceRepository = new InvoiceRepository();
+    const subscriptionAddressRepo = new SubscriptionAddressRepository();
+    const pointHistoryRepository = new PointHistoryRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -91,6 +96,10 @@ export class buyerSiteRouter {
     const cardUsecase = new CardUsecase(gmoGetwaySerivce);
     const paymentUseCase = new PaymentUseCase(gmoGetwaySerivce, cardUsecase);
     const shipmentUseCase = new ShipmentUseCase();
+    const pointUseCase = new PointHistoryUseCase(
+      pointHistoryRepository,
+      buyerUsecase,
+    );
     const mailUseCase = new MailUseCase(
       orderRepo,
       mailService,
@@ -102,7 +111,6 @@ export class buyerSiteRouter {
       mailService,
       pdfService,
     );
-    const subscriptionAddressRepo = new SubscriptionAddressRepository();
     const orderUsecase = new OrderUsecase(
       orderRepo,
       orderItemRepo,
@@ -116,6 +124,7 @@ export class buyerSiteRouter {
       paymentUseCase,
       mailUseCase,
       shipmentUseCase,
+      pointUseCase,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
@@ -152,6 +161,7 @@ export class buyerSiteRouter {
     const subscriptionAddressEndpoint = new SubscriptionAddressEndpoint(
       subscriptionAddressUsecase,
     );
+    const pointHistoryEndpoint = new PointHistoryEndpoint(pointUseCase);
 
     router.use(TimezoneMiddleware);
     router.use('/prefectures', prefectureEndpoint.getRouter());
@@ -176,6 +186,7 @@ export class buyerSiteRouter {
       productRecentlyViewedEndpoint.getRouter(),
     );
     router.use('/payment', paymentEndpoint.getRouter());
+    router.use('/point', pointHistoryEndpoint.getRouter());
 
     return router;
   };

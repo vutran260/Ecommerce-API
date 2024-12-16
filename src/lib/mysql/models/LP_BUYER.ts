@@ -12,6 +12,10 @@ import type {
 import type { LP_CART, LP_CARTId } from './LP_CART';
 import type { LP_FAVORITE, LP_FAVORITEId } from './LP_FAVORITE';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
+import type {
+  LP_POINT_HISTORY_LOGS,
+  LP_POINT_HISTORY_LOGSId,
+} from './LP_POINT_HISTORY_LOGS';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type {
   LP_PRODUCT_RECENTLY_VIEWED,
@@ -164,6 +168,39 @@ export class LP_BUYER
   hasLpOrder!: Sequelize.HasManyHasAssociationMixin<LP_ORDER, LP_ORDERId>;
   hasLpOrders!: Sequelize.HasManyHasAssociationsMixin<LP_ORDER, LP_ORDERId>;
   countLpOrders!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_BUYER hasMany LP_POINT_HISTORY_LOGS via buyerId
+  lpPointHistoryLogs!: LP_POINT_HISTORY_LOGS[];
+  getLpPointHistoryLogs!: Sequelize.HasManyGetAssociationsMixin<LP_POINT_HISTORY_LOGS>;
+  setLpPointHistoryLogs!: Sequelize.HasManySetAssociationsMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  addLpPointHistoryLog!: Sequelize.HasManyAddAssociationMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  addLpPointHistoryLogs!: Sequelize.HasManyAddAssociationsMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  createLpPointHistoryLog!: Sequelize.HasManyCreateAssociationMixin<LP_POINT_HISTORY_LOGS>;
+  removeLpPointHistoryLog!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  removeLpPointHistoryLogs!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  hasLpPointHistoryLog!: Sequelize.HasManyHasAssociationMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  hasLpPointHistoryLogs!: Sequelize.HasManyHasAssociationsMixin<
+    LP_POINT_HISTORY_LOGS,
+    LP_POINT_HISTORY_LOGSId
+  >;
+  countLpPointHistoryLogs!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER belongsToMany LP_PRODUCT via buyerId and productId
   productIdLpProducts!: LP_PRODUCT[];
   getProductIdLpProducts!: Sequelize.BelongsToManyGetAssociationsMixin<LP_PRODUCT>;
