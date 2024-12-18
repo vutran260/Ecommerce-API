@@ -235,6 +235,7 @@ export class OrderUsecase {
     cartItems: CartItem[] | SubscriptionProduct[];
     latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress;
     orderType: OrderType;
+    pointRate?: number;
     t: Transaction;
   }) {
     Logger.info('Start create normal order');
@@ -249,6 +250,7 @@ export class OrderUsecase {
       cartItems,
       latestAddress,
       orderType,
+      pointRate = 1,
       t,
     } = params;
     const order = await this.initOrder({
@@ -276,7 +278,10 @@ export class OrderUsecase {
     });
     const pointUse = pointHistory?.requestPoint || 0;
     const finalAmount = totalAmount + shipmentFee - pointUse;
-    const pointReceive = this.pointHistoryUseCase.calculatePoint(finalAmount);
+    const pointReceive = this.pointHistoryUseCase.calculatePoint(
+      finalAmount,
+      pointRate,
+    );
 
     await this.createOrderPayment(order.id, t);
     await this.createShipment(order.id, shipmentFee, t);

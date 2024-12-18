@@ -150,7 +150,7 @@ export class PointHistoryUseCase {
     );
   };
 
-  public calculatePoint = (amount: number) => {
-    return Math.floor(amount * 0.01);
+  public calculatePoint = (amount: number, pointRate = 1) => {
+    return Math.floor(amount * 0.01 * pointRate);
   };
 }

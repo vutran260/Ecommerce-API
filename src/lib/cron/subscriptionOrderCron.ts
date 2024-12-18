@@ -25,6 +25,7 @@ import {
 } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { CartItem } from '../../buyer_site/endpoint/CartEndpoint';
+import { PointConstants } from '../../lib/constant/point/PointConstant';
 
 export class SubscriptionOrderCron {
   private subscriptionRepository: SubscriptionRepository;
@@ -77,6 +78,15 @@ export class SubscriptionOrderCron {
 
       const t = await lpSequelize.transaction();
       try {
+        let pointRate = PointConstants.DEFAULT_POINT_RATE;
+        // Check if the subscription starting from the second occurrence
+        // then set pointRate to the store's pointRate
+        if (sub.subscriptionStatus === SubscriptionStatus.CONTINUE) {
+          Logger.info(
+            `subscription starting from the second occurrence, set point rate = store's point rate = ${sub.store.pointRate}`,
+          );
+          pointRate = sub.store.pointRate;
+        }
         const order = await this.orderUseCase.createNormalOrder({
           buyerId: sub.buyerId,
           storeId: sub.storeId,
@@ -84,6 +94,7 @@ export class SubscriptionOrderCron {
           cartItems: subProducts,
           latestAddress: subAddress,
           orderType: OrderType.SUBSCRIPTION,
+          pointRate,
           t,
         });
 
