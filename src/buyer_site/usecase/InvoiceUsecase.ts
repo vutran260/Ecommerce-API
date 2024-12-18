@@ -7,7 +7,7 @@ import {
   formatCurrency,
   formatDiscountAmount,
   formatName,
-  formatPhoneNumber,
+  formatPhoneNumber, formatPoint,
 } from '../../lib/helpers/commonFunction';
 import { PdfService, TemplateParams } from '../../third_party/pdf/pdfService';
 import { InvoiceRepository } from '../repository/InvoiceRepository';
@@ -62,6 +62,7 @@ export class InvoiceUseCase {
         orderAddress.lastNameKanji,
       ),
       shipmentFee: `${formatCurrency(order.shipmentFee)}円`,
+      pointUse: formatPoint(order.pointUse),
       totalAmount: `${formatCurrency(order.totalAmount)}円`,
       storeName:
         order?.store?.lpStoreSso?.storeShortName ||

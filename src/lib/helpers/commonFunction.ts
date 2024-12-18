@@ -58,6 +58,13 @@ const formatBusinessRegistrationNumber = (
   return '-';
 };
 
+const formatPoint = (point: number) => {
+  if (!point) {
+    return '利用なし';
+  }
+  return `${point}ポイント`;
+};
+
 export {
   formatCurrency,
   formatPhoneNumber,
@@ -65,4 +72,5 @@ export {
   formatDiscountAmount,
   formatBusinessRegistrationNumber,
   formatNameKanjiAndKana,
+  formatPoint,
 };

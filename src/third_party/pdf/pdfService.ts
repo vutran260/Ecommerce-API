@@ -10,6 +10,7 @@ export interface TemplateParams {
   customerName: string;
   totalAmount: string;
   shipmentFee: string;
+  pointUse: string;
   storeName: string;
   postalCode: string;
   address: string;
