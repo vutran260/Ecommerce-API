@@ -3,6 +3,9 @@ import { StoreRepository } from '../repository/StoreRepository';
 import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import { LP_STORECreationAttributes } from '../../lib/mysql/models/LP_STORE';
 import { LP_SELLERAttributes } from '../../lib/mysql/models/LP_SELLER';
+import StoreUpdateRequest from '../../common/model/stores/StoreUpdateRequest';
+import { plainToInstance } from 'class-transformer';
+import { validatorRequest } from '../../lib/helpers/validate';
 
 export class StoreUsecase {
   private storeRepo: StoreRepository;
@@ -29,5 +32,13 @@ export class StoreUsecase {
 
   public getStoreDetail = async (id: string) => {
     return this.storeRepo.getStoreById(id);
+  };
+
+  public updateStore = async (id: string, request: StoreUpdateRequest) => {
+    const updateStoreRequest = plainToInstance(StoreUpdateRequest, request);
+    await validatorRequest(updateStoreRequest);
+    return this.storeRepo.updateStore(request, {
+      id,
+    });
   };
 }

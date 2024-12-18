@@ -32,6 +32,7 @@ export interface LP_STOREAttributes {
   zipCode?: string;
   phone?: string;
   rejectReason?: string;
+  pointRate: number;
   status?: string;
   remark?: string;
   createdAt?: Date;
@@ -50,6 +51,7 @@ export type LP_STOREOptionalAttributes =
   | 'zipCode'
   | 'phone'
   | 'rejectReason'
+  | 'pointRate'
   | 'status'
   | 'remark'
   | 'createdAt'
@@ -75,6 +77,7 @@ export class LP_STORE
   zipCode?: string;
   phone?: string;
   rejectReason?: string;
+  pointRate!: number;
   status?: string;
   remark?: string;
   createdAt?: Date;
@@ -484,6 +487,13 @@ export class LP_STORE
           type: DataTypes.STRING(255),
           allowNull: true,
           field: 'reject_reason',
+        },
+        pointRate: {
+          type: DataTypes.DECIMAL(3, 1),
+          allowNull: false,
+          defaultValue: 1.0,
+          comment: 'Point rate',
+          field: 'point_rate',
         },
         status: {
           type: DataTypes.STRING(255),

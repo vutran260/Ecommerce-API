@@ -3,6 +3,9 @@ import {
   LP_STORE,
   LP_STORECreationAttributes,
 } from '../../lib/mysql/models/LP_STORE';
+import StoreUpdateRequest from '../../common/model/stores/StoreUpdateRequest';
+import { WhereOptions } from 'sequelize/types/model';
+
 export class StoreRepository {
   public CreateStore = async (
     input: LP_STORECreationAttributes,
@@ -32,5 +35,21 @@ export class StoreRepository {
     });
 
     return result?.dataValues;
+  };
+
+  public updateStore = async (
+    input: StoreUpdateRequest,
+    condition: WhereOptions,
+    t?: Transaction,
+  ) => {
+    return LP_STORE.update(
+      {
+        ...input,
+      },
+      {
+        where: condition,
+        transaction: t,
+      },
+    );
   };
 }

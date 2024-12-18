@@ -43,11 +43,18 @@ export class StoreEndpoint {
     return ResponseData(results, res);
   };
 
+  private updateStore = async (req: ProtectedRequest, res: Response) => {
+    const storeId: string = req.storeId;
+    const results = await this.storeUsecase.updateStore(storeId, req.body);
+    return ResponseData(results, res);
+  };
+
   public getRouter() {
     const router = express.Router();
     router.post('/register', this.registerStore);
     router.get('/profile', this.getStoreProfile);
     router.get('/:id', this.getStoreDetail);
+    router.put('/update-store', this.updateStore);
 
     return router;
   }
