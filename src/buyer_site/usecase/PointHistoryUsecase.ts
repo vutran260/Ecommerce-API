@@ -151,6 +151,6 @@ export class PointHistoryUseCase {
   };
 
   public calculatePoint = (amount: number) => {
-    return amount * 0.01;
+    return Math.floor(amount * 0.01);
   };
 }
