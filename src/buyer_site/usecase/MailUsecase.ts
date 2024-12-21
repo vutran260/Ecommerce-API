@@ -15,6 +15,7 @@ import { formatDateJp, formatDateTimeJp } from '../../lib/helpers/dateTimeUtil';
 import {
   formatCurrency,
   formatPhoneNumber,
+  formatPoint,
 } from '../../lib/helpers/commonFunction';
 import {
   SubscriptionAddress,
@@ -70,6 +71,7 @@ export class MailUseCase {
         products: products,
         subTotal: formatCurrency(order?.amount),
         shippingCode: formatCurrency(order?.shipmentFee),
+        pointUse: formatPoint(order?.pointUse),
         total: formatCurrency(order?.totalAmount),
         postCode: latestAddress.postCode,
         address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
