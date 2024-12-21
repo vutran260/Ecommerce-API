@@ -32,6 +32,7 @@ export interface OrderSuccessOptions extends MailOptions {
     }[];
     subTotal: number | string;
     shippingCode: number | string;
+    pointUse: string;
     total: number | string;
     postCode: string;
     address: string;
