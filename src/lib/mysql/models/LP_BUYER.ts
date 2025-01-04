@@ -21,6 +21,10 @@ import type {
   LP_PRODUCT_RECENTLY_VIEWED,
   LP_PRODUCT_RECENTLY_VIEWEDId,
 } from './LP_PRODUCT_RECENTLY_VIEWED';
+import type {
+  LP_PRODUCT_SPECIAL_FAQ,
+  LP_PRODUCT_SPECIAL_FAQId,
+} from './LP_PRODUCT_SPECIAL_FAQ';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
@@ -300,6 +304,39 @@ export class LP_BUYER
     LP_PRODUCT_RECENTLY_VIEWEDId
   >;
   countLpProductRecentlyVieweds!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_BUYER hasMany LP_PRODUCT_SPECIAL_FAQ via buyerId
+  lpProductSpecialFaqs!: LP_PRODUCT_SPECIAL_FAQ[];
+  getLpProductSpecialFaqs!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  setLpProductSpecialFaqs!: Sequelize.HasManySetAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaq!: Sequelize.HasManyAddAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaqs!: Sequelize.HasManyAddAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  createLpProductSpecialFaq!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  removeLpProductSpecialFaq!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  removeLpProductSpecialFaqs!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaq!: Sequelize.HasManyHasAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaqs!: Sequelize.HasManyHasAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  countLpProductSpecialFaqs!: Sequelize.HasManyCountAssociationsMixin;
   // LP_BUYER belongsToMany LP_STORE via buyerId and storeId
   storeIdLpStores!: LP_STORE[];
   getStoreIdLpStores!: Sequelize.BelongsToManyGetAssociationsMixin<LP_STORE>;

@@ -1,6 +1,5 @@
 'use strict';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 const seederName = path.basename(__filename, path.extname(__filename));
 const prefectures = [

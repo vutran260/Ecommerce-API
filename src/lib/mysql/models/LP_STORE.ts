@@ -14,6 +14,10 @@ import type {
   LP_PRODUCT_RECENTLY_VIEWED,
   LP_PRODUCT_RECENTLY_VIEWEDId,
 } from './LP_PRODUCT_RECENTLY_VIEWED';
+import type {
+  LP_PRODUCT_SPECIAL_FAQ,
+  LP_PRODUCT_SPECIAL_FAQId,
+} from './LP_PRODUCT_SPECIAL_FAQ';
 import type { LP_SELLER, LP_SELLERId } from './LP_SELLER';
 import type { LP_STORE_BUYER, LP_STORE_BUYERId } from './LP_STORE_BUYER';
 import type { LP_STORE_POST, LP_STORE_POSTId } from './LP_STORE_POST';
@@ -303,6 +307,39 @@ export class LP_STORE
     LP_PRODUCT_RECENTLY_VIEWEDId
   >;
   countLpProductRecentlyVieweds!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_STORE hasMany LP_PRODUCT_SPECIAL_FAQ via storeId
+  lpProductSpecialFaqs!: LP_PRODUCT_SPECIAL_FAQ[];
+  getLpProductSpecialFaqs!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  setLpProductSpecialFaqs!: Sequelize.HasManySetAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaq!: Sequelize.HasManyAddAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaqs!: Sequelize.HasManyAddAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  createLpProductSpecialFaq!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  removeLpProductSpecialFaq!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  removeLpProductSpecialFaqs!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaq!: Sequelize.HasManyHasAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaqs!: Sequelize.HasManyHasAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  countLpProductSpecialFaqs!: Sequelize.HasManyCountAssociationsMixin;
   // LP_STORE hasMany LP_SELLER via storeId
   lpSellers!: LP_SELLER[];
   getLpSellers!: Sequelize.HasManyGetAssociationsMixin<LP_SELLER>;
