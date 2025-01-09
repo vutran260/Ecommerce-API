@@ -11,7 +11,10 @@ import {
   LP_PRODUCTCreationAttributes,
 } from '../../lib/mysql/models/LP_PRODUCT';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import { LP_PRODUCT_COMPONENTCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
+import {
+  LP_PRODUCT_COMPONENTAttributes,
+  LP_PRODUCT_COMPONENTCreationAttributes,
+} from '../../lib/mysql/models/LP_PRODUCT_COMPONENT';
 import {
   LP_PRODUCT_CATEGORY,
   LP_PRODUCT_CATEGORYCreationAttributes,
@@ -24,7 +27,9 @@ import Product, {
 } from '../../common/model/products/Product';
 import { ProductCompomentFromLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductCompoment';
 import { LP_PRODUCT_FAQCreationAttributes } from '../../lib/mysql/models/LP_PRODUCT_FAQ';
-import { ProductFaqToLP_PRODUCT_COMPONENT } from '../../common/model/products/ProductFaq';
+import ProductFaq, {
+  ProductFaqToLP_PRODUCT_COMPONENT,
+} from '../../common/model/products/ProductFaq';
 import { Sequelize } from 'sequelize-typescript';
 
 export class ProductRepository {
@@ -67,18 +72,19 @@ export class ProductRepository {
     const out: Product = ProductFromLP_PRODUCT(result.dataValues);
 
     (await result.getLpProductComponents({ transaction: t })).forEach(
-      (component) =>
+      (component: { dataValues: LP_PRODUCT_COMPONENTAttributes }) =>
         out.components.push(
           ProductCompomentFromLP_PRODUCT_COMPONENT(component.dataValues),
         ),
     );
 
     (await result.getLpProductCategories({ transaction: t })).forEach(
-      (category) => out.categories.push(category.dataValues.categoryId),
+      (category: { dataValues: { categoryId: string } }) =>
+        out.categories.push(category.dataValues.categoryId),
     );
 
-    (await result.getLpProductFaqs({ transaction: t })).forEach((faq) =>
-      out.faqs.push(faq.dataValues),
+    (await result.getLpProductFaqs({ transaction: t })).forEach(
+      (faq: { dataValues: ProductFaq }) => out.faqs.push(faq.dataValues),
     );
 
     return out;
@@ -102,11 +108,11 @@ export class ProductRepository {
         transaction: t,
       });
 
-      (await lpProduct.getLpProductComponents({ transaction: t })).forEach(
-        async (component) => {
-          await component.destroy({ transaction: t });
-        },
-      );
+      for (const component of await lpProduct.getLpProductComponents({
+        transaction: t,
+      })) {
+        await component.destroy({ transaction: t });
+      }
 
       await Promise.all(
         input.components.map((component) => {
@@ -117,11 +123,9 @@ export class ProductRepository {
         }),
       );
 
-      (await lpProduct.getLpProductFaqs({ transaction: t })).forEach(
-        async (faq) => {
-          await faq.destroy({ transaction: t });
-        },
-      );
+      for (const faq of await lpProduct.getLpProductFaqs({ transaction: t })) {
+        await faq.destroy({ transaction: t });
+      }
 
       await Promise.all(
         input.faqs.map((faq) => {

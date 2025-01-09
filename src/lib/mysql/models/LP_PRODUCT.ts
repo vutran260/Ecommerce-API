@@ -33,6 +33,7 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
+  isSpecial: number;
   buyingPeriod?: string;
   isDiscount: number;
   discountPercentage?: number;
@@ -60,6 +61,7 @@ export type LP_PRODUCTPk = 'id';
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
 export type LP_PRODUCTOptionalAttributes =
   | 'id'
+  | 'isSpecial'
   | 'buyingPeriod'
   | 'discountPercentage'
   | 'hasDiscountSchedule'
@@ -86,6 +88,7 @@ export class LP_PRODUCT
   id!: string;
   storeId!: string;
   isSubscription!: number;
+  isSpecial!: number;
   buyingPeriod?: string;
   isDiscount!: number;
   discountPercentage?: number;
@@ -544,6 +547,13 @@ export class LP_PRODUCT
           type: DataTypes.BOOLEAN,
           allowNull: false,
           field: 'is_subscription',
+        },
+        isSpecial: {
+          type: DataTypes.TINYINT,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Is special product',
+          field: 'is_special',
         },
         buyingPeriod: {
           type: DataTypes.STRING(255),
