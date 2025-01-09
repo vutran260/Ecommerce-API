@@ -58,6 +58,9 @@ import { SubscriptionAddressEndpoint } from './endpoint/SubscriptionAddressEndpo
 import { PointHistoryRepository } from './repository/PointHistoryRepository';
 import { PointHistoryUseCase } from './usecase/PointHistoryUsecase';
 import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
+import { ProductSpecialQuestionRepository } from './repository/ProductSpecialQuestionRepository';
+import { ProductSpecialUseCase } from './usecase/ProductSpecialUsecase';
+import { ProductSpecialEndpoint } from './endpoint/ProductSpecialEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -81,6 +84,8 @@ export class buyerSiteRouter {
     const invoiceRepository = new InvoiceRepository();
     const subscriptionAddressRepo = new SubscriptionAddressRepository();
     const pointHistoryRepository = new PointHistoryRepository();
+    const productSpecialQuestionRepository =
+      new ProductSpecialQuestionRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -139,6 +144,9 @@ export class buyerSiteRouter {
     const subscriptionAddressUsecase = new SubscriptionAddressUseCase(
       subscriptionAddressRepo,
     );
+    const productSpecialUseCase = new ProductSpecialUseCase(
+      productSpecialQuestionRepository,
+    );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
     const productEndpoint = new ProductEndpoint(productUsecase);
@@ -162,6 +170,9 @@ export class buyerSiteRouter {
       subscriptionAddressUsecase,
     );
     const pointHistoryEndpoint = new PointHistoryEndpoint(pointUseCase);
+    const productSpecialEndpoint = new ProductSpecialEndpoint(
+      productSpecialUseCase,
+    );
 
     router.use(TimezoneMiddleware);
     router.use('/prefectures', prefectureEndpoint.getRouter());
@@ -187,6 +198,7 @@ export class buyerSiteRouter {
     );
     router.use('/payment', paymentEndpoint.getRouter());
     router.use('/point', pointHistoryEndpoint.getRouter());
+    router.use('/product-special', productSpecialEndpoint.getRouter());
 
     return router;
   };
