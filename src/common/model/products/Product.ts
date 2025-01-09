@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import ProductComponent from './ProductCompoment';
@@ -23,6 +24,10 @@ export default class Product {
   @IsBoolean()
   @IsNotEmpty()
   isSubscription: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isSpecial: boolean;
 
   @IsBoolean()
   @IsNotEmpty()
@@ -107,6 +112,7 @@ export const ProductToLP_PRODUCT = (product: Product): LP_PRODUCTAttributes => {
   return {
     id: product.id,
     storeId: product.storeId,
+    isSpecial: booleanToTINYINT(product.isSpecial)!,
     isSubscription: booleanToTINYINT(product.isSubscription)!,
     isDiscount: booleanToTINYINT(product.isDiscount)!,
     buyingPeriod: product.buyingPeriod?.join(','),
@@ -144,6 +150,7 @@ export const ProductFromLP_PRODUCT = (
   return {
     id: lpProduct.id,
     storeId: lpProduct.storeId,
+    isSpecial: TINYINTToBoolean(lpProduct.isSpecial)!,
     isSubscription: TINYINTToBoolean(lpProduct.isSubscription)!,
     isDiscount: TINYINTToBoolean(lpProduct.isDiscount)!,
 

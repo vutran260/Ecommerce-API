@@ -18,6 +18,10 @@ import type {
   LP_PRODUCT_RECENTLY_VIEWED,
   LP_PRODUCT_RECENTLY_VIEWEDId,
 } from './LP_PRODUCT_RECENTLY_VIEWED';
+import type {
+  LP_PRODUCT_SPECIAL_FAQ,
+  LP_PRODUCT_SPECIAL_FAQId,
+} from './LP_PRODUCT_SPECIAL_FAQ';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 import type { LP_SUBSCRIPTION, LP_SUBSCRIPTIONId } from './LP_SUBSCRIPTION';
 import type {
@@ -29,6 +33,7 @@ export interface LP_PRODUCTAttributes {
   id: string;
   storeId: string;
   isSubscription: number;
+  isSpecial: number;
   buyingPeriod?: string;
   isDiscount: number;
   discountPercentage?: number;
@@ -56,6 +61,7 @@ export type LP_PRODUCTPk = 'id';
 export type LP_PRODUCTId = LP_PRODUCT[LP_PRODUCTPk];
 export type LP_PRODUCTOptionalAttributes =
   | 'id'
+  | 'isSpecial'
   | 'buyingPeriod'
   | 'discountPercentage'
   | 'hasDiscountSchedule'
@@ -82,6 +88,7 @@ export class LP_PRODUCT
   id!: string;
   storeId!: string;
   isSubscription!: number;
+  isSpecial!: number;
   buyingPeriod?: string;
   isDiscount!: number;
   discountPercentage?: number;
@@ -413,6 +420,39 @@ export class LP_PRODUCT
     LP_PRODUCT_RECENTLY_VIEWEDId
   >;
   countLpProductRecentlyVieweds!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_PRODUCT hasMany LP_PRODUCT_SPECIAL_FAQ via productId
+  lpProductSpecialFaqs!: LP_PRODUCT_SPECIAL_FAQ[];
+  getLpProductSpecialFaqs!: Sequelize.HasManyGetAssociationsMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  setLpProductSpecialFaqs!: Sequelize.HasManySetAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaq!: Sequelize.HasManyAddAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  addLpProductSpecialFaqs!: Sequelize.HasManyAddAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  createLpProductSpecialFaq!: Sequelize.HasManyCreateAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  removeLpProductSpecialFaq!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  removeLpProductSpecialFaqs!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaq!: Sequelize.HasManyHasAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  hasLpProductSpecialFaqs!: Sequelize.HasManyHasAssociationsMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  countLpProductSpecialFaqs!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT belongsToMany LP_SUBSCRIPTION via productId and subscriptionId
   subscriptionIdLpSubscriptionLpSubscriptionProducts!: LP_SUBSCRIPTION[];
   getSubscriptionIdLpSubscriptionLpSubscriptionProducts!: Sequelize.BelongsToManyGetAssociationsMixin<LP_SUBSCRIPTION>;
@@ -507,6 +547,13 @@ export class LP_PRODUCT
           type: DataTypes.BOOLEAN,
           allowNull: false,
           field: 'is_subscription',
+        },
+        isSpecial: {
+          type: DataTypes.TINYINT,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Is special product',
+          field: 'is_special',
         },
         buyingPeriod: {
           type: DataTypes.STRING(255),
