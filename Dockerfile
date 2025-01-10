@@ -1,42 +1,38 @@
-# Here we are getting our node as Base image
-FROM node:21.7.3-alpine3.19
+# Use Node.js as the base image
+FROM --platform=linux/amd64 node:21.7.3-alpine3.19
 
 # Temporarily switch to root to install system packages
 USER root
 
-# Install Chromium and any other dependencies
+# Install Chromium and other dependencies
 RUN apk update && apk add --no-cache \
     chromium \
     nss \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont\
+    ttf-freefont \
     font-noto-cjk
 
-# create user in the docker image
+# Create a user and app directory
 USER node
-
-# Creating a new directory for app files and setting path in the container
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 
-# setting working directory in the container
+# Set working directory
 WORKDIR /home/node/app
 
-# grant permission of node project directory to node user
+# Copy app files
 COPY --chown=node:node . .
 
-# installing the dependencies into the container
-RUN npm config set registry https://registry.npmjs.org/ \
-    && npm config set fetch-retries 5 \
-    && npm config set fetch-retry-mintimeout 20000 \
-    && npm config set fetch-retry-maxtimeout 120000
+# Configure npm and install dependencies
+RUN npm config set registry https://registry.npmmirror.com/ \
+    && npm config set fetch-retries 10 \
+    && npm config set fetch-retry-mintimeout 60000 \
+    && npm config set fetch-retry-maxtimeout 300000 \
+    && npm install --no-optional --verbose
 
-# Install dependencies
-RUN npm install --verbose --network-timeout=200000
-
-# container exposed network port number
+# Expose port
 EXPOSE 3000
 
-# command to run within the container
-CMD [ "npm", "start" ]
+# Start the application
+CMD ["npm", "start"]
