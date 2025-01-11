@@ -59,6 +59,7 @@ import { PointHistoryRepository } from './repository/PointHistoryRepository';
 import { PointHistoryUseCase } from './usecase/PointHistoryUsecase';
 import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
 import { ProductSpecialQuestionRepository } from './repository/ProductSpecialQuestionRepository';
+import { ProductSpecialFaqRepository } from './repository/ProductSpecialFaqRepository';
 import { ProductSpecialUseCase } from './usecase/ProductSpecialUsecase';
 import { ProductSpecialEndpoint } from './endpoint/ProductSpecialEndpoint';
 
@@ -86,6 +87,7 @@ export class buyerSiteRouter {
     const pointHistoryRepository = new PointHistoryRepository();
     const productSpecialQuestionRepository =
       new ProductSpecialQuestionRepository();
+    const productSpecialFaqRepository = new ProductSpecialFaqRepository();
 
     //3-party
     const gmoGetwaySerivce = new GMOPaymentService();
@@ -146,6 +148,7 @@ export class buyerSiteRouter {
     );
     const productSpecialUseCase = new ProductSpecialUseCase(
       productSpecialQuestionRepository,
+      productSpecialFaqRepository,
     );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
