@@ -18,11 +18,7 @@ import {
   SubscriptionStatus,
 } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
-import {
-  BadRequestError,
-  InternalError,
-  NotFoundError,
-} from '../../lib/http/custom_error/ApiError';
+import { BadRequestError, InternalError, NotFoundError } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { LP_ORDER_ITEM } from '../../lib/mysql/models/LP_ORDER_ITEM';
@@ -46,11 +42,7 @@ import {
 } from '../../common/model/orders/Subscription';
 import moment from 'moment';
 import { SubscriptionRepository } from '../repository/SubscriptionRepository';
-import {
-  LP_ADDRESS_BUYER,
-  LP_ORDER_CANCEL_REASON,
-  LP_PRODUCT,
-} from '../../lib/mysql/models/init-models';
+import { LP_ADDRESS_BUYER, LP_ORDER_CANCEL_REASON, LP_PRODUCT } from '../../lib/mysql/models/init-models';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
 import { PaymentUseCase } from '../../buyer_site/usecase/PaymentUsecase';
 import { MailUseCase } from '../../buyer_site/usecase/MailUsecase';
@@ -384,7 +376,7 @@ export class OrderUsecase {
     return orderUpdated;
   }
 
-  private async initOrder(params: {
+  public async initOrder(params: {
     buyerId: string;
     orderType: OrderType;
     orderStatus: OrderStatus;
@@ -424,7 +416,7 @@ export class OrderUsecase {
     return order;
   }
 
-  private async processCartItems(params: {
+  public async processCartItems(params: {
     cartItems: CartItem[] | SubscriptionProduct[];
     orderId: number;
     orderType: OrderType;
@@ -480,12 +472,12 @@ export class OrderUsecase {
     return totalAmount;
   }
 
-  private async getCartItems(storeId: string, buyerId: string) {
+  public async getCartItems(storeId: string, buyerId: string) {
     const items = await this.cartRepo.getListItemInCart(storeId, buyerId);
     return items.map((item) => CartItem.FromLP_CART(item));
   }
 
-  private async updateStock(
+  public async updateStock(
     productId: string,
     quantity: number,
     t: Transaction,
@@ -510,7 +502,7 @@ export class OrderUsecase {
     await this.productRepo.updateStockProduct(productId, newQuantity, t);
   }
 
-  private async createOrderPayment(orderId: number, t: Transaction) {
+  public async createOrderPayment(orderId: number, t: Transaction) {
     Logger.info('Start add payment info');
     const currentDate = new Date();
     const createOrderPaymentRequest: CreateOrderPaymentRequest = {
@@ -526,7 +518,7 @@ export class OrderUsecase {
     );
   }
 
-  private async createShipment(
+  public async createShipment(
     orderId: number,
     shipmentFee: number,
     t: Transaction,
@@ -545,7 +537,7 @@ export class OrderUsecase {
     await this.shipmentRepository.createShipment(createShipmentRequest, t);
   }
 
-  private async createOrderAddressBuyer(
+  public async createOrderAddressBuyer(
     orderId: number,
     latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress,
     t: Transaction,
@@ -556,7 +548,7 @@ export class OrderUsecase {
     await this.orderAddressBuyerRepository.addAddress(orderAddressBuyer, t);
   }
 
-  private async updateOrderInfo(params: {
+  public async updateOrderInfo(params: {
     orderId: number;
     buyerId: string;
     storeId: string;

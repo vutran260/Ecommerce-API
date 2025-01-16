@@ -123,8 +123,7 @@ export class CartRepository {
     storeId: string,
     buyerId: string,
   ): Promise<LP_CART[]> => {
-    let product = [];
-    product = await LP_CART.findAll({
+    return await LP_CART.findAll({
       include: [
         {
           association: LP_CART.associations.product,
@@ -135,6 +134,23 @@ export class CartRepository {
         buyerId: buyerId,
       },
     });
-    return product;
+  };
+
+  public getSpecialItemInCart = async (
+    storeId: string,
+    buyerId: string,
+  ): Promise<LP_CART[]> => {
+    return await LP_CART.findAll({
+      include: [
+        {
+          association: LP_CART.associations.product,
+        },
+      ],
+      where: {
+        storeId: storeId,
+        buyerId: buyerId,
+        isSpecial: true,
+      },
+    });
   };
 }

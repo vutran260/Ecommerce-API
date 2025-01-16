@@ -20,6 +20,8 @@ export enum OrderType {
 }
 
 export enum OrderStatus {
+  WAITING_APPROVED = 'WAITING_APPROVED', //承認待ち
+  APPROVED = 'APPROVED', // 承認済み
   WAITING_CONFIRMED = 'WAITING_CONFIRMED', //受注確認待ち中
   CONFIRMED_ORDER = 'CONFIRMED_ORDER', // 受注確認済
   DELIVERING = 'DELIVERING', // 配達中

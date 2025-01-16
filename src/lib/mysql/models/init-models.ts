@@ -609,6 +609,11 @@ export function initModels(sequelize: Sequelize) {
     as: 'lpSubscriptionProducts',
     foreignKey: 'productId',
   });
+  LP_CART.belongsTo(LP_PRODUCT_SPECIAL_FAQ, { as: 'faq', foreignKey: 'faqId' });
+  LP_PRODUCT_SPECIAL_FAQ.hasMany(LP_CART, {
+    as: 'lpCarts',
+    foreignKey: 'faqId',
+  });
   LP_SELLER_SSO.belongsTo(LP_SELLER, { as: 'seller', foreignKey: 'sellerId' });
   LP_SELLER.hasOne(LP_SELLER_SSO, {
     as: 'lpSellerSso',

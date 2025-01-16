@@ -6,9 +6,7 @@ import { ProductSpecialFaqRepository } from '../repository/ProductSpecialFaqRepo
 export class ProductSpecialFaqUsecase {
   private productSpecialFaqRepo: ProductSpecialFaqRepository;
 
-  constructor(
-    productSpecialFaqRepo: ProductSpecialFaqRepository,
-  ) {
+  constructor(productSpecialFaqRepo: ProductSpecialFaqRepository) {
     this.productSpecialFaqRepo = productSpecialFaqRepo;
   }
 
@@ -27,15 +25,11 @@ export class ProductSpecialFaqUsecase {
     return this.productSpecialFaqRepo.createProductSpecialFaq(request);
   };
 
-  public detailFaq = async (
-    buyerId: string,
-    storeId: string,
-    productId: string,
-  ) => {
-    return this.productSpecialFaqRepo.detailProductSpecialFaq(
-      storeId,
-      buyerId,
-      productId,
-    );
+  public detailFaq = async (params: {
+    buyerId: string;
+    storeId: string;
+    productId: string;
+  }) => {
+    return this.productSpecialFaqRepo.detailProductSpecialFaq(params);
   };
 }

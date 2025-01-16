@@ -4,14 +4,21 @@ import { BadRequestError } from '../../lib/http/custom_error/ApiError';
 import Logger from '../../lib/core/Logger';
 import { ProductRepository } from '../repository/ProductRepository';
 import { ErrorCode } from '../../lib/http/custom_error/ErrorCode';
+import { ProductSpecialFaqUsecase } from '../usecase/ProductSpecialFaqUsecase';
 
 export class CartUsecase {
   private productRepo: ProductRepository;
   private cartRepo: CartRepository;
+  private productSpecialFaqUseCase: ProductSpecialFaqUsecase;
 
-  constructor(productRepo: ProductRepository, cartRepo: CartRepository) {
+  constructor(
+    productRepo: ProductRepository,
+    cartRepo: CartRepository,
+    productSpecialFaqUseCase: ProductSpecialFaqUsecase,
+  ) {
     this.productRepo = productRepo;
     this.cartRepo = cartRepo;
+    this.productSpecialFaqUseCase = productSpecialFaqUseCase;
   }
 
   public addItem = async (addItemRequest: CartItem) => {
@@ -90,6 +97,21 @@ export class CartUsecase {
         );
         return this.cartRepo.getItemById(item.id);
       }
+    }
+
+    if (product.isSpecial) {
+      const faq = await this.productSpecialFaqUseCase.detailFaq({
+        storeId: addItemRequest.storeId,
+        buyerId: addItemRequest.buyerId,
+        productId: addItemRequest.productId,
+      });
+      if (!faq) {
+        throw new BadRequestError(
+          'You did not answer the faq yet, please submit faq before add to cart',
+        );
+      }
+
+      addItemRequest.faqId = faq.id;
     }
 
     await this.cartRepo.addItemToCart(addItemRequest.ToLP_CART());

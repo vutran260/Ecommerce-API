@@ -12,12 +12,13 @@ export class ProductSpecialFaqRepository {
     });
   };
 
-  public detailProductSpecialFaq = async (
-    storeId: string,
-    buyerId: string,
-    productId: string,
-    t?: Transaction,
-  ) => {
+  public detailProductSpecialFaq = async (params: {
+    buyerId: string;
+    storeId: string;
+    productId: string;
+    t?: Transaction;
+  }) => {
+    const { buyerId, storeId, productId, t } = params;
     return await LP_PRODUCT_SPECIAL_FAQ.findOne({
       where: {
         storeId,

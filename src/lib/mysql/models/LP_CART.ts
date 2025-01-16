@@ -2,6 +2,10 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
+import type {
+  LP_PRODUCT_SPECIAL_FAQ,
+  LP_PRODUCT_SPECIAL_FAQId,
+} from './LP_PRODUCT_SPECIAL_FAQ';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
 export interface LP_CARTAttributes {
@@ -11,6 +15,7 @@ export interface LP_CARTAttributes {
   productId: string;
   quantity: number;
   isSpecial: number;
+  faqId?: number;
   isSubscription: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -25,6 +30,7 @@ export type LP_CARTId = LP_CART[LP_CARTPk];
 export type LP_CARTOptionalAttributes =
   | 'id'
   | 'isSpecial'
+  | 'faqId'
   | 'buyingPeriod'
   | 'startBuyingDate'
   | 'createdAt'
@@ -46,6 +52,7 @@ export class LP_CART
   productId!: string;
   quantity!: number;
   isSpecial!: number;
+  faqId?: number;
   isSubscription!: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -64,6 +71,14 @@ export class LP_CART
   getProduct!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT>;
   setProduct!: Sequelize.BelongsToSetAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
   createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
+  // LP_CART belongsTo LP_PRODUCT_SPECIAL_FAQ via faqId
+  faq!: LP_PRODUCT_SPECIAL_FAQ;
+  getFaq!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  setFaq!: Sequelize.BelongsToSetAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  createFaq!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
   // LP_CART belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;
@@ -116,6 +131,15 @@ export class LP_CART
           defaultValue: 0,
           comment: 'Is special product',
           field: 'is_special',
+        },
+        faqId: {
+          type: DataTypes.BIGINT.UNSIGNED,
+          allowNull: true,
+          references: {
+            model: 'LP_PRODUCT_SPECIAL_FAQ',
+            key: 'id',
+          },
+          field: 'faq_id',
         },
         isSubscription: {
           type: DataTypes.TINYINT,
@@ -180,6 +204,11 @@ export class LP_CART
             name: 'product_id',
             using: 'BTREE',
             fields: [{ name: 'product_id' }],
+          },
+          {
+            name: 'LP_CART_faq_id_foreign_idx',
+            using: 'BTREE',
+            fields: [{ name: 'faq_id' }],
           },
         ],
       },

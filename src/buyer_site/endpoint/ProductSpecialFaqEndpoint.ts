@@ -20,11 +20,11 @@ export class ProductSpecialFaqEndpoint {
   };
 
   private detailFaq = async (req: ProtectedRequest, res: Response) => {
-    const results = await this.productSpecialFaqUseCase.detailFaq(
-      req.user.id,
-      req.storeId,
-      req.params.productId,
-    );
+    const results = await this.productSpecialFaqUseCase.detailFaq({
+      storeId: req.storeId,
+      buyerId: req.user.id,
+      productId: req.params.productId,
+    });
     return ResponseData(results, res);
   };
 
