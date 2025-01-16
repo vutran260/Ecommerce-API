@@ -30,6 +30,7 @@ export class OrderEndpoint {
       buyerId,
       storeId,
     );
+
     return ResponseData(results, res);
   };
 

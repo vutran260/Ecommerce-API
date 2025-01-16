@@ -9,6 +9,7 @@ export interface LP_PRODUCT_SPECIAL_FAQAttributes {
   buyerId: string;
   storeId: string;
   productId: string;
+  status: string;
   question1: number;
   answer1: string;
   question2: number;
@@ -44,6 +45,7 @@ export type LP_PRODUCT_SPECIAL_FAQId =
   LP_PRODUCT_SPECIAL_FAQ[LP_PRODUCT_SPECIAL_FAQPk];
 export type LP_PRODUCT_SPECIAL_FAQOptionalAttributes =
   | 'id'
+  | 'status'
   | 'createdAt'
   | 'updatedAt';
 export type LP_PRODUCT_SPECIAL_FAQCreationAttributes = Optional<
@@ -62,6 +64,7 @@ export class LP_PRODUCT_SPECIAL_FAQ
   buyerId!: string;
   storeId!: string;
   productId!: string;
+  status!: string;
   question1!: number;
   answer1!: string;
   question2!: number;
@@ -144,6 +147,11 @@ export class LP_PRODUCT_SPECIAL_FAQ
             key: 'id',
           },
           field: 'product_id',
+        },
+        status: {
+          type: DataTypes.STRING(100),
+          allowNull: false,
+          defaultValue: 'NEW',
         },
         question1: {
           type: DataTypes.BIGINT,

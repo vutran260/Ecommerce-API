@@ -61,7 +61,8 @@ import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
 import { ProductSpecialQuestionRepository } from './repository/ProductSpecialQuestionRepository';
 import { ProductSpecialFaqRepository } from './repository/ProductSpecialFaqRepository';
 import { ProductSpecialUseCase } from './usecase/ProductSpecialUsecase';
-import { ProductSpecialEndpoint } from './endpoint/ProductSpecialEndpoint';
+import { ProductSpecialFaqEndpoint } from './endpoint/ProductSpecialFaqEndpoint';
+import { ProductSpecialQuestionEndpoint } from './endpoint/ProductSpecialQuestionEndpoint';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -173,7 +174,10 @@ export class buyerSiteRouter {
       subscriptionAddressUsecase,
     );
     const pointHistoryEndpoint = new PointHistoryEndpoint(pointUseCase);
-    const productSpecialEndpoint = new ProductSpecialEndpoint(
+    const productSpecialFaqEndpoint = new ProductSpecialFaqEndpoint(
+      productSpecialUseCase,
+    );
+    const productSpecialQuestionEndpoint = new ProductSpecialQuestionEndpoint(
       productSpecialUseCase,
     );
 
@@ -201,7 +205,11 @@ export class buyerSiteRouter {
     );
     router.use('/payment', paymentEndpoint.getRouter());
     router.use('/point', pointHistoryEndpoint.getRouter());
-    router.use('/product-special', productSpecialEndpoint.getRouter());
+    router.use('/product-special-faq', productSpecialFaqEndpoint.getRouter());
+    router.use(
+      '/product-special-question',
+      productSpecialQuestionEndpoint.getRouter(),
+    );
 
     return router;
   };

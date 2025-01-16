@@ -11,4 +11,21 @@ export class ProductSpecialFaqRepository {
       transaction: t,
     });
   };
+
+  public detailProductSpecialFaq = async (
+    storeId: string,
+    buyerId: string,
+    productId: string,
+    t?: Transaction,
+  ) => {
+    return await LP_PRODUCT_SPECIAL_FAQ.findOne({
+      where: {
+        storeId,
+        buyerId,
+        productId,
+        status: 'NEW',
+      },
+      transaction: t,
+    });
+  };
 }
