@@ -10,6 +10,7 @@ export interface LP_CARTAttributes {
   storeId: string;
   productId: string;
   quantity: number;
+  isSpecial: number;
   isSubscription: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -23,6 +24,7 @@ export type LP_CARTPk = 'id';
 export type LP_CARTId = LP_CART[LP_CARTPk];
 export type LP_CARTOptionalAttributes =
   | 'id'
+  | 'isSpecial'
   | 'buyingPeriod'
   | 'startBuyingDate'
   | 'createdAt'
@@ -43,6 +45,7 @@ export class LP_CART
   storeId!: string;
   productId!: string;
   quantity!: number;
+  isSpecial!: number;
   isSubscription!: number;
   buyingPeriod?: number;
   startBuyingDate?: Date;
@@ -106,6 +109,13 @@ export class LP_CART
         quantity: {
           type: DataTypes.INTEGER.UNSIGNED,
           allowNull: false,
+        },
+        isSpecial: {
+          type: DataTypes.TINYINT,
+          allowNull: false,
+          defaultValue: 0,
+          comment: 'Is special product',
+          field: 'is_special',
         },
         isSubscription: {
           type: DataTypes.TINYINT,

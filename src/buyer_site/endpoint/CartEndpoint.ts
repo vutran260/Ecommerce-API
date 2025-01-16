@@ -1,6 +1,12 @@
 import express, { Response } from 'express';
 import { ProtectedRequest } from '../../lib/http/app-request';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { validatorRequest } from '../../lib/helpers/validate';
 import { LP_CART, LP_CARTAttributes } from '../../lib/mysql/models/LP_CART';
@@ -33,6 +39,7 @@ export class CartEndpoint {
 
     return ResponseData('add product success!!!', res);
   };
+
   private updateItem = async (req: ProtectedRequest, res: Response) => {
     const updateItemRequest = plainToInstance(CartItem, req.body);
     updateItemRequest.buyerId = req.user.id;
@@ -108,6 +115,10 @@ export class CartItem {
   @IsNotEmpty()
   isSubscription: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  isSpecial: boolean;
+
   buyingPeriod?: number;
 
   @IsYYYYMMDD()
@@ -127,6 +138,7 @@ export class CartItem {
       quantity: this.quantity,
       buyingPeriod: this.buyingPeriod,
       isSubscription: booleanToTINYINT(this.isSubscription)!,
+      isSpecial: booleanToTINYINT(this.isSpecial)!,
       startBuyingDate: startBuyingDate,
     };
   }
@@ -139,6 +151,7 @@ export class CartItem {
     item.productId = lpCart.productId;
     item.quantity = lpCart.quantity;
     item.isSubscription = TINYINTToBoolean(lpCart.isSubscription);
+    item.isSpecial = TINYINTToBoolean(lpCart.isSpecial);
     item.buyingPeriod = lpCart.buyingPeriod;
     item.startBuyingDate = !lpCart.startBuyingDate
       ? undefined

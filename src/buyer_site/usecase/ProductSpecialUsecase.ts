@@ -40,4 +40,16 @@ export class ProductSpecialUseCase {
 
     return this.productSpecialFaqRepo.createProductSpecialFaq(request);
   };
+
+  public detailFaq = async (
+    buyerId: string,
+    storeId: string,
+    productId: string,
+  ) => {
+    return this.productSpecialFaqRepo.detailProductSpecialFaq(
+      storeId,
+      buyerId,
+      productId,
+    );
+  };
 }
