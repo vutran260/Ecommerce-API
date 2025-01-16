@@ -1,17 +1,17 @@
 import express, { Response } from 'express';
 import { ResponseData } from '../../lib/http/Response';
-import { ProductSpecialUseCase } from '../usecase/ProductSpecialUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
+import { ProductSpecialQuestionUseCase } from '../usecase/ProductSpecialQuestionUsecase';
 
 export class ProductSpecialQuestionEndpoint {
-  private productSpecialUseCase: ProductSpecialUseCase;
+  private productSpecialQuestionUseCase: ProductSpecialQuestionUseCase;
 
-  constructor(productSpecialUseCase: ProductSpecialUseCase) {
-    this.productSpecialUseCase = productSpecialUseCase;
+  constructor(productSpecialQuestionUseCase: ProductSpecialQuestionUseCase) {
+    this.productSpecialQuestionUseCase = productSpecialQuestionUseCase;
   }
 
   private getList = async (req: ProtectedRequest, res: Response) => {
-    const results = await this.productSpecialUseCase.getQuestionList();
+    const results = await this.productSpecialQuestionUseCase.getQuestionList();
     return ResponseData(results, res);
   };
 

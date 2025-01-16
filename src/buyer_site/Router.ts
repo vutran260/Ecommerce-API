@@ -60,9 +60,10 @@ import { PointHistoryUseCase } from './usecase/PointHistoryUsecase';
 import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
 import { ProductSpecialQuestionRepository } from './repository/ProductSpecialQuestionRepository';
 import { ProductSpecialFaqRepository } from './repository/ProductSpecialFaqRepository';
-import { ProductSpecialUseCase } from './usecase/ProductSpecialUsecase';
+import { ProductSpecialFaqUsecase } from './usecase/ProductSpecialFaqUsecase';
 import { ProductSpecialFaqEndpoint } from './endpoint/ProductSpecialFaqEndpoint';
 import { ProductSpecialQuestionEndpoint } from './endpoint/ProductSpecialQuestionEndpoint';
+import { ProductSpecialQuestionUseCase } from './usecase/ProductSpecialQuestionUsecase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -147,9 +148,11 @@ export class buyerSiteRouter {
     const subscriptionAddressUsecase = new SubscriptionAddressUseCase(
       subscriptionAddressRepo,
     );
-    const productSpecialUseCase = new ProductSpecialUseCase(
-      productSpecialQuestionRepository,
+    const productSpecialFaqUseCase = new ProductSpecialFaqUsecase(
       productSpecialFaqRepository,
+    );
+    const productSpecialQuestionUseCase = new ProductSpecialQuestionUseCase(
+      productSpecialQuestionRepository,
     );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
@@ -175,10 +178,10 @@ export class buyerSiteRouter {
     );
     const pointHistoryEndpoint = new PointHistoryEndpoint(pointUseCase);
     const productSpecialFaqEndpoint = new ProductSpecialFaqEndpoint(
-      productSpecialUseCase,
+      productSpecialFaqUseCase,
     );
     const productSpecialQuestionEndpoint = new ProductSpecialQuestionEndpoint(
-      productSpecialUseCase,
+      productSpecialQuestionUseCase,
     );
 
     router.use(TimezoneMiddleware);
