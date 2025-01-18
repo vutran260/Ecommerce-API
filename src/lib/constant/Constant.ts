@@ -17,6 +17,7 @@ export enum DefaultFormat {
 export enum OrderType {
   NORMAL = 'NORMAL',
   SUBSCRIPTION = 'SUBSCRIPTION',
+  SPECIAL = 'SPECIAL',
 }
 
 export enum OrderStatus {

@@ -1,24 +1,20 @@
 import { OrderStatus, OrderType } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
-import {
-  BadRequestError,
-  InternalError,
-} from '../../lib/http/custom_error/ApiError';
+import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { CartItem } from '../endpoint/CartEndpoint';
 import { AddressRepository } from '../repository/AddressRepository';
-import { Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { isEmpty } from 'lodash';
-import {
-  SubscriptionAddress,
-  SubscriptionProduct,
-} from '../../common/model/orders/Subscription';
+import { SubscriptionAddress } from '../../common/model/orders/Subscription';
 import { LP_ADDRESS_BUYER } from '../../lib/mysql/models/init-models';
 import { ShipmentUseCase } from '../usecase/ShipmentUseCase';
 import { PointHistoryUseCase } from '../usecase/PointHistoryUsecase';
 import { RequestPointStatus } from '../../lib/constant/point/RequestPointStatus';
 import { OrderUsecase } from '../usecase/OrderUsecase';
 import { CartRepository } from '../repository/CartRepository';
+import { ProductSpecialFaqRepository } from '../repository/ProductSpecialFaqRepository';
+import { OrderSpecialFaqStatus } from '../../lib/constant/orderSpecial/OrderSpecialFaqStatus';
 
 export class OrderSpecialUsecase {
   private addressRepository: AddressRepository;
@@ -26,6 +22,7 @@ export class OrderSpecialUsecase {
   private pointHistoryUseCase: PointHistoryUseCase;
   private cartRepo: CartRepository;
   private orderUsecase: OrderUsecase;
+  private productSpecialFaqRepository: ProductSpecialFaqRepository;
 
   constructor(
     addressRepository: AddressRepository,
@@ -33,12 +30,14 @@ export class OrderSpecialUsecase {
     pointHistoryUseCase: PointHistoryUseCase,
     cartRepo: CartRepository,
     orderUsecase: OrderUsecase,
+    productSpecialFaqRepository: ProductSpecialFaqRepository,
   ) {
     this.addressRepository = addressRepository;
     this.shipmentUseCase = shipmentUseCase;
     this.pointHistoryUseCase = pointHistoryUseCase;
     this.cartRepo = cartRepo;
     this.orderUsecase = orderUsecase;
+    this.productSpecialFaqRepository = productSpecialFaqRepository;
   }
 
   public createOrder = async (buyerId: string, storeId: string) => {
@@ -60,7 +59,7 @@ export class OrderSpecialUsecase {
         storeId,
         cartItems: specialCartItems,
         latestAddress,
-        orderType: OrderType.NORMAL,
+        orderType: OrderType.SPECIAL,
         t,
       });
       await t.commit();
@@ -75,7 +74,7 @@ export class OrderSpecialUsecase {
   public async createSpecialOrder(params: {
     buyerId: string;
     storeId: string;
-    cartItems: CartItem[] | SubscriptionProduct[];
+    cartItems: CartItem[];
     latestAddress: LP_ADDRESS_BUYER | SubscriptionAddress;
     orderType: OrderType;
     pointRate?: number;
@@ -124,6 +123,12 @@ export class OrderSpecialUsecase {
     await this.orderUsecase.createOrderPayment(order.id, t);
     await this.orderUsecase.createShipment(order.id, shipmentFee, t);
     await this.orderUsecase.createOrderAddressBuyer(order.id, latestAddress, t);
+    const faqIds = cartItems.map((item) => item.faqId);
+    await this.updateFaqStatus(
+      faqIds,
+      OrderSpecialFaqStatus.WAITING_APPROVE,
+      t,
+    );
 
     return await this.orderUsecase.updateOrderInfo({
       orderId: order.id,
@@ -139,8 +144,26 @@ export class OrderSpecialUsecase {
     });
   }
 
-  public async getSpecialCartItems(storeId: string, buyerId: string) {
+  private async getSpecialCartItems(storeId: string, buyerId: string) {
     const items = await this.cartRepo.getSpecialItemInCart(storeId, buyerId);
     return items.map((item) => CartItem.FromLP_CART(item));
+  }
+
+  private async updateFaqStatus(
+    faqIds: (number | undefined)[],
+    status: OrderSpecialFaqStatus,
+    t: Transaction,
+  ) {
+    if (!isEmpty(faqIds)) {
+      await this.productSpecialFaqRepository.updateProductSpecialFaq(
+        {
+          status: status,
+        },
+        {
+          id: { [Op.in]: faqIds },
+        },
+        t,
+      );
+    }
   }
 }

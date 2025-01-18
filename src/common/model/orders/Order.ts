@@ -97,6 +97,7 @@ export class CreateOrderItemRequest {
   price?: number;
   originalPrice: number;
   quantity: number;
+  faqId?: number;
   createdAt = new Date();
   updatedAt = new Date();
   deletedAt?: Date;
@@ -113,6 +114,9 @@ export class CreateOrderItemRequest {
     this.productOverview = cartItem.product.productOverview;
     this.price = finalItemPrice;
     this.quantity = cartItem.quantity;
+    if (cartItem instanceof CartItem) {
+      this.faqId = cartItem.faqId;
+    }
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
