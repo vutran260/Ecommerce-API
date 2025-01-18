@@ -126,6 +126,8 @@ export class CartItem {
 
   product: Product;
 
+  faqId?: number;
+
   public ToLP_CART(): LP_CARTAttributes {
     const startBuyingDate = !this.startBuyingDate
       ? undefined
@@ -140,6 +142,7 @@ export class CartItem {
       isSubscription: booleanToTINYINT(this.isSubscription)!,
       isSpecial: booleanToTINYINT(this.isSpecial)!,
       startBuyingDate: startBuyingDate,
+      faqId: this.faqId,
     };
   }
 
@@ -157,6 +160,7 @@ export class CartItem {
       ? undefined
       : moment(lpCart.startBuyingDate).format(DATE_FORMAT);
     item.product = ProductFromLP_PRODUCT(lpCart.product);
+    item.faqId = lpCart.faqId;
     return item;
   }
 }

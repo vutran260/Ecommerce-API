@@ -2,11 +2,16 @@ import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_ORDER, LP_ORDERId } from './LP_ORDER';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
+import type {
+  LP_PRODUCT_SPECIAL_FAQ,
+  LP_PRODUCT_SPECIAL_FAQId,
+} from './LP_PRODUCT_SPECIAL_FAQ';
 
 export interface LP_ORDER_ITEMAttributes {
   id: string;
   orderId?: number;
   productId?: string;
+  faqId?: number;
   productName: string;
   productImage: string;
   productDescription: string;
@@ -26,6 +31,7 @@ export type LP_ORDER_ITEMOptionalAttributes =
   | 'id'
   | 'orderId'
   | 'productId'
+  | 'faqId'
   | 'price'
   | 'cost'
   | 'createdAt'
@@ -43,6 +49,7 @@ export class LP_ORDER_ITEM
   id!: string;
   orderId?: number;
   productId?: string;
+  faqId?: number;
   productName!: string;
   productImage!: string;
   productDescription!: string;
@@ -65,6 +72,14 @@ export class LP_ORDER_ITEM
   getProduct!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT>;
   setProduct!: Sequelize.BelongsToSetAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
   createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
+  // LP_ORDER_ITEM belongsTo LP_PRODUCT_SPECIAL_FAQ via faqId
+  faq!: LP_PRODUCT_SPECIAL_FAQ;
+  getFaq!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
+  setFaq!: Sequelize.BelongsToSetAssociationMixin<
+    LP_PRODUCT_SPECIAL_FAQ,
+    LP_PRODUCT_SPECIAL_FAQId
+  >;
+  createFaq!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT_SPECIAL_FAQ>;
 
   static initModel(sequelize: Sequelize.Sequelize): typeof LP_ORDER_ITEM {
     return LP_ORDER_ITEM.init(
@@ -92,6 +107,15 @@ export class LP_ORDER_ITEM
             key: 'id',
           },
           field: 'product_id',
+        },
+        faqId: {
+          type: DataTypes.BIGINT.UNSIGNED,
+          allowNull: true,
+          references: {
+            model: 'LP_PRODUCT_SPECIAL_FAQ',
+            key: 'id',
+          },
+          field: 'faq_id',
         },
         productName: {
           type: DataTypes.STRING(255),
@@ -168,6 +192,11 @@ export class LP_ORDER_ITEM
             name: 'product_id',
             using: 'BTREE',
             fields: [{ name: 'product_id' }],
+          },
+          {
+            name: 'LP_ORDER_ITEM_faq_id_foreign_idx',
+            using: 'BTREE',
+            fields: [{ name: 'faq_id' }],
           },
         ],
       },

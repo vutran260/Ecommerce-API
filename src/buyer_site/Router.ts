@@ -60,9 +60,12 @@ import { PointHistoryUseCase } from './usecase/PointHistoryUsecase';
 import { PointHistoryEndpoint } from './endpoint/PointHistoryEndpoint';
 import { ProductSpecialQuestionRepository } from './repository/ProductSpecialQuestionRepository';
 import { ProductSpecialFaqRepository } from './repository/ProductSpecialFaqRepository';
-import { ProductSpecialUseCase } from './usecase/ProductSpecialUsecase';
+import { ProductSpecialFaqUsecase } from './usecase/ProductSpecialFaqUsecase';
 import { ProductSpecialFaqEndpoint } from './endpoint/ProductSpecialFaqEndpoint';
 import { ProductSpecialQuestionEndpoint } from './endpoint/ProductSpecialQuestionEndpoint';
+import { ProductSpecialQuestionUseCase } from './usecase/ProductSpecialQuestionUsecase';
+import { OrderSpecialEndpoint } from './endpoint/OrderSpecialEndpoint';
+import { OrderSpecialUsecase } from './usecase/OrderSpecialUsecase';
 
 export class buyerSiteRouter {
   public getBuyerSiteRouter = () => {
@@ -134,6 +137,14 @@ export class buyerSiteRouter {
       shipmentUseCase,
       pointUseCase,
     );
+    const orderSpecialUsecase = new OrderSpecialUsecase(
+      addressRepo,
+      shipmentUseCase,
+      pointUseCase,
+      cartRepo,
+      orderUsecase,
+      productSpecialFaqRepository,
+    );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
     const subscriptionUseCase = new SubscriptionUseCase(
@@ -147,9 +158,11 @@ export class buyerSiteRouter {
     const subscriptionAddressUsecase = new SubscriptionAddressUseCase(
       subscriptionAddressRepo,
     );
-    const productSpecialUseCase = new ProductSpecialUseCase(
-      productSpecialQuestionRepository,
+    const productSpecialFaqUseCase = new ProductSpecialFaqUsecase(
       productSpecialFaqRepository,
+    );
+    const productSpecialQuestionUseCase = new ProductSpecialQuestionUseCase(
+      productSpecialQuestionRepository,
     );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
@@ -159,10 +172,15 @@ export class buyerSiteRouter {
     const prefectureEndpoint = new PrefectureEndpoint(prefectureUsecase);
     const buyerPostEndpoint = new BuyerPostEndpoint(buyerPostUsecase);
 
-    const cartUseCase = new CartUsecase(productRepo, cartRepo);
+    const cartUseCase = new CartUsecase(
+      productRepo,
+      cartRepo,
+      productSpecialFaqUseCase,
+    );
     const cartEndpoint = new CartEndpoint(cartUseCase);
     const cardEndpoint = new CardEndpoint(cardUsecase);
     const orderEndpoint = new OrderEndpoint(orderUsecase, invoiceUseCase);
+    const orderSpecialEndpoint = new OrderSpecialEndpoint(orderSpecialUsecase);
     const uploadEndpoint = new UploadEndpoint(uploadUsecase);
     const subscriptionEndpoint = new SubscriptionEndpoint(subscriptionUseCase);
     const ssoEndpoint = new SSOEndpoint(ssoUseCase);
@@ -175,10 +193,10 @@ export class buyerSiteRouter {
     );
     const pointHistoryEndpoint = new PointHistoryEndpoint(pointUseCase);
     const productSpecialFaqEndpoint = new ProductSpecialFaqEndpoint(
-      productSpecialUseCase,
+      productSpecialFaqUseCase,
     );
     const productSpecialQuestionEndpoint = new ProductSpecialQuestionEndpoint(
-      productSpecialUseCase,
+      productSpecialQuestionUseCase,
     );
 
     router.use(TimezoneMiddleware);
@@ -192,6 +210,7 @@ export class buyerSiteRouter {
     router.use('/product', productEndpoint.getRouter());
     router.use('/store', storeEndpoint.getRouter());
     router.use('/order', orderEndpoint.getRouter());
+    router.use('/special-order', orderSpecialEndpoint.getRouter());
     router.use('/post', buyerPostEndpoint.getRouter());
     router.use('/file', uploadEndpoint.getRouter());
     router.use('/subscription', subscriptionEndpoint.getRouter());

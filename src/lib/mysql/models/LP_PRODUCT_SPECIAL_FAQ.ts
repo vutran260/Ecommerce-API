@@ -1,6 +1,8 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { LP_BUYER, LP_BUYERId } from './LP_BUYER';
+import type { LP_CART, LP_CARTId } from './LP_CART';
+import type { LP_ORDER_ITEM, LP_ORDER_ITEMId } from './LP_ORDER_ITEM';
 import type { LP_PRODUCT, LP_PRODUCTId } from './LP_PRODUCT';
 import type { LP_STORE, LP_STOREId } from './LP_STORE';
 
@@ -104,6 +106,51 @@ export class LP_PRODUCT_SPECIAL_FAQ
   getProduct!: Sequelize.BelongsToGetAssociationMixin<LP_PRODUCT>;
   setProduct!: Sequelize.BelongsToSetAssociationMixin<LP_PRODUCT, LP_PRODUCTId>;
   createProduct!: Sequelize.BelongsToCreateAssociationMixin<LP_PRODUCT>;
+  // LP_PRODUCT_SPECIAL_FAQ hasMany LP_CART via faqId
+  lpCarts!: LP_CART[];
+  getLpCarts!: Sequelize.HasManyGetAssociationsMixin<LP_CART>;
+  setLpCarts!: Sequelize.HasManySetAssociationsMixin<LP_CART, LP_CARTId>;
+  addLpCart!: Sequelize.HasManyAddAssociationMixin<LP_CART, LP_CARTId>;
+  addLpCarts!: Sequelize.HasManyAddAssociationsMixin<LP_CART, LP_CARTId>;
+  createLpCart!: Sequelize.HasManyCreateAssociationMixin<LP_CART>;
+  removeLpCart!: Sequelize.HasManyRemoveAssociationMixin<LP_CART, LP_CARTId>;
+  removeLpCarts!: Sequelize.HasManyRemoveAssociationsMixin<LP_CART, LP_CARTId>;
+  hasLpCart!: Sequelize.HasManyHasAssociationMixin<LP_CART, LP_CARTId>;
+  hasLpCarts!: Sequelize.HasManyHasAssociationsMixin<LP_CART, LP_CARTId>;
+  countLpCarts!: Sequelize.HasManyCountAssociationsMixin;
+  // LP_PRODUCT_SPECIAL_FAQ hasMany LP_ORDER_ITEM via faqId
+  lpOrderItems!: LP_ORDER_ITEM[];
+  getLpOrderItems!: Sequelize.HasManyGetAssociationsMixin<LP_ORDER_ITEM>;
+  setLpOrderItems!: Sequelize.HasManySetAssociationsMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  addLpOrderItem!: Sequelize.HasManyAddAssociationMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  addLpOrderItems!: Sequelize.HasManyAddAssociationsMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  createLpOrderItem!: Sequelize.HasManyCreateAssociationMixin<LP_ORDER_ITEM>;
+  removeLpOrderItem!: Sequelize.HasManyRemoveAssociationMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  removeLpOrderItems!: Sequelize.HasManyRemoveAssociationsMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  hasLpOrderItem!: Sequelize.HasManyHasAssociationMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  hasLpOrderItems!: Sequelize.HasManyHasAssociationsMixin<
+    LP_ORDER_ITEM,
+    LP_ORDER_ITEMId
+  >;
+  countLpOrderItems!: Sequelize.HasManyCountAssociationsMixin;
   // LP_PRODUCT_SPECIAL_FAQ belongsTo LP_STORE via storeId
   store!: LP_STORE;
   getStore!: Sequelize.BelongsToGetAssociationMixin<LP_STORE>;

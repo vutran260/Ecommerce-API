@@ -1,17 +1,17 @@
 import express, { Response } from 'express';
 import { ResponseData } from '../../lib/http/Response';
-import { ProductSpecialUseCase } from '../usecase/ProductSpecialUsecase';
+import { ProductSpecialFaqUsecase } from '../usecase/ProductSpecialFaqUsecase';
 import { ProtectedRequest } from '../../lib/http/app-request';
 
 export class ProductSpecialFaqEndpoint {
-  private productSpecialUseCase: ProductSpecialUseCase;
+  private productSpecialFaqUseCase: ProductSpecialFaqUsecase;
 
-  constructor(productSpecialUseCase: ProductSpecialUseCase) {
-    this.productSpecialUseCase = productSpecialUseCase;
+  constructor(productSpecialUseCase: ProductSpecialFaqUsecase) {
+    this.productSpecialFaqUseCase = productSpecialUseCase;
   }
 
   private submitFaq = async (req: ProtectedRequest, res: Response) => {
-    const results = await this.productSpecialUseCase.submitFaq(
+    const results = await this.productSpecialFaqUseCase.submitFaq(
       req.user.id,
       req.storeId,
       req.body,
@@ -20,11 +20,11 @@ export class ProductSpecialFaqEndpoint {
   };
 
   private detailFaq = async (req: ProtectedRequest, res: Response) => {
-    const results = await this.productSpecialUseCase.detailFaq(
-      req.user.id,
-      req.storeId,
-      req.params.productId,
-    );
+    const results = await this.productSpecialFaqUseCase.detailFaq({
+      storeId: req.storeId,
+      buyerId: req.user.id,
+      productId: req.params.productId,
+    });
     return ResponseData(results, res);
   };
 
