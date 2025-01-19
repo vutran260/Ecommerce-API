@@ -93,7 +93,7 @@ export class OrderSpecialUsecase {
     const order = await this.orderUsecase.initOrder({
       buyerId: buyerId,
       orderType: orderType,
-      orderStatus: OrderStatus.WAITING_APPROVED,
+      orderStatus: OrderStatus.WAITING_APPROVE,
       t,
     });
     const totalAmount = await this.orderUsecase.processCartItems({
@@ -139,7 +139,7 @@ export class OrderSpecialUsecase {
       pointUse,
       pointReceive,
       finalAmount,
-      orderStatus: OrderStatus.WAITING_APPROVED,
+      orderStatus: OrderStatus.WAITING_APPROVE,
       t,
     });
   }

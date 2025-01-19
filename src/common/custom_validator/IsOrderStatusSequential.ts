@@ -16,6 +16,15 @@ export class IsOrderStatusSequentialConstraint
     const request = args.object as UpdateOrderStatusRequest;
 
     const allowedTransitions: Record<string, OrderStatus[]> = {
+      [OrderStatus.WAITING_APPROVE]: [
+        OrderStatus.APPROVED,
+        OrderStatus.REJECTED,
+      ],
+      [OrderStatus.APPROVED]: [
+        OrderStatus.WAITING_CONFIRMED,
+        OrderStatus.CANCEL,
+      ],
+      [OrderStatus.REJECTED]: [OrderStatus.CANCEL],
       [OrderStatus.WAITING_CONFIRMED]: [
         OrderStatus.CONFIRMED_ORDER,
         OrderStatus.CANCEL,
