@@ -1,6 +1,9 @@
 import { OrderStatus, OrderType } from '../../lib/constant/Constant';
 import Logger from '../../lib/core/Logger';
-import { BadRequestError, InternalError } from '../../lib/http/custom_error/ApiError';
+import {
+  BadRequestError,
+  InternalError,
+} from '../../lib/http/custom_error/ApiError';
 import { lpSequelize } from '../../lib/mysql/Connection';
 import { CartItem } from '../endpoint/CartEndpoint';
 import { AddressRepository } from '../repository/AddressRepository';
@@ -15,6 +18,7 @@ import { OrderUsecase } from '../usecase/OrderUsecase';
 import { CartRepository } from '../repository/CartRepository';
 import { ProductSpecialFaqRepository } from '../repository/ProductSpecialFaqRepository';
 import { OrderSpecialFaqStatus } from '../../lib/constant/orderSpecial/OrderSpecialFaqStatus';
+import { OrderRepository } from '../repository/OrderRepository';
 
 export class OrderSpecialUsecase {
   private addressRepository: AddressRepository;
@@ -23,6 +27,7 @@ export class OrderSpecialUsecase {
   private cartRepo: CartRepository;
   private orderUsecase: OrderUsecase;
   private productSpecialFaqRepository: ProductSpecialFaqRepository;
+  private orderRepo: OrderRepository;
 
   constructor(
     addressRepository: AddressRepository,
@@ -31,6 +36,7 @@ export class OrderSpecialUsecase {
     cartRepo: CartRepository,
     orderUsecase: OrderUsecase,
     productSpecialFaqRepository: ProductSpecialFaqRepository,
+    orderRepo: OrderRepository,
   ) {
     this.addressRepository = addressRepository;
     this.shipmentUseCase = shipmentUseCase;
@@ -38,6 +44,7 @@ export class OrderSpecialUsecase {
     this.cartRepo = cartRepo;
     this.orderUsecase = orderUsecase;
     this.productSpecialFaqRepository = productSpecialFaqRepository;
+    this.orderRepo = orderRepo;
   }
 
   public createOrder = async (buyerId: string, storeId: string) => {
@@ -141,6 +148,13 @@ export class OrderSpecialUsecase {
       finalAmount,
       orderStatus: OrderStatus.WAITING_APPROVE,
       t,
+    });
+  }
+
+  public async confirmOrder(id: number) {
+    return await this.orderRepo.updateOrderStatus({
+      orderId: id,
+      status: OrderStatus.WAITING_CONFIRMED,
     });
   }
 
