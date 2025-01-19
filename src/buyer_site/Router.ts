@@ -144,6 +144,7 @@ export class buyerSiteRouter {
       cartRepo,
       orderUsecase,
       productSpecialFaqRepository,
+      orderRepo,
     );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
