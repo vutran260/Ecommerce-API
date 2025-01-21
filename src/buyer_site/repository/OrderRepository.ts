@@ -15,6 +15,7 @@ import {
 } from '../../lib/paging/Request';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import Logger from '../../lib/core/Logger';
+import { LP_STORE } from '../../lib/mysql/models/LP_STORE';
 
 export class OrderRepository {
   public createOrder = async (
@@ -78,6 +79,11 @@ export class OrderRepository {
         },
         {
           association: LP_ORDER.associations.store,
+          include: [
+            {
+              association: LP_STORE.associations.lpSellers,
+            },
+          ],
         },
       ],
       transaction: t,

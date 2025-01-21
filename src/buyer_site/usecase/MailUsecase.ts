@@ -330,6 +330,24 @@ export class MailUseCase {
     this.mailService.sendMail(mailOptions);
   };
 
+  public sendMailRequestApproveSpecialOrder = async (params: {
+    orderId: number;
+  }) => {
+    const { orderId } = params;
+    const order = await this.orderRepo.getOrderFullAttrById(orderId);
+    if (!order) {
+      return;
+    }
+    const mailOptions = {
+      to: order?.store?.lpSellers[0].email || '',
+      subject: 'ECパレット｜ご注文ありがとうございます',
+      templateName: 'orderSpecialRequestApprove',
+      params: {},
+    };
+    console.log('mailOptions', mailOptions);
+    this.mailService.sendMail(mailOptions);
+  };
+
   private calculateTotalAmount(products: SubscriptionProduct[]): number {
     let totalAmount = 0;
     for (const product of products) {
