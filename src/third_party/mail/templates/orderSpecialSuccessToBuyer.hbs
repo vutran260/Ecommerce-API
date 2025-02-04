@@ -1,0 +1,98 @@
+{{lastNameKanji}} {{firstNameKanji}} 様<br><br>
+
+この度は「ECパレット もみじ薬局店」をご利用いただき、誠にありがとうございます。<br><br>
+
+お客様のご注文を受け付けました。ただし、ご注文いただいた商品には薬剤師による確認が必要な医薬品が含まれております。<br>
+ご注文はまだ完了しておりませんので、以下の注意事項をご確認ください。<br><br>
+
+なお、ご注文いただいた商品には薬剤師による確認が必要な医薬品が含まれております。まだご注文は完了しておりませんので、以下の注意事項を必ずご確認ください。<br>
+【薬剤師による適正使用の確認承認が必要な医薬品のご注文についての注意事項】<br>
+・薬剤師による適正使用の確認後、承諾依頼のメールをお送りします。メール内のURLから承諾画面にアクセスし、画面の案内に従って、承諾手続きを完了させてください。<br>
+お客様による承諾手続き完了をもって、ご注文が確定いたします。<br>
+・ご回答いただいた質問内容によっては、直接確認が必要な場合がございます。薬剤師から電話またはメールが届いたときは、薬剤師の説明・指示を受けてください。<br>
+・薬剤師による適正使用の確認がされ次第、商品を発送いたしますので通常のお届けより日数をいただく場合がございます。また、他商品とまとめての発送となりますので、あらかじめご了承くださいますようお願いいたします。<br>
+・以下の内容に該当する場合は、薬剤師による医薬品適正使用の確認承認が必要な医薬品を含むすべてのご注文をキャンセルさせていただきますので、ご注意ください。<br>
+１）一定期間内に、お客様による承諾手続きが完了しなかった場合<br>
+２）薬剤師が適正使用ではないと判断した場合<br>
+・薬剤師による医薬品適正使用の確認承認が必要な医薬品のインターネット販売は、医薬品医療機器等法および薬剤師法等の法令により、以下の手続きが義務付けられています。あらかじめご了承ください。<br>
+１）使用者に関する情報の収集ならびに確認<br>
+２）薬剤師による使用可否の判断<br>
+３）医薬品適正使用のための情報の提供<br>
+４）提供された医薬品適正使用のための情報を理解されたことの確認<br><br>
+
+━━━━━━━━━━━━━━━━━━━━━<br>
+ご回答内容<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+【質問内容】<br>
+{{#each faqList}}
+商品名：{{ this.productName }}<br>
+商品コード：{{ this.productId }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question1}}<br>
+回答: {{ this.answer1 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question2}}<br>
+回答: {{ this.answer2 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question3}}<br>
+回答: {{ this.answer3 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question4}}<br>
+回答: {{ this.answer4 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question5}}<br>
+回答: {{ this.answer5 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question5}}<br>
+回答: {{ this.answer5 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question6}}<br>
+回答: {{ this.answer6 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question7}}<br>
+回答: {{ this.answer7 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question8}}<br>
+回答: {{ this.answer8 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question9}}<br>
+回答: {{ this.answer9 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question10}}<br>
+回答: {{ this.answer10 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question11}}<br>
+回答: {{ this.answer11 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question12}}<br>
+回答: {{ this.answer12 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question13}}<br>
+回答: {{ this.answer13 }}<br><br>
+{{/each}}
+━━━━━━━━━━━━━━━━━━━━━<br>
+ご注文情報<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+注文番号<br>
+R274269817<br><br>
+
+注文日時<br>
+2024年03月08日　00:37<br><br>
+
+━━━━━━━━━━━━━━━━━━━━━<br>
+商品明細・ご請求金額<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+{{#each products}}
+  <strong>【商品】</strong><br>
+  {{productName}}<br>
+  価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
+  ..........................................<br>
+{{/each}}
+<strong>【小計】</strong>{{subTotal}}円（税込）<br>
+<strong>【送料】</strong>{{shippingCode}}円（税込）<br>
+<strong>【合計】</strong>{{total}}円（税込）<br>
+━━━━━━━━━━━━━━━━━━━━━<br><br>
+
+本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>
+よくあるご質問、お問い合わせはこちらから<br>
+<a href="https://linq-circle.com/faq/">https://linq-circle.com/faq/</a>

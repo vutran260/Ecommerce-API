@@ -93,3 +93,5 @@ export const mailConfig: SMTPTransport.Options = {
 export const sso = {
   url: process.env.SSO_URL || '',
 };
+
+export const sellerUrl = process.env.SELLER_URL;

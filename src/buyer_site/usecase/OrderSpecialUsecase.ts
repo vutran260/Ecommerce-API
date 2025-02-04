@@ -19,6 +19,8 @@ import { CartRepository } from '../repository/CartRepository';
 import { ProductSpecialFaqRepository } from '../repository/ProductSpecialFaqRepository';
 import { OrderSpecialFaqStatus } from '../../lib/constant/orderSpecial/OrderSpecialFaqStatus';
 import { OrderRepository } from '../repository/OrderRepository';
+import { MailUseCase } from '../usecase/MailUsecase';
+import { ProductSpecialQuestionUseCase } from '../usecase/ProductSpecialQuestionUsecase';
 
 export class OrderSpecialUsecase {
   private addressRepository: AddressRepository;
@@ -27,7 +29,9 @@ export class OrderSpecialUsecase {
   private cartRepo: CartRepository;
   private orderUsecase: OrderUsecase;
   private productSpecialFaqRepository: ProductSpecialFaqRepository;
+  private productSpecialQuestionUseCase: ProductSpecialQuestionUseCase;
   private orderRepo: OrderRepository;
+  private mailUseCase: MailUseCase;
 
   constructor(
     addressRepository: AddressRepository,
@@ -36,7 +40,9 @@ export class OrderSpecialUsecase {
     cartRepo: CartRepository,
     orderUsecase: OrderUsecase,
     productSpecialFaqRepository: ProductSpecialFaqRepository,
+    productSpecialQuestionUseCase: ProductSpecialQuestionUseCase,
     orderRepo: OrderRepository,
+    mailUseCase: MailUseCase,
   ) {
     this.addressRepository = addressRepository;
     this.shipmentUseCase = shipmentUseCase;
@@ -44,7 +50,9 @@ export class OrderSpecialUsecase {
     this.cartRepo = cartRepo;
     this.orderUsecase = orderUsecase;
     this.productSpecialFaqRepository = productSpecialFaqRepository;
+    this.productSpecialQuestionUseCase = productSpecialQuestionUseCase;
     this.orderRepo = orderRepo;
+    this.mailUseCase = mailUseCase;
   }
 
   public createOrder = async (buyerId: string, storeId: string) => {
@@ -61,7 +69,7 @@ export class OrderSpecialUsecase {
 
     const t = await lpSequelize.transaction();
     try {
-      await this.createSpecialOrder({
+      const order = await this.createSpecialOrder({
         buyerId,
         storeId,
         cartItems: specialCartItems,
@@ -70,6 +78,23 @@ export class OrderSpecialUsecase {
         t,
       });
       await t.commit();
+
+      if (order) {
+        const faqQuestionsMap =
+          await this.productSpecialQuestionUseCase.getQuestionListMap();
+        // Email 1 - Buyer
+        this.mailUseCase.sendMailOrderSpecialSuccessToBuyer({
+          orderId: order.id,
+          faqQuestionsMap,
+          latestAddress,
+        });
+        // Email  2 - Doctor approve
+        this.mailUseCase.sendMailRequestApproveSpecialOrder({
+          orderId: order.id,
+          faqQuestionsMap,
+          latestAddress,
+        });
+      }
     } catch (error) {
       Logger.error('Fail to create special order');
       Logger.error(error);

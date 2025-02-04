@@ -23,6 +23,7 @@ import {
 } from '../../common/model/orders/Subscription';
 import { CreateOrderItemRequest } from '../../common/model/orders/Order';
 import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
+import { sellerUrl } from '../../Config';
 
 export class MailUseCase {
   private orderRepo: OrderRepository;
@@ -327,6 +328,109 @@ export class MailUseCase {
       params: mailParams,
     };
 
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailOrderSpecialSuccessToBuyer = async (params: {
+    orderId: number;
+    latestAddress: LP_ADDRESS_BUYER;
+    faqQuestionsMap: Record<number, string>;
+  }) => {
+    const { orderId, latestAddress, faqQuestionsMap } = params;
+    const order = await this.orderRepo.getOrderFullAttrById(orderId);
+    if (!order) {
+      return;
+    }
+    const faqList = order?.lpOrderItems.map((item) => {
+      return {
+        ...item.faq.dataValues,
+        productName: item.faq.product.productName,
+      };
+    });
+    const products =
+      order?.lpOrderItems?.map((item) => {
+        return {
+          productName: item.productName,
+          unitPrice: formatCurrency(item.price),
+          quantity: item.quantity,
+          subTotal: formatCurrency((item.price || 0) * item.quantity),
+        };
+      }) || [];
+    const mailOptions = {
+      to: latestAddress.email,
+      subject: 'ECパレット｜ご注文ありがとうございます',
+      templateName: 'orderSpecialSuccessToBuyer',
+      params: {
+        firstNameKanji: latestAddress.firstNameKanji,
+        lastNameKanji: latestAddress.lastNameKanji,
+        faqList: faqList,
+        faqQuestionsMap: faqQuestionsMap,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt),
+        products: products,
+        subTotal: formatCurrency(order?.amount),
+        shippingCode: formatCurrency(order?.shipmentFee),
+        total: formatCurrency(order?.totalAmount),
+      },
+    };
+    console.log('mailOptions', mailOptions);
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailRequestApproveSpecialOrder = async (params: {
+    orderId: number;
+    latestAddress: LP_ADDRESS_BUYER;
+    faqQuestionsMap: Record<number, string>;
+  }) => {
+    const { orderId, latestAddress, faqQuestionsMap } = params;
+    const order = await this.orderRepo.getOrderFullAttrById(orderId);
+    if (!order) {
+      return;
+    }
+    const faqList = order?.lpOrderItems.map((item) => {
+      return {
+        ...item.faq.dataValues,
+        productName: item.faq.product.productName,
+      };
+    });
+    const products =
+      order?.lpOrderItems?.map((item) => {
+        return {
+          sellerUrl,
+          productId: item.id,
+          productName: item.productName,
+          unitPrice: formatCurrency(item.price),
+          quantity: item.quantity,
+          subTotal: formatCurrency((item.price || 0) * item.quantity),
+        };
+      }) || [];
+    const mailOptions = {
+      to: order?.store?.lpSellers[0].email || '',
+      subject: 'ECパレット｜ご注文ありがとうございます',
+      templateName: 'orderSpecialRequestApprove',
+      params: {
+        lastNameKanji:
+          order?.store?.lpSellers[0]?.lpSellerSso?.lastNameKanji || '',
+        firstNameKanji:
+          order?.store?.lpSellers[0]?.lpSellerSso?.firstNameKanji || '',
+        buyerFirstNameKanji: latestAddress.firstNameKanji,
+        buyerLastNameKanji: latestAddress.lastNameKanji,
+        sellerUrl: sellerUrl,
+        deadLine: '2024年03月18日',
+        faqList: faqList,
+        faqQuestionsMap: faqQuestionsMap,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt),
+        products: products,
+        subTotal: formatCurrency(order?.amount),
+        shippingCode: formatCurrency(order?.shipmentFee),
+        total: formatCurrency(order?.totalAmount),
+        postCode: latestAddress.postCode,
+        address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
+        phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
+      },
+    };
+    console.log('mailOptions', mailOptions);
     this.mailService.sendMail(mailOptions);
   };
 
