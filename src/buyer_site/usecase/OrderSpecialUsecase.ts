@@ -82,9 +82,17 @@ export class OrderSpecialUsecase {
       if (order) {
         const faqQuestionsMap =
           await this.productSpecialQuestionUseCase.getQuestionListMap();
+        // Email 1 - Buyer
+        this.mailUseCase.sendMailOrderSpecialSuccessToBuyer({
+          orderId: order.id,
+          faqQuestionsMap,
+          latestAddress,
+        });
+        // Email  2 - Doctor approve
         this.mailUseCase.sendMailRequestApproveSpecialOrder({
           orderId: order.id,
           faqQuestionsMap,
+          latestAddress,
         });
       }
     } catch (error) {
