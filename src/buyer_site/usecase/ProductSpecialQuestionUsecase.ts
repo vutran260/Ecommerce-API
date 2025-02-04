@@ -16,4 +16,20 @@ export class ProductSpecialQuestionUseCase {
 
     return await this.productSpecialQuestionRepo.getQuestionList(order);
   };
+
+  public getQuestionListMap = async (): Promise<Record<number, string>> => {
+    const faqQuestions = await this.productSpecialQuestionRepo.getQuestionList([
+      {
+        attribute: 'id',
+        direction: 'ASC',
+      },
+    ]);
+    return faqQuestions.reduce(
+      (acc, question) => {
+        acc[question.id] = question.question || '';
+        return acc;
+      },
+      {} as Record<number, string>,
+    );
+  };
 }

@@ -332,17 +332,46 @@ export class MailUseCase {
 
   public sendMailRequestApproveSpecialOrder = async (params: {
     orderId: number;
+    faqQuestionsMap: Record<number, string>;
   }) => {
-    const { orderId } = params;
+    const { orderId, faqQuestionsMap } = params;
     const order = await this.orderRepo.getOrderFullAttrById(orderId);
     if (!order) {
       return;
     }
+    const faqList = order?.lpOrderItems.map((item) => {
+      return {
+        ...item.faq.dataValues,
+        productName: item.faq.product.productName,
+      };
+    });
+    const products =
+      order?.lpOrderItems?.map((item) => {
+        return {
+          productName: item.productName,
+          unitPrice: formatCurrency(item.price),
+          quantity: item.quantity,
+          subTotal: formatCurrency((item.price || 0) * item.quantity),
+        };
+      }) || [];
     const mailOptions = {
       to: order?.store?.lpSellers[0].email || '',
       subject: 'ECパレット｜ご注文ありがとうございます',
       templateName: 'orderSpecialRequestApprove',
-      params: {},
+      params: {
+        lastNameKanji:
+          order?.store?.lpSellers[0]?.lpSellerSso?.lastNameKanji || '',
+        firstNameKanji:
+          order?.store?.lpSellers[0]?.lpSellerSso?.firstNameKanji || '',
+        faqList: faqList,
+        faqQuestionsMap: faqQuestionsMap,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt),
+        products: products,
+        subTotal: formatCurrency(order?.amount),
+        shippingCode: formatCurrency(order?.shipmentFee),
+        total: formatCurrency(order?.totalAmount),
+      },
     };
     console.log('mailOptions', mailOptions);
     this.mailService.sendMail(mailOptions);

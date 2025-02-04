@@ -1,4 +1,4 @@
-{{buyerLastNameKanji}} {{buyerFirstNameKanji}} 様<br><br>
+{{lastNameKanji}} {{firstNameKanji}} 様<br><br>
 
 この度は「ECパレット もみじ薬局店」をご利用いただき、誠にありがとうございます。<br><br>
 
@@ -24,37 +24,52 @@
 ご回答内容<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
 【質問内容】<br>
-商品名：ファモチジン錠「クニヒロ」　１２錠<br>
-質問: 薬剤師による医薬品適正使用のための確認後、お客様自身による承諾手続きがされず、ご注文から7日間が経過した場合は、ご注文の全商品をキャンセルさせていただきます。<br>
-回答: はい<br><br>
+{{#each faqList}}
+商品名：{{ this.productName }}<br>
+商品コード：{{ this.productId }}<br><br>
 
-質問: 薬剤師が適正でないと判断した場合には、ご注文すべての商品がキャンセルとなり、他の商品は再度ご購入手続きが必要となります。<br>
-回答: はい<br><br>
+質問: {{ lookup faqQuestionsMap this.question1}}<br>
+回答: {{ this.answer1 }}<br><br>
 
-質問: ご使用者のお名前 回答: 矢島　弘士 質問: ご使用者の年齢<br>
-回答: はい<br><br>
+質問: {{ lookup faqQuestionsMap this.question2}}<br>
+回答: {{ this.answer2 }}<br><br>
 
-質問: ご使用者の性別<br>
-回答: 男性<br><br>
+質問: {{ lookup faqQuestionsMap this.question3}}<br>
+回答: {{ this.answer3 }}<br><br>
 
-質問: どのような症状に使用しますか？<br>
-回答: 胃痛、もたれ、胸やけ、むかつき<br><br>
+質問: {{ lookup faqQuestionsMap this.question4}}<br>
+回答: {{ this.answer4 }}<br><br>
 
-質問: 医薬品や食品によるアレルギーや副作用歴はありますか？<br>
-回答: いいえ<br><br>
+質問: {{ lookup faqQuestionsMap this.question5}}<br>
+回答: {{ this.answer5 }}<br><br>
 
-質問: 現在医療機関受診中、または医療機関受診していないが現在かかっている病気、使用している医薬品(市販薬含む）や健康食品がありますか？<br>
-回答: いいえ<br><br>
+質問: {{ lookup faqQuestionsMap this.question5}}<br>
+回答: {{ this.answer5 }}<br><br>
 
-質問: この医薬品を使用したことがありますか？<br>
-回答: いいえ<br><br>
+質問: {{ lookup faqQuestionsMap this.question6}}<br>
+回答: {{ this.answer6 }}<br><br>
 
-質問: この医薬品について、薬剤師に質問・伝達事項などはありますか？<br>
-回答: いいえ<br><br>
+質問: {{ lookup faqQuestionsMap this.question7}}<br>
+回答: {{ this.answer7 }}<br><br>
 
-質問: 使用上の注意をお読みいただき、内容に問題ないことを確認いただけましたか？<br>
-回答: いいえ<br><br>
+質問: {{ lookup faqQuestionsMap this.question8}}<br>
+回答: {{ this.answer8 }}<br><br>
 
+質問: {{ lookup faqQuestionsMap this.question9}}<br>
+回答: {{ this.answer9 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question10}}<br>
+回答: {{ this.answer10 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question11}}<br>
+回答: {{ this.answer11 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question12}}<br>
+回答: {{ this.answer12 }}<br><br>
+
+質問: {{ lookup faqQuestionsMap this.question13}}<br>
+回答: {{ this.answer13 }}<br><br>
+{{/each}}
 ━━━━━━━━━━━━━━━━━━━━━<br>
 ご注文情報<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
@@ -67,15 +82,15 @@ R274269817<br><br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
 商品明細・ご請求金額<br>
 ━━━━━━━━━━━━━━━━━━━━━<br>
-【商品】 ファモチジン錠「クニヒロ」　１２錠 価格998円 × 1 = 998円（税込）<br>
-..........................................<br>
-【商品】 パブロンエースＰｒｏ微粒　６包 価格880円 × 1 = 880円（税込）<br>
-..........................................<br>
-【商品】 抗菌綿棒Ａ　２００本×２個 価格183円 × 1 = 183円（税込）<br>
-..........................................<br>
-【小計】2,061円（税込）<br>
-【送料】550円（税込）<br>
-【合計】2,611円（税込）<br>
+{{#each products}}
+  <strong>【商品】</strong><br>
+  {{productName}}<br>
+  価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
+  ..........................................<br>
+{{/each}}
+<strong>【小計】</strong>{{subTotal}}円（税込）<br>
+<strong>【送料】</strong>{{shippingCode}}円（税込）<br>
+<strong>【合計】</strong>{{total}}円（税込）<br>
 ━━━━━━━━━━━━━━━━━━━━━<br><br>
 
 本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>

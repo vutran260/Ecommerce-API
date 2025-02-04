@@ -68,6 +68,9 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport(mailConfig);
+    handlebars.registerHelper('lookup', function (obj, key) {
+      return obj && obj[key] ? obj[key] : '';
+    });
   }
 
   public async sendMail(

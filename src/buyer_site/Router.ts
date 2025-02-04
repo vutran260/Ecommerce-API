@@ -137,16 +137,6 @@ export class buyerSiteRouter {
       shipmentUseCase,
       pointUseCase,
     );
-    const orderSpecialUsecase = new OrderSpecialUsecase(
-      addressRepo,
-      shipmentUseCase,
-      pointUseCase,
-      cartRepo,
-      orderUsecase,
-      productSpecialFaqRepository,
-      orderRepo,
-      mailUseCase,
-    );
     const buyerPostUsecase = new BuyerPostUsecase(buyerPostRepo);
     const uploadUsecase = new UploadUsecase(s3Service);
     const subscriptionUseCase = new SubscriptionUseCase(
@@ -165,6 +155,17 @@ export class buyerSiteRouter {
     );
     const productSpecialQuestionUseCase = new ProductSpecialQuestionUseCase(
       productSpecialQuestionRepository,
+    );
+    const orderSpecialUsecase = new OrderSpecialUsecase(
+      addressRepo,
+      shipmentUseCase,
+      pointUseCase,
+      cartRepo,
+      orderUsecase,
+      productSpecialFaqRepository,
+      productSpecialQuestionUseCase,
+      orderRepo,
+      mailUseCase,
     );
 
     const buyerEndpoint = new BuyerEndpoint(buyerUsecase);
