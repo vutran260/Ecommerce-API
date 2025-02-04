@@ -373,7 +373,6 @@ export class MailUseCase {
         total: formatCurrency(order?.totalAmount),
       },
     };
-    console.log('mailOptions', mailOptions);
     this.mailService.sendMail(mailOptions);
   };
 
@@ -397,7 +396,7 @@ export class MailUseCase {
       order?.lpOrderItems?.map((item) => {
         return {
           sellerUrl,
-          productId: item.id,
+          productId: item.productId,
           productName: item.productName,
           unitPrice: formatCurrency(item.price),
           quantity: item.quantity,
@@ -430,7 +429,6 @@ export class MailUseCase {
         phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
       },
     };
-    console.log('mailOptions', mailOptions);
     this.mailService.sendMail(mailOptions);
   };
 
