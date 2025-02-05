@@ -1,0 +1,36 @@
+{{lastNameKanji}} {{firstNameKanji}} 様<br><br>
+
+この度はECパレットにて医薬品の購入を申し込みいただき、誠にありがとうございます。<br><br>
+
+しかしながら、以下の医薬品について、薬剤師としての判断により、適正使用の観点からご購入をお受けすることができません。<br>
+<a href="{{buyerUrl}}/order-detail/?id={{orderId}}">{{orderId}}</a><br>
+{{#each products}}
+  商品名: <a href="{{buyerUrl}}/products/detail/?id={{productId}}">{{productName}}</a><br>
+{{/each}}
+<br>
+
+ご理解いただけますようお願い申し上げます。お客様の健康と安全を最優先に考えた上での判断ですので、何卒ご容赦ください。<br>
+ご質問やご不明点がございましたら、お気軽にご連絡ください。<br><br>
+
+<strong>注文番号</strong><br>
+{{orderId}}<br>
+<strong>注文日時</strong><br>
+{{orderCreatedAt}}<br>
+<strong>受取方法</strong><br>
+ご指定のお届け先<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+<strong>商品明細・ご請求金額</strong><br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+{{#each products}}
+  <strong>【商品】</strong><br>
+  {{productName}}<br>
+  価格{{unitPrice}}円 × {{quantity}} = {{subTotal}}円（税込）<br>
+  ..........................................<br>
+{{/each}}
+<strong>【小計】</strong>{{subTotal}}円（税込）<br>
+<strong>【送料】</strong>{{shippingCode}}円（税込）<br>
+<strong>【合計】</strong>{{total}}円（税込）<br>
+━━━━━━━━━━━━━━━━━━━━━<br>
+本メールは送信専用メールアドレスから配信されています。ご返信をいただいてもお答えできませんのでご了承ください。<br>
+よくあるご質問、お問い合わせはこちらから<br>
+<a href="https://linq-circle.com/faq/">https://linq-circle.com/faq/</a>

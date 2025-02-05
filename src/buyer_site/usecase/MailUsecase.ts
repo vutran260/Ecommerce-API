@@ -23,7 +23,7 @@ import {
 } from '../../common/model/orders/Subscription';
 import { CreateOrderItemRequest } from '../../common/model/orders/Order';
 import { ShipmentUseCase } from '../../buyer_site/usecase/ShipmentUseCase';
-import { sellerUrl } from '../../Config';
+import { buyerUrl, sellerUrl } from '../../Config';
 
 export class MailUseCase {
   private orderRepo: OrderRepository;
@@ -427,6 +427,79 @@ export class MailUseCase {
         postCode: latestAddress.postCode,
         address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
         phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
+      },
+    };
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailApproveSpecialOrder = async (params: {
+    order: LP_ORDER;
+    timezone: string;
+  }) => {
+    const { order, timezone } = params;
+    const { lpOrderAddressBuyer } = order;
+
+    const products =
+      order?.lpOrderItems?.map((item) => {
+        return {
+          productId: item.productId,
+          productName: item.productName,
+          unitPrice: formatCurrency(item.price),
+          quantity: item.quantity,
+          subTotal: formatCurrency((item.price || 0) * item.quantity),
+        };
+      }) || [];
+    const mailOptions = {
+      to: lpOrderAddressBuyer.email,
+      subject: 'ECパレット｜医薬品購入への承諾依頼',
+      templateName: 'orderSpecialApproved',
+      params: {
+        buyerUrl,
+        firstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        lastNameKanji: lpOrderAddressBuyer.lastNameKanji,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt, timezone),
+        products: products,
+        subTotal: formatCurrency(order?.amount),
+        shippingCode: formatCurrency(order?.shipmentFee),
+        total: formatCurrency(order?.totalAmount),
+      },
+    };
+    this.mailService.sendMail(mailOptions);
+  };
+
+  public sendMailRejectedSpecialOrder = async (params: {
+    order: LP_ORDER;
+    timezone: string;
+  }) => {
+    const { order, timezone } = params;
+    const { lpOrderAddressBuyer } = order;
+
+    const products =
+      order?.lpOrderItems?.map((item) => {
+        return {
+          buyerUrl,
+          productId: item.productId,
+          productName: item.productName,
+          unitPrice: formatCurrency(item.price),
+          quantity: item.quantity,
+          subTotal: formatCurrency((item.price || 0) * item.quantity),
+        };
+      }) || [];
+    const mailOptions = {
+      to: lpOrderAddressBuyer.email,
+      subject: 'ECパレット｜医薬品購入のご承諾について',
+      templateName: 'orderSpecialRejected',
+      params: {
+        buyerUrl,
+        firstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        lastNameKanji: lpOrderAddressBuyer.lastNameKanji,
+        orderId: order.id,
+        orderCreatedAt: formatDateTimeJp(order.createdAt, timezone),
+        products: products,
+        subTotal: formatCurrency(order?.amount),
+        shippingCode: formatCurrency(order?.shipmentFee),
+        total: formatCurrency(order?.totalAmount),
       },
     };
     this.mailService.sendMail(mailOptions);
