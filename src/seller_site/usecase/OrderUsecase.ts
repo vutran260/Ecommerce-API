@@ -95,14 +95,9 @@ export class OrderUsecase {
       throw new NotFoundError(`Order with ID ${request.orderId} not found.`);
     }
 
-    Logger.info(
-      `Order found with ID: ${request.orderId}, current status: ${order.orderStatus}`,
-    );
-
     request.currentStatus = order.orderStatus || '';
     const updateRequest = plainToInstance(UpdateOrderStatusRequest, request);
     await validatorRequest(updateRequest);
-    Logger.info('Validated request successfully');
 
     const t = await lpSequelize.transaction();
     try {
@@ -213,20 +208,16 @@ export class OrderUsecase {
             Logger.info('Order payment status updated to CANCELLED');
           }
         }
-
-        Logger.info('Sending cancellation email to seller');
-        this.mailUseCase.sendMailSellerCancelOrder({
-          order,
-          reasons: request.reasons || [],
-          canceledAt: new Date(),
-          timezone,
-        });
       }
 
+      // Handle send mail
+      this.sendMail({
+        order,
+        request,
+        timezone,
+      });
+
       await t.commit();
-      Logger.info(
-        `Order status updated successfully for order ID: ${order.id}`,
-      );
       return await this.orderRepo.getOrderById(order.id);
     } catch (error) {
       Logger.error('Failed to update order status');
@@ -235,4 +226,38 @@ export class OrderUsecase {
       throw error;
     }
   };
+
+  private sendMail(params: {
+    order: LP_ORDER;
+    timezone: string;
+    request: UpdateOrderStatusRequest;
+  }) {
+    const { order, timezone, request } = params;
+
+    switch (request.status) {
+      case OrderStatus.CANCEL:
+        Logger.info('Sending cancellation email to seller');
+        this.mailUseCase.sendMailSellerCancelOrder({
+          order,
+          reasons: request?.reasons || [],
+          canceledAt: new Date(),
+          timezone,
+        });
+        break;
+      case OrderStatus.APPROVED:
+        Logger.info('Sending approved email to buyer');
+        this.mailUseCase.sendMailApproveSpecialOrder({
+          order,
+          timezone,
+        });
+        break;
+      case OrderStatus.REJECTED:
+        Logger.info('Sending rejected email to buyer');
+        this.mailUseCase.sendMailRejectedSpecialOrder({
+          order,
+          timezone,
+        });
+        break;
+    }
+  }
 }

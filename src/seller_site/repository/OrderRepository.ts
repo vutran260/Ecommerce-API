@@ -3,7 +3,12 @@ import { Transaction } from 'sequelize';
 import Logger from '../../lib/core/Logger';
 import { LP_ORDER } from '../../lib/mysql/models/LP_ORDER';
 import { BuildOrderQuery, LpOrder } from '../../lib/paging/Order';
-import { BuildQuery, Filter, GetOffset, Paging } from '../../lib/paging/Request';
+import {
+  BuildQuery,
+  Filter,
+  GetOffset,
+  Paging,
+} from '../../lib/paging/Request';
 import { LP_BUYER } from '../../lib/mysql/models/init-models';
 
 export class OrderRepository {
@@ -22,6 +27,9 @@ export class OrderRepository {
         },
         {
           association: LP_ORDER.associations.lpOrderAddressBuyer,
+        },
+        {
+          association: LP_ORDER.associations.lpOrderItems,
         },
       ],
       transaction: t,

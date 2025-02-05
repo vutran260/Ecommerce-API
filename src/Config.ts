@@ -95,3 +95,4 @@ export const sso = {
 };
 
 export const sellerUrl = process.env.SELLER_URL;
+export const buyerUrl = process.env.BUYER_URL;
