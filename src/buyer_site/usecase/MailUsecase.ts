@@ -1,7 +1,6 @@
 import Logger from '../../lib/core/Logger';
 import { OrderRepository } from '../repository/OrderRepository';
 import {
-  LP_ADDRESS_BUYER,
   LP_ORDER,
   LP_SUBSCRIPTION,
   LP_SUBSCRIPTION_ADDRESS,
@@ -40,15 +39,14 @@ export class MailUseCase {
     this.shipmentUseCase = shipmentUseCase;
   }
 
-  public sendMailOrder = async (params: {
-    orderId: number;
-    latestAddress: LP_ADDRESS_BUYER;
-  }) => {
-    const { orderId, latestAddress } = params;
+  public sendMailOrder = async (params: { orderId: number }) => {
+    const { orderId } = params;
     const order = await this.orderRepo.getOrderFullAttrById(orderId);
     if (!order) {
       return;
     }
+
+    const { lpOrderAddressBuyer } = order;
 
     const products =
       order?.lpOrderItems?.map((item) => {
@@ -59,13 +57,14 @@ export class MailUseCase {
           subTotal: formatCurrency((item.price || 0) * item.quantity),
         };
       }) || [];
+
     const mailOptions: OrderSuccessOptions = {
-      to: latestAddress.email,
+      to: lpOrderAddressBuyer.email,
       subject: 'ECパレット｜ご注文ありがとうございます',
       templateName: 'orderSuccessTemplate',
       params: {
-        buyerFirstNameKanji: latestAddress.firstNameKanji,
-        buyerLastNameKanji: latestAddress.lastNameKanji,
+        buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
         companyName: 'ECパレット',
         orderId: order.id,
         orderCreatedAt: formatDateJp(order.createdAt),
@@ -74,9 +73,9 @@ export class MailUseCase {
         shippingCode: formatCurrency(order?.shipmentFee),
         pointUse: formatPoint(order?.pointUse),
         total: formatCurrency(order?.totalAmount),
-        postCode: latestAddress.postCode,
-        address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
-        phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
+        postCode: lpOrderAddressBuyer.postCode,
+        address: `${lpOrderAddressBuyer.prefectureName || ''} ${lpOrderAddressBuyer.cityTown} ${lpOrderAddressBuyer.streetAddress} ${lpOrderAddressBuyer.buildingName}`,
+        phoneNumber: formatPhoneNumber(lpOrderAddressBuyer.telephoneNumber),
       },
     };
     Logger.info(
@@ -333,20 +332,23 @@ export class MailUseCase {
 
   public sendMailOrderSpecialSuccessToBuyer = async (params: {
     orderId: number;
-    latestAddress: LP_ADDRESS_BUYER;
     faqQuestionsMap: Record<number, string>;
   }) => {
-    const { orderId, latestAddress, faqQuestionsMap } = params;
+    const { orderId, faqQuestionsMap } = params;
     const order = await this.orderRepo.getOrderFullAttrById(orderId);
     if (!order) {
       return;
     }
+
+    const { lpOrderAddressBuyer } = order;
+
     const faqList = order?.lpOrderItems.map((item) => {
       return {
         ...item.faq.dataValues,
         productName: item.faq.product.productName,
       };
     });
+
     const products =
       order?.lpOrderItems?.map((item) => {
         return {
@@ -356,13 +358,14 @@ export class MailUseCase {
           subTotal: formatCurrency((item.price || 0) * item.quantity),
         };
       }) || [];
+
     const mailOptions = {
-      to: latestAddress.email,
+      to: lpOrderAddressBuyer.email,
       subject: 'ECパレット｜ご注文ありがとうございます',
       templateName: 'orderSpecialSuccessToBuyer',
       params: {
-        firstNameKanji: latestAddress.firstNameKanji,
-        lastNameKanji: latestAddress.lastNameKanji,
+        firstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        lastNameKanji: lpOrderAddressBuyer.lastNameKanji,
         faqList: faqList,
         faqQuestionsMap: faqQuestionsMap,
         orderId: order.id,
@@ -378,14 +381,16 @@ export class MailUseCase {
 
   public sendMailRequestApproveSpecialOrder = async (params: {
     orderId: number;
-    latestAddress: LP_ADDRESS_BUYER;
     faqQuestionsMap: Record<number, string>;
   }) => {
-    const { orderId, latestAddress, faqQuestionsMap } = params;
+    const { orderId, faqQuestionsMap } = params;
     const order = await this.orderRepo.getOrderFullAttrById(orderId);
     if (!order) {
       return;
     }
+
+    const { lpOrderAddressBuyer } = order;
+
     const faqList = order?.lpOrderItems.map((item) => {
       return {
         ...item.faq.dataValues,
@@ -412,8 +417,8 @@ export class MailUseCase {
           order?.store?.lpSellers[0]?.lpSellerSso?.lastNameKanji || '',
         firstNameKanji:
           order?.store?.lpSellers[0]?.lpSellerSso?.firstNameKanji || '',
-        buyerFirstNameKanji: latestAddress.firstNameKanji,
-        buyerLastNameKanji: latestAddress.lastNameKanji,
+        buyerFirstNameKanji: lpOrderAddressBuyer.firstNameKanji,
+        buyerLastNameKanji: lpOrderAddressBuyer.lastNameKanji,
         sellerUrl: sellerUrl,
         deadLine: '2024年03月18日',
         faqList: faqList,
@@ -424,9 +429,9 @@ export class MailUseCase {
         subTotal: formatCurrency(order?.amount),
         shippingCode: formatCurrency(order?.shipmentFee),
         total: formatCurrency(order?.totalAmount),
-        postCode: latestAddress.postCode,
-        address: `${latestAddress.prefectureName || ''} ${latestAddress.cityTown} ${latestAddress.streetAddress} ${latestAddress.buildingName}`,
-        phoneNumber: formatPhoneNumber(latestAddress.telephoneNumber),
+        postCode: lpOrderAddressBuyer.postCode,
+        address: `${lpOrderAddressBuyer.prefectureName || ''} ${lpOrderAddressBuyer.cityTown} ${lpOrderAddressBuyer.streetAddress} ${lpOrderAddressBuyer.buildingName}`,
+        phoneNumber: formatPhoneNumber(lpOrderAddressBuyer.telephoneNumber),
       },
     };
     this.mailService.sendMail(mailOptions);
