@@ -153,7 +153,6 @@ export class OrderUsecase {
       if (order) {
         this.mailUseCase.sendMailOrder({
           orderId: order.id,
-          latestAddress,
         });
       }
     } catch (error) {

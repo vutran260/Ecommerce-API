@@ -86,13 +86,11 @@ export class OrderSpecialUsecase {
         this.mailUseCase.sendMailOrderSpecialSuccessToBuyer({
           orderId: order.id,
           faqQuestionsMap,
-          latestAddress,
         });
         // Email  2 - Doctor approve
         this.mailUseCase.sendMailRequestApproveSpecialOrder({
           orderId: order.id,
           faqQuestionsMap,
-          latestAddress,
         });
       }
     } catch (error) {
